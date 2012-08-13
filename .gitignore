@@ -4,3 +4,5 @@
 #*.jar
 *.war
 *.ear
+.checkstyle
+war/WEB-INF/classes/
