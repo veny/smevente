@@ -1,0 +1,49 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:veny='urn:import:veny.smevente.client'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel styleName="header" >
+
+    <g:HTMLPanel ui:field="loadingBar" styleName="header-loadingBar-holder" >
+      <g:Label styleName="header-loadingBar" text="{consts.headerLoading}" />
+      <veny:IdleBar ui:field="idlebar" />
+    </g:HTMLPanel>
+
+    <div class="header-dashboard-holder">
+      <div class="header-dashboard-left">
+          <!-- units -->
+          <g:InlineLabel text="{consts.unit}" />
+          <g:ListBox ui:field='units' />
+          <!-- unit members -->
+          <g:InlineLabel text="{consts.unitMember}" />
+          <g:ListBox ui:field="unitMembers" />
+          <!-- limited version -->
+          <g:InlineLabel ui:field='limitedVersion' visible='false'
+              text="{consts.limitedVersion}" styleName="header-limitedVersion" />
+      </div>
+      <div class='header-dashboard-right'>
+          <!-- username -->
+          <g:InlineLabel text="{consts.username}" />
+          :
+          <g:InlineLabel ui:field="username" addStyleNames="header-bold" />
+          |
+          <!-- logout -->
+          <g:Anchor ui:field='logout' addStyleNames="hyperlink" text="{consts.logout}" />
+          |
+          <!-- languages -->
+          <g:InlineLabel text='{consts.headerLanguage}' />
+          <g:ListBox ui:field='languages' />
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div>
+      <veny:Menu ui:field="menu" />
+    </div>
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>

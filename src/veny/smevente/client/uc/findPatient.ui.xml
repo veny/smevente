@@ -1,0 +1,25 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel addStyleNames="uc-standard" >
+
+    <g:VerticalPanel horizontalAlignment="ALIGN_LEFT" >
+        <g:Label text="{consts.name}" />
+        <g:TextBox ui:field="name" />
+        <g:Label text="{consts.phoneNumber}" />
+        <g:TextBox ui:field="phoneNumber" />
+        <g:Label text="{consts.birthNumber}" />
+        <g:TextBox ui:field="birthNumber" />
+        <g:Cell horizontalAlignment="ALIGN_RIGHT">
+          <g:Button text="{consts.find}" ui:field="submit" />
+        </g:Cell>
+      </g:VerticalPanel>
+
+      <g:FlexTable ui:field="resultTable" addStyleNames="resultTable" />
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>

@@ -1,0 +1,61 @@
+<web-app>
+
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>Smevente.html</welcome-file>
+  </welcome-file-list>
+
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+      classpath:/appctx-common.xml
+      classpath:/appctx-security.xml
+      classpath:/appctx-validation.xml
+    </param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+
+  <!-- Spring MVC -->
+  <servlet>
+    <servlet-name>dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dispatcher</servlet-name>
+    <!--
+      REST API has prefix 'rest',
+      otherwise your css, js, and images wont get resolved.
+    -->
+    <url-pattern>/rest/*</url-pattern>
+  </servlet-mapping>
+
+
+  <!-- SECURITY -->
+  <!--
+    Spring's DelegatingFilterProxy provides the link between web.xml and the application context.
+  -->
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/rest/*</url-pattern>
+  </filter-mapping>
+
+
+  <!-- GAE HTTPS -->
+  <security-constraint>
+    <web-resource-collection>
+        <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+</web-app>

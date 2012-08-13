@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='smevente'>
+  <!-- Inherit the core Web Toolkit stuff.                        -->
+  <inherits name='com.google.gwt.user.User'/>
+  <inherits name="com.google.gwt.uibinder.UiBinder" />
+  <inherits name="com.google.gwt.i18n.I18N"/>
+  <inherits name='com.google.gwt.json.JSON' />
+
+  <!-- Inherit the default GWT style sheet.  You can change       -->
+  <!-- the theme of your GWT application by uncommenting          -->
+  <!-- any one of the following lines.                            -->
+  <inherits name='com.google.gwt.user.theme.standard.Standard'/>
+  <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+  <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+
+  <!-- Other module inherits                                      -->
+  <inherits name='eu.maydu.gwt.validation.ValidationLibrary'/>
+  <inherits name='net.auroris.ColorPicker.ColorPicker'/>
+
+  <!-- Specify the app entry point class.                         -->
+  <entry-point class='veny.smevente.client.Smevente'/>
+
+  <!-- Tell the GWT compiler the supported locales. -->
+  <extend-property name="locale" values="en"/>
+  <extend-property name="locale" values="cs"/>
+  <set-property-fallback name="locale" value="en"/>
+
+  <!-- Specify the paths for translatable code                    -->
+  <source path='client'/>
+  <source path='client/uc'/>
+  <source path='client/mvp'/>
+  <source path='client/rest'/>
+  <source path='client/utils'/>
+  <source path='model'>
+    <exclude name='**/gae/*.java'/>
+  </source>
+  <source path='shared'/>
+
+</module>

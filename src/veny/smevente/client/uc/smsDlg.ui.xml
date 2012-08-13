@@ -1,0 +1,46 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel addStyleNames="form-holder" >
+
+    <g:VerticalPanel horizontalAlignment="ALIGN_RIGHT" spacing="4" >
+        <g:FlowPanel>
+          <g:InlineLabel ui:field="date" addStyleNames="elementLabel" />
+          <g:ListBox ui:field="startHour" />
+          <g:InlineLabel text=":" addStyleNames="padded-both" />
+          <g:ListBox ui:field="startMinute" />
+        </g:FlowPanel>
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label ui:field="medicalHelpHeader" />
+            <g:ListBox ui:field="medicalHelp" />
+        </g:FlowPanel>
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label text="{consts.medicalHelpLength}" />
+            <g:ListBox ui:field="medicalHelpLength" />
+        </g:FlowPanel>
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label text="{consts.name}" />
+            <g:SuggestBox ui:field="nameSuggestBox"/>
+        </g:FlowPanel>
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label text="{consts.phoneNumber}" />
+            <g:TextBox ui:field="phoneNumber" enabled="false" />
+        </g:FlowPanel>
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label text="{consts.smsText}" />
+            <g:TextArea ui:field="smsText" />
+        </g:FlowPanel>
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label text="{consts.notice}" />
+            <g:TextArea ui:field="notice" />
+        </g:FlowPanel>
+        <g:DisclosurePanel ui:field="validationErrors" />
+        <g:Hidden ui:field="smsId" />
+    </g:VerticalPanel>
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>

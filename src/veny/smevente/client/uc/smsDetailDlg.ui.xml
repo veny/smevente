@@ -1,0 +1,30 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel>
+
+    <g:VerticalPanel addStyleNames="sms-detail-dlg-content" spacing="4" >
+        <g:Label text="{consts.date}" addStyleNames="text-bold" />
+        <g:Label ui:field="date" />
+        <g:Label text="{consts.time}" addStyleNames="text-bold" />
+        <g:Label ui:field="time" />
+        <g:Label ui:field="medicalHelpLabel" addStyleNames="text-bold" />
+        <g:Label ui:field="medicalHelp" />
+        <g:Label text="{consts.name}" addStyleNames="text-bold" />
+        <g:Label ui:field="name"/>
+        <g:Label text="{consts.phoneNumber}" addStyleNames="text-bold" />
+        <g:Label ui:field="phoneNumber" />
+        <g:Label text="{consts.smsText}" addStyleNames="text-bold" />
+        <g:Label ui:field="smsText" />
+        <g:Label text="{consts.notice}" addStyleNames="text-bold" />
+        <g:Label ui:field="notice" />
+        <g:Label text="{consts.sent}" addStyleNames="text-bold" />
+        <g:Label ui:field="sent" />
+    </g:VerticalPanel>
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>

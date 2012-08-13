@@ -1,0 +1,31 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel addStyleNames="login" >
+
+    <g:VerticalPanel addStyleNames="login-form-holder" horizontalAlignment="ALIGN_LEFT" >
+        <g:Cell horizontalAlignment="ALIGN_RIGHT">
+          <g:Image url="images/smevente-logo.png" />
+        </g:Cell>
+        <g:Label text="{consts.username}" />
+        <g:TextBox ui:field="username" />
+        <g:Label text="{consts.password}" />
+        <g:PasswordTextBox ui:field="password" />
+        <g:Cell horizontalAlignment="ALIGN_RIGHT">
+          <g:Button text="{consts.login}" ui:field="submit"/>
+        </g:Cell>
+        <g:DisclosurePanel ui:field="validationErrors" />
+        <g:Label ui:field="buildNumber" addStyleNames="buildNumber" />
+        <g:Anchor text="{consts.aboutSmevente}" addStyleNames="buildNumber" href="http://smevente.com"/>
+    </g:VerticalPanel>
+
+    <g:HTML styleName="gae-logo">
+        <img src="http://code.google.com/appengine/images/appengine-noborder-120x30.gif"
+             alt="Powered by Google App Engine" />
+    </g:HTML>
+  </g:HTMLPanel>
+
+</ui:UiBinder>

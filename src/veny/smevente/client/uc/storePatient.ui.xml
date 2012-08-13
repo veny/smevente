@@ -1,0 +1,42 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel addStyleNames="uc-standard" >
+
+    <g:VerticalPanel horizontalAlignment="ALIGN_LEFT" >
+        <g:Label text="{consts.firstname}" />
+        <g:TextBox ui:field="firstname" />
+        <g:Label text="{consts.surname}" />
+        <g:TextBox ui:field="surname" />
+        <g:Label text="{consts.phoneNumber}" />
+        <g:TextBox ui:field="phoneNumber" />
+        <g:Label text="{consts.birthNumber}" />
+        <g:TextBox ui:field="birthNumber" />
+        <g:Label text="{consts.degree}" />
+        <g:TextBox ui:field="degree" />
+        <g:Label text="{consts.street}" />
+        <g:TextBox ui:field="street" />
+        <g:Label text="{consts.city}" />
+        <g:TextBox ui:field="city" />
+        <g:Label text="{consts.zipCode}" />
+        <g:TextBox ui:field="zipCode" />
+        <g:Label text="{consts.employer}" />
+        <g:TextBox ui:field="employer" />
+        <g:Label text="{consts.careers}" />
+        <g:TextBox ui:field="careers" />
+        <g:Cell horizontalAlignment="ALIGN_RIGHT">
+          <g:HorizontalPanel>
+            <g:Button text="{consts.save}" ui:field="submit" />
+            <g:Button text="{consts.cancel}" ui:field="cancel" />
+          </g:HorizontalPanel>
+        </g:Cell>
+        <g:DisclosurePanel ui:field="validationErrors" />
+        <g:Hidden ui:field="patientId" />
+      </g:VerticalPanel>
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>

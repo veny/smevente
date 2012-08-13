@@ -1,0 +1,36 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel addStyleNames="uc-standard" >
+
+    <g:VerticalPanel horizontalAlignment="ALIGN_LEFT" >
+        <g:Label text="{consts.username}" />
+        <g:TextBox ui:field="username" />
+        <g:Label text="{consts.fullname}" />
+        <g:TextBox ui:field="fullname" />
+        <g:Label text="{consts.unitAdmin}" />
+        <g:CheckBox ui:field="unitAdmin" />
+        <g:Label text="{consts.unitOrder}" />
+        <g:TextBox ui:field="unitOrder" />
+        <g:Label text="{consts.updatePassword}" />
+        <g:CheckBox ui:field="updatePassword" />
+        <g:Label text="{consts.password}" />
+        <g:PasswordTextBox ui:field="password" />
+        <g:Label text="{consts.passwordAgain}" />
+        <g:PasswordTextBox ui:field="passwordAgain" />
+        <g:Cell horizontalAlignment="ALIGN_RIGHT">
+          <g:HorizontalPanel>
+            <g:Button text="{consts.save}" ui:field="submit" />
+            <g:Button text="{consts.cancel}" ui:field="cancel" />
+          </g:HorizontalPanel>
+        </g:Cell>
+        <g:DisclosurePanel ui:field="validationErrors" />
+        <g:Hidden ui:field="userId" />
+      </g:VerticalPanel>
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>

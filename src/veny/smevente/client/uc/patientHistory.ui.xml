@@ -1,0 +1,19 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:c='urn:import:com.google.gwt.user.datepicker.client'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel addStyleNames="uc-standard" >
+
+    <g:VerticalPanel horizontalAlignment="ALIGN_LEFT" >
+      <g:Label text="{consts.name}" />
+      <g:Label ui:field="fullname" addStyleNames="text-bold" />
+    </g:VerticalPanel>
+
+    <g:FlexTable ui:field="resultTable" addStyleNames="resultTable" />
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>

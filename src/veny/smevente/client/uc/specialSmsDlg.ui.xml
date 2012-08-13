@@ -1,0 +1,31 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel addStyleNames="form-holder" >
+
+    <g:VerticalPanel horizontalAlignment="ALIGN_RIGHT" spacing="4" >
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label text="{consts.type}" />
+            <g:ListBox ui:field="type" />
+        </g:FlowPanel>
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label text="{consts.name}" />
+            <g:TextBox ui:field="fullname" enabled="false" />
+        </g:FlowPanel>
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label text="{consts.phoneNumber}" />
+            <g:TextBox ui:field="phoneNumber" enabled="false" />
+        </g:FlowPanel>
+        <g:FlowPanel styleName="medicalHelpElementHolder">
+            <g:Label text="{consts.smsText}" />
+            <g:TextArea ui:field="smsText" />
+        </g:FlowPanel>
+        <g:DisclosurePanel ui:field="validationErrors" />
+    </g:VerticalPanel>
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>

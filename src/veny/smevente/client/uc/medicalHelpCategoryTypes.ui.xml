@@ -1,0 +1,14 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel addStyleNames="uc-standard" >
+
+      <g:Button ui:field="addMhc" />
+      <g:FlexTable ui:field="resultTable" addStyleNames="resultTable" />
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>

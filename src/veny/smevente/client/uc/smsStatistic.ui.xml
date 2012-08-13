@@ -1,0 +1,29 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:c='urn:import:com.google.gwt.user.datepicker.client'>
+
+  <ui:with field='consts' type='veny.smevente.client.l10n.SmeventeConstants'/>
+
+  <g:HTMLPanel addStyleNames="uc-standard" >
+
+    <g:VerticalPanel horizontalAlignment="ALIGN_LEFT" >
+        <g:Label text="{consts.from}" />
+        <c:DateBox ui:field="from" />
+        <g:Label text="{consts.to}" />
+        <c:DateBox ui:field="to" />
+        <g:Cell horizontalAlignment="ALIGN_RIGHT">
+          <g:Button text="{consts.find}" ui:field="submit" />
+        </g:Cell>
+        <g:DisclosurePanel ui:field="validationErrors" />
+    </g:VerticalPanel>
+
+    <g:SimplePanel styleName="chart-centered">
+      <g:Image ui:field="chart" />
+    </g:SimplePanel>
+
+    <g:FlexTable ui:field="resultTable" addStyleNames="resultTable" />
+
+  </g:HTMLPanel>
+
+</ui:UiBinder>
