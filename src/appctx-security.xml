@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:oauth="http://spring-security-oauth.codehaus.org/3.0"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://spring-security-oauth.codehaus.org/3.0 http://spring-security-oauth.codehaus.org/schema/spring-security-oauth-3.0.xsd">
+
+  <!--
+    =================== Authentication ===================
+   -->
+
+  <!--
+    The AuthenticationEntryPoint will be called if the user requests a secure HTTP resource
+    but they are not authenticated.
+  -->
+  <beans:bean name="authenticationEntryPoint"
+    class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
+
+  <http entry-point-ref="authenticationEntryPoint" auto-config="false" use-expressions="false">
+    <session-management session-fixation-protection="newSession"/>
+    <intercept-url pattern="/rest/cron/task/sms/" filters="none" />
+    <intercept-url pattern="/rest/upgrade/**" access="ROLE_ROOT" />
+    <intercept-url pattern="/rest/data/**" access="ROLE_ROOT" />
+    <intercept-url pattern="/rest/**" access="ROLE_AUTHENTICATED" />
+    <custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
+    <custom-filter position="LOGOUT_FILTER" ref="logoutFilter" />
+    <!-- intercept-url pattern="/management/**" access="hasIpAddress('${management.address}')"/-->
+  </http>
+
+  <!--
+    The AuthenticationManager delegates the fetching of persistent user information
+    to one or more AuthenticationProviders.
+   -->
+  <authentication-manager alias="authenticationManager">
+    <authentication-provider ref="authenticationProvider" />
+  </authentication-manager>
+
+  <!--
+    This filter will intercept a request and attempt to perform authentication
+    from that POST request if the request URL matches the value of the 'filterProcessesUrl' property.
+  -->
+  <beans:bean id="authenticationFilter"
+    class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+    <beans:property name="filterProcessesUrl" value="/rest/login/" />
+    <beans:property name="authenticationManager" ref="authenticationManager" />
+    <beans:property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/>
+  </beans:bean>
+
+  <!--
+    Logs a principal out.
+  -->
+  <beans:bean id="logoutFilter"
+    class="org.springframework.security.web.authentication.logout.LogoutFilter">
+    <beans:constructor-arg value="/rest/ping/" />
+    <beans:constructor-arg>
+      <beans:list>
+        <!-- Invalidates session and clears SecurityContext -->
+        <beans:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+      </beans:list>
+    </beans:constructor-arg>
+    <beans:property name="filterProcessesUrl" value="/rest/logout/" />
+  </beans:bean>
+
+  <!--
+    Used to handle a successful user authentication to return HTTP 200
+    instead of the default 302.
+  -->
+  <beans:bean id="authenticationSuccessHandler" class="veny.smevente.security.AuthenticationSuccessHandlerImpl" />
+
+  <!--
+    Used to perform my own authentication based on 'userService.performLogin(username, password)'.
+  -->
+  <beans:bean id="authenticationProvider" class="veny.smevente.security.AuthenticationProviderImpl"/>
+
+
+  <!--
+    =================== Authorization ===================
+   -->
+
+  <global-method-security pre-post-annotations="enabled">
+    <expression-handler ref="expressionHandler"/>
+  </global-method-security>
+
+  <beans:bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+    <beans:property name="permissionEvaluator" ref="permissionEvaluator" />
+  </beans:bean>
+
+  <beans:bean id="permissionEvaluator" class="veny.smevente.security.PermissionEvaluatorImpl" />
+
+  <beans:bean class="veny.smevente.security.DummyPermissionVoter" />
+  <beans:bean class="veny.smevente.security.UnitAdminPermissionVoter" />
+  <beans:bean class="veny.smevente.security.MyUserPermissionVoter" />
+
+</beans:beans>
