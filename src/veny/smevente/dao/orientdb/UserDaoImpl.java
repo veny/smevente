@@ -1,13 +1,17 @@
 package veny.smevente.dao.orientdb;
 
 
+import java.util.HashMap;
 import java.util.List;
-
-import com.orientechnologies.orient.core.db.ODatabase;
+import java.util.Map;
 
 import veny.smevente.dao.UserDao;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.model.User;
+
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 
 /**
  * OrientDB DAO implementation for <code>User</code> entity.
@@ -17,56 +21,52 @@ import veny.smevente.model.User;
  */
 public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
 
-    /**
-     * Checks whether given username and password represents a user.
-     * @param username user name
-     * @param password password
-     * @return <i>true</i> if the combination is valid
-     */
+    /** {@inheritDoc} */
     public boolean login(final String username, final String password) {
         final ODatabaseCallback<Integer> callback = new ODatabaseCallback<Integer>() {
             @Override
-            public Integer doWithDatabase(final ODatabase db) {
-                final StringBuilder sql = new StringBuilder("SELECT COUNT(e) FROM "
-                        + getPersistentClass().getName()
-                        + " e WHERE e.username=:username AND e.password=:password");
+            public Integer doWithDatabase(final ODatabaseDocument db) {
+                final StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM ")
+                        .append(getPersistentClass().getName())
+                        .append(" WHERE username = :username AND password = :password");
                 appendSoftDeleteFilter(sql);
-                final Query query = em.createQuery(sql.toString());
-                query.setParameter("username", username);
-                query.setParameter("password", password);
-                setSoftDeleteFilter(query);
-                return (Integer) query.getSingleResult();
+
+                final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
+                final Map<String, Object> params = new HashMap<String, Object>();
+                params.put("username", username);
+                params.put("password", password);
+
+                //setSoftDeleteFilter(query);
+                final List<ODocument> result = db.command(query).execute(params);
+                return (Integer) result.get(0).field("count");
             }
         };
 
-        return JpaGaeUtils.execute(callback).intValue() > 0;
+        return getDatabaseWrapper().execute(callback).intValue() > 0;
     }
 
-    /**
-     * Finds user by given user name and password.
-     * @param username user name
-     * @param password password
-     * @return found user or <i>null</i> if not found
-     */
+    /** {@inheritDoc} */
     public User findByUsernameAndPassword(final String username, final String password) {
-        return JpaGaeUtils.execute(new JpaCallback<User>() {
-            @SuppressWarnings("unchecked")
+        return getDatabaseWrapper().execute(new ODatabaseCallback<User>() {
             @Override
-            public User doWithEntityManager(final EntityManager em) {
-                final StringBuilder sql = new StringBuilder("SELECT DISTINCT e FROM "
-                        + getPersistentClass().getName()
-                        + " e WHERE e.username=:username AND e.password=:password");
+            public User doWithDatabase(final ODatabaseDocument db) {
+                final StringBuilder sql = new StringBuilder("SELECT DISTINCT FROM ")
+                        .append(getPersistentClass().getName())
+                        .append(" WHERE username = :username AND password = :password");
                 appendSoftDeleteFilter(sql);
-                final Query query = em.createQuery(sql.toString());
-                query.setParameter("username", username);
-                query.setParameter("password", password);
-                setSoftDeleteFilter(query);
-                List<User> users = (List<User>) query.getResultList();
+
+                final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
+                final Map<String, Object> params = new HashMap<String, Object>();
+                params.put("username", username);
+                params.put("password", password);
+                //setSoftDeleteFilter(query);
+
+                final List<ODocument> users = db.command(query).execute(params);
                 if (users.size() > 1) {
                     throw new IllegalStateException("expected max 1 user, but found " + users.size());
                 }
 
-                return users.isEmpty() ? null : (User) users.get(0);
+                return users.isEmpty() ? null : (User) users.get(0).getOriginalValue("xx");
             }
         });
     }
@@ -88,4 +88,5 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
 //    }
 
     // ---------------------------------------------------------- Special Stuff
+
 }

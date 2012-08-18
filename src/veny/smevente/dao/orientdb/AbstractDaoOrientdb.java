@@ -13,6 +13,7 @@ import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.misc.SoftDelete;
 
 import com.orientechnologies.orient.core.db.ODatabase;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 
 /**
  * Abstract class for most common DAO operations based on <code>OrientDB</code> engine.
@@ -54,12 +55,22 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
         return persistentClass;
     }
 
+    /**
+     * Getter for the database wrapper.
+     *
+     * @return the database wrapper
+     * @see DatabaseWrapper
+     */
+    public DatabaseWrapper getDatabaseWrapper() {
+        return databaseWrapper;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void remove(final T entity) {
         databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
-            public T doWithDatabase(final ODatabase db) {
+            public T doWithDatabase(final ODatabaseDocument db) {
                 //removeHardOrSoft(entity, em);
                 return null;
             }
@@ -71,7 +82,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     public void remove(final Long entityId) {
         databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
-            public T doWithDatabase(final ODatabase db) {
+            public T doWithDatabase(final ODatabaseDocument db) {
                 //final T entity = em.find(getPersistentClass(), entityId);
                 //removeHardOrSoft(entity, em);
                 return null;
@@ -84,7 +95,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     public T getById(final long id) throws ObjectNotFoundException {
         final T rslt = databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
-            public T doWithDatabase(final ODatabase db) {
+            public T doWithDatabase(final ODatabaseDocument db) {
                 //return em.find(getPersistentClass(), id);
                 return null;
             }
@@ -112,7 +123,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     public List< T > getAll(final boolean withDeleted) {
         return databaseWrapper.execute(new ODatabaseCallback<List< T >>() {
             @Override
-            public List< T > doWithDatabase(final ODatabase db) {
+            public List< T > doWithDatabase(final ODatabaseDocument db) {
 //                final StringBuilder sql = new StringBuilder("SELECT e FROM " + getPersistentClass().getName() + " e");
 //                if (!withDeleted) { setSoftDeleteFilter(sql); }
 //
@@ -134,7 +145,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     public List< T > findBy(final String paramName, final Object value, final String orderBy) {
         return databaseWrapper.execute(new ODatabaseCallback<List< T >>() {
             @Override
-            public List< T > doWithDatabase(final ODatabase db) {
+            public List< T > doWithDatabase(final ODatabaseDocument db) {
 //                final StringBuilder sql = new StringBuilder("SELECT e FROM ").append(getPersistentClass().getName())
 //                    .append(" e WHERE e.").append(paramName).append("=:").append(paramName);
 //
@@ -165,7 +176,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
 
         return databaseWrapper.execute(new ODatabaseCallback<List< T >>() {
             @Override
-            public List< T > doWithDatabase(final ODatabase db) {
+            public List< T > doWithDatabase(final ODatabaseDocument db) {
 //                final StringBuilder sql = new StringBuilder("SELECT e FROM ").append(getPersistentClass().getName())
 //                    .append(" e WHERE e.").append(paramName1).append("=:").append(paramName1)
 //                    .append(" AND e.").append(paramName2).append("=:").append(paramName2);
@@ -192,7 +203,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     public T getBy(final String paramName, final Object value) {
         return databaseWrapper.execute(new ODatabaseCallback< T >() {
             @Override
-            public T doWithDatabase(final ODatabase db) {
+            public T doWithDatabase(final ODatabaseDocument db) {
 //                final StringBuilder sql = new StringBuilder("SELECT e FROM ").append(getPersistentClass().getName())
 //                    .append(" e WHERE e.").append(paramName).append("=:").append(paramName);
 //                final Query q = em.createQuery(sql.toString());
@@ -212,7 +223,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     public void persist(final T entity) {
         databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
-            public T doWithDatabase(final ODatabase db) {
+            public T doWithDatabase(final ODatabaseDocument db) {
 //                em.persist(entity);
                 return null;
             }
@@ -224,7 +235,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     public T merge(final T entity) {
         return databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
-            public T doWithDatabase(final ODatabase db) {
+            public T doWithDatabase(final ODatabaseDocument db) {
 //                return em.merge(entity);
                 return null;
             }

@@ -3,7 +3,6 @@ package veny.smevente.dao.orientdb;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 
@@ -42,7 +41,7 @@ public final class DatabaseWrapper {
          * @param db interface to work with OrientDB engine
          * @return a result object, or <code>null</code> if none
          */
-        T doWithDatabase(ODatabase db);
+        T doWithDatabase(ODatabaseDocument db);
     }
 
     /**
