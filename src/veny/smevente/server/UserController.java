@@ -23,7 +23,7 @@ import veny.smevente.client.utils.Pair;
 import veny.smevente.model.MembershipDto;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.UnitDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.service.SmsService;
 import veny.smevente.service.UserService;
 
@@ -74,7 +74,7 @@ public class UserController {
      */
     @RequestMapping(value = "/info/", method = RequestMethod.GET)
     public ModelAndView getUserInfo(final HttpServletRequest request) {
-        final UserDto user = DataController.getLoggedInUser(request);
+        final User user = DataController.getLoggedInUser(request);
 
         // username
         final ModelAndView modelAndView = new ModelAndView("jsonView");
@@ -100,7 +100,7 @@ public class UserController {
             @RequestParam("old") final String oldPassword,
             @RequestParam("new") final String newPassword) {
 
-        final UserDto user = DataController.getLoggedInUser(request);
+        final User user = DataController.getLoggedInUser(request);
         userService.updateUserPassword(user.getId(), oldPassword, newPassword);
         response.setStatus(HttpServletResponse.SC_OK);
     }
@@ -123,7 +123,7 @@ public class UserController {
 
         String un = (null == userName || 0 == userName.trim().length() ? null : userName.trim());
         String fn = (null == fullName || 0 == fullName.trim().length() ? null : fullName.trim());
-        List<UserDto> users = userService.findUsers(unitId, un, fn);
+        List<User> users = userService.findUsers(unitId, un, fn);
 
         ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("users", users);
@@ -144,7 +144,7 @@ public class UserController {
     public ModelAndView createUser(
         final HttpServletRequest request,
         final HttpServletResponse response,
-        final UserDto user,
+        final User user,
         @RequestParam("unitId") final Long unitId,
         @RequestParam("type") final Integer type,
         @RequestParam("significance") final Integer significance) {
@@ -152,7 +152,7 @@ public class UserController {
         // as first encode the password
         user.setPassword(userService.encodePassword(user.getPassword()));
         MembershipDto.Type etype = MembershipDto.Type.values()[type.intValue()];
-        final UserDto created = userService.createUser(user, unitId, etype, significance);
+        final User created = userService.createUser(user, unitId, etype, significance);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("user", created);
         return modelAndView;
@@ -171,13 +171,13 @@ public class UserController {
     public void updateUser(
         final HttpServletRequest request,
         final HttpServletResponse response,
-        final UserDto user,
+        final User user,
         @RequestParam("unitId") final Long unitId,
         @RequestParam("type") final Integer type,
         @RequestParam("significance") final Integer significance) {
 
         // as first encode the password if it should be also updated
-        if (!UserDto.DO_NOT_CHANGE_PASSWORD.equals(user.getPassword())) {
+        if (!User.DO_NOT_CHANGE_PASSWORD.equals(user.getPassword())) {
             user.setPassword(userService.encodePassword(user.getPassword()));
         }
         MembershipDto.Type etype = MembershipDto.Type.values()[type.intValue()];
@@ -364,7 +364,7 @@ public class UserController {
             @PathVariable("from") final long from,
             @PathVariable("to") final long to) {
 
-        List<Pair<UserDto, Map<String, Integer>>> rslt =
+        List<Pair<User, Map<String, Integer>>> rslt =
             smsService.getSmsStatistic(unitId, userId, new Date(from), new Date(to));
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");

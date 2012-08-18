@@ -29,7 +29,7 @@ import veny.smevente.model.MembershipDto;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.UnitDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.model.gae.MedicalHelpCategory;
 import veny.smevente.model.gae.Membership;
 import veny.smevente.model.gae.Patient;
@@ -264,13 +264,13 @@ public class SmsServiceImpl implements SmsService {
         final List<Sms> foundSmsGae = smsDao.findByPatient(patientId);
         final List<SmsDto> smss = new ArrayList<SmsDto>();
 
-        final Map<Long, UserDto> authorCache = new HashMap<Long, UserDto>();
+        final Map<Long, User> authorCache = new HashMap<Long, User>();
 
         for (Sms smsGae : foundSmsGae) {
             final SmsDto sms = smsGae.mapToDto();
             // Author
             if (!authorCache.containsKey(smsGae.getUserId())) {
-                final UserDto user = userDao.getById(smsGae.getUserId()).mapToDto();
+                final User user = userDao.getById(smsGae.getUserId()).mapToDto();
                 authorCache.put(smsGae.getUserId(), user);
             }
             // MHC
@@ -373,7 +373,7 @@ public class SmsServiceImpl implements SmsService {
 
     /** {@inheritDoc} */
     @Override
-    public List<Pair<UserDto, Map<String, Integer>>> getSmsStatistic(
+    public List<Pair<User, Map<String, Integer>>> getSmsStatistic(
             final Long unitId, final Long userId, final Date from, final Date to) {
 
         // find membership for given user on given unit
@@ -399,12 +399,12 @@ public class SmsServiceImpl implements SmsService {
             users.add(userDao.getById(userId));
         }
 
-        final List<Pair<UserDto, Map<String, Integer>>> rslt = new ArrayList<Pair<UserDto, Map<String, Integer>>>();
+        final List<Pair<User, Map<String, Integer>>> rslt = new ArrayList<Pair<User, Map<String, Integer>>>();
         long smsCount = 0;
 
         // get SMS statistics for collected users
         for (User u : users) {
-            final UserDto userDto = u.mapToDto();
+            final User userDto = u.mapToDto();
             final List<Sms> foundSmsGae = smsDao.findByAuthorAndPeriod(u.getId(), from, to, true);
             smsCount += foundSmsGae.size();
             int sent = 0;
@@ -420,7 +420,7 @@ public class SmsServiceImpl implements SmsService {
             stat.put(SmsDto.SENT, sent);
             stat.put(SmsDto.FAILED, failed);
             stat.put(SmsDto.SUM, foundSmsGae.size());
-            rslt.add(new Pair<UserDto, Map<String, Integer>>(userDto, stat));
+            rslt.add(new Pair<User, Map<String, Integer>>(userDto, stat));
         }
         LOG.info("collected statistics for " + rslt.size() + " user(s), smsCount=" + smsCount);
 

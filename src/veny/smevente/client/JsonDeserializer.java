@@ -12,7 +12,7 @@ import veny.smevente.model.MembershipDto;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.UnitDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
 import com.google.gwt.json.client.JSONArray;
@@ -70,7 +70,7 @@ public class JsonDeserializer {
             result = (T) fromJsonExceptionWrapper(jsObj);
         } else if (UnitDto.class == classToCreate) {
             result = (T) unitFromJson(jsObj);
-        } else if (UserDto.class == classToCreate) {
+        } else if (User.class == classToCreate) {
             result = (T) userFromJson(jsObj);
         } else if (PatientDto.class == classToCreate) {
             result = (T) patientFromJson(jsObj);
@@ -114,7 +114,7 @@ public class JsonDeserializer {
         List<T> rslt = null;
         if (UnitDto.class == classToCreate) {
             rslt = (List<T>) unitListFromJson(jsArr);
-        } else if (UserDto.class == classToCreate) {
+        } else if (User.class == classToCreate) {
             rslt = (List<T>) userListFromJson(jsArr);
         } else if (PatientDto.class == classToCreate) {
             rslt = (List<T>) patientListFromJson(jsArr);
@@ -266,8 +266,8 @@ public class JsonDeserializer {
      * @param jsObj JSON object to deserialize
      * @return <code>User</code> object
      */
-    private UserDto userFromJson(final JSONObject jsObj) {
-        final UserDto rslt = new UserDto();
+    private User userFromJson(final JSONObject jsObj) {
+        final User rslt = new User();
         rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
         rslt.setUsername(jsObj.get("username").isString().stringValue());
         rslt.setFullname(jsObj.get("fullname").isString().stringValue());
@@ -277,8 +277,8 @@ public class JsonDeserializer {
      * @param jsArr JSON array to deserialize
      * @return list of <code>User</code> objects
      */
-    private List<UserDto> userListFromJson(final JSONArray jsArr) {
-        final List<UserDto> rslt = new ArrayList<UserDto>();
+    private List<User> userListFromJson(final JSONArray jsArr) {
+        final List<User> rslt = new ArrayList<User>();
 
         for (int i = 0; i < jsArr.size(); i++) {
             JSONValue jsonValue = jsArr.get(i);
@@ -430,17 +430,17 @@ public class JsonDeserializer {
      * @param representation JSON string
      * @return list of <code>Sms</code>
      */
-    public List<Pair<UserDto, Map<String, Long>>> smsStatisticsFromJson(final String representation) {
+    public List<Pair<User, Map<String, Long>>> smsStatisticsFromJson(final String representation) {
         final JSONValue jsonValue = JSONParser.parseStrict(representation);
         final JSONObject jsObj = jsonValue.isObject();
         if (jsObj == null) { throw new IllegalArgumentException("not JSON object: " + representation); }
         final JSONArray jsArr = jsObj.get("smsStatistics").isArray();
         if (jsArr == null) { throw new IllegalArgumentException("not JSON array: " + representation); }
 
-        final List<Pair<UserDto, Map<String, Long>>> rslt = new ArrayList<Pair<UserDto, Map<String, Long>>>();
+        final List<Pair<User, Map<String, Long>>> rslt = new ArrayList<Pair<User, Map<String, Long>>>();
         for (int i = 0; i < jsArr.size(); i++) {
             final JSONValue jsonUser = jsArr.get(i).isObject().get("a");
-            final UserDto user = userFromJson(jsonUser.isObject());
+            final User user = userFromJson(jsonUser.isObject());
 
             final JSONValue jsonStats = jsArr.get(i).isObject().get("b");
             final Map<String, Long> stats = new HashMap<String, Long>();
@@ -449,7 +449,7 @@ public class JsonDeserializer {
             stats.put(SmsDto.FAILED, getLong(jsonStats.isObject().get(SmsDto.FAILED)));
             stats.put(SmsDto.DELETED, getLong(jsonStats.isObject().get(SmsDto.DELETED)));
 
-            rslt.add(new Pair<UserDto, Map<String, Long>>(user, stats));
+            rslt.add(new Pair<User, Map<String, Long>>(user, stats));
         }
         return rslt;
     }

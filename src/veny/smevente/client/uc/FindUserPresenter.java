@@ -15,7 +15,7 @@ import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.UiUtils;
 import veny.smevente.model.MembershipDto;
 import veny.smevente.model.MembershipDto.Type;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -89,7 +89,7 @@ public class FindUserPresenter
     private final PopupPanel menuPopupPanel = new PopupPanel(true, true);
 
     /** List of found users. */
-    private List<UserDto> foundUsers;
+    private List<User> foundUsers;
 
     /** ID of user where the context menu is raised. */
     private String clickedId = null;
@@ -159,7 +159,7 @@ public class FindUserPresenter
             @Override
             public void onDoubleClick(final DoubleClickEvent event) {
                 if (clickedRowIndex >= 0 && clickedRowIndex < foundUsers.size()) {
-                    final UserDto p = foundUsers.get(clickedRowIndex);
+                    final User p = foundUsers.get(clickedRowIndex);
                     App.get().switchToPresenterByType(PresenterEnum.STORE_USER, p);
                 }
             }
@@ -168,7 +168,7 @@ public class FindUserPresenter
         // context menu
         final Command updateCommand = new Command() {
             public void execute() {
-                final UserDto u = hideMenuAndGetSelectedUser();
+                final User u = hideMenuAndGetSelectedUser();
                 App.get().switchToPresenterByType(PresenterEnum.STORE_USER, u);
             }
         };
@@ -176,7 +176,7 @@ public class FindUserPresenter
             public void execute() {
                 menuPopupPanel.hide();
                 final int idx = getIndexById(clickedId);
-                final UserDto u = foundUsers.get(idx);
+                final User u = foundUsers.get(idx);
                 final String name = u.getUsername();
                 if (Window.confirm(MESSAGES.deleteUserQuestion(name))) {
                     deleteUser(clickedId, idx + 1);
@@ -236,12 +236,12 @@ public class FindUserPresenter
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final UserDto user = new UserDto();
+                final User user = new User();
                 long idValue = Long.parseLong(id);
                 user.setId(idValue);
                 eventBus.fireEvent(new CrudEvent(EntityTypeEnum.USER, OperationType.DELETE, user));
                 view.getResultTable().removeRow(line);
-                for (UserDto foundUser : foundUsers) {
+                for (User foundUser : foundUsers) {
                     if (foundUser.getId() == idValue) {
                         foundUsers.remove(foundUser);
                         break;
@@ -265,9 +265,9 @@ public class FindUserPresenter
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                foundUsers = App.get().getJsonDeserializer().deserializeList(UserDto.class, "users", jsonText);
+                foundUsers = App.get().getJsonDeserializer().deserializeList(User.class, "users", jsonText);
                 int line = 1;
-                for (UserDto u : foundUsers) {
+                for (User u : foundUsers) {
                     addUser(u, line);
                     line++;
                 }
@@ -281,7 +281,7 @@ public class FindUserPresenter
      * @param u the user
      * @param line line where the user will be inserted on
      */
-    private void addUser(final UserDto u, final int line) {
+    private void addUser(final User u, final int line) {
         final FlexTable table = view.getResultTable();
         UiUtils.addCell(table, line, 0, new Label("" + line));
         UiUtils.addCell(table, line, 1, new Label(u.getUsername()));
@@ -302,7 +302,7 @@ public class FindUserPresenter
      * @param user the user to be checked if administrator of selected unit
      * @return true if specified user is an administrator of selected unit
      */
-    private boolean isAdmin(final UserDto user) {
+    private boolean isAdmin(final User user) {
         List<MembershipDto> unitMembers = App.get().getSelectedUnit().getMembers();
 
         // just to be sure
@@ -321,7 +321,7 @@ public class FindUserPresenter
      * Hides the popup menu and gets the user where the action has been selected on.
      * @return selected user
      */
-    public UserDto hideMenuAndGetSelectedUser() {
+    public User hideMenuAndGetSelectedUser() {
         menuPopupPanel.hide();
         final int idx = getIndexById(clickedId);
         return foundUsers.get(idx);
@@ -347,7 +347,7 @@ public class FindUserPresenter
 
         final Long id = Long.parseLong(idAsText);
         int i = 0;
-        for (UserDto u : foundUsers) {
+        for (User u : foundUsers) {
             if (id.longValue() == u.getId().longValue()) { return i; }
             i++;
         }

@@ -15,5 +15,7 @@
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/org.springframework.web-3.0.5.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/org.springframework.web.servlet-3.0.5.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-security-core-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orientdb-core-1.2.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-core-asl-1.5.4.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

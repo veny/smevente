@@ -35,7 +35,7 @@ public class MembershipDto implements Serializable {
     private int significance;
 
     /** User in unit. */
-    private UserDto user;
+    private User user;
 
     // CHECKSTYLE:OFF
     public Long getId() {
@@ -56,10 +56,10 @@ public class MembershipDto implements Serializable {
     public void setSignificance(int significance) {
         this.significance = significance;
     }
-    public UserDto getUser() {
+    public User getUser() {
         return user;
     }
-    public void setUser(UserDto user) {
+    public void setUser(User user) {
         this.user = user;
     }
     // CHECKSTYLE:ON

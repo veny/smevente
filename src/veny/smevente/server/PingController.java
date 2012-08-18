@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 
 /**
  * Ping/pong controller to check if the application is alive.
@@ -38,7 +38,7 @@ public class PingController {
     @RequestMapping(value = "/ping/")
     public ModelAndView ping(final HttpServletRequest request, final HttpServletResponse response) {
 
-        final UserDto user = DataController.getLoggedInUser(request);
+        final User user = DataController.getLoggedInUser(request);
         LOG.info("ping, user=" + user.getUsername());
 
         final ModelAndView modelAndView = new ModelAndView();

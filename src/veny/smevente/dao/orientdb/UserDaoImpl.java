@@ -1,9 +1,12 @@
-package veny.smevente.dao.jpa.gae;
+package veny.smevente.dao.orientdb;
 
 
 import java.util.List;
 
-import veny.smevente.dao.orientdb.AbstractDaoOrientdb;
+import com.orientechnologies.orient.core.db.ODatabase;
+
+import veny.smevente.dao.UserDao;
+import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.model.User;
 
 /**
@@ -12,7 +15,7 @@ import veny.smevente.model.User;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 18.8.2012
  */
-public class UserDaoImpl extends AbstractDaoOrientdb<User> {
+public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
 
     /**
      * Checks whether given username and password represents a user.
@@ -21,9 +24,9 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> {
      * @return <i>true</i> if the combination is valid
      */
     public boolean login(final String username, final String password) {
-        final JpaCallback<Integer> callback = new JpaCallback<Integer>() {
+        final ODatabaseCallback<Integer> callback = new ODatabaseCallback<Integer>() {
             @Override
-            public Integer doWithEntityManager(final EntityManager em) {
+            public Integer doWithDatabase(final ODatabase db) {
                 final StringBuilder sql = new StringBuilder("SELECT COUNT(e) FROM "
                         + getPersistentClass().getName()
                         + " e WHERE e.username=:username AND e.password=:password");

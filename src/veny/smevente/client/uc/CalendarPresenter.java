@@ -27,7 +27,7 @@ import veny.smevente.client.utils.SmsWidgetEvent.SmsWidgetHandler;
 import veny.smevente.model.MedicalHelpCategoryDto;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.SmsDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.shared.EntityTypeEnum;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
@@ -347,7 +347,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * @param user author of SMSs
      * @param weekDate a date in currently displayed week in calendar
      */
-    private void loadSmsForWeek(final UserDto user, final Date weekDate) {
+    private void loadSmsForWeek(final User user, final Date weekDate) {
         clean();
 
         final Date from = DateUtils.getWeekFrom(null == weekDate ? App.get().getWeekDate() : weekDate);

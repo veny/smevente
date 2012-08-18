@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.beans.BeanUtils;
 
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.misc.SoftDelete;
 
 /**
@@ -119,8 +119,8 @@ public class User implements Serializable {
      * Maps instance of this into corresponding DTO object.
      * @return corresponding DTO
      */
-    public UserDto mapToDto() {
-        final UserDto rslt = new UserDto();
+    public User mapToDto() {
+        final User rslt = new User();
         BeanUtils.copyProperties(this, rslt);
         return rslt;
     }
@@ -130,7 +130,7 @@ public class User implements Serializable {
      * @param dto corresponding DTO
      * @return instance of this
      */
-    public static User mapFromDto(final UserDto dto) {
+    public static User mapFromDto(final User dto) {
         final User rslt = new User();
         mapFromDto(dto, rslt);
         return rslt;
@@ -141,9 +141,9 @@ public class User implements Serializable {
      * @param source source DTO
      * @param destination destination GAE entity
      */
-    public static void mapFromDto(final UserDto source, final User destination) {
+    public static void mapFromDto(final User source, final User destination) {
         String[] ignore = null;
-        if (UserDto.DO_NOT_CHANGE_PASSWORD.equals(source.getPassword())) {
+        if (User.DO_NOT_CHANGE_PASSWORD.equals(source.getPassword())) {
             ignore = new String[] { "lastLoggedIn", "password" };
         } else {
             ignore = new String[] { "lastLoggedIn" };

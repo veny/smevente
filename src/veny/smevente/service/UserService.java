@@ -6,7 +6,7 @@ import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.MembershipDto;
 import veny.smevente.model.MembershipDto.Type;
 import veny.smevente.model.UnitDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 
 import com.google.appengine.api.users.User;
 
@@ -29,7 +29,7 @@ public interface UserService {
      * @param root flag of root user
      * @return created user
      */
-    UserDto createUser(String username, String password, String fullname, boolean root);
+    User createUser(String username, String password, String fullname, boolean root);
 
     /**
      * Stores a given user into DB.
@@ -37,7 +37,7 @@ public interface UserService {
      * @param user the user to be created
      * @return created user
      */
-    UserDto createUser(UserDto user);
+    User createUser(User user);
 
     /**
      * Stores a given user and also the related membership into DB.
@@ -48,7 +48,7 @@ public interface UserService {
      * @param significance the significance of membership
      * @return created user
      */
-    UserDto createUser(UserDto user, Long unitId,
+    User createUser(User user, Long unitId,
             final Type type,
             final Integer significance);
 
@@ -58,14 +58,14 @@ public interface UserService {
      * @return the found user
      * @throws ObjectNotFoundException if the ID doesn't exist
      */
-    UserDto getUser(Long id) throws ObjectNotFoundException;
+    User getUser(Long id) throws ObjectNotFoundException;
 
     /**
      * Updates a given user into DB.
      *
      * @param user the user to be updated
      */
-    void updateUser(final UserDto user);
+    void updateUser(final User user);
 
     /**
      * Updates a given user into DB.
@@ -75,7 +75,7 @@ public interface UserService {
      * @param type the type of membership
      * @param significance the significance of membership
      */
-    void updateUser(final UserDto user, Long unitId,
+    void updateUser(final User user, Long unitId,
             final Type type,
             final Integer significance);
 
@@ -90,7 +90,7 @@ public interface UserService {
      * @param username unique user name to find
      * @return found user
      */
-    UserDto findUserByUsername(String username);
+    User findUserByUsername(String username);
 
     /**
      * Finds users according to given user name and/or full name for given unit.
@@ -99,7 +99,7 @@ public interface UserService {
      * @param fullName full name
      * @return list of found users
      */
-    List<UserDto> findUsers(Long unitId, String userName, String fullName);
+    List<User> findUsers(Long unitId, String userName, String fullName);
 
     /**
      * Changes password of given user.
@@ -118,7 +118,7 @@ public interface UserService {
      * @param password password of the user
      * @return user by user name and password or <i>null</i> if not found
      */
-    UserDto performLogin(String username, String password);
+    User performLogin(String username, String password);
 
     /**
      * Encode the user password.
@@ -133,7 +133,7 @@ public interface UserService {
      * @return list of all users
      */
     @Deprecated // only for unit testing purposes
-    List<UserDto> getAllUsers();
+    List<User> getAllUsers();
 
 //    /**
 //     * Gets all users in given unit.
@@ -159,7 +159,7 @@ public interface UserService {
      * @return list of memberships with units for given user
      * @see #getUsersByUnit(Long, User)
      */
-    List<UnitDto> getUnitsOfUser(UserDto user);
+    List<UnitDto> getUnitsOfUser(User user);
 
     // ------------------------------------------------------- Membership Stuff
 

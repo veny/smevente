@@ -9,6 +9,7 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>
       classpath:/appctx-common.xml
+      classpath:/appctx-persistence.xml
       classpath:/appctx-security.xml
       classpath:/appctx-validation.xml
     </param-value>

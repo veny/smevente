@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.service.UserService;
 
 /**
@@ -58,9 +58,9 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
             final Long userId = userDetail.getA();
             if (null == userId) { throw new AuthenticationServiceException("user ID in user detail cannot be null"); }
 
-            final UserDto user;
-            if (UserDto.ROOT_ID.equals(userId)) {
-                user = UserDto.buildRoot();
+            final User user;
+            if (User.ROOT_ID.equals(userId)) {
+                user = User.buildRoot();
             } else {
                 user = userService.getUser(userId);
             }

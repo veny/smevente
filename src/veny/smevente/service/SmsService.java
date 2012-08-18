@@ -7,7 +7,7 @@ import java.util.Map;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.SmsDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.service.SmsGatewayService.SmsException;
 
 /**
@@ -127,7 +127,7 @@ public interface SmsService {
      * @param to date to
      * @return list of SMS statistics
      */
-    List<Pair<UserDto, Map<String, Integer>>> getSmsStatistic(Long unitId, Long userId, Date from, Date to);
+    List<Pair<User, Map<String, Integer>>> getSmsStatistic(Long unitId, Long userId, Date from, Date to);
 
     /**
      * Loads all SMSs.

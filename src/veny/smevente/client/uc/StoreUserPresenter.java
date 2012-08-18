@@ -16,7 +16,7 @@ import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.model.MembershipDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -196,8 +196,8 @@ public class StoreUserPresenter
     public void onShow(final Object parameter) {
         view.getUsername().setFocus(true);
 
-        if (null != parameter && parameter instanceof UserDto) {
-            final UserDto u = (UserDto) parameter;
+        if (null != parameter && parameter instanceof User) {
+            final User u = (User) parameter;
             MembershipDto m = getMembership(u);
             view.getUserId().setValue(u.getId().toString());
             view.getUsername().setText(u.getUsername());
@@ -350,7 +350,7 @@ public class StoreUserPresenter
      * Creates a new patient.
      */
     private void storeUser() {
-        final UserDto u = new UserDto();
+        final User u = new User();
         if (null == view.getUserId().getValue() || view.getUserId().getValue().trim().isEmpty()) {
             u.setId(null);
         } else {
@@ -360,7 +360,7 @@ public class StoreUserPresenter
         u.setFullname(view.getFullname().getText());
         u.setPassword(view.getUpdatePassword().getValue()
                 ? view.getPassword().getText()
-                : UserDto.DO_NOT_CHANGE_PASSWORD);
+                : User.DO_NOT_CHANGE_PASSWORD);
 
         final Map<String, String> params = new HashMap<String, String>();
         params.put("unitId", App.get().getSelectedUnit().getId().toString());
@@ -377,8 +377,8 @@ public class StoreUserPresenter
             @Override
             public void onSuccess(final String jsonText) {
                 if (null == u.getId()) {
-                    final UserDto user = App.get().getJsonDeserializer().deserialize(
-                            UserDto.class, "user", jsonText);
+                    final User user = App.get().getJsonDeserializer().deserialize(
+                            User.class, "user", jsonText);
                     eventBus.fireEvent(new CrudEvent(EntityTypeEnum.USER, OperationType.CREATE, user));
                     Window.alert(CONSTANTS.userAdded());
                 } else {
@@ -404,7 +404,7 @@ public class StoreUserPresenter
      * @param user the user for which the membership will be searched
      * @return the membership for given user and current unit
      */
-    private MembershipDto getMembership(final UserDto user) {
+    private MembershipDto getMembership(final User user) {
         List<MembershipDto> memberships = App.get().getSelectedUnit().getMembers();
 
         if (memberships != null) {

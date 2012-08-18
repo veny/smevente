@@ -1,6 +1,5 @@
 package veny.smevente.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -11,23 +10,20 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 8.11.2010
  */
-public class UserDto implements Serializable {
+public class User {
 
     /** The flag used when user is updated, but the password will not be changed. */
     public static final String DO_NOT_CHANGE_PASSWORD = "###########################";
 
     /** ID of the fake root entity. */
     public static final Long ROOT_ID = new Long(-111);
-    /** Username of the fake root entity. */
+    /** User name of the fake root entity. */
     public static final String ROOT_USERNAME = "root";
-
-    /** Generated (101220) serial version UID. */
-    private static final long serialVersionUID = -2177298093237212572L;
 
     /** Primary Key. */
     private Long id;
 
-    /** Username. */
+    /** User name. */
     private String username;
 
     /** Password. */
@@ -106,8 +102,8 @@ public class UserDto implements Serializable {
      * Builds a fake root user to be able to log in without any user in database.
      * @return fake root user
      */
-    public static UserDto buildRoot() {
-        final UserDto user = new UserDto();
+    public static User buildRoot() {
+        final User user = new User();
         user.setId(ROOT_ID);
         user.setUsername(ROOT_USERNAME);
         user.setRoot(true);

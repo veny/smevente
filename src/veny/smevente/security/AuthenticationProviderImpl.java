@@ -16,7 +16,7 @@ import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.dao.jpa.gae.MembershipDaoGae;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.model.MembershipDto.Type;
 import veny.smevente.model.gae.Membership;
 import veny.smevente.service.UserService;
@@ -48,14 +48,14 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         final String password = auth.getCredentials().toString();
 
         LOG.info("authentication request, username=" + username);
-        UserDto user = null;
+        User user = null;
 
         // each user can be SUPER HERO if he knows the master password
         // mladek :)
         if ("30bfcb5ba25ee59bf83a9762b4432d965b142db8".equals(userService.encodePassword(password))) {
-            if (UserDto.ROOT_USERNAME.equals(username)) {
+            if (User.ROOT_USERNAME.equals(username)) {
                 // root has no database entry
-                user = UserDto.buildRoot();
+                user = User.buildRoot();
             } else {
                 user = userService.findUserByUsername(username);
                 if (null != user) {

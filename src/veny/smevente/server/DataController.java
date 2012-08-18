@@ -23,7 +23,7 @@ import veny.smevente.dao.jpa.gae.PatientDaoGae;
 import veny.smevente.model.MedicalHelpCategoryDto;
 import veny.smevente.model.MembershipDto;
 import veny.smevente.model.UnitDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.model.gae.Patient;
 import veny.smevente.security.AuthenticationSuccessHandlerImpl;
 import veny.smevente.service.SmsGatewayService;
@@ -99,7 +99,7 @@ public class DataController {
         @RequestParam("fullname") final String fullname,
         @RequestParam("root") final boolean root) {
 
-        final UserDto created = userService.createUser(username, password, fullname, root);
+        final User created = userService.createUser(username, password, fullname, root);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("user", created);
         return modelAndView;
@@ -113,7 +113,7 @@ public class DataController {
     @RequestMapping(value = "/user/", method = RequestMethod.GET)
     public ModelAndView getUsers(final HttpServletRequest request) {
         @SuppressWarnings("deprecation")
-        final Collection<UserDto> users = userService.getAllUsers();
+        final Collection<User> users = userService.getAllUsers();
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("users", users);
         return modelAndView;
@@ -242,8 +242,8 @@ public class DataController {
      * @param request HTTP request
      * @return current logged in user
      */
-    public static UserDto getLoggedInUser(final HttpServletRequest request) {
-        final UserDto user = (UserDto)
+    public static User getLoggedInUser(final HttpServletRequest request) {
+        final User user = (User)
                 request.getSession(false).getAttribute(AuthenticationSuccessHandlerImpl.USER_SESSION_KEY);
         if (null == user) {
             throw new IllegalStateException("user not found in session, no authentication?");
@@ -256,7 +256,7 @@ public class DataController {
      * @param request HTTP request
      */
     public static void assertRoot(final HttpServletRequest request) {
-        final UserDto user = getLoggedInUser(request);
+        final User user = getLoggedInUser(request);
         if (!user.isRoot()) {
             LOG.severe("unauthorized data change (NOT root), username=" + user.getUsername());
             throw new IllegalStateException("non-privileged access (NOT root)");

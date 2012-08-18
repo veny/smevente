@@ -13,7 +13,7 @@ import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.LoginPresenter;
 import veny.smevente.client.uc.LoginViewImpl;
 import veny.smevente.model.MembershipDto.Type;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
 import com.google.gwt.core.client.GWT;
@@ -408,7 +408,7 @@ public final class App implements ValueChangeHandler<String> {
      * Gets the current selected unit member.
      * @return the current selected unit member
      */
-    public UserDto getSelectedUnitMember() {
+    public User getSelectedUnitMember() {
         return getSelectedUnit().getMembers().get(selectedUnitMemberIndex).getUser();
     }
     /**

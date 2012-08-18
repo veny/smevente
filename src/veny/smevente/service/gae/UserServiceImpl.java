@@ -19,7 +19,7 @@ import veny.smevente.dao.jpa.gae.UnitDaoGae;
 import veny.smevente.dao.jpa.gae.UserDaoGae;
 import veny.smevente.model.MembershipDto;
 import veny.smevente.model.UnitDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.model.gae.Membership;
 import veny.smevente.model.gae.Unit;
 import veny.smevente.model.gae.User;
@@ -64,10 +64,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
-    public UserDto createUser(
+    public User createUser(
             final String username, final String password,
             final String fullname, final boolean root) {
-        final UserDto user = new UserDto();
+        final User user = new User();
         user.setUsername(username);
         user.setPassword(encodePassword(password));
         user.setFullname(fullname);
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
-    public UserDto createUser(final UserDto user) {
+    public User createUser(final User user) {
         validateUser(user);
         List<User> check = userDao.findBy("username", user.getUsername(), null);
         if (!check.isEmpty()) {
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
         final User userGae = User.mapFromDto(user);
         userDao.persist(userGae);
 
-        final UserDto rslt = userGae.mapToDto();
+        final User rslt = userGae.mapToDto();
         LOG.info("created new user, " + rslt);
         return rslt;
     }
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @PreAuthorize("hasPermission(#unitId, 'V_UNIT_ADMIN')")
     @Override
-    public UserDto createUser(final UserDto user,
+    public User createUser(final User user,
             final Long unitId,
             final MembershipDto.Type type,
             final Integer significance) {
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
         if (significance < 0) {
             throw new IllegalArgumentException("invalid value of significance: " + significance);
         }
-        UserDto rslt = createUser(user);
+        User rslt = createUser(user);
         createMembershipWithReorg(unitId, rslt.getId(), type, significance);
         return rslt;
     }
@@ -115,8 +115,8 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
-    public UserDto getUser(final Long id) {
-        final UserDto rslt = userDao.getById(id).mapToDto();
+    public User getUser(final Long id) {
+        final User rslt = userDao.getById(id).mapToDto();
         LOG.info("found user by id=" + id);
         return rslt;
     }
@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     // TODO [veny,B] think of authorization
     @Override
-    public void updateUser(final UserDto user) {
+    public void updateUser(final User user) {
         if (null == user.getId()) { throw new NullPointerException("ID cannot be null"); }
         validateUser(user);
 
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @PreAuthorize("hasPermission(#unitId, 'V_UNIT_ADMIN')")
     @Override
-    public void updateUser(final UserDto user,
+    public void updateUser(final User user,
             final Long unitId,
             final MembershipDto.Type type,
             final Integer significance) {
@@ -180,7 +180,7 @@ public class UserServiceImpl implements UserService {
     // no authorization - used in AuthenticationProvider
     /** {@inheritDoc} */
     @Override
-    public UserDto findUserByUsername(final String username) {
+    public User findUserByUsername(final String username) {
         if (null == username) { throw new NullPointerException("username cannot be null"); }
 
         final List<User> found = userDao.findBy("username", username, null);
@@ -188,7 +188,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("duplicate username found (has to be unique!), username=" + username);
         }
 
-        final UserDto rslt;
+        final User rslt;
         if (0 == found.size()) {
             rslt = null;
         } else {
@@ -203,12 +203,12 @@ public class UserServiceImpl implements UserService {
     @SuppressWarnings("unchecked")
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
-    public List<UserDto> findUsers(final Long unitId, final String userName, final String fullName) {
+    public List<User> findUsers(final Long unitId, final String userName, final String fullName) {
         if (null == unitId) { throw new IllegalArgumentException("unit id cannot be null"); }
 
         LOG.info("findUsers, unit id=" + unitId + ", user name=" + userName + ", full name=" + fullName);
 
-        List<UserDto> users = null;
+        List<User> users = null;
         if (null == userName && null == fullName) {
             users = getAllUsers();
         } else {
@@ -235,17 +235,17 @@ public class UserServiceImpl implements UserService {
                 }
             }
 
-            users = new ArrayList<UserDto>();
+            users = new ArrayList<User>();
             for (User u : collectedRslt) {
-                final UserDto user = u.mapToDto();
+                final User user = u.mapToDto();
                 users.add(user);
             }
         }
 
         // exist the found users in specified unit?
-        final List<UserDto> rslt = new ArrayList<UserDto>();
+        final List<User> rslt = new ArrayList<User>();
         if (!users.isEmpty()) {
-            for (UserDto user: users) {
+            for (User user: users) {
                 final List<Membership> memberships = membershipDao.findBy("userId", user.getId(),
                         "unitId", unitId, null);
                 if (!memberships.isEmpty()) {
@@ -285,7 +285,7 @@ public class UserServiceImpl implements UserService {
     // no authorization - used in AuthenticationProvider
     /** {@inheritDoc} */
     @Override
-    public UserDto performLogin(final String username, final String password) {
+    public User performLogin(final String username, final String password) {
         if (null == username) { throw new NullPointerException("username cannot be null"); }
         if (null == password) { throw new NullPointerException("password cannot be null"); }
 
@@ -300,7 +300,7 @@ public class UserServiceImpl implements UserService {
         userGae.setLastLoggedIn(new Date());
         userDao.persist(userGae);
 
-        final UserDto rslt = userGae.mapToDto();
+        final User rslt = userGae.mapToDto();
         LOG.info("found user by username & password, " + rslt);
         return rslt;
     }
@@ -328,11 +328,11 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<User> getAllUsers() {
         final List<User> found = userDao.getAll();
         LOG.info("found all users, size=" + found.size());
 
-        final List<UserDto> rslt = new ArrayList<UserDto>();
+        final List<User> rslt = new ArrayList<User>();
         for (User userGae : found) {
             rslt.add(userGae.mapToDto());
         }
@@ -382,7 +382,7 @@ public class UserServiceImpl implements UserService {
     /** {@inheritDoc} */
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
-    public List<UnitDto> getUnitsOfUser(final UserDto user) {
+    public List<UnitDto> getUnitsOfUser(final User user) {
         final List<UnitDto> rslt = new ArrayList<UnitDto>();
 
         // get memberships of given user
@@ -395,7 +395,7 @@ public class UserServiceImpl implements UserService {
 
             // add the given user at first place
             final MembershipDto memb = userMembGae.mapToDto();
-            final UserDto uDto = userDao.getById(userMembGae.getUserId()).mapToDto();
+            final User uDto = userDao.getById(userMembGae.getUserId()).mapToDto();
             memb.setUser(uDto);
             unit.addMember(memb);
 
@@ -406,7 +406,7 @@ public class UserServiceImpl implements UserService {
                 for (Membership mGae : other) {
                     if (!user.getId().equals(mGae.getUserId())) { // don't include 'me' again
                         final MembershipDto membershipDto = mGae.mapToDto();
-                        final UserDto userDto = userDao.getById(mGae.getUserId()).mapToDto();
+                        final User userDto = userDao.getById(mGae.getUserId()).mapToDto();
                         membershipDto.setUser(userDto);
                         unit.addMember(membershipDto);
                     }
@@ -485,7 +485,7 @@ public class UserServiceImpl implements UserService {
      * Validation of a user before persistence.
      * @param user the user to be validated
      */
-    private void validateUser(final UserDto user) {
+    private void validateUser(final User user) {
         if (null == user.getUsername()) { throw new NullPointerException("username cannot be null"); }
         if (null == user.getPassword()) { throw new NullPointerException("password cannot be null"); }
         if (null == user.getFullname()) { throw new NullPointerException("fullname cannot be null"); }

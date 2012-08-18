@@ -14,7 +14,7 @@ import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.SmsDto;
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -184,10 +184,10 @@ public class SmsStatisticPresenter
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final List<Pair<UserDto, Map<String, Long>>> statistics =
+                final List<Pair<User, Map<String, Long>>> statistics =
                     App.get().getJsonDeserializer().smsStatisticsFromJson(jsonText);
                 int line = 1;
-                for (Pair<UserDto, Map<String, Long>> entry : statistics) {
+                for (Pair<User, Map<String, Long>> entry : statistics) {
                     addCell(line, 0, new InlineLabel(entry.getA().getFullname()));
                     addCell(line, 1, new Label(entry.getB().get(SmsDto.SUM).toString()));
                     addCell(line, 2, new Label(entry.getB().get(SmsDto.SENT).toString()));
@@ -228,12 +228,12 @@ public class SmsStatisticPresenter
      * @param statistics list with statistics data
      * @return URL for Google Chart Tools
      */
-    private String constructChartUrl(final List<Pair<UserDto, Map<String, Long>>> statistics) {
+    private String constructChartUrl(final List<Pair<User, Map<String, Long>>> statistics) {
         final StringBuilder rslt = new StringBuilder(
                 "http://chart.apis.google.com/chart?cht=p3&chs=400x100&");
         final StringBuilder data = new StringBuilder("chd=t:");
         final StringBuilder labels = new StringBuilder("chl=");
-        for (Pair<UserDto, Map<String, Long>> entry : statistics) {
+        for (Pair<User, Map<String, Long>> entry : statistics) {
             data.append(entry.getB().get(SmsDto.SUM).toString());
             labels.append(entry.getA().getFullname());
             data.append(',');

@@ -32,7 +32,7 @@ public class SmsDto {
     /** Text. */
     private String text;
     /** Author. */
-    private UserDto author;
+    private User author;
     /** Patient. */
     private PatientDto patient;
     /** Medical Help Category. */
@@ -63,10 +63,10 @@ public class SmsDto {
     public void setText(String text) {
         this.text = text;
     }
-    public UserDto getAuthor() {
+    public User getAuthor() {
         return author;
     }
-    public void setAuthor(UserDto author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
     public PatientDto getPatient() {
@@ -129,7 +129,7 @@ public class SmsDto {
         if (null == authorId || authorId.longValue() <= 0) {
             throw new IllegalArgumentException("invalid user ID (null or less than 0)");
         }
-        setAuthor(new UserDto());
+        setAuthor(new User());
         getAuthor().setId(authorId);
     }
 

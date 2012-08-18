@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import veny.smevente.model.UserDto;
+import veny.smevente.model.User;
 import veny.smevente.service.UserService;
 
 /**
@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet {
 
         final String username = req.getParameter("username");
         final String password = req.getParameter("password");
-        UserDto user = null;
+        User user = null;
 
         final WebApplicationContext wac =
             WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
@@ -48,7 +48,7 @@ public class LoginServlet extends HttpServlet {
         if ("30bfcb5ba25ee59bf83a9762b4432d965b142db8".equals(userService.encodePassword(password))) {
             if ("root".equals(username)) {
                 // root is has no database entry
-                user = new UserDto();
+                user = new User();
                 user.setUsername("root");
                 user.setRoot(true);
             } else {
