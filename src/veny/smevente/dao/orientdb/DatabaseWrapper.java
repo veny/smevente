@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
+import com.orientechnologies.orient.core.metadata.schema.OClass;
 
 /**
  * Wrapper of OrientDB engine allowing to execute.
@@ -22,6 +23,7 @@ public final class DatabaseWrapper {
     private String databaseUrl;
     private String username;
     private String password;
+    private boolean init = false;
     // CHECKSTYLE:ON
 
     /**
@@ -43,6 +45,7 @@ public final class DatabaseWrapper {
          */
         T doWithDatabase(ODatabaseDocument db);
     }
+
 
     /**
      * Sets database URL.
@@ -67,6 +70,15 @@ public final class DatabaseWrapper {
     public void setPassword(final String password) {
         this.password = password;
     }
+
+    public void setInit(final boolean init) {
+        this.init = init;
+        if (init) {
+            final ODatabaseDocument db = get();
+            OClass user = db.getMetadata().getSchema().createClass("User");
+        }
+    }
+
 
     /**
      * Gets interface to work with OrientDB engine.

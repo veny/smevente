@@ -17,32 +17,21 @@
   <context:component-scan base-package="veny.smevente" />
 
   <bean id="userService" class="veny.smevente.service.gae.UserServiceImpl" />
-  <bean id="unitService" class="veny.smevente.service.gae.UnitServiceImpl" />
+  <!-- bean id="unitService" class="veny.smevente.service.gae.UnitServiceImpl" />
   <bean id="smsService" class="veny.smevente.service.gae.SmsServiceImpl" />
-  <bean id="smsGatewayService" class="veny.smevente.service.SmsGatewayServiceSmsSluzbaCz" />
+  <bean id="smsGatewayService" class="veny.smevente.service.SmsGatewayServiceSmsSluzbaCz" /-->
 
-  <bean id="unitDao" class="veny.smevente.dao.jpa.gae.UnitDaoGae" />
-  <bean id="userDao" class="veny.smevente.dao.jpa.gae.UserDaoGae" />
+  <bean id="userDao" class="veny.smevente.dao.orientdb.UserDaoImpl" />
+  <!-- bean id="unitDao" class="veny.smevente.dao.jpa.gae.UnitDaoGae" />
   <bean id="smsDao" class="veny.smevente.dao.jpa.gae.SmsDaoGae" />
   <bean id="patientDao" class="veny.smevente.dao.jpa.gae.PatientDaoGae" />
   <bean id="membershipDao" class="veny.smevente.dao.jpa.gae.MembershipDaoGae" />
-  <bean id="medicalHelpCategoryDao" class="veny.smevente.dao.jpa.gae.MedicalHelpCategoryDaoGae" />
+  <bean id="medicalHelpCategoryDao" class="veny.smevente.dao.jpa.gae.MedicalHelpCategoryDaoGae" /-->
 
-  <bean id="gaeCache" class="veny.smevente.service.gae.GaeCache" />
-
-  <!--24.7.2010(Spring->GAE) bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean" lazy-init="true">
-    <property name="persistenceUnitName" value="transactions-optional" />
-  </bean>
-  <bean name="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-    <property name="entityManagerFactory" ref="entityManagerFactory" />
-  </bean>
-
-  <tx:annotation-driven />
-  <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" /-->
 
   <!-- AOP -->
 
-  <aop:aspectj-autoproxy/>
-  <bean id="cacheAspect" class="veny.smevente.service.gae.CacheAspect" />
+  <!-- aop:aspectj-autoproxy/>
+  <bean id="cacheAspect" class="veny.smevente.service.gae.CacheAspect" /-->
 
 </beans>

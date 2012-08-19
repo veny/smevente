@@ -41,8 +41,8 @@ public class UserController {
     @Autowired
     private UserService userService;
     /** Dependency. */
-    @Autowired
-    private SmsService smsService;
+//    @Autowired
+//    private SmsService smsService;
 
     /**
      * This is an overridden version of initBinder method of Spring baseCommandController.
