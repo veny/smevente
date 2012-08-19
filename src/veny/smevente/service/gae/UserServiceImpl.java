@@ -321,23 +321,17 @@ public class UserServiceImpl implements UserService {
         }
         return formatter.toString();
     }
-//
-//    /** {@inheritDoc} */
-//    @Transactional(readOnly = true)
-//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-//    @Override
-//    public List<User> getAllUsers() {
-//        final List<User> found = userDao.getAll();
-//        LOG.info("found all users, size=" + found.size());
-//
-//        final List<User> rslt = new ArrayList<User>();
-//        for (User userGae : found) {
-//            rslt.add(userGae.mapToDto());
-//        }
-//        LOG.info("returned users, size=" + rslt.size());
-//        return rslt;
-//    }
-//
+
+    /** {@inheritDoc} */
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+    @Override
+    public List<User> getAllUsers() {
+        final List<User> found = userDao.getAll();
+        LOG.info("found all users, size=" + found.size());
+        return found;
+    }
+
 ////    /*
 ////     * Here is not used a TX because of GAE Entity Group limit for transaction.
 ////     * I avoided to use TX (not needed here).

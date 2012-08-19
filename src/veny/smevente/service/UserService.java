@@ -125,14 +125,14 @@ public interface UserService {
      */
     String encodePassword(final String password);
 
-//    /**
-//     * Loads all users.
-//     *
-//     * @return list of all users
-//     */
-//    @Deprecated // only for unit testing purposes
-//    List<User> getAllUsers();
-//
+    /**
+     * Loads all users.
+     *
+     * @return list of all users
+     */
+    @Deprecated // only for unit testing purposes
+    List<User> getAllUsers();
+
 ////    /**
 ////     * Gets all users in given unit.
 ////     *

@@ -1,7 +1,9 @@
 package veny.smevente.dao.orientdb;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ import veny.smevente.misc.SoftDelete;
 
 import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 
 /**
  * Abstract class for most common DAO operations based on <code>OrientDB</code> engine.
@@ -146,21 +150,18 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
         return databaseWrapper.execute(new ODatabaseCallback<List< T >>() {
             @Override
             public List< T > doWithDatabase(final ODatabaseDocument db) {
-//                final StringBuilder sql = new StringBuilder("SELECT e FROM ").append(getPersistentClass().getName())
-//                    .append(" e WHERE e.").append(paramName).append("=:").append(paramName);
-//
-//                appendSoftDeleteFilter(sql);
-//                if (null != orderBy) { sql.append(" ORDER BY ").append(orderBy); }
-//
-//                final Query q = em.createQuery(sql.toString());
-//                q.setParameter(paramName, value);
-//                setSoftDeleteFilter(q);
-//                final List< T > rslt = q.getResultList();
-//
-//                // load entities to eliminate 'Object Manager has been closed' exception
-//                rslt.size();
-//
-//                return rslt;
+                final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName())
+                    .append(" WHERE ").append(paramName).append(" =: ").append(paramName);
+
+                appendSoftDeleteFilter(sql);
+                if (null != orderBy) { sql.append(" ORDER BY ").append(orderBy); }
+
+                final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
+                final Map<String, Object> params = new HashMap<String, Object>();
+                params.put(paramName, value);
+
+                //setSoftDeleteFilter(query);
+                final List<ODocument> result = db.command(query).execute(params);
                 return null;
             }
         }, false);
