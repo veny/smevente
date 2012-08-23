@@ -1,11 +1,30 @@
 package veny.smevente.dao.orientdb;
 
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.annotation.PreDestroy;
+import javax.persistence.Column;
+import javax.persistence.Transient;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
+import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 
 /**
  * Wrapper of OrientDB engine allowing to execute.
@@ -13,7 +32,7 @@ import com.orientechnologies.orient.core.metadata.schema.OClass;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 18.8.2012
  */
-public final class DatabaseWrapper {
+public final class DatabaseWrapper implements DisposableBean {
 
     /** Logger. */
     private static final Logger LOG = Logger.getLogger(DatabaseWrapper.class.getName());
@@ -75,7 +94,19 @@ public final class DatabaseWrapper {
         this.init = init;
         if (init) {
             final ODatabaseDocument db = get();
-            OClass user = db.getMetadata().getSchema().createClass("User");
+
+            // AbstractEntity
+            OClass entity = db.getMetadata().getSchema().getClass("AbstractEntity");
+            if (null == entity) {
+                entity = db.getMetadata().getSchema().createClass("AbstractEntity");
+                entity.createProperty("revision", OType.STRING);
+            }
+
+            // User
+            OClass user = db.getMetadata().getSchema().getClass("User");
+            if (null == user) {
+                user = db.getMetadata().getSchema().createClass("User", entity);
+            }
         }
     }
 
@@ -128,6 +159,55 @@ public final class DatabaseWrapper {
                 db.close();
             }
         }
+        return rslt;
+    }
+
+    // --------------------------------------------------- DisposableBean Stuff
+
+    /** {@inheritDoc} */
+    @Override
+    public void destroy() throws Exception {
+        ODatabaseDocumentPool.global().close();
+        LOG.info("Connection pool properly closed");
+    }
+
+    // ---------------------------------------- Document<->Entity Mapping Stuff
+
+    public ODocument createDocument(Object entity) {
+        final ODocument doc = new ODocument(entity.getClass().getSimpleName());
+
+        final PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(entity);
+        for (PropertyDescriptor pd : pds) {
+            final Annotation col = pd.getReadMethod().getAnnotation(Column.class);
+            if (null != col) {
+                final String propName = pd.getName();
+                try {
+                    doc.field(propName, PropertyUtils.getProperty(entity, propName));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return doc;
+    }
+
+    public Object createValueObject(final ODocument doc, final Class clazz) {
+        Object rslt = null;
+        try {
+            rslt = clazz.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        final String[] fieldNames = doc.fieldNames();
+        for (String fieldName : fieldNames) {
+            try {
+                PropertyUtils.setProperty(rslt, fieldName, doc.field(fieldName));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return rslt;
     }
 

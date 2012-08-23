@@ -2,26 +2,25 @@ package veny.smevente.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
- * DTO entity representing the User.
+ * Entity class representing the User.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 8.11.2010
  */
-public class User {
+public class User extends AbstractEntity {
 
     /** The flag used when user is updated, but the password will not be changed. */
     public static final String DO_NOT_CHANGE_PASSWORD = "###########################";
 
     /** ID of the fake root entity. */
-    public static final Long ROOT_ID = new Long(-111);
+    public static final String ROOT_ID = "-111";
     /** User name of the fake root entity. */
     public static final String ROOT_USERNAME = "root";
-
-    /** Primary Key. */
-    private Long id;
 
     /** User name. */
     private String username;
@@ -42,12 +41,7 @@ public class User {
     private Date lastLoggedIn;
 
     // CHECKSTYLE:OFF
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column
     public String getUsername() {
         return username;
     }
@@ -55,12 +49,14 @@ public class User {
         this.username = username;
     }
     @JsonIgnore
+    @Column
     public String getPassword() {
         return password;
     }
     public void setPassword(String password) {
         this.password = password;
     }
+    @Column
     public String getFullname() {
         return fullname;
     }
@@ -68,6 +64,7 @@ public class User {
         this.fullname = fullname;
     }
     @JsonIgnore
+    @Column
     public boolean isRoot() {
         return root;
     }
@@ -75,6 +72,7 @@ public class User {
         this.root = root;
     }
     @JsonIgnore
+    @Column
     public Date getLastLoggedIn() {
         return lastLoggedIn;
     }
