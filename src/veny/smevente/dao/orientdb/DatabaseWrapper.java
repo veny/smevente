@@ -20,6 +20,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import veny.smevente.model.AbstractEntity;
+
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
@@ -95,18 +97,21 @@ public final class DatabaseWrapper implements DisposableBean {
         if (init) {
             final ODatabaseDocument db = get();
 
-            // AbstractEntity
-            OClass entity = db.getMetadata().getSchema().getClass("AbstractEntity");
-            if (null == entity) {
-                entity = db.getMetadata().getSchema().createClass("AbstractEntity");
-                entity.createProperty("revision", OType.STRING);
+
+            // delete classes
+            if (db.getMetadata().getSchema().existsClass("User")) {
+                db.getMetadata().getSchema().dropClass("User");
+            }
+            if (db.getMetadata().getSchema().existsClass("AbstractEntity")) {
+                db.getMetadata().getSchema().dropClass("AbstractEntity");
             }
 
+            // AbstractEntity
+            OClass entity = db.getMetadata().getSchema().createClass("AbstractEntity");
+            entity.createProperty("deleted", OType.BOOLEAN).setMandatory(true);
+            entity.createProperty("revision", OType.STRING);
             // User
-            OClass user = db.getMetadata().getSchema().getClass("User");
-            if (null == user) {
-                user = db.getMetadata().getSchema().createClass("User", entity);
-            }
+            OClass user = db.getMetadata().getSchema().createClass("User", entity);
         }
     }
 
@@ -191,13 +196,18 @@ public final class DatabaseWrapper implements DisposableBean {
         return doc;
     }
 
-    public Object createValueObject(final ODocument doc, final Class clazz) {
-        Object rslt = null;
+    public AbstractEntity createValueObject(final ODocument doc, final Class clazz) {
+        AbstractEntity rslt = null;
         try {
-            rslt = clazz.newInstance();
+            rslt = (AbstractEntity) clazz.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // RID -> ID
+        rslt.setId(doc.getIdentity().toString());
+        // document version
+        rslt.setVersion(Integer.toString(doc.getVersion()));
 
         final String[] fieldNames = doc.fieldNames();
         for (String fieldName : fieldNames) {

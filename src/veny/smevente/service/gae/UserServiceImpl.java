@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(final User user) {
         validateUser(user);
-        List<User> check = userDao.findBy("username", user.getUsername(), null);
+        final List<User> check = userDao.findBy("username", user.getUsername(), null);
         if (!check.isEmpty()) {
             ServerValidation.exception("duplicateValue", "username", (Object[]) null);
         }
@@ -158,12 +158,12 @@ public class UserServiceImpl implements UserService {
 //        updateUser(user);
 //        updateMembershipWithReorg(unitId, user.getId(), type, significance);
 //    }
-//
-//    /** {@inheritDoc} */
-//    @Transactional
-//    // TODO [veny,B] think of authorization
-//    @Override
-//    public void deleteUser(final Long id) {
+
+    /** {@inheritDoc} */
+    @Transactional
+    // TODO [veny,B] think of authorization
+    @Override
+    public void deleteUser(final String id) {
 //        final List<MembershipDto> memberships = findMembershipsByUser(id);
 //        if (memberships != null) {
 //            for (MembershipDto membership: memberships) {
@@ -171,10 +171,11 @@ public class UserServiceImpl implements UserService {
 //                LOG.info("membership (for user with id=" + id + ") deleted, id=" + membership.getId());
 //            }
 //        }
-//        userDao.remove(id);
-//        LOG.info("user deleted, id=" + id);
-//    }
-//
+        // TODO [veny,A] delete membership
+        userDao.remove(id);
+        LOG.info("user deleted, id=" + id);
+    }
+
 //    // no authorization - used in AuthenticationProvider
 //    /** {@inheritDoc} */
 //    @Override

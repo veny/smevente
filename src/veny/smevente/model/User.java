@@ -6,12 +6,15 @@ import javax.persistence.Column;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import veny.smevente.misc.SoftDelete;
+
 /**
  * Entity class representing the User.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 8.11.2010
  */
+@SoftDelete
 public class User extends AbstractEntity {
 
     /** The flag used when user is updated, but the password will not be changed. */

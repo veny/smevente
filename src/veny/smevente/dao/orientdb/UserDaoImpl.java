@@ -29,15 +29,13 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
                 final StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM ")
                         .append(getPersistentClass().getName())
                         .append(" WHERE username = :username AND password = :password");
-                appendSoftDeleteFilter(sql);
 
-                final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("username", username);
                 params.put("password", password);
 
                 //setSoftDeleteFilter(query);
-                final List<ODocument> result = db.command(query).execute(params);
+                final List<ODocument> result = executeWithSoftDelete(db, sql.toString(), params);
                 return (Integer) result.get(0).field("count");
             }
         };
@@ -53,15 +51,12 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
                 final StringBuilder sql = new StringBuilder("SELECT DISTINCT FROM ")
                         .append(getPersistentClass().getName())
                         .append(" WHERE username = :username AND password = :password");
-                appendSoftDeleteFilter(sql);
 
-                final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("username", username);
                 params.put("password", password);
-                //setSoftDeleteFilter(query);
 
-                final List<ODocument> users = db.command(query).execute(params);
+                final List<ODocument> users = executeWithSoftDelete(db, sql.toString(), params);
                 if (users.size() > 1) {
                     throw new IllegalStateException("expected max 1 user, but found " + users.size());
                 }

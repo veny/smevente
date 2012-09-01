@@ -14,10 +14,12 @@ import veny.smevente.dao.GenericDao;
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.misc.SoftDelete;
+import veny.smevente.model.AbstractEntity;
 import veny.smevente.model.User;
 
 import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 
@@ -74,23 +76,23 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     /** {@inheritDoc} */
     @Override
     public void remove(final T entity) {
-        databaseWrapper.execute(new ODatabaseCallback<T>() {
-            @Override
-            public T doWithDatabase(final ODatabaseDocument db) {
-                //removeHardOrSoft(entity, em);
-                return null;
-            }
-        }, true);
+        remove(((AbstractEntity) entity).getId());
     }
 
     /** {@inheritDoc} */
     @Override
-    public void remove(final Long entityId) {
+    public void remove(final String entityId) {
         databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
             public T doWithDatabase(final ODatabaseDocument db) {
-                //final T entity = em.find(getPersistentClass(), entityId);
-                //removeHardOrSoft(entity, em);
+                final ODocument doc = db.getRecord(new ORecordId(entityId));
+
+                if (null != softDeleteAnnotation) {
+                    doc.field(softDeleteAnnotation.attribute(), Boolean.TRUE);
+                    doc.save();
+                } else {
+                    doc.delete();
+                }
                 return null;
             }
         }, true);
@@ -130,16 +132,12 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
         return databaseWrapper.execute(new ODatabaseCallback<List< T >>() {
             @Override
             public List< T > doWithDatabase(final ODatabaseDocument db) {
-                final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName())
-                        .append(" ");
-                if (!withDeleted) { setSoftDeleteFilter(sql); }
-
-                final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
-
-                //setSoftDeleteFilter(query);
-                final List<ODocument> result = db.command(query).execute();
+                final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName());
+                final List<ODocument> result = executeWithSoftDelete(db, sql.toString(), null);
                 final List<T> rslt = new ArrayList<T>();
-                for (ODocument doc : result) { rslt.add((T) databaseWrapper.createValueObject(doc, getPersistentClass())); }
+                for (ODocument doc : result) {
+                    rslt.add((T) databaseWrapper.createValueObject(doc, getPersistentClass()));
+                }
                 return rslt;
             }
         }, false);
@@ -153,20 +151,18 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
             @Override
             public List< T > doWithDatabase(final ODatabaseDocument db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName())
-                    .append(" WHERE ").append(paramName).append(" =: ").append(paramName);
+                    .append(" WHERE ").append(paramName).append(" = :").append(paramName);
 
-                appendSoftDeleteFilter(sql);
                 if (null != orderBy) { sql.append(" ORDER BY ").append(orderBy); }
 
-                final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put(paramName, value);
 
                 //setSoftDeleteFilter(query);
                 final List<T> rslt = new ArrayList<T>();
-                final List<ODocument> result = db.command(query).execute(params);
-                for (ODocument d : result) {
-                    rslt.add(null);
+                final List<ODocument> result = executeWithSoftDelete(db, sql.toString(), params);
+                for (ODocument doc : result) {
+                    rslt.add((T) databaseWrapper.createValueObject(doc, getPersistentClass()));
                 }
                 return rslt;
             }
@@ -184,22 +180,25 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
         return databaseWrapper.execute(new ODatabaseCallback<List< T >>() {
             @Override
             public List< T > doWithDatabase(final ODatabaseDocument db) {
-//                final StringBuilder sql = new StringBuilder("SELECT e FROM ").append(getPersistentClass().getName())
-//                    .append(" e WHERE e.").append(paramName1).append("=:").append(paramName1)
-//                    .append(" AND e.").append(paramName2).append("=:").append(paramName2);
-//
+                final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName())
+                        .append(" WHERE ").append(paramName1).append(" = :").append(paramName1)
+                        .append(" AND ").append(paramName2).append(" = :").append(paramName2);
+
 //                appendSoftDeleteFilter(sql);
-//                if (null != orderBy) { sql.append(" ORDER BY ").append(orderBy); }
-//
-//                final Query q = em.createQuery(sql.toString());
-//                q.setParameter(paramName1, value1);
-//                q.setParameter(paramName2, value2);
-//                setSoftDeleteFilter(q);
-//                final List< T > rslt = q.getResultList();
-//                // load entities to eliminate 'Object Manager has been closed' exception
-//                rslt.size();
-//                return rslt;
-                return null;
+                if (null != orderBy) { sql.append(" ORDER BY ").append(orderBy); }
+
+                final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
+                final Map<String, Object> params = new HashMap<String, Object>();
+                params.put(paramName1, value1);
+                params.put(paramName2, value2);
+
+                //setSoftDeleteFilter(query);
+                final List<T> rslt = new ArrayList<T>();
+                final List<ODocument> result = db.command(query).execute(params);
+                for (ODocument doc : result) {
+                    rslt.add((T) databaseWrapper.createValueObject(doc, getPersistentClass()));
+                }
+                return rslt;
             }
         }, false);
     }
@@ -232,8 +231,12 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
             @Override
             public T doWithDatabase(final ODatabaseDocument db) {
                 final ODocument doc = databaseWrapper.createDocument(entity);
-                doc.field("username", ((User) entity).getUsername());
                 doc.save();
+
+                if (null == ((AbstractEntity) entity).getId()) {
+                    db.commit(); // to obtain RID
+                    ((AbstractEntity) entity).setId(doc.getIdentity().toString());
+                }
                 return null;
             }
         }, true);
@@ -270,55 +273,66 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
 
     // ------------------------------------------------------ Soft Delete Stuff
 
-    /**
-     * Appends a SQL suffix that filters deleted entities.
-     * @param query query to be extended
-     */
-    protected void appendSoftDeleteFilter(final StringBuilder query) {
-        if (null != softDeleteAnnotation) {
-            query.append(" AND e.").append(softDeleteAnnotation.attribute()).append("=:sd");
-        }
-    }
-    /**
-     * Sets a SQL suffix that filters deleted entities. Should be used
-     * in cases where no other select criteria is used, so the WHERE
-     * clause is completely missing.
-     * @param query query to be extended
-     */
-    protected void setSoftDeleteFilter(final StringBuilder query) {
-        if (null != softDeleteAnnotation) {
-            query.append(" WHERE e.").append(softDeleteAnnotation.attribute()).append("=:sd");
-        }
-    }
-    /**
-     * Set a query parameter to filter the deleted entities.
-     * @param query query to set the value
-     */
-//    protected void setSoftDeleteFilter(final Query query) {
-//        if (null != softDeleteAnnotation) {
-//            query.setParameter("sd", Boolean.FALSE);
-//        }
-//    }
 
     /**
-     * Removes a given entity from storage hard (physical remove)
-     * or soft (set flag).
-     * @param entity the entity to remove
-     * @param em the controlling entity manager
-     * @return <i>true</i> by hard delete
+     * Decorates a SQL query with a extension of WHERE clause to eliminate soft deleted entities.
+     * @param db database
+     * @param origSql original SQL
+     * @param origParams original query paramaters
+     * @return result set from database
      */
-//    private boolean removeHardOrSoft(final T entity, final EntityManager em) {
-//        if (null == softDeleteAnnotation) {
-//            em.remove(entity);
-//            return Boolean.TRUE;
-//        } else {
-//            try {
-//                BeanUtils.setProperty(entity, softDeleteAnnotation.attribute(), Boolean.TRUE);
-//            } catch (Exception e) {
-//                throw new IllegalStateException("failed to soft remove an entity: " + entity, e);
-//            }
-//            em.persist(entity);
-//            return Boolean.FALSE;
+    protected List<ODocument> executeWithSoftDelete(
+            final ODatabaseDocument db, final String origSql, final Map<String, Object> origParams) {
+
+        StringBuffer sql = new StringBuffer(origSql);
+        Map<String, Object> params = origParams;
+
+        if (null != softDeleteAnnotation) {
+            if (sql.indexOf(" WHERE ") > 0 || sql.indexOf(" where ") > 0) {
+                sql.append(" AND ");
+            } else {
+                sql.append(" WHERE ");
+            }
+            sql.append(softDeleteAnnotation.attribute()).append(" = :softDelete");
+            if (null == params) { params = new HashMap<String, Object>(); }
+            params.put("softDelete", Boolean.FALSE);
+        }
+
+        final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
+        if (null == params) {
+            return db.command(query).execute();
+        } else {
+            return db.command(query).execute(params);
+        }
+    }
+
+//    /**
+//     * Appends a SQL suffix that filters deleted entities.
+//     * @param query query to be extended
+//     */
+//    protected void appendSoftDeleteFilter(final StringBuilder query) {
+//        if (null != softDeleteAnnotation) {
+//            query.append(" AND e.").append(softDeleteAnnotation.attribute()).append("=:sd");
+//        }
+//    }
+//    /**
+//     * Sets a SQL suffix that filters deleted entities. Should be used
+//     * in cases where no other select criteria is used, so the WHERE
+//     * clause is completely missing.
+//     * @param query query to be extended
+//     */
+//    protected void setSoftDeleteFilter(final StringBuilder query) {
+//        if (null != softDeleteAnnotation) {
+//            query.append(" WHERE ").append(softDeleteAnnotation.attribute()).append(" = :sd");
+//        }
+//    }
+//    /**
+//     * Set a query parameter to filter the deleted entities.
+//     * @param params query parameters to be extended
+//     */
+//    protected void setSoftDeleteFilter(final Map<String, Object> params) {
+//        if (null != softDeleteAnnotation) {
+//            params.put("sd", Boolean.FALSE);
 //        }
 //    }
 

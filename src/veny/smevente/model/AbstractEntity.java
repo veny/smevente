@@ -28,6 +28,12 @@ public abstract class AbstractEntity {
     private String version;
 
     /**
+     * Flag if the entity has been soft deleted
+     * (not physically removed but flagged as deleted).
+     */
+    private boolean deleted;
+
+    /**
      * Represents revision of the schema in which the entry has been stored.
      * It's support for schema evolution.
      */
@@ -47,6 +53,13 @@ public abstract class AbstractEntity {
     }
     public void setVersion(String version) {
         this.version = version;
+    }
+    @Column
+    public boolean isDeleted() {
+        return deleted;
+    }
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
     @Column
     public String getRevision() {

@@ -96,7 +96,7 @@ public interface GenericDao< T > {
      *
      * @param entityId the entity ID to delete
      */
-    void remove(Long entityId);
+    void remove(String entityId);
 
 //    /**
 //     * Count entities.

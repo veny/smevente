@@ -76,13 +76,13 @@ public interface UserService {
 //    void updateUser(final User user, Long unitId,
 //            final Type type,
 //            final Integer significance);
-//
-//    /**
-//     * Deletes user.
-//     * @param id user ID to be deleted
-//     */
-//    void deleteUser(Long id);
-//
+
+    /**
+     * Deletes user.
+     * @param id user ID to be deleted
+     */
+    void deleteUser(String id);
+
 //    /**
 //     * Finds user by given user name.
 //     * @param username unique user name to find
