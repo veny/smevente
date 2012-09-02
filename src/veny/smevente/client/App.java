@@ -65,7 +65,7 @@ public final class App implements ValueChangeHandler<String> {
     private Presenter< ? > activeMainPresenter = null;
 
     /** List of units sorted by significance for the current logged in user. */
-    private List<veny.smevente.model.UnitDto> units;
+    private List<veny.smevente.model.Unit> units;
     /** Index of currently selected unit. */
     private int selectedUnitIndex;
     /** Index of currently selected unit member. */
@@ -360,7 +360,7 @@ public final class App implements ValueChangeHandler<String> {
      * Gets list of units sorted by significance for the current logged in user.
      * @return list of units sorted by significance for the current logged in user
      */
-    public List<veny.smevente.model.UnitDto> getUnits() {
+    public List<veny.smevente.model.Unit> getUnits() {
         return units;
     }
 
@@ -368,7 +368,7 @@ public final class App implements ValueChangeHandler<String> {
      * Sets list of units sorted by significance for the current logged in user.
      * @param units list of units sorted by significance for the current logged in user
      */
-    public void setUnits(final List<veny.smevente.model.UnitDto> units) {
+    public void setUnits(final List<veny.smevente.model.Unit> units) {
         this.units = units;
     }
 
@@ -383,7 +383,7 @@ public final class App implements ValueChangeHandler<String> {
      * Gets the current selected unit.
      * @return the current selected unit
      */
-    public veny.smevente.model.UnitDto getSelectedUnit() {
+    public veny.smevente.model.Unit getSelectedUnit() {
         return units.get(selectedUnitIndex);
     }
     /**

@@ -23,7 +23,7 @@ public class MedicalHelpCategoryDto implements Serializable {
     private Long id;
 
     /** Unit which is master of this. */
-    private UnitDto unit;
+    private Unit unit;
     /** Category name. */
     private String name;
     /** Default SMS text. */
@@ -42,10 +42,10 @@ public class MedicalHelpCategoryDto implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    public UnitDto getUnit() {
+    public Unit getUnit() {
         return unit;
     }
-    public void setUnit(UnitDto unit) {
+    public void setUnit(Unit unit) {
         this.unit = unit;
     }
     public String getName() {
@@ -90,7 +90,7 @@ public class MedicalHelpCategoryDto implements Serializable {
         if (null == unitId || unitId.longValue() <= 0) {
             throw new IllegalArgumentException("invalid unit ID (null or less than 0)");
         }
-        setUnit(new UnitDto());
+        setUnit(new Unit());
         getUnit().setId(unitId);
     }
 

@@ -1,6 +1,7 @@
-package veny.smevente.service.gae;
+package veny.smevente.service.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +77,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(final User user) {
         validateUser(user);
+        // to be sure that reused object will be created as new
+        if (null != user.getId()) { user.setId(null); user.setVersion(null); }
+
         final List<User> check = userDao.findBy("username", user.getUsername(), null);
         if (!check.isEmpty()) {
             ServerValidation.exception("duplicateValue", "username", (Object[]) null);
@@ -83,7 +88,12 @@ public class UserServiceImpl implements UserService {
         userDao.persist(user);
 
         LOG.info("created new user, " + user);
-        return user;
+        try {
+            // clone original object
+            return (User) BeanUtils.cloneBean(user);
+        } catch (Exception e) {
+            throw new IllegalStateException("failed to clone user", e);
+        }
     }
 
 //    /** {@inheritDoc} */
@@ -473,9 +483,15 @@ public class UserServiceImpl implements UserService {
      * @param user the user to be validated
      */
     private void validateUser(final User user) {
-        if (null == user.getUsername()) { throw new NullPointerException("username cannot be null"); }
-        if (null == user.getPassword()) { throw new NullPointerException("password cannot be null"); }
-        if (null == user.getFullname()) { throw new NullPointerException("fullname cannot be null"); }
+        if (Strings.isNullOrEmpty(user.getUsername())) {
+            throw new IllegalArgumentException("username cannot be blank");
+        }
+        if (Strings.isNullOrEmpty(user.getPassword())) {
+            throw new IllegalArgumentException("password cannot be blank");
+        }
+        if (Strings.isNullOrEmpty(user.getFullname())) {
+            throw new IllegalArgumentException("fullname cannot be blank");
+        }
     }
 
 //    /**

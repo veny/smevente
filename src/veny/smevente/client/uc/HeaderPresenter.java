@@ -18,7 +18,7 @@ import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.CrudEventHandler;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.model.MembershipDto;
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -272,12 +272,12 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
                 view.getUsername().setText(username);
 
                 // units
-                List<UnitDto> units = App.get().getJsonDeserializer().deserializeList(UnitDto.class, "units", jsonText);
+                List<Unit> units = App.get().getJsonDeserializer().deserializeList(Unit.class, "units", jsonText);
                 appInit(units);
                 // fill the drop down again
                 view.getUnits().clear();
                 view.getUnits().setSelectedIndex(0);
-                for (UnitDto u : units) { view.getUnits().addItem(u.getName()); }
+                for (Unit u : units) { view.getUnits().addItem(u.getName()); }
                 // simulate selection on first unit -> fire event
                 unitSelected(0);
             }
@@ -294,10 +294,10 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                List<UnitDto> usedUnits = App.get().getUnits();
+                List<Unit> usedUnits = App.get().getUnits();
                 int selectedUnitIndex = view.getUnits().getSelectedIndex();
-                List<UnitDto> units = App.get().getJsonDeserializer().deserializeList(UnitDto.class, "units", jsonText);
-                for (UnitDto newUnit : units) {
+                List<Unit> units = App.get().getJsonDeserializer().deserializeList(Unit.class, "units", jsonText);
+                for (Unit newUnit : units) {
                     if (newUnit.getId().equals(usedUnits.get(selectedUnitIndex).getId())) {
                         usedUnits.remove(selectedUnitIndex);
                         usedUnits.add(selectedUnitIndex, newUnit);
@@ -318,7 +318,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
      * Initialize the application with found units.
      * @param units the list of found units
      */
-    private void appInit(final List<UnitDto> units) {
+    private void appInit(final List<Unit> units) {
         App.get().setUnits(units);
         view.getMenu().setupAdminItems();
         if (!App.get().isSelectedUnitMemberAdmin()) {
@@ -332,7 +332,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
      */
     private void unitSelected(final int idx) {
         App.get().setSelectedUnitIndex(idx);
-        final UnitDto newUnit = App.get().getSelectedUnit();
+        final Unit newUnit = App.get().getSelectedUnit();
         // just to be sure
         if (null == newUnit) { throw new IllegalStateException("selected unit cannot be null"); }
 

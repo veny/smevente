@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.MembershipDto;
 import veny.smevente.model.SmsDto;
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.SmsService;
 import veny.smevente.service.UserService;
@@ -81,7 +81,7 @@ public class UserController {
         modelAndView.addObject("username", user.getUsername());
 
         // units where the user is member in
-        final List<UnitDto> units = userService.getUnitsOfUser(user);
+        final List<Unit> units = userService.getUnitsOfUser(user);
         modelAndView.addObject("units", units);
 
         return modelAndView;

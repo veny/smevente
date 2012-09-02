@@ -12,7 +12,7 @@ import javax.persistence.Transient;
 import org.springframework.beans.BeanUtils;
 
 import veny.smevente.model.MembershipDto;
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.service.TextUtils;
 
 /**
@@ -43,7 +43,7 @@ public class Unit implements Serializable {
     private String metadata;
     /**
      * An unit can be limited in amount of SMS that can be sent.
-     * @see UnitDto#limitedSmss
+     * @see Unit#limitedSmss
      */
     private Long limitedSmss;
     /** Infrastructure schema version. */
@@ -100,8 +100,8 @@ public class Unit implements Serializable {
      * Maps instance of this into corresponding DTO object.
      * @return corresponding DTO
      */
-    public UnitDto mapToDto() {
-        final UnitDto rslt = new UnitDto();
+    public Unit mapToDto() {
+        final Unit rslt = new Unit();
         BeanUtils.copyProperties(this, rslt, new String[] { "metadata", "members" });
         rslt.setMetadata(TextUtils.stringToMap(getMetadata()));
         return rslt;

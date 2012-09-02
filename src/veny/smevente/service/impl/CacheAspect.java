@@ -1,4 +1,4 @@
-package veny.smevente.service.gae;
+package veny.smevente.service.impl;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -1,4 +1,4 @@
-package veny.smevente.service.gae;
+package veny.smevente.service.impl;
 
 import java.util.Collections;
 import java.util.Map;

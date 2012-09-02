@@ -11,7 +11,7 @@ import veny.smevente.model.MedicalHelpCategoryDto;
 import veny.smevente.model.MembershipDto;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.SmsDto;
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
@@ -68,7 +68,7 @@ public class JsonDeserializer {
 
         if (ExceptionJsonWrapper.class == classToCreate) {
             result = (T) fromJsonExceptionWrapper(jsObj);
-        } else if (UnitDto.class == classToCreate) {
+        } else if (Unit.class == classToCreate) {
             result = (T) unitFromJson(jsObj);
         } else if (User.class == classToCreate) {
             result = (T) userFromJson(jsObj);
@@ -112,7 +112,7 @@ public class JsonDeserializer {
         }
 
         List<T> rslt = null;
-        if (UnitDto.class == classToCreate) {
+        if (Unit.class == classToCreate) {
             rslt = (List<T>) unitListFromJson(jsArr);
         } else if (User.class == classToCreate) {
             rslt = (List<T>) userListFromJson(jsArr);
@@ -198,12 +198,12 @@ public class JsonDeserializer {
      * @param jsObj JSON object to deserialize
      * @return <code>Unit</code> object
      */
-    private UnitDto unitFromJson(final JSONObject jsObj) {
-        final UnitDto rslt = new UnitDto();
+    private Unit unitFromJson(final JSONObject jsObj) {
+        final Unit rslt = new Unit();
         rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
         rslt.setName(jsObj.get("name").isString().stringValue());
         rslt.setLimitedSmss(getLong(jsObj.get("limitedSmss")));
-        rslt.addMetadata(UnitDto.UNIT_TYPE, getString(jsObj.get("type")));
+        rslt.addMetadata(Unit.UNIT_TYPE, getString(jsObj.get("type")));
         // members
         final JSONArray jsArr = jsObj.get("members").isArray();
         if (null != jsArr) {
@@ -215,8 +215,8 @@ public class JsonDeserializer {
      * @param jsArr JSON array to deserialize
      * @return list of <code>Unit</code> objects
      */
-    private List<UnitDto> unitListFromJson(final JSONArray jsArr) {
-        final List<UnitDto> rslt = new ArrayList<UnitDto>();
+    private List<Unit> unitListFromJson(final JSONArray jsArr) {
+        final List<Unit> rslt = new ArrayList<Unit>();
 
         for (int i = 0; i < jsArr.size(); i++) {
             JSONValue jsonValue = jsArr.get(i);

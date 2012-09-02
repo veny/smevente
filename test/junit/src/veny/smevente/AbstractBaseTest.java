@@ -2,34 +2,26 @@ package veny.smevente;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.orientechnologies.orient.core.sql.OCommandSQL;
-
 import veny.smevente.dao.orientdb.DatabaseWrapper;
-import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.PatientDto;
-import veny.smevente.model.SmsDto;
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.SmsGatewayService;
-import veny.smevente.service.SmsService;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
+
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 
 /**
  * Base class for the <i>Smevente</i> unit tests.
@@ -42,10 +34,10 @@ import veny.smevente.service.UserService;
 public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests {
 
     // CHECKSTYLE:OFF
-//    @Autowired
-//    protected UnitService unitService;
     @Autowired
     protected UserService userService;
+    @Autowired
+    protected UnitService unitService;
 //    @Autowired
 //    protected SmsService smsService;
     // CHECKSTYLE:ON
@@ -58,10 +50,11 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     public void deleteEntries() {
         final DatabaseWrapper dbw = (DatabaseWrapper) applicationContext.getBean("databaseWrapper");
         dbw.get().command(new OCommandSQL("DELETE FROM User")).execute();
+        dbw.get().command(new OCommandSQL("DELETE FROM Unit")).execute();
     }
 
 
-    // -------------------------------------------------------- Assistant Stuff
+    // --------------------------------------------------- User Assistant Stuff
 
     // CHECKSTYLE:OFF
     public static final String USERNAME = "max.mustermann";
@@ -102,55 +95,58 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         assertEquals(false, user.isRoot());
     }
 
-//    // CHECKSTYLE:OFF
-//    public static final String UNITNAME = "unitXY";
-//    public static final Long LIMITED_SMSS = null;
-//    // CHECKSTYLE:ON
-//
-//    /** @return a new created default unit */
-//    protected UnitDto createDefaultUnit() {
-//        return createUnit(UNITNAME, getDefaultUnitMetadata(), LIMITED_SMSS);
-//    }
-//    /**
-//     * Creates a new unit with given attributes.
-//     * @param name unit name
-//     * @param metadata unit's metadata
-//     * @param limitedSmss limited amount of SMS that can be sent
-//     * @return a new unit created
-//     */
-//    protected UnitDto createUnit(final String name, final Map<String, String> metadata, final Long limitedSmss) {
-//        final UnitDto toCreate = new UnitDto();
-//        toCreate.setName(name);
-//        toCreate.setMetadata(metadata);
-//        toCreate.setLimitedSmss(limitedSmss);
-//        return unitService.createUnit(toCreate);
-//    }
-//    /**
-//     * Asserts default unit.
-//     * @param unit unit to be checked
-//     */
-//    protected void assertDefaultUnit(final UnitDto unit) {
-//        assertNotNull(unit);
-//        assertNotNull(unit.getId());
-//        assertEquals(UNITNAME, unit.getName());
-//        assertNotNull(unit.getMetadata());
-//        assertTrue(unit.getMetadata().containsKey(SmsGatewayService.METADATA_USERNAME));
-//        assertEquals(LIMITED_SMSS, unit.getLimitedSmss());
-//        assertTrue(unit.getMetadata().containsKey(SmsGatewayService.METADATA_PASSWORD));
-//        assertNull(unit.getMembers());
-//    }
-//    /**
-//     * Gets default metadata for an unit.
-//     * @return default unit's metadata
-//     */
-//    protected Map<String, String> getDefaultUnitMetadata() {
-//        final Map<String, String> rslt = new HashMap<String, String>();
-//        rslt.put(SmsGatewayService.METADATA_USERNAME, "nick");
-//        rslt.put(SmsGatewayService.METADATA_PASSWORD, "passwd");
-//        rslt.put(UnitDto.UNIT_TYPE, "doctor");
-//        return rslt;
-//    }
-//
+
+    // --------------------------------------------------- Unit Assistant Stuff
+
+    // CHECKSTYLE:OFF
+    public static final String UNITNAME = "unitXY";
+    public static final Long LIMITED_SMSS = null;
+    // CHECKSTYLE:ON
+
+    /** @return a new created default unit */
+    protected Unit createDefaultUnit() {
+        return createUnit(UNITNAME, getDefaultUnitMetadata(), LIMITED_SMSS);
+    }
+    /**
+     * Creates a new unit with given attributes.
+     * @param name unit name
+     * @param metadata unit's metadata
+     * @param limitedSmss limited amount of SMS that can be sent
+     * @return a new unit created
+     */
+    protected Unit createUnit(final String name, final Map<String, String> metadata, final Long limitedSmss) {
+        final Unit toCreate = new Unit();
+        toCreate.setName(name);
+        toCreate.setMetadata(metadata);
+        toCreate.setLimitedSmss(limitedSmss);
+        return unitService.createUnit(toCreate);
+    }
+    /**
+     * Asserts default unit.
+     * @param unit unit to be checked
+     */
+    protected void assertDefaultUnit(final Unit unit) {
+        assertNotNull(unit);
+        assertNotNull(unit.getId());
+        assertEquals(UNITNAME, unit.getName());
+//XXX        assertNotNull(unit.getMetadata());
+//XXX        assertTrue(unit.getMetadata().containsKey(SmsGatewayService.METADATA_USERNAME));
+        assertEquals(LIMITED_SMSS, unit.getLimitedSmss());
+//XXX        assertTrue(unit.getMetadata().containsKey(SmsGatewayService.METADATA_PASSWORD));
+//XXX        assertNull(unit.getMembers());
+    }
+    /**
+     * Gets default metadata for an unit.
+     * @return default unit's metadata
+     */
+    protected Map<String, String> getDefaultUnitMetadata() {
+        final Map<String, String> rslt = new HashMap<String, String>();
+        rslt.put(SmsGatewayService.METADATA_USERNAME, "nick");
+        rslt.put(SmsGatewayService.METADATA_PASSWORD, "passwd");
+        rslt.put(Unit.UNIT_TYPE, "doctor");
+        return rslt;
+    }
+
 //    // CHECKSTYLE:OFF
 //    public static final String PHONE_NUMBER = "606123456";
 //    public static final String BIRTH_NUMBER = "7001012222";

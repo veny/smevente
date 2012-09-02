@@ -1,20 +1,22 @@
 package veny.smevente.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import javax.persistence.Column;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import veny.smevente.misc.SoftDelete;
+
 /**
- * DTO representing the Organizational Unit.
+ * Entity class representing the Organizational Unit.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 8.11.2010
  */
-public class UnitDto implements Serializable {
+@SoftDelete
+public class Unit extends AbstractEntity {
 
     /**
      * This enumeration represents the variants of localized texts.
@@ -32,12 +34,6 @@ public class UnitDto implements Serializable {
 
     /** Key in metadata: unit type. */
     public static final String UNIT_TYPE = "type";
-
-    /** Generated (1110303) serial version UID. */
-    private static final long serialVersionUID = 4659769889589771514L;
-
-    /** Primary Key. */
-    private Long id;
 
     /** Unit name. */
     private String name;
@@ -58,16 +54,11 @@ public class UnitDto implements Serializable {
     private Long limitedSmss;
 
     /** Members in units. */
-    private List<MembershipDto> members;
+//    private List<MembershipDto> members;
 
 
     // CHECKSTYLE:OFF
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column
     public String getName() {
         return name;
     }
@@ -81,18 +72,19 @@ public class UnitDto implements Serializable {
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
     }
+    @Column
     public Long getLimitedSmss() {
         return limitedSmss;
     }
     public void setLimitedSmss(Long limitedSmss) {
         this.limitedSmss = limitedSmss;
     }
-    public List<MembershipDto> getMembers() {
-        return members;
-    }
-    public void setMembers(List<MembershipDto> members) {
-        this.members = members;
-    }
+//    public List<MembershipDto> getMembers() {
+//        return members;
+//    }
+//    public void setMembers(List<MembershipDto> members) {
+//        this.members = members;
+//    }
     // CHECKSTYLE:ON
 
     /**
@@ -125,8 +117,8 @@ public class UnitDto implements Serializable {
      */
     public void addMember(final MembershipDto member) {
         if (null == member.getUser()) { throw new IllegalArgumentException("membership has to have a user"); }
-        if (null == members) { members = new ArrayList<MembershipDto>(); }
-        members.add(member);
+//        if (null == members) { members = new ArrayList<MembershipDto>(); }
+//        members.add(member);
     }
 
     /** {@inheritDoc} */
@@ -138,16 +130,16 @@ public class UnitDto implements Serializable {
             .append(name)
             .append("', limitedSmss=")
             .append(limitedSmss);
-        if (null == members) {
-            rslt.append(", members=null");
-        } else {
-            rslt.append(", members=[");
-            for (MembershipDto u : members) {
-                rslt.append(u.getUser().getUsername()).append(',');
-            }
-            rslt.deleteCharAt(rslt.length() - 1);
-            rslt.append(']');
-        }
+//        if (null == members) {
+//            rslt.append(", members=null");
+//        } else {
+//            rslt.append(", members=[");
+//            for (MembershipDto u : members) {
+//                rslt.append(u.getUser().getUsername()).append(',');
+//            }
+//            rslt.deleteCharAt(rslt.length() - 1);
+//            rslt.append(']');
+//        }
         rslt.append(")");
         return rslt.toString();
     }

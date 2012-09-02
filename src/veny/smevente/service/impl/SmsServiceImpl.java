@@ -1,4 +1,4 @@
-package veny.smevente.service.gae;
+package veny.smevente.service.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,12 +23,12 @@ import veny.smevente.dao.jpa.gae.MedicalHelpCategoryDaoGae;
 import veny.smevente.dao.jpa.gae.MembershipDaoGae;
 import veny.smevente.dao.jpa.gae.PatientDaoGae;
 import veny.smevente.dao.jpa.gae.SmsDaoGae;
-import veny.smevente.dao.jpa.gae.UnitDaoGae;
 import veny.smevente.dao.jpa.gae.UserDaoGae;
+import veny.smevente.dao.orientdb.UnitDaoImpl;
 import veny.smevente.model.MembershipDto;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.SmsDto;
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.model.gae.MedicalHelpCategory;
 import veny.smevente.model.gae.Membership;
@@ -61,7 +61,7 @@ public class SmsServiceImpl implements SmsService {
     private MembershipDaoGae membershipDao;
     /** Dependency. */
     @Autowired
-    private UnitDaoGae unitDao;
+    private UnitDaoImpl unitDao;
     /** Dependency. */
     @Autowired
     private PatientDaoGae patientDao;
@@ -438,7 +438,7 @@ public class SmsServiceImpl implements SmsService {
         for (Sms smsGae : found) {
             final SmsDto sms = smsGae.mapToDto();
             final Patient patientGae = patientDao.getById(smsGae.getPatientId());
-            final UnitDto unit = unitDao.getById(patientGae.getUnitId()).mapToDto();
+            final Unit unit = unitDao.getById(patientGae.getUnitId()).mapToDto();
             sms.setAuthor(userDao.getById(smsGae.getUserId()).mapToDto());
             sms.setPatient(patientGae.mapToDto());
             sms.getPatient().setUnit(unit);

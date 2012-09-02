@@ -3,7 +3,7 @@ package veny.smevente.dao;
 import veny.smevente.model.User;
 
 /**
- * Interface for persistence operation withs <code>User</code> entity.
+ * Interface for persistence operation with <code>User</code> entity.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 18.8.2012

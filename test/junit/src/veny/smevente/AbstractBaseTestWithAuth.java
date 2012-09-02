@@ -17,10 +17,10 @@ import org.springframework.test.context.ContextConfiguration;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.dao.jpa.gae.MembershipDaoGae;
-import veny.smevente.dao.jpa.gae.UnitDaoGae;
 import veny.smevente.dao.jpa.gae.UserDaoGae;
+import veny.smevente.dao.orientdb.UnitDaoImpl;
 import veny.smevente.model.MembershipDto.Type;
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.model.gae.Membership;
 import veny.smevente.model.gae.Unit;
@@ -38,8 +38,8 @@ public abstract class AbstractBaseTestWithAuth extends AbstractBaseTest {
 
     // CHECKSTYLE:OFF
     protected User user1;
-    protected UnitDto unit1;
-    protected UnitDto unit2;
+    protected Unit unit1;
+    protected Unit unit2;
     // CHECKSTYLE:ON
 
     /** User DAO. */
@@ -47,7 +47,7 @@ public abstract class AbstractBaseTestWithAuth extends AbstractBaseTest {
     private UserDaoGae userDao;
     /** Unit DAO. */
     @Autowired
-    private UnitDaoGae unitDao;
+    private UnitDaoImpl unitDao;
     /** Membership DAO. */
     @Autowired
     private MembershipDaoGae membershipDao;

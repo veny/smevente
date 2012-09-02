@@ -10,7 +10,7 @@ import veny.smevente.AbstractBaseTestWithAuth;
 import veny.smevente.model.MedicalHelpCategoryDto;
 import veny.smevente.model.MembershipDto;
 import veny.smevente.model.PatientDto;
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
 /**
@@ -89,7 +89,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.createUnit. */
     @Test
     public void testCreateUnit() {
-        final UnitDto toCreate = new UnitDto();
+        final Unit toCreate = new Unit();
         toCreate.setName(UNITNAME);
         toCreate.setMetadata(getDefaultUnitMetadata());
         toCreate.setLimitedSmss(LIMITED_SMSS);

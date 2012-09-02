@@ -19,7 +19,7 @@ public class PatientDto implements Serializable {
     private Long id;
 
     /** Unit which is master of this. */
-    private UnitDto unit;
+    private Unit unit;
     /** Patient's first name. */
     private String firstname;
     /** Patient's surname. */
@@ -48,10 +48,10 @@ public class PatientDto implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    public UnitDto getUnit() {
+    public Unit getUnit() {
         return unit;
     }
-    public void setUnit(UnitDto unit) {
+    public void setUnit(Unit unit) {
         this.unit = unit;
     }
     public String getFirstname() {
@@ -150,7 +150,7 @@ public class PatientDto implements Serializable {
         if (null == unitId || unitId.longValue() <= 0) {
             throw new IllegalArgumentException("invalid unit ID (null or less than 0)");
         }
-        setUnit(new UnitDto());
+        setUnit(new Unit());
         getUnit().setId(unitId);
     }
 

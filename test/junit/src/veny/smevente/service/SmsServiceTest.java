@@ -21,7 +21,7 @@ import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.MedicalHelpCategoryDto;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.SmsDto;
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
 /**
@@ -67,7 +67,7 @@ public class SmsServiceTest extends AbstractBaseTest {
             assertEquals("expected IllegalArgumentException", true, false);
         } catch (IllegalArgumentException e) { assertEquals(true, true); }
         try { // not the same unit by patient & unit
-            final UnitDto unit = createUnit("zx", new HashMap<String, String>(), 0L);
+            final Unit unit = createUnit("zx", new HashMap<String, String>(), 0L);
             final PatientDto patient = createPatient("A", "B", null, null, unit);
             createSms("a", now, 0, "a", created.getAuthor(), patient, created.getMedicalHelpCategory());
             assertEquals("expected IllegalArgumentException", true, false);
@@ -117,7 +117,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     @Test
     public void testCreateAndSendSpecialSmsByLimitedUnit() {
         final User author = createDefaultUser();
-        final UnitDto limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
+        final Unit limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
         final PatientDto patient = createPatient("a", "b", "606146177", null, limitedUnit);
         assertEquals(1L, limitedUnit.getLimitedSmss().longValue());
 
@@ -128,7 +128,7 @@ public class SmsServiceTest extends AbstractBaseTest {
 
         // first time - OK
         smsService.createAndSendSpecialSms(sms);
-        final UnitDto decreasedUnit = unitService.getById(limitedUnit.getId());
+        final Unit decreasedUnit = unitService.getById(limitedUnit.getId());
         assertEquals(limitedUnit.getLimitedSmss().longValue() - 1L, decreasedUnit.getLimitedSmss().longValue());
 
         // second time - limit exceeded
@@ -228,8 +228,8 @@ public class SmsServiceTest extends AbstractBaseTest {
         final Date to = new Date(); // now
         final Map<String, String> metadata = new HashMap<String, String>();
         metadata.put("A", "B");
-        final UnitDto unitA = createUnit("A", metadata, 0L);
-        final UnitDto unitB = createUnit("B", metadata, 0L);
+        final Unit unitA = createUnit("A", metadata, 0L);
+        final Unit unitB = createUnit("B", metadata, 0L);
         final User authorA = createUser("A", "A", "AA", false);
         final User authorB = createUser("B", "B", "B", false);
         final PatientDto patientA = createPatient("A", "A", null, null, unitA);
@@ -367,7 +367,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     @Test
     public void testSendSmsByLimitedUnit() {
         final User author = createDefaultUser();
-        final UnitDto limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
+        final Unit limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
         final PatientDto patient = createPatient("a", "b", "606146177", null, limitedUnit);
         final MedicalHelpCategoryDto mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, limitedUnit);
@@ -383,7 +383,7 @@ public class SmsServiceTest extends AbstractBaseTest {
 
         // first time - OK
         smsService.sendSms(created.getId());
-        final UnitDto decreasedUnit = unitService.getById(limitedUnit.getId());
+        final Unit decreasedUnit = unitService.getById(limitedUnit.getId());
         assertEquals(limitedUnit.getLimitedSmss().longValue() - 1L, decreasedUnit.getLimitedSmss().longValue());
 
         // second time - limit exceeded
@@ -430,7 +430,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     @Test
     public void testBulkSendByLimitedUnit() {
         final User author = createDefaultUser();
-        final UnitDto limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
+        final Unit limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
         final PatientDto patient = createPatient("a", "b", "606146177", null, limitedUnit);
         final MedicalHelpCategoryDto mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, limitedUnit);

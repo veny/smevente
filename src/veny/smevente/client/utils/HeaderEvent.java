@@ -2,7 +2,7 @@ package veny.smevente.client.utils;
 
 import java.util.Date;
 
-import veny.smevente.model.UnitDto;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
 import com.google.gwt.event.shared.EventHandler;
@@ -45,7 +45,7 @@ public class HeaderEvent extends GwtEvent<HeaderEvent.HeaderHandler> {
     public static final Type<HeaderHandler> TYPE = new Type<HeaderHandler>();
 
     /** The selected unit. */
-    private UnitDto unit;
+    private Unit unit;
     /** The selected unit member. */
     private User unitMember;
     /** The selected date. */
@@ -55,7 +55,7 @@ public class HeaderEvent extends GwtEvent<HeaderEvent.HeaderHandler> {
      * Constructor.
      * @param unit selected unit
      */
-    public HeaderEvent(final UnitDto unit) {
+    public HeaderEvent(final Unit unit) {
         this.unit = unit;
     }
     /**
@@ -97,7 +97,7 @@ public class HeaderEvent extends GwtEvent<HeaderEvent.HeaderHandler> {
      * Gets selected unit.
      * @return selected unit
      */
-    public UnitDto getUnit() {
+    public Unit getUnit() {
         return unit;
     }
     /**

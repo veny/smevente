@@ -104,6 +104,9 @@ public final class DatabaseWrapper implements DisposableBean {
             if (db.getMetadata().getSchema().existsClass("User")) {
                 db.getMetadata().getSchema().dropClass("User");
             }
+            if (db.getMetadata().getSchema().existsClass("Unit")) {
+                db.getMetadata().getSchema().dropClass("Unit");
+            }
             if (db.getMetadata().getSchema().existsClass("AbstractEntity")) {
                 db.getMetadata().getSchema().dropClass("AbstractEntity");
             }
@@ -114,6 +117,8 @@ public final class DatabaseWrapper implements DisposableBean {
             entity.createProperty("revision", OType.STRING);
             // User
             OClass user = db.getMetadata().getSchema().createClass("User", entity);
+            // Unit
+            OClass unit = db.getMetadata().getSchema().createClass("Unit", entity);
         }
     }
 

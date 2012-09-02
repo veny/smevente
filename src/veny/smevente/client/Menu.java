@@ -8,7 +8,7 @@ import veny.smevente.client.mvp.SingletonEventBus;
 import veny.smevente.client.utils.DateUtils;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
-import veny.smevente.model.UnitDto.TextVariant;
+import veny.smevente.model.Unit.TextVariant;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
