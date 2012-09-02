@@ -3,6 +3,7 @@ package veny.smevente.service.gae;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 import java.util.logging.Logger;
@@ -269,33 +270,32 @@ public class UserServiceImpl implements UserService {
         LOG.info("changed password, userId=" + userId);
     }
 
-//    /*
-//     * Here is not used a TX because of GAE Entity Group limit for transaction.
-//     * I avoided to use TX (not needed here).
-//     */
-//    // no authorization - used in AuthenticationProvider
-//    /** {@inheritDoc} */
-//    @Override
-//    public User performLogin(final String username, final String password) {
-//        if (null == username) { throw new NullPointerException("username cannot be null"); }
-//        if (null == password) { throw new NullPointerException("password cannot be null"); }
-//
-//        final User userGae = userDao.findByUsernameAndPassword(username, encodePassword(password));
-//
-//        if (null == userGae) {
-//            LOG.info("user not found by username & password, username=" + username);
-//            return null;
-//        }
-//
-//        // update last logged in timestamp
-//        userGae.setLastLoggedIn(new Date());
-//        userDao.persist(userGae);
-//
-//        final User rslt = userGae.mapToDto();
-//        LOG.info("found user by username & password, " + rslt);
-//        return rslt;
-//    }
-//
+    /*
+     * Here is not used a TX because of GAE Entity Group limit for transaction.
+     * I avoided to use TX (not needed here).
+     */
+    // no authorization - used in AuthenticationProvider
+    /** {@inheritDoc} */
+    @Override
+    public User performLogin(final String username, final String password) {
+        if (Strings.isNullOrEmpty(username)) { throw new NullPointerException("username cannot be blank"); }
+        if (Strings.isNullOrEmpty(password)) { throw new NullPointerException("password cannot be blank"); }
+
+        final User user = userDao.findByUsernameAndPassword(username, encodePassword(password));
+
+        if (null == user) {
+            LOG.info("user not found by username & password, username=" + username);
+            return null;
+        }
+
+        // update last logged in timestamp
+        user.setLastLoggedIn(new Date());
+        userDao.persist(user);
+
+        LOG.info("found user by username & password, " + user);
+        return user;
+    }
+
     // no authorization
     /** {@inheritDoc} */
     @Override

@@ -11,7 +11,6 @@ import veny.smevente.model.User;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 
 /**
  * OrientDB DAO implementation for <code>User</code> entity.
@@ -48,8 +47,8 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
         return getDatabaseWrapper().execute(new ODatabaseCallback<User>() {
             @Override
             public User doWithDatabase(final ODatabaseDocument db) {
-                final StringBuilder sql = new StringBuilder("SELECT DISTINCT FROM ")
-                        .append(getPersistentClass().getName())
+                final StringBuilder sql = new StringBuilder("SELECT FROM ")
+                        .append(getPersistentClass().getSimpleName())
                         .append(" WHERE username = :username AND password = :password");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
@@ -61,7 +60,8 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
                     throw new IllegalStateException("expected max 1 user, but found " + users.size());
                 }
 
-                return users.isEmpty() ? null : (User) users.get(0).getOriginalValue("xx");
+                return users.isEmpty() ? null : (User) getDatabaseWrapper().createValueObject(
+                        users.get(0), getPersistentClass());
             }
         });
     }

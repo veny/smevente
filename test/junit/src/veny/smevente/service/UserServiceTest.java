@@ -2,6 +2,7 @@ package veny.smevente.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -351,7 +352,7 @@ public class UserServiceTest extends AbstractBaseTest {
         userService.updateUserPassword(created.getId(), PASSWORD, newPassword);
         assertEquals(1, userService.getAllUsers().size()); // stored existing user, no duplicate
 
-//        assertNotNull(userService.performLogin(USERNAME, newPassword));
+        assertNotNull(userService.performLogin(USERNAME, newPassword));
         assertEquals(userService.encodePassword(newPassword), userService.findUserByUsername(USERNAME).getPassword());
 
         try { // bad user ID

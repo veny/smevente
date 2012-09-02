@@ -105,14 +105,14 @@ public interface UserService {
      */
     void updateUserPassword(String userId, String oldPassword, String newPassword) throws ValidationException;
 
-//    /**
-//     * Loads the user by user name and password.
-//     *
-//     * @param username user name of the user
-//     * @param password password of the user
-//     * @return user by user name and password or <i>null</i> if not found
-//     */
-//    User performLogin(String username, String password);
+    /**
+     * Loads the user by user name and password.
+     *
+     * @param username user name of the user
+     * @param password password of the user
+     * @return user by user name and password or <i>null</i> if not found
+     */
+    User performLogin(String username, String password);
 
     /**
      * Encode the user password.
