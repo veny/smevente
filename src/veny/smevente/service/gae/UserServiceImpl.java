@@ -3,27 +3,20 @@ package veny.smevente.service.gae;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import veny.smevente.dao.UserDao;
-import veny.smevente.dao.jpa.gae.MembershipDaoGae;
-import veny.smevente.dao.jpa.gae.UnitDaoGae;
-import veny.smevente.model.MembershipDto;
-import veny.smevente.model.UnitDto;
 import veny.smevente.model.User;
-import veny.smevente.model.gae.Membership;
-import veny.smevente.model.gae.Unit;
 import veny.smevente.service.UserService;
+
+import com.google.common.base.Strings;
+
 import eu.maydu.gwt.validation.client.server.ServerValidation;
 
 
@@ -176,28 +169,28 @@ public class UserServiceImpl implements UserService {
         LOG.info("user deleted, id=" + id);
     }
 
-//    // no authorization - used in AuthenticationProvider
-//    /** {@inheritDoc} */
-//    @Override
-//    public User findUserByUsername(final String username) {
-//        if (null == username) { throw new NullPointerException("username cannot be null"); }
-//
-//        final List<User> found = userDao.findBy("username", username, null);
-//        if (found.size() > 1) {
-//            throw new IllegalStateException("duplicate username found (has to be unique!), username=" + username);
-//        }
-//
-//        final User rslt;
-//        if (0 == found.size()) {
-//            rslt = null;
-//        } else {
-//            rslt = found.get(0).mapToDto();
-//        }
-//
-//        LOG.info("found user by username, " + rslt);
-//        return rslt;
-//    }
-//
+    // no authorization - used in AuthenticationProvider
+    /** {@inheritDoc} */
+    @Override
+    public User findUserByUsername(final String username) {
+        if (Strings.isNullOrEmpty(username)) { throw new NullPointerException("username cannot be blank"); }
+
+        final List<User> found = userDao.findBy("username", username, null);
+        if (found.size() > 1) {
+            throw new IllegalStateException("duplicate username found (has to be unique!), username=" + username);
+        }
+
+        final User rslt;
+        if (0 == found.size()) {
+            rslt = null;
+        } else {
+            rslt = found.get(0);
+        }
+
+        LOG.info("found user by username, " + rslt);
+        return rslt;
+    }
+
 //    /** {@inheritDoc} */
 //    @SuppressWarnings("unchecked")
 //    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
@@ -255,28 +248,27 @@ public class UserServiceImpl implements UserService {
 //        LOG.info("returned users, size=" + rslt.size());
 //        return rslt;
 //    }
-//
-//    /** {@inheritDoc} */
-//    @PreAuthorize("hasPermission(#userId, 'V_MY_USER')")
-//    @Override
-//    public void updateUserPassword(final Long userId, final String oldPassword, final String newPassword) {
-//        if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
-//        if (null == oldPassword) { throw new NullPointerException("old password cannot be null"); }
-//        if (null == newPassword) { throw new NullPointerException("new password cannot be null"); }
-//        if (0 == newPassword.trim().length()) { throw new IllegalArgumentException("new password cannot be blank"); }
-//
-//        // check the old password
-//        final User userGae = userDao.getById(userId);
-//        if (!userGae.getPassword().equals(encodePassword(oldPassword))) {
-//            LOG.warning("trying to change password, the old one is bad, userId=" + userId);
-//            ServerValidation.exception("validationOldPasswordBad", "old", (Object[]) null);
-//        }
-//
-//        userGae.setPassword(encodePassword(newPassword));
-//        userDao.persist(userGae);
-//        LOG.info("changed password, userId=" + userId);
-//    }
-//
+
+    /** {@inheritDoc} */
+    @PreAuthorize("hasPermission(#userId, 'V_MY_USER')")
+    @Override
+    public void updateUserPassword(final String userId, final String oldPassword, final String newPassword) {
+        if (Strings.isNullOrEmpty(userId)) { throw new NullPointerException("user ID cannot be blank"); }
+        if (Strings.isNullOrEmpty(oldPassword)) { throw new NullPointerException("old password cannot be blank"); }
+        if (Strings.isNullOrEmpty(newPassword)) { throw new NullPointerException("new password cannot be blank"); }
+
+        // check the old password
+        final User user = userDao.getById(userId);
+        if (!user.getPassword().equals(encodePassword(oldPassword))) {
+            LOG.warning("trying to change password, the old one is bad, userId=" + userId);
+            ServerValidation.exception("validationOldPasswordBad", "old", (Object[]) null);
+        }
+
+        user.setPassword(encodePassword(newPassword));
+        userDao.persist(user);
+        LOG.info("changed password, userId=" + userId);
+    }
+
 //    /*
 //     * Here is not used a TX because of GAE Entity Group limit for transaction.
 //     * I avoided to use TX (not needed here).
@@ -320,7 +312,9 @@ public class UserServiceImpl implements UserService {
         for (byte b : hash) {
             formatter.format("%02x", b);
         }
-        return formatter.toString();
+
+        final StringBuffer rslt = new StringBuffer(md.getAlgorithm()).append(':').append(formatter.toString());
+        return rslt.toString();
     }
 
     /** {@inheritDoc} */

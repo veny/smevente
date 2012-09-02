@@ -1,7 +1,6 @@
 package veny.smevente.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.List;
@@ -10,9 +9,6 @@ import org.junit.Test;
 
 import veny.smevente.AbstractBaseTest;
 import veny.smevente.dao.ObjectNotFoundException;
-import veny.smevente.model.MembershipDto;
-import veny.smevente.model.MembershipDto.Type;
-import veny.smevente.model.UnitDto;
 import veny.smevente.model.User;
 import eu.maydu.gwt.validation.client.ValidationException;
 
@@ -308,22 +304,22 @@ public class UserServiceTest extends AbstractBaseTest {
 //        assertEquals(0, userService.findMembershipsByUser(secondCreated.getId()).size());
 //        assertEquals(0, userService.findMembershipsByUser(thirdCreated.getId()).size());
 //    }
-//
-//    /** UserService.findUserByUsername. */
-//    @Test
-//    public void testFindUserByUsername() {
-//        createDefaultUser();
-//        final User found = userService.findUserByUsername(USERNAME);
-//        assertDefaultUser(found);
-//
-//        assertNull(userService.findUserByUsername(USERNAME.toUpperCase()));
-//        assertNull(userService.findUserByUsername(USERNAME + "x"));
-//
-//        // SOFT DELETE
-//        userService.deleteUser(found.getId());
-//        assertNull(userService.findUserByUsername(USERNAME));
-//    }
-//
+
+    /** UserService.findUserByUsername. */
+    @Test
+    public void testFindUserByUsername() {
+        createDefaultUser();
+        final User found = userService.findUserByUsername(USERNAME);
+        assertDefaultUser(found);
+
+        assertNull(userService.findUserByUsername(USERNAME.toUpperCase()));
+        assertNull(userService.findUserByUsername(USERNAME + "x"));
+
+        // SOFT DELETE
+        userService.deleteUser(found.getId());
+        assertNull(userService.findUserByUsername(USERNAME));
+    }
+
 //    /** UserService.findUsers. */
 //    @Test
 //    public void testFindUsers() {
@@ -344,27 +340,30 @@ public class UserServiceTest extends AbstractBaseTest {
 //        userService.deleteUser(found.get(0).getId());
 //        assertEquals(0, userService.findUsers(unit1.getId(), USERNAME, FULLNAME).size());
 //    }
-//
-//    /** UserService.updateUserPassword. */
-//    @Test
-//    public void testUpdateUserPassword() {
-//        final User created = createDefaultUser();
-//        final String newPassword = PASSWORD + "x";
-//        userService.updateUserPassword(created.getId(), PASSWORD, newPassword);
-//
+
+    /** UserService.updateUserPassword. */
+    @Test
+    public void testUpdateUserPassword() {
+        final User created = createDefaultUser();
+
+        final String newPassword = PASSWORD + "x";
+        assertEquals(1, userService.getAllUsers().size());
+        userService.updateUserPassword(created.getId(), PASSWORD, newPassword);
+        assertEquals(1, userService.getAllUsers().size()); // stored existing user, no duplicate
+
 //        assertNotNull(userService.performLogin(USERNAME, newPassword));
-//        assertEquals(userService.encodePassword(newPassword), userService.findUserByUsername(USERNAME).getPassword());
-//
-//        try { // bad user ID
-//            userService.updateUserPassword(2L, PASSWORD, newPassword);
-//            assertEquals("expected ObjectNotFoundException", true, false);
-//        } catch (ObjectNotFoundException e) { assertEquals(true, true); }
-//        try { // bad old password
-//            userService.updateUserPassword(created.getId(), PASSWORD, newPassword);
-//            assertEquals("expected ValidationException", true, false);
-//        } catch (ValidationException e) { assertEquals(true, true); }
-//    }
-//
+        assertEquals(userService.encodePassword(newPassword), userService.findUserByUsername(USERNAME).getPassword());
+
+        try { // bad user ID
+            userService.updateUserPassword("xx", PASSWORD, newPassword);
+            assertEquals("expected ObjectNotFoundException", true, false);
+        } catch (ObjectNotFoundException e) { assertEquals(true, true); }
+        try { // bad old password
+            userService.updateUserPassword(created.getId(), PASSWORD, newPassword);
+            assertEquals("expected ValidationException", true, false);
+        } catch (ValidationException e) { assertEquals(true, true); }
+    }
+
 //    /** UserService.performLogin. */
 //    @Test
 //    public void testPerformLogin() {

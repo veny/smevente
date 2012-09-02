@@ -3,11 +3,7 @@ package veny.smevente.service;
 import java.util.List;
 
 import veny.smevente.dao.ObjectNotFoundException;
-import veny.smevente.model.MembershipDto;
-import veny.smevente.model.MembershipDto.Type;
-import veny.smevente.model.UnitDto;
 import veny.smevente.model.User;
-
 import eu.maydu.gwt.validation.client.ValidationException;
 
 /**
@@ -83,13 +79,13 @@ public interface UserService {
      */
     void deleteUser(String id);
 
-//    /**
-//     * Finds user by given user name.
-//     * @param username unique user name to find
-//     * @return found user
-//     */
-//    User findUserByUsername(String username);
-//
+    /**
+     * Finds user by given user name.
+     * @param username unique user name to find
+     * @return found user
+     */
+    User findUserByUsername(String username);
+
 //    /**
 //     * Finds users according to given user name and/or full name for given unit.
 //     * @param unitId the ID of unit the searched users must belong into
@@ -98,17 +94,17 @@ public interface UserService {
 //     * @return list of found users
 //     */
 //    List<User> findUsers(Long unitId, String userName, String fullName);
-//
-//    /**
-//     * Changes password of given user.
-//     *
-//     * @param userId user ID
-//     * @param oldPassword the old password
-//     * @param newPassword the new password
-//     * @throws ValidationException if the old password doesn't match
-//     */
-//    void updateUserPassword(Long userId, String oldPassword, String newPassword) throws ValidationException;
-//
+
+    /**
+     * Changes password of given user.
+     *
+     * @param userId user ID
+     * @param oldPassword the old password
+     * @param newPassword the new password
+     * @throws ValidationException if the old password doesn't match
+     */
+    void updateUserPassword(String userId, String oldPassword, String newPassword) throws ValidationException;
+
 //    /**
 //     * Loads the user by user name and password.
 //     *

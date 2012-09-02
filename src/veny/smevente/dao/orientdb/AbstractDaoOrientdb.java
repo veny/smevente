@@ -15,9 +15,8 @@ import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.misc.SoftDelete;
 import veny.smevente.model.AbstractEntity;
-import veny.smevente.model.User;
 
-import com.orientechnologies.orient.core.db.ODatabase;
+import com.google.common.base.Strings;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -76,12 +75,17 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     /** {@inheritDoc} */
     @Override
     public void remove(final T entity) {
-        remove(((AbstractEntity) entity).getId());
+        final String id = ((AbstractEntity) entity).getId();
+        remove(id);
     }
 
     /** {@inheritDoc} */
     @Override
     public void remove(final String entityId) {
+        if (Strings.isNullOrEmpty(entityId)) {
+            throw new IllegalArgumentException("entity ID cannot be blank");
+        }
+
         databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
             public T doWithDatabase(final ODatabaseDocument db) {
@@ -135,8 +139,15 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
         return databaseWrapper.execute(new ODatabaseCallback<List< T >>() {
             @Override
             public List< T > doWithDatabase(final ODatabaseDocument db) {
-                final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName());
-                final List<ODocument> result = executeWithSoftDelete(db, sql.toString(), null);
+                final StringBuilder sql =
+                        new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName());
+                List<ODocument> result;
+                if (withDeleted) {
+                    final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
+                    result = db.command(query).execute();
+                } else {
+                    result = executeWithSoftDelete(db, sql.toString(), null);
+                }
                 final List<T> rslt = new ArrayList<T>();
                 for (ODocument doc : result) {
                     rslt.add((T) databaseWrapper.createValueObject(doc, getPersistentClass()));
@@ -161,7 +172,6 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put(paramName, value);
 
-                //setSoftDeleteFilter(query);
                 final List<T> rslt = new ArrayList<T>();
                 final List<ODocument> result = executeWithSoftDelete(db, sql.toString(), params);
                 for (ODocument doc : result) {
@@ -187,17 +197,14 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
                         .append(" WHERE ").append(paramName1).append(" = :").append(paramName1)
                         .append(" AND ").append(paramName2).append(" = :").append(paramName2);
 
-//                appendSoftDeleteFilter(sql);
                 if (null != orderBy) { sql.append(" ORDER BY ").append(orderBy); }
 
-                final OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sql.toString());
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put(paramName1, value1);
                 params.put(paramName2, value2);
 
-                //setSoftDeleteFilter(query);
                 final List<T> rslt = new ArrayList<T>();
-                final List<ODocument> result = db.command(query).execute(params);
+                final List<ODocument> result = executeWithSoftDelete(db, sql.toString(), params);
                 for (ODocument doc : result) {
                     rslt.add((T) databaseWrapper.createValueObject(doc, getPersistentClass()));
                 }
@@ -207,7 +214,6 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public T getBy(final String paramName, final Object value) {
         return databaseWrapper.execute(new ODatabaseCallback< T >() {
@@ -233,7 +239,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
         databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
             public T doWithDatabase(final ODatabaseDocument db) {
-                final ODocument doc = databaseWrapper.createDocument(entity);
+                final ODocument doc = databaseWrapper.createDocument((AbstractEntity) entity);
                 doc.save();
 
                 if (null == ((AbstractEntity) entity).getId()) {
@@ -294,7 +300,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
             if (sql.indexOf(" WHERE ") > 0 || sql.indexOf(" where ") > 0) {
                 sql.append(" AND ");
             } else {
-                sql.append(" WHERE ");
+                sql.append(" WHERE "); // TODO [veny,A] ORDER BY problem
             }
             sql.append(softDeleteAnnotation.attribute()).append(" = :softDelete");
             if (null == params) { params = new HashMap<String, Object>(); }

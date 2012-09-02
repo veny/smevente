@@ -22,8 +22,10 @@ import org.springframework.context.ApplicationContextAware;
 
 import veny.smevente.model.AbstractEntity;
 
+import com.google.gwt.thirdparty.guava.common.base.Strings;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -178,7 +180,7 @@ public final class DatabaseWrapper implements DisposableBean {
 
     // ---------------------------------------- Document<->Entity Mapping Stuff
 
-    public ODocument createDocument(Object entity) {
+    public ODocument createDocument(AbstractEntity entity) {
         final ODocument doc = new ODocument(entity.getClass().getSimpleName());
 
         final PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(entity);
@@ -193,6 +195,12 @@ public final class DatabaseWrapper implements DisposableBean {
                 }
             }
         }
+
+        // RID, Version
+        if (!Strings.isNullOrEmpty(entity.getId())) { doc.setIdentity(new ORecordId(entity.getId())); }
+        if (!Strings.isNullOrEmpty(entity.getVersion())) { doc.setVersion(Integer.parseInt(entity.getVersion())); }
+        doc.setClassName(entity.getClass().getSimpleName());
+
         return doc;
     }
 
