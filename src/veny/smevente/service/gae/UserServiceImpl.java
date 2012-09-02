@@ -108,17 +108,17 @@ public class UserServiceImpl implements UserService {
 //        createMembershipWithReorg(unitId, rslt.getId(), type, significance);
 //        return rslt;
 //    }
-//
-//    /** {@inheritDoc} */
-//    @Transactional(readOnly = true)
-//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-//    @Override
-//    public User getUser(final Long id) {
-//        final User rslt = userDao.getById(id).mapToDto();
-//        LOG.info("found user by id=" + id);
-//        return rslt;
-//    }
-//
+
+    /** {@inheritDoc} */
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+    @Override
+    public User getUser(final String id) {
+        final User rslt = userDao.getById(id);
+        LOG.info("found user by id=" + id);
+        return rslt;
+    }
+
 //    /** {@inheritDoc} */
 //    @Transactional
 //    // TODO [veny,B] think of authorization

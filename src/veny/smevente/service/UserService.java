@@ -49,15 +49,15 @@ public interface UserService {
 //    User createUser(User user, Long unitId,
 //            final Type type,
 //            final Integer significance);
-//
-//    /**
-//     * Gets user by given ID.
-//     * @param id user ID to be returned
-//     * @return the found user
-//     * @throws ObjectNotFoundException if the ID doesn't exist
-//     */
-//    User getUser(Long id) throws ObjectNotFoundException;
-//
+
+    /**
+     * Gets user by given ID.
+     * @param id user ID to be returned
+     * @return the found user
+     * @throws ObjectNotFoundException if the ID doesn't exist
+     */
+    User getUser(String id) throws ObjectNotFoundException;
+
 //    /**
 //     * Updates a given user into DB.
 //     *

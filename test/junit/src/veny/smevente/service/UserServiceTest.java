@@ -105,20 +105,20 @@ public class UserServiceTest extends AbstractBaseTest {
 //        assertEquals(1, userService.getAllUsers().size());
 //        assertEquals(0, userService.findMembershipsByUser(userA.getId()).size());
 //    }
-//
-//    /** UserService.getUser. */
-//    @Test
-//    public void testGetUser() {
-//        final User created = createDefaultUser();
-//        final User found = userService.getUser(created.getId());
-//        assertDefaultUser(found);
-//
-//        try { // invalid ID
-//            userService.getUser(-1L);
-//            assertEquals("expected ObjectNotFoundException", true, false);
-//        } catch (ObjectNotFoundException e) { assertEquals(true, true); }
-//    }
-//
+
+    /** UserService.getUser. */
+    @Test
+    public void testGetUser() {
+        final User created = createDefaultUser();
+        final User found = userService.getUser(created.getId());
+        assertDefaultUser(found);
+
+        try { // invalid ID
+            userService.getUser("xx");
+            assertEquals("expected ObjectNotFoundException", true, false);
+        } catch (ObjectNotFoundException e) { assertEquals(true, true); }
+    }
+
 //    /** UserService.updateUser. */
 //    @SuppressWarnings("deprecation")
 //    @Test

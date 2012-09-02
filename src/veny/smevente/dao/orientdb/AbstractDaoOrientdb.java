@@ -99,15 +99,18 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
-    public T getById(final long id) throws ObjectNotFoundException {
-        final T rslt = databaseWrapper.execute(new ODatabaseCallback<T>() {
-            @Override
-            public T doWithDatabase(final ODatabaseDocument db) {
-                //return em.find(getPersistentClass(), id);
-                return null;
-            }
-        }, false);
+    public T getById(final String id) throws ObjectNotFoundException {
+        final T rslt;
+
+        try {
+            ODocument doc = databaseWrapper.get().getRecord(new ORecordId(id));
+            rslt = (T) databaseWrapper.createValueObject(doc, getPersistentClass());
+        } catch (IllegalArgumentException e) {
+            throw new ObjectNotFoundException("failed to find entity'"
+                     + getPersistentClass().getSimpleName() + "' not found, id=" + id, e);
+        }
 
         if (null == rslt) {
             throw new ObjectNotFoundException(
@@ -234,7 +237,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
                 doc.save();
 
                 if (null == ((AbstractEntity) entity).getId()) {
-                    db.commit(); // to obtain RID
+                    db.commit(); // to obtain RID, TODO [veny,A] other solution?
                     ((AbstractEntity) entity).setId(doc.getIdentity().toString());
                 }
                 return null;
@@ -348,7 +351,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
                 softDeleteValue =
                     (Boolean) propertyUtilsBean.getProperty(entity, softDeleteAnnotation.attribute());
             } catch (Exception e) {
-                throw new IllegalStateException("failed to read a 'sof delete' attribute, entity=" + entity, e);
+                throw new IllegalStateException("failed to read a 'softDelete' attribute, entity=" + entity, e);
             }
             if (null != softDeleteValue && softDeleteValue.booleanValue()) {
                 throw new DeletedObjectException("found deleted entity, entity=" + entity);

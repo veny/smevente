@@ -7,3 +7,4 @@
 .checkstyle
 war/WEB-INF/classes/
 .settings/
+test/junit/classes/

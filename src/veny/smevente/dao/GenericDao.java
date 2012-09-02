@@ -18,7 +18,7 @@ public interface GenericDao< T > {
      * @return desired entity
      * @throws ObjectNotFoundException if entity with given id is not found.
      */
-    T getById(long id) throws ObjectNotFoundException;
+    T getById(String id) throws ObjectNotFoundException;
 
     /**
      * Get all entities of concrete type (excluding the deleted by SoftDelete entities).
