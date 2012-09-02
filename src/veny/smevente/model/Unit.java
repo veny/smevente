@@ -1,13 +1,13 @@
 package veny.smevente.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.Column;
+import javax.persistence.Transient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import veny.smevente.misc.SoftDelete;
+
+import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 /**
  * Entity class representing the Organizational Unit.
@@ -32,15 +32,15 @@ public class Unit extends AbstractEntity {
     }
 
 
-    /** Key in metadata: unit type. */
-    public static final String UNIT_TYPE = "type";
-
     /** Unit name. */
     private String name;
-
-    /** Unit metadata. */
+    /** Unit description. */
+    private String description;
+    /** Type of unit (doctor/...). */
+    private String type;
+    /** Configuration of SMS engine used by the unit. */
     @JsonIgnore
-    private Map<String, String> metadata;
+    private String smsEngine;
 
     /**
      * An unit can be limited in amount of SMS that can be sent.
@@ -54,7 +54,7 @@ public class Unit extends AbstractEntity {
     private Long limitedSmss;
 
     /** Members in units. */
-//    private List<MembershipDto> members;
+//XXX    private List<MembershipDto> members;
 
 
     // CHECKSTYLE:OFF
@@ -65,12 +65,27 @@ public class Unit extends AbstractEntity {
     public void setName(String name) {
         this.name = name;
     }
-    @JsonIgnore
-    public Map<String, String> getMetadata() {
-        return metadata;
+    @Column
+    public String getDescription() {
+        return description;
     }
-    public void setMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    @Column
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+    @JsonIgnore
+    @Column
+    public String getSmsEngine() {
+        return smsEngine;
+    }
+    public void setSmsEngine(String smsEngine) {
+        this.smsEngine = smsEngine;
     }
     @Column
     public Long getLimitedSmss() {
@@ -93,22 +108,14 @@ public class Unit extends AbstractEntity {
      * @return unit type or <i>TextVariant.PATIENT</i> if not defined
      * @see TextVariant
      */
-    public TextVariant getType() {
-        if (null == metadata || null == metadata.get(UNIT_TYPE) || 0 == metadata.get(UNIT_TYPE).trim().length()) {
+    @Transient
+    @JsonIgnore
+    public TextVariant getTypeEnum() {
+        if (Strings.isNullOrEmpty(type)) {
             return TextVariant.PATIENT;
         } else {
-            return TextVariant.valueOf(metadata.get(UNIT_TYPE).trim());
+            return TextVariant.valueOf(type.trim());
         }
-    }
-
-    /**
-     * Adds a new entry into metadata.
-     * @param key entry key
-     * @param value entry value
-     */
-    public void addMetadata(final String key, final String value) {
-        if (null == getMetadata()) { setMetadata(new HashMap<String, String>()); }
-        metadata.put(key, value);
     }
 
     /**
@@ -130,7 +137,7 @@ public class Unit extends AbstractEntity {
             .append(name)
             .append("', limitedSmss=")
             .append(limitedSmss);
-//        if (null == members) {
+//XXX        if (null == members) {
 //            rslt.append(", members=null");
 //        } else {
 //            rslt.append(", members=[");

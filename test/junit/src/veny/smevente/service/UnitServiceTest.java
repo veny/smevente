@@ -2,13 +2,14 @@ package veny.smevente.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
 
 import veny.smevente.AbstractBaseTest;
+import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.Unit;
 
 /**
@@ -25,76 +26,52 @@ public class UnitServiceTest extends AbstractBaseTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testCreateUnit() {
-        final Unit toCreate = new Unit();
-        toCreate.setName(UNITNAME);
-        toCreate.setMetadata(getDefaultUnitMetadata());
-        toCreate.setLimitedSmss(LIMITED_SMSS);
-        final Unit firstUnit = unitService.createUnit(toCreate);
-        assertDefaultUnit(firstUnit);
-
+        final Unit firstUnit = createDefaultUnit();
         final List<Unit> found = unitService.getAllUnits();
         assertEquals(1, found.size());
         assertDefaultUnit(found.get(0));
 
-        toCreate.setName("A");
-        toCreate.setMetadata(getDefaultUnitMetadata());
-        toCreate.setLimitedSmss(0L);
-        final Unit secondUnit = unitService.createUnit(toCreate);
-        assertFalse(firstUnit.getId().equals(secondUnit.getId()));
+        final Unit secondUnit = createUnit("A", "desc", null, 10L, null);
+        assertNotNull(secondUnit.getId());
         assertEquals("A", secondUnit.getName());
-        assertEquals(getDefaultUnitMetadata(), secondUnit.getMetadata());
-        assertEquals(new Long(0), secondUnit.getLimitedSmss());
+        assertEquals(new Long(10), secondUnit.getLimitedSmss());
 
-        toCreate.setName("B");
-        toCreate.setMetadata(getDefaultUnitMetadata());
-        toCreate.setLimitedSmss(1L);
-        final Unit thirdUnit = unitService.createUnit(toCreate);
-        assertFalse(firstUnit.getId().equals(thirdUnit.getId()));
-        assertFalse(secondUnit.getId().equals(thirdUnit.getId()));
-        assertEquals(3, unitService.getAllUnits().size());
+        assertFalse(firstUnit.getId().equals(secondUnit.getId()));
+        assertEquals(2, unitService.getAllUnits().size());
 
         // Validation
-
+        Unit toCreate = new Unit();
         try { // existing unit name
             toCreate.setName("A");
             unitService.createUnit(toCreate);
             assertEquals("expected IllegalStateException", true, false);
         } catch (IllegalStateException e) { assertEquals(true, true); }
-        try { // no metadata
-            toCreate.setName("X");
-            toCreate.setMetadata(null);
-            unitService.createUnit(toCreate);
-            assertEquals("expected NullPointerException", true, false);
-        } catch (NullPointerException e) { assertEquals(true, true); }
-        try { // empty metadata
-            toCreate.setName("X");
-            toCreate.setMetadata(new HashMap<String, String>());
-            unitService.createUnit(toCreate);
-            assertEquals("expected IllegalArgumentException", true, false);
-        } catch (IllegalArgumentException e) { assertEquals(true, true); }
+
+        // SOFT DELETE
+        // impossible to delete unit now
     }
 
-//    /** UnitService.getById. */
-//    @Test
-//    public void testGetById() {
-//        final Unit firstCreated = createDefaultUnit();
-//        final Unit firstFound = unitService.getById(firstCreated.getId());
-//        assertEquals(firstCreated.getId(), firstFound.getId());
-//        assertDefaultUnit(firstFound);
-//
-//        final Unit secondCreated = createUnit("A", getDefaultUnitMetadata(), LIMITED_SMSS);
-//        final Unit secondFound = unitService.getById(secondCreated.getId());
-//        assertEquals(secondCreated.getId(), secondFound.getId());
-//        assertEquals("A", secondFound.getName());
-//
-//        try { // get by non-existing ID
-//            unitService.getById(Long.MAX_VALUE);
-//            assertEquals("expected ObjectNotFoundException", true, false);
-//        } catch (ObjectNotFoundException e) { assertEquals(true, true); }
-//    }
-//
-//    // ---------------------------------------------------------- Patient Stuff
-//
+    /** UnitService.getUnit. */
+    @Test
+    public void testGetById() {
+        final Unit firstCreated = createDefaultUnit();
+        final Unit firstFound = unitService.getUnit(firstCreated.getId());
+        assertEquals(firstCreated.getId(), firstFound.getId());
+        assertDefaultUnit(firstFound);
+
+        final Unit secondCreated = createUnit("A", "desc", "type", 0L, "sms");
+        final Unit secondFound = unitService.getUnit(secondCreated.getId());
+        assertEquals(secondCreated.getId(), secondFound.getId());
+        assertEquals("A", secondFound.getName());
+
+        try { // get by non-existing ID
+            unitService.getUnit("xx");
+            assertEquals("expected ObjectNotFoundException", true, false);
+        } catch (ObjectNotFoundException e) { assertEquals(true, true); }
+    }
+
+    // ---------------------------------------------------------- Patient Stuff
+
 //    /** UnitService.createPatient. */
 //    @Test
 //    public void testCreatePatient() {

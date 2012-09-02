@@ -48,6 +48,7 @@ public interface UserService {
 
     /**
      * Gets user by given ID.
+     *
      * @param id user ID to be returned
      * @return the found user
      * @throws ObjectNotFoundException if the ID doesn't exist

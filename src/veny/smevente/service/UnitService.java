@@ -2,6 +2,7 @@ package veny.smevente.service;
 
 import java.util.List;
 
+import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.MedicalHelpCategoryDto;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.Unit;
@@ -24,12 +25,14 @@ public interface UnitService {
      */
     Unit createUnit(Unit unit);
 
-//    /**
-//     * Gets unit by ID.
-//     * @param id ID to search
-//     * @return found unit (only the unit, not the aggregated entities)
-//     */
-//    Unit getById(Long id);
+    /**
+     * Gets unit by given ID.
+     *
+     * @param id ID to search
+     * @return found unit (only the unit, not the aggregated entities)
+     * @throws ObjectNotFoundException if the ID doesn't exist
+     */
+    Unit getUnit(String id) throws ObjectNotFoundException;
 
     /**
      * Loads all units.

@@ -62,8 +62,6 @@ public class UnitServiceImpl implements UnitService {
     public Unit createUnit(final Unit unit) {
         if (null == unit) { throw new NullPointerException("unit cannot be null"); }
         if (Strings.isNullOrEmpty(unit.getName())) { throw new IllegalArgumentException("unit name cannot be blank"); }
-        if (null == unit.getMetadata()) { throw new NullPointerException("unit metadata cannot be null"); }
-        if (unit.getMetadata().isEmpty()) { throw new IllegalArgumentException("unit metadata cannot be empty"); }
 
         // to be sure that reused object will be created as new
         if (null != unit.getId()) { unit.setId(null); unit.setVersion(null); }
@@ -86,14 +84,15 @@ public class UnitServiceImpl implements UnitService {
         }
     }
 
-//    /** {@inheritDoc} */
-//    @Override
-//    @Transactional
-//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-//    public Unit getById(final Long id) {
-//        final Unit unitGae = unitDao.getById(id);
-//        return unitGae.mapToDto();
-//    }
+    /** {@inheritDoc} */
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+    public Unit getUnit(final String id) {
+        final Unit unit = unitDao.getById(id);
+        LOG.info("found unit by id=" + id);
+        return unit;
+    }
 
     /** {@inheritDoc} */
     @Override

@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +14,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import veny.smevente.dao.orientdb.DatabaseWrapper;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
-import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
 
@@ -100,25 +96,32 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
 
     // CHECKSTYLE:OFF
     public static final String UNITNAME = "unitXY";
-    public static final Long LIMITED_SMSS = null;
     // CHECKSTYLE:ON
 
     /** @return a new created default unit */
     protected Unit createDefaultUnit() {
-        return createUnit(UNITNAME, getDefaultUnitMetadata(), LIMITED_SMSS);
+        return createUnit(
+                UNITNAME, "unit's desc", Unit.TextVariant.PATIENT.toString(),
+                11L, "usr:x,passwd:y");
     }
     /**
      * Creates a new unit with given attributes.
      * @param name unit name
-     * @param metadata unit's metadata
+     * @param description unit's description
+     * @param type unit's type
      * @param limitedSmss limited amount of SMS that can be sent
+     * @param smsEngine SMS engine configuration
      * @return a new unit created
      */
-    protected Unit createUnit(final String name, final Map<String, String> metadata, final Long limitedSmss) {
+    protected Unit createUnit(
+            final String name, final String description, final String type,
+            final Long limitedSmss, final String smsEngine) {
         final Unit toCreate = new Unit();
         toCreate.setName(name);
-        toCreate.setMetadata(metadata);
+        toCreate.setDescription(description);
+        toCreate.setType(type);
         toCreate.setLimitedSmss(limitedSmss);
+        toCreate.setSmsEngine(smsEngine);
         return unitService.createUnit(toCreate);
     }
     /**
@@ -129,22 +132,11 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         assertNotNull(unit);
         assertNotNull(unit.getId());
         assertEquals(UNITNAME, unit.getName());
-//XXX        assertNotNull(unit.getMetadata());
-//XXX        assertTrue(unit.getMetadata().containsKey(SmsGatewayService.METADATA_USERNAME));
-        assertEquals(LIMITED_SMSS, unit.getLimitedSmss());
-//XXX        assertTrue(unit.getMetadata().containsKey(SmsGatewayService.METADATA_PASSWORD));
+        assertEquals("unit's desc", unit.getDescription());
+        assertEquals(Unit.TextVariant.PATIENT.toString(), unit.getType());
+        assertTrue(11L == unit.getLimitedSmss());
+        assertEquals("usr:x,passwd:y", unit.getSmsEngine());
 //XXX        assertNull(unit.getMembers());
-    }
-    /**
-     * Gets default metadata for an unit.
-     * @return default unit's metadata
-     */
-    protected Map<String, String> getDefaultUnitMetadata() {
-        final Map<String, String> rslt = new HashMap<String, String>();
-        rslt.put(SmsGatewayService.METADATA_USERNAME, "nick");
-        rslt.put(SmsGatewayService.METADATA_PASSWORD, "passwd");
-        rslt.put(Unit.UNIT_TYPE, "doctor");
-        return rslt;
     }
 
 //    // CHECKSTYLE:OFF
