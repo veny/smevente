@@ -365,22 +365,23 @@ public class UserServiceTest extends AbstractBaseTest {
         } catch (ValidationException e) { assertEquals(true, true); }
     }
 
-//    /** UserService.performLogin. */
-//    @Test
-//    public void testPerformLogin() {
-//        createDefaultUser();
-//        final User found = userService.performLogin(USERNAME, PASSWORD);
-//        assertDefaultUser(found);
-//
-//        assertNull(userService.performLogin(USERNAME, PASSWORD + "x"));
-//        assertNull(userService.performLogin(USERNAME + "x", PASSWORD));
-//
-//        // SOFT DELETE
-//        // can't login with deleted user
-//        userService.deleteUser(found.getId());
-//        assertNull(userService.performLogin(USERNAME, PASSWORD));
-//    }
-//
+    /** UserService.performLogin. */
+    @Test
+    public void testPerformLogin() {
+        createDefaultUser();
+        final User found = userService.performLogin(USERNAME, PASSWORD);
+        assertDefaultUser(found);
+        assertNotNull(found.getLastLoggedIn());
+
+        assertNull(userService.performLogin(USERNAME, PASSWORD + "x"));
+        assertNull(userService.performLogin(USERNAME + "x", PASSWORD));
+
+        // SOFT DELETE
+        // can't login with deleted user
+        userService.deleteUser(found.getId());
+        assertNull(userService.performLogin(USERNAME, PASSWORD));
+    }
+
 //    /** UserService.getUnitsOfUser. */
 //    @Test
 //    public void testGetUnitsOfUser() {

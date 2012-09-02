@@ -10,7 +10,7 @@ import eu.maydu.gwt.validation.client.ValidationException;
  * User service.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
- * @since 0.1
+ * @since 12.7.2010
  */
 public interface UserService {
 
