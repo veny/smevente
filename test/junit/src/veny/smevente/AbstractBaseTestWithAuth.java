@@ -19,7 +19,7 @@ import veny.smevente.client.utils.Pair;
 import veny.smevente.dao.jpa.gae.MembershipDaoGae;
 import veny.smevente.dao.jpa.gae.UserDaoGae;
 import veny.smevente.dao.orientdb.UnitDaoImpl;
-import veny.smevente.model.MembershipDto.Type;
+import veny.smevente.model.Membership.Type;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.model.gae.Membership;

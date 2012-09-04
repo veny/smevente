@@ -23,9 +23,9 @@
 
   <bean id="userDao" class="veny.smevente.dao.orientdb.UserDaoImpl" />
   <bean id="unitDao" class="veny.smevente.dao.orientdb.UnitDaoImpl" />
+  <bean id="membershipDao" class="veny.smevente.dao.orientdb.MembershipDaoImpl" />
   <!-- bean id="smsDao" class="veny.smevente.dao.jpa.gae.SmsDaoGae" />
   <bean id="patientDao" class="veny.smevente.dao.jpa.gae.PatientDaoGae" />
-  <bean id="membershipDao" class="veny.smevente.dao.jpa.gae.MembershipDaoGae" />
   <bean id="medicalHelpCategoryDao" class="veny.smevente.dao.jpa.gae.MedicalHelpCategoryDaoGae" /-->
 
 

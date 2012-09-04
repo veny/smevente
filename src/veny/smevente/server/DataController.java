@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.dao.jpa.gae.PatientDaoGae;
 import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.MembershipDto;
+import veny.smevente.model.Membership;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.model.gae.Patient;

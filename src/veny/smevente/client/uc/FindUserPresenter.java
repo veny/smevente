@@ -13,8 +13,8 @@ import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.UiUtils;
-import veny.smevente.model.MembershipDto;
-import veny.smevente.model.MembershipDto.Type;
+import veny.smevente.model.Membership;
+import veny.smevente.model.Membership.Type;
 import veny.smevente.model.User;
 import veny.smevente.shared.EntityTypeEnum;
 
@@ -303,12 +303,12 @@ public class FindUserPresenter
      * @return true if specified user is an administrator of selected unit
      */
     private boolean isAdmin(final User user) {
-        List<MembershipDto> unitMembers = App.get().getSelectedUnit().getMembers();
+        List<Membership> unitMembers = App.get().getSelectedUnit().getMembers();
 
         // just to be sure
         if (null == unitMembers) { throw new IllegalStateException("selected unit members cannot be null"); }
 
-        for (MembershipDto unitMember: unitMembers) {
+        for (Membership unitMember: unitMembers) {
             if (unitMember.getUser().getId() == user.getId()) {
                 return Type.ADMIN == unitMember.getType();
             }

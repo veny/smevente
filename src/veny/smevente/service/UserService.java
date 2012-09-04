@@ -3,6 +3,7 @@ package veny.smevente.service;
 import java.util.List;
 
 import veny.smevente.dao.ObjectNotFoundException;
+import veny.smevente.model.Membership;
 import veny.smevente.model.User;
 import eu.maydu.gwt.validation.client.ValidationException;
 
@@ -33,18 +34,16 @@ public interface UserService {
      */
     User createUser(User user);
 
-//    /**
-//     * Stores a given user and also the related membership into DB.
-//     *
-//     * @param user the user to be created
-//     * @param unitId the id of unit the user belongs into
-//     * @param type the type of membership
-//     * @param significance the significance of membership
-//     * @return created user
-//     */
-//    User createUser(User user, Long unitId,
-//            final Type type,
-//            final Integer significance);
+    /**
+     * Stores a given user and also the related membership into DB.
+     *
+     * @param user user to be created
+     * @param unitId ID of unit the user belongs to
+     * @param role role of membership
+     * @param significance significance of membership
+     * @return created user
+     */
+    User createUser(User user, String unitId, final Membership.Role role, final Integer significance);
 
     /**
      * Gets user by given ID.

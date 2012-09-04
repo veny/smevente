@@ -1,7 +1,6 @@
 package veny.smevente.service.impl;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -14,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
+import veny.smevente.dao.MembershipDao;
+import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
+import veny.smevente.model.Membership;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.UserService;
 
@@ -38,11 +41,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
     /** Dependency. */
-//    @Autowired
-//    private MembershipDaoGae membershipDao;
-//    /** Dependency. */
-//    @Autowired
-//    private UnitDaoGae unitDao;
+    @Autowired
+    private MembershipDao membershipDao;
+    /** Dependency. */
+    @Autowired
+    private UnitDao unitDao;
 
     /** Message Digest to generate password hash. */
     private final MessageDigest md;
@@ -96,22 +99,34 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-//    /** {@inheritDoc} */
-//    @Transactional
-//    @PreAuthorize("hasPermission(#unitId, 'V_UNIT_ADMIN')")
-//    @Override
-//    public User createUser(final User user,
-//            final Long unitId,
-//            final MembershipDto.Type type,
-//            final Integer significance) {
-//
-//        if (significance < 0) {
-//            throw new IllegalArgumentException("invalid value of significance: " + significance);
-//        }
-//        User rslt = createUser(user);
-//        createMembershipWithReorg(unitId, rslt.getId(), type, significance);
-//        return rslt;
-//    }
+    /** {@inheritDoc} */
+    @Transactional
+    @PreAuthorize("hasPermission(#unitId, 'V_UNIT_ADMIN')")
+    @Override
+    public User createUser(
+            final User user, final String unitId, final Membership.Role role, final Integer significance) {
+
+        if (significance < 0) {
+            throw new IllegalArgumentException("invalid value of significance: " + significance);
+        }
+
+        // find unit
+        final Unit unit = unitDao.getById(unitId);
+
+        // create user
+        final User rslt = createUser(user);
+
+        // create membership
+        final Membership memb = new Membership();
+        memb.setRole(role.toString());
+        memb.setSignificance(significance);
+        memb.setUser(rslt);
+        membershipDao.persist(memb);
+
+        // add membership to unit
+
+        return rslt;
+    }
 
     /** {@inheritDoc} */
     @Transactional(readOnly = true)

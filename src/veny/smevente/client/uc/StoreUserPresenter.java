@@ -15,7 +15,7 @@ import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
-import veny.smevente.model.MembershipDto;
+import veny.smevente.model.Membership;
 import veny.smevente.model.User;
 import veny.smevente.shared.EntityTypeEnum;
 
@@ -198,11 +198,11 @@ public class StoreUserPresenter
 
         if (null != parameter && parameter instanceof User) {
             final User u = (User) parameter;
-            MembershipDto m = getMembership(u);
+            Membership m = getMembership(u);
             view.getUserId().setValue(u.getId().toString());
             view.getUsername().setText(u.getUsername());
             view.getFullname().setText(u.getFullname());
-            view.getUnitAdmin().setValue(m.getType() == MembershipDto.Type.ADMIN);
+            view.getUnitAdmin().setValue(m.getType() == MembershipDto.Membership.ADMIN);
             view.getUnitOrder().setValue("" + (m.getSignificance() + 1));
             view.getUpdatePassword().setValue(null);
             view.getUpdatePassword().setEnabled(true);
@@ -365,7 +365,7 @@ public class StoreUserPresenter
         final Map<String, String> params = new HashMap<String, String>();
         params.put("unitId", App.get().getSelectedUnit().getId().toString());
         params.put("type", "" + (view.getUnitAdmin().getValue()
-                ? MembershipDto.Type.ADMIN.ordinal() : MembershipDto.Type.MEMBER.ordinal()));
+                ? MembershipDto.Membership.ADMIN.ordinal() : MembershipDto.Membership.MEMBER.ordinal()));
         params.put("significance", "" + (Integer.parseInt(view.getUnitOrder().getValue()) - 1));
         params.put("username", u.getUsername());
         params.put("fullname", u.getFullname());
@@ -404,11 +404,11 @@ public class StoreUserPresenter
      * @param user the user for which the membership will be searched
      * @return the membership for given user and current unit
      */
-    private MembershipDto getMembership(final User user) {
-        List<MembershipDto> memberships = App.get().getSelectedUnit().getMembers();
+    private Membership getMembership(final User user) {
+        List<Membership> memberships = App.get().getSelectedUnit().getMembers();
 
         if (memberships != null) {
-            for (MembershipDto membership: memberships) {
+            for (Membership membership: memberships) {
                 if (membership.getUser().getId() == user.getId()) {
                     return membership;
                 }

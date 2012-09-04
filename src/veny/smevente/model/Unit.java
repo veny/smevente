@@ -1,5 +1,7 @@
 package veny.smevente.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Transient;
 
@@ -54,7 +56,7 @@ public class Unit extends AbstractEntity {
     private Long limitedSmss;
 
     /** Members in units. */
-//XXX    private List<MembershipDto> members;
+    private List<Membership> members;
 
 
     // CHECKSTYLE:OFF
@@ -94,16 +96,16 @@ public class Unit extends AbstractEntity {
     public void setLimitedSmss(Long limitedSmss) {
         this.limitedSmss = limitedSmss;
     }
-//    public List<MembershipDto> getMembers() {
-//        return members;
-//    }
-//    public void setMembers(List<MembershipDto> members) {
-//        this.members = members;
-//    }
+    public List<Membership> getMembers() {
+        return members;
+    }
+    public void setMembers(List<Membership> members) {
+        this.members = members;
+    }
     // CHECKSTYLE:ON
 
     /**
-     * Virtual attribute based on a metadata entry with key 'type'.
+     * Virtual attribute providing an enumeration entry to identify type.
      * The 'type' defines a unit categorization (e.g. doctor, hairdressing, ...).
      * @return unit type or <i>TextVariant.PATIENT</i> if not defined
      * @see TextVariant
@@ -122,7 +124,7 @@ public class Unit extends AbstractEntity {
      * Adds a new members.
      * @param member new member to be added
      */
-    public void addMember(final MembershipDto member) {
+    public void addMember(final Membership member) {
         if (null == member.getUser()) { throw new IllegalArgumentException("membership has to have a user"); }
 //        if (null == members) { members = new ArrayList<MembershipDto>(); }
 //        members.add(member);

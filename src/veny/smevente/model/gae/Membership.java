@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 import org.springframework.beans.BeanUtils;
 
-import veny.smevente.model.MembershipDto;
+import veny.smevente.model.Membership;
 
 /**
  * GAE entity representing the Membership in an Organizational Unit.
@@ -29,7 +29,7 @@ public class Membership implements Serializable {
     private Long id;
 
     /** Membership type (User, Admin, ...). */
-    private MembershipDto.Type type;
+    private Membership.Type type;
     /** Significance of the membership to other memberships of a user. */
     private int significance;
     /** ID of user. */
@@ -44,10 +44,10 @@ public class Membership implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    public MembershipDto.Type getType() {
+    public Membership.Type getType() {
         return type;
     }
-    public void setType(MembershipDto.Type type) {
+    public void setType(Membership.Type type) {
         this.type = type;
     }
     public int getSignificance() {
@@ -76,8 +76,8 @@ public class Membership implements Serializable {
      * Maps instance of this into corresponding DTO object.
      * @return corresponding DTO
      */
-    public MembershipDto mapToDto() {
-        final MembershipDto rslt = new MembershipDto();
+    public Membership mapToDto() {
+        final Membership rslt = new Membership();
         BeanUtils.copyProperties(this, rslt, new String[] { "userId", "unitId" });
         return rslt;
     }

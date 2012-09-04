@@ -3,8 +3,6 @@ package veny.smevente.service;
 import java.util.List;
 
 import veny.smevente.dao.ObjectNotFoundException;
-import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.PatientDto;
 import veny.smevente.model.Unit;
 
 /**

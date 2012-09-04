@@ -8,7 +8,7 @@ import java.util.Map;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.MembershipDto;
+import veny.smevente.model.Membership;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.Unit;
@@ -233,10 +233,10 @@ public class JsonDeserializer {
      * @param jsObj JSON object to deserialize
      * @return <code>MembershipDto</code> object
      */
-    private MembershipDto membershipFromJson(final JSONObject jsObj) {
-        final MembershipDto rslt = new MembershipDto();
+    private Membership membershipFromJson(final JSONObject jsObj) {
+        final Membership rslt = new Membership();
         rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
-        rslt.setType(MembershipDto.Type.valueOf(jsObj.get("type").isString().stringValue()));
+        rslt.setType(Membership.Type.valueOf(jsObj.get("type").isString().stringValue()));
         rslt.setSignificance((int) jsObj.get("significance").isNumber().doubleValue());
         final JSONObject jsUserObj = jsObj.get("user").isObject();
         if (null != jsUserObj) {
@@ -248,8 +248,8 @@ public class JsonDeserializer {
      * @param jsArr JSON array to deserialize
      * @return list of <code>Unit</code> objects
      */
-    private List<MembershipDto> membershipListFromJson(final JSONArray jsArr) {
-        final List<MembershipDto> rslt = new ArrayList<MembershipDto>();
+    private List<Membership> membershipListFromJson(final JSONArray jsArr) {
+        final List<Membership> rslt = new ArrayList<Membership>();
 
         for (int i = 0; i < jsArr.size(); i++) {
             JSONValue jsonValue = jsArr.get(i);

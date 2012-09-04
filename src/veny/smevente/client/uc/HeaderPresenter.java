@@ -17,7 +17,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.CrudEventHandler;
 import veny.smevente.client.utils.HeaderEvent;
-import veny.smevente.model.MembershipDto;
+import veny.smevente.model.Membership;
 import veny.smevente.model.Unit;
 import veny.smevente.shared.EntityTypeEnum;
 
@@ -303,7 +303,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
                         usedUnits.add(selectedUnitIndex, newUnit);
                         // change content of members drop down
                         view.getUnitMembers().clear();
-                        for (MembershipDto m : newUnit.getMembers()) {
+                        for (Membership m : newUnit.getMembers()) {
                             view.getUnitMembers().addItem(m.getUser().getFullname());
                         }
                         break;
@@ -341,7 +341,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
 
         // change content of members drop down
         view.getUnitMembers().clear();
-        for (MembershipDto m : newUnit.getMembers()) {
+        for (Membership m : newUnit.getMembers()) {
             view.getUnitMembers().addItem(m.getUser().getFullname());
         }
         // the current logged in user is always on the first position (index 0)

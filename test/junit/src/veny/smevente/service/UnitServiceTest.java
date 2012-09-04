@@ -26,6 +26,7 @@ public class UnitServiceTest extends AbstractBaseTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testCreateUnit() {
+Unit u = unitService.getUnit("#9:0");
         final Unit firstUnit = createDefaultUnit();
         final List<Unit> found = unitService.getAllUnits();
         assertEquals(1, found.size());
@@ -52,7 +53,7 @@ public class UnitServiceTest extends AbstractBaseTest {
     }
 
     /** UnitService.getUnit. */
-    @Test
+    //@Test
     public void testGetById() {
         final Unit firstCreated = createDefaultUnit();
         final Unit firstFound = unitService.getUnit(firstCreated.getId());

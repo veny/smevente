@@ -111,7 +111,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
         try {
             ODocument doc = databaseWrapper.get().getRecord(new ORecordId(id));
             rslt = (T) databaseWrapper.createValueObject(doc, getPersistentClass());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) { // from 'new ORecordId'
             throw new ObjectNotFoundException("failed to find entity'"
                      + getPersistentClass().getSimpleName() + "' not found, id=" + id, e);
         }

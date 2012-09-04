@@ -2,23 +2,13 @@ package veny.smevente.dao.orientdb;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.PreDestroy;
 import javax.persistence.Column;
-import javax.persistence.Transient;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import veny.smevente.model.AbstractEntity;
 
@@ -29,6 +19,8 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.object.db.OObjectDatabasePool;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
  * Wrapper of OrientDB engine allowing to execute.
@@ -97,12 +89,15 @@ public final class DatabaseWrapper implements DisposableBean {
     public void setInit(final boolean init) {
         this.init = init;
         if (init) {
-            final ODatabaseDocument db = get();
+            final OObjectDatabaseTx db = get();
 
 
             // delete classes
             if (db.getMetadata().getSchema().existsClass("User")) {
                 db.getMetadata().getSchema().dropClass("User");
+            }
+            if (db.getMetadata().getSchema().existsClass("Membership")) {
+                db.getMetadata().getSchema().dropClass("Membership");
             }
             if (db.getMetadata().getSchema().existsClass("Unit")) {
                 db.getMetadata().getSchema().dropClass("Unit");
@@ -117,8 +112,15 @@ public final class DatabaseWrapper implements DisposableBean {
             entity.createProperty("revision", OType.STRING);
             // User
             OClass user = db.getMetadata().getSchema().createClass("User", entity);
+            // Membership
+            OClass membership = db.getMetadata().getSchema().createClass("Membership", entity);
+            membership.createProperty("user", OType.LINK, user).setMandatory(true);
             // Unit
             OClass unit = db.getMetadata().getSchema().createClass("Unit", entity);
+            unit.createProperty("memberships", OType.LINKSET, membership);
+
+            db.getEntityManager().registerEntityClasses("veny.smevente.model.User");
+            db.getEntityManager().registerEntityClasses("veny.smevente.model.Unit");
         }
     }
 
@@ -128,8 +130,11 @@ public final class DatabaseWrapper implements DisposableBean {
      *
      * @return object represent API to access data
      */
-    public ODatabaseDocument get() {
-        return ODatabaseDocumentPool.global().acquire(databaseUrl, username, password);
+//    public ODatabaseDocument get() {
+//        return ODatabaseDocumentPool.global().acquire(databaseUrl, username, password);
+//    }
+    public OObjectDatabaseTx get() {
+        return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
     }
 
     /**
@@ -152,7 +157,7 @@ public final class DatabaseWrapper implements DisposableBean {
      * @param <T> data type handled by the action
      */
     public <T> T execute(final ODatabaseCallback<T> callback, final boolean tx) {
-        final ODatabaseDocument db = this.get();
+        final OObjectDatabaseTx db = this.get();
         T rslt = null;
 
         try {

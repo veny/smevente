@@ -8,7 +8,7 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 
 import veny.smevente.AbstractBaseTestWithAuth;
 import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.MembershipDto;
+import veny.smevente.model.Membership;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -43,10 +43,10 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         userA.setUsername("a");
         userA.setFullname("a a");
         userA.setPassword("a");
-        userService.createUser(userA, unit1.getId(), MembershipDto.Type.MEMBER, 0);
+        userService.createUser(userA, unit1.getId(), MembershipDto.Membership.MEMBER, 0);
 
         try { // hasPermission(#unitId, 'V_UNIT_ADMIN')
-            userService.createUser(userA, unit2.getId(), MembershipDto.Type.MEMBER, 0);
+            userService.createUser(userA, unit2.getId(), MembershipDto.Membership.MEMBER, 0);
             assertEquals("expected AccessDeniedException", true, false);
         } catch (AccessDeniedException e) { assertEquals(true, true); }
     }
@@ -54,10 +54,10 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UserService.updateUser(UserDto, Long, MembershipDto.Type, Integer). */
     @Test
     public void testUserServiceUpdateUser() {
-        userService.updateUser(user1, unit1.getId(), MembershipDto.Type.MEMBER, 0);
+        userService.updateUser(user1, unit1.getId(), MembershipDto.Membership.MEMBER, 0);
 
         try { // hasPermission(#unitId, 'V_UNIT_ADMIN')
-            userService.createUser(user1, unit2.getId(), MembershipDto.Type.MEMBER, 0);
+            userService.createUser(user1, unit2.getId(), MembershipDto.Membership.MEMBER, 0);
             assertEquals("expected AccessDeniedException", true, false);
         } catch (AccessDeniedException e) { assertEquals(true, true); }
     }
@@ -71,7 +71,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         user.setUsername("a");
         user.setFullname("a a");
         user.setPassword("a");
-        user = userService.createUser(user, unit1.getId(), MembershipDto.Type.MEMBER, 0);
+        user = userService.createUser(user, unit1.getId(), MembershipDto.Membership.MEMBER, 0);
         try { // hasPermission(#userId, 'V_MY_USER')
             userService.updateUserPassword(user.getId(), user.getPassword(), "newPassword");
             assertEquals("expected AccessDeniedException", true, false);

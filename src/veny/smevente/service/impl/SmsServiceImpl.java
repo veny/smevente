@@ -25,7 +25,7 @@ import veny.smevente.dao.jpa.gae.PatientDaoGae;
 import veny.smevente.dao.jpa.gae.SmsDaoGae;
 import veny.smevente.dao.jpa.gae.UserDaoGae;
 import veny.smevente.dao.orientdb.UnitDaoImpl;
-import veny.smevente.model.MembershipDto;
+import veny.smevente.model.Membership;
 import veny.smevente.model.PatientDto;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.Unit;
@@ -389,7 +389,7 @@ public class SmsServiceImpl implements SmsService {
         final List<User> users = new ArrayList<User>();
 
         // Admin -> return other members
-        if (MembershipDto.Type.ADMIN.equals(userMemb.getType())) {
+        if (MembershipDto.Membership.ADMIN.equals(userMemb.getType())) {
             // find other users
             final List<Membership> other = membershipDao.findBy("unitId", unitId, null);
             for (Membership m : other) {

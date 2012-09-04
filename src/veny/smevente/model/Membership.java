@@ -1,36 +1,36 @@
 package veny.smevente.model;
 
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Transient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+import com.google.gwt.thirdparty.guava.common.base.Strings;
+
 
 
 /**
- * DTO entity representing the Membership in an Organizational Unit.
+ * Entity class representing the Membership of User in Organizational Unit.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 9.11.2010
  */
-public class MembershipDto implements Serializable {
+public class Membership extends AbstractEntity {
 
-    /** Generated (1110304) serial version UID. */
-    private static final long serialVersionUID = -1683227367944340693L;
     /**
      * Enumeration of membership types.
      * @author Vaclav Sykora [vaclav.sykora@gmail.com]
      * @since 5.7.2010
      */
-    public enum Type {
+    public enum Role {
         /** Ordinary member. */
         MEMBER,
         /** Administrator. */
         ADMIN
     }
 
-    /** Primary Key. */
-    private Long id;
-
-    /** Membership type (User, Admin, ...). */
-    private Type type;
-
+    /** Membership role (User, Admin, ...). */
+    private String role;
     /** Significance of the membership to other memberships of a user. */
     private int significance;
 
@@ -38,18 +38,14 @@ public class MembershipDto implements Serializable {
     private User user;
 
     // CHECKSTYLE:OFF
-    public Long getId() {
-        return id;
+    @Column
+    public String getRole() {
+        return role;
     }
-    public void setId(Long id) {
-        this.id = id;
+    public void setRole(String role) {
+        this.role = role;
     }
-    public Type getType() {
-        return type;
-    }
-    public void setType(Type type) {
-        this.type = type;
-    }
+    @Column
     public int getSignificance() {
         return significance;
     }
@@ -64,13 +60,30 @@ public class MembershipDto implements Serializable {
     }
     // CHECKSTYLE:ON
 
+
+    /**
+     * Virtual attribute providing an enumeration entry to identify role.
+     *
+     * @return membership role or <i>Role.MEMBER</i> if not defined
+     * @see Role
+     */
+    @Transient
+    @JsonIgnore
+    public Role getRoleEnum() {
+        if (Strings.isNullOrEmpty(role)) {
+            return Role.MEMBER;
+        } else {
+            return Role.valueOf(role.trim());
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString() {
         return new StringBuilder("Membership(id=")
             .append(getId())
-            .append(", type=")
-            .append(type)
+            .append(", role=")
+            .append(role)
             .append(", significance=")
             .append(significance)
             .append(", user=")

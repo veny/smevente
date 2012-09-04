@@ -12,7 +12,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.LoginPresenter;
 import veny.smevente.client.uc.LoginViewImpl;
-import veny.smevente.model.MembershipDto.Type;
+import veny.smevente.model.Membership.Role;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
 

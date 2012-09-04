@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.MembershipDto;
+import veny.smevente.model.Membership;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -151,7 +151,7 @@ public class UserController {
 
         // as first encode the password
         user.setPassword(userService.encodePassword(user.getPassword()));
-        MembershipDto.Type etype = MembershipDto.Type.values()[type.intValue()];
+        Membership.Type etype = Membership.Type.values()[type.intValue()];
         final User created = userService.createUser(user, unitId, etype, significance);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("user", created);
@@ -180,7 +180,7 @@ public class UserController {
         if (!User.DO_NOT_CHANGE_PASSWORD.equals(user.getPassword())) {
             user.setPassword(userService.encodePassword(user.getPassword()));
         }
-        MembershipDto.Type etype = MembershipDto.Type.values()[type.intValue()];
+        Membership.Type etype = Membership.Type.values()[type.intValue()];
         userService.updateUser(user, unitId, etype, significance);
         response.setStatus(200);
     }
