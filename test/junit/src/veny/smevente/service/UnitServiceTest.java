@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.orientechnologies.orient.core.id.ORecordId;
+
 import veny.smevente.AbstractBaseTest;
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.Unit;
@@ -26,7 +28,6 @@ public class UnitServiceTest extends AbstractBaseTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testCreateUnit() {
-Unit u = unitService.getUnit("#9:0");
         final Unit firstUnit = createDefaultUnit();
         final List<Unit> found = unitService.getAllUnits();
         assertEquals(1, found.size());
@@ -53,7 +54,7 @@ Unit u = unitService.getUnit("#9:0");
     }
 
     /** UnitService.getUnit. */
-    //@Test
+    @Test
     public void testGetById() {
         final Unit firstCreated = createDefaultUnit();
         final Unit firstFound = unitService.getUnit(firstCreated.getId());
@@ -65,8 +66,12 @@ Unit u = unitService.getUnit("#9:0");
         assertEquals(secondCreated.getId(), secondFound.getId());
         assertEquals("A", secondFound.getName());
 
-        try { // get by non-existing ID
+        try { // invalid ID class
             unitService.getUnit("xx");
+            assertEquals("expected ObjectNotFoundException", true, false);
+        } catch (ObjectNotFoundException e) { assertEquals(true, true); }
+        try { // invalid ID
+            unitService.getUnit(new ORecordId("#1001:123456789"));
             assertEquals("expected ObjectNotFoundException", true, false);
         } catch (ObjectNotFoundException e) { assertEquals(true, true); }
     }

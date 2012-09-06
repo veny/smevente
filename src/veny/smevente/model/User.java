@@ -26,25 +26,29 @@ public class User extends AbstractEntity {
     public static final String ROOT_USERNAME = "root";
 
     /** User name. */
+    @Column
     private String username;
 
     /** Password. */
     @JsonIgnore
+    @Column
     private String password;
 
     /** User's full name. */
+    @Column
     private String fullname;
 
     /** Whether the user is a system root. */
     @JsonIgnore
+    @Column
     private boolean root = false;
 
     /** Last log in time. */
     @JsonIgnore
+    @Column
     private Date lastLoggedIn;
 
     // CHECKSTYLE:OFF
-    @Column
     public String getUsername() {
         return username;
     }
@@ -52,14 +56,12 @@ public class User extends AbstractEntity {
         this.username = username;
     }
     @JsonIgnore
-    @Column
     public String getPassword() {
         return password;
     }
     public void setPassword(String password) {
         this.password = password;
     }
-    @Column
     public String getFullname() {
         return fullname;
     }
@@ -67,20 +69,18 @@ public class User extends AbstractEntity {
         this.fullname = fullname;
     }
     @JsonIgnore
-    @Column
-    public boolean isRoot() {
-        return root;
-    }
-    public void setRoot(boolean root) {
-        this.root = root;
-    }
-    @JsonIgnore
-    @Column
     public Date getLastLoggedIn() {
         return lastLoggedIn;
     }
     public void setLastLoggedIn(Date lastLoggedIn) {
         this.lastLoggedIn = lastLoggedIn;
+    }
+    @JsonIgnore
+    public boolean isRoot() {
+        return root;
+    }
+    public void setRoot(boolean root) {
+        this.root = root;
     }
     // CHECKSTYLE:ON
 

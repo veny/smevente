@@ -35,13 +35,17 @@ public class Unit extends AbstractEntity {
 
 
     /** Unit name. */
+    @Column
     private String name;
     /** Unit description. */
+    @Column
     private String description;
     /** Type of unit (doctor/...). */
+    @Column
     private String type;
     /** Configuration of SMS engine used by the unit. */
     @JsonIgnore
+    @Column
     private String smsEngine;
 
     /**
@@ -60,21 +64,18 @@ public class Unit extends AbstractEntity {
 
 
     // CHECKSTYLE:OFF
-    @Column
     public String getName() {
         return name;
     }
     public void setName(String name) {
         this.name = name;
     }
-    @Column
     public String getDescription() {
         return description;
     }
     public void setDescription(String description) {
         this.description = description;
     }
-    @Column
     public String getType() {
         return type;
     }
@@ -82,14 +83,12 @@ public class Unit extends AbstractEntity {
         this.type = type;
     }
     @JsonIgnore
-    @Column
     public String getSmsEngine() {
         return smsEngine;
     }
     public void setSmsEngine(String smsEngine) {
         this.smsEngine = smsEngine;
     }
-    @Column
     public Long getLimitedSmss() {
         return limitedSmss;
     }

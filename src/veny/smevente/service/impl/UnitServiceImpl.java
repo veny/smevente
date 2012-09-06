@@ -1,32 +1,18 @@
 package veny.smevente.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.gwt.thirdparty.guava.common.base.Strings;
-
 import veny.smevente.dao.UnitDao;
-import veny.smevente.dao.jpa.gae.MedicalHelpCategoryDaoGae;
-import veny.smevente.dao.jpa.gae.PatientDaoGae;
-import veny.smevente.dao.orientdb.UnitDaoImpl;
-import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.PatientDto;
 import veny.smevente.model.Unit;
-import veny.smevente.model.User;
-import veny.smevente.model.gae.MedicalHelpCategory;
-import veny.smevente.model.gae.Patient;
 import veny.smevente.server.validation.ValidationContainer;
-import veny.smevente.service.TextUtils;
 import veny.smevente.service.UnitService;
-import eu.maydu.gwt.validation.client.server.ServerValidation;
+
+import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 /**
  * Implementation of service collecting methods associated to Unit.
@@ -73,22 +59,16 @@ public class UnitServiceImpl implements UnitService {
         }
 
 //        unitGae.setMetadata(TextUtils.mapToString(unit.getMetadata()));
-        unitDao.persist(unit);
-        LOG.info("created new unit, name=" + name);
-
-        try {
-            // clone original object
-            return (Unit) BeanUtils.cloneBean(unit);
-        } catch (Exception e) {
-            throw new IllegalStateException("failed to clone unit", e);
-        }
+        final Unit rslt = unitDao.persist(unit);
+        LOG.info("created new unit, name=" + rslt);
+        return rslt;
     }
 
     /** {@inheritDoc} */
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public Unit getUnit(final String id) {
+    public Unit getUnit(final Object id) {
         final Unit unit = unitDao.getById(id);
         LOG.info("found unit by id=" + id);
         return unit;

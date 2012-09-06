@@ -30,7 +30,7 @@ public interface UnitService {
      * @return found unit (only the unit, not the aggregated entities)
      * @throws ObjectNotFoundException if the ID doesn't exist
      */
-    Unit getUnit(String id) throws ObjectNotFoundException;
+    Unit getUnit(Object id) throws ObjectNotFoundException;
 
     /**
      * Loads all units.
