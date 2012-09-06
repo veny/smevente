@@ -2,6 +2,8 @@ package veny.smevente.dao;
 
 import java.util.List;
 
+import veny.smevente.model.AbstractEntity;
+
 /**
  * Interface for most common DAO operations.
  *
@@ -10,7 +12,7 @@ import java.util.List;
  *
  * @param <T> the entity class
  */
-public interface GenericDao< T > {
+public interface GenericDao< T extends AbstractEntity > {
 
     /**
      * Get entity by id.

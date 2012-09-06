@@ -28,7 +28,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  *
  * @param <T> the entity class
  */
-public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
+public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements GenericDao< T > {
 
     /** Class of target entity. */
     private final Class< T > persistentClass;
@@ -70,28 +70,8 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
         return databaseWrapper;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void remove(final Object id) {
-        if (null == id) {
-            throw new IllegalArgumentException("entity ID cannot be null");
-        }
 
-        databaseWrapper.execute(new ODatabaseCallback<T>() {
-            @Override
-            public T doWithDatabase(final OObjectDatabaseTx db) {
-                final AbstractEntity entity = db.load((ORID) id);
-
-                if (null != softDeleteAnnotation) {
-                    entity.setDeleted(true);
-                    db.save(entity);
-                } else {
-                    db.delete(entity);
-                }
-                return null;
-            }
-        }, true);
-    }
+    // ----------------------------------------------------- GenericDao Methods
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
@@ -195,9 +175,7 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
 
                 final List<T> rslt = new ArrayList<T>();
                 final List<AbstractEntity> result = executeWithSoftDelete(db, sql.toString(), params);
-                for (AbstractEntity e : result) {
-                    rslt.add((T) db.detach(e));
-                }
+                for (AbstractEntity e : result) { rslt.add((T) db.detach(e)); }
                 return rslt;
             }
         }, false);
@@ -237,6 +215,29 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
                     db.commit(); // to obtain RID, TODO [veny,A] other solution?
                 }
                 return (T) rslt;
+            }
+        }, true);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void remove(final Object id) {
+        databaseWrapper.execute(new ODatabaseCallback<T>() {
+            @Override
+            public T doWithDatabase(final OObjectDatabaseTx db) {
+                if (null == id) {
+                    throw new IllegalArgumentException("entity ID cannot be null");
+                }
+
+                final AbstractEntity entity = db.load((ORID) id);
+
+                if (null != softDeleteAnnotation) {
+                    entity.setDeleted(true);
+                    db.save(entity);
+                } else {
+                    db.delete(entity);
+                }
+                return null;
             }
         }, true);
     }
@@ -292,36 +293,6 @@ public abstract class AbstractDaoOrientdb< T > implements GenericDao< T > {
             return db.command(query).execute(params);
         }
     }
-
-//    /**
-//     * Appends a SQL suffix that filters deleted entities.
-//     * @param query query to be extended
-//     */
-//    protected void appendSoftDeleteFilter(final StringBuilder query) {
-//        if (null != softDeleteAnnotation) {
-//            query.append(" AND e.").append(softDeleteAnnotation.attribute()).append("=:sd");
-//        }
-//    }
-//    /**
-//     * Sets a SQL suffix that filters deleted entities. Should be used
-//     * in cases where no other select criteria is used, so the WHERE
-//     * clause is completely missing.
-//     * @param query query to be extended
-//     */
-//    protected void setSoftDeleteFilter(final StringBuilder query) {
-//        if (null != softDeleteAnnotation) {
-//            query.append(" WHERE ").append(softDeleteAnnotation.attribute()).append(" = :sd");
-//        }
-//    }
-//    /**
-//     * Set a query parameter to filter the deleted entities.
-//     * @param params query parameters to be extended
-//     */
-//    protected void setSoftDeleteFilter(final Map<String, Object> params) {
-//        if (null != softDeleteAnnotation) {
-//            params.put("sd", Boolean.FALSE);
-//        }
-//    }
 
     /**
      * Asserts that a given entity is not deleted
