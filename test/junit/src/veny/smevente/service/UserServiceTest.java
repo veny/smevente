@@ -14,6 +14,8 @@ import com.orientechnologies.orient.core.id.ORecordId;
 
 import veny.smevente.AbstractBaseTest;
 import veny.smevente.dao.ObjectNotFoundException;
+import veny.smevente.model.Membership;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import eu.maydu.gwt.validation.client.ValidationException;
 
@@ -51,46 +53,46 @@ public class UserServiceTest extends AbstractBaseTest {
         assertEquals(3, userService.getAllUsers().size());
     }
 
-//    /** UserService.createUser. */
-//    @SuppressWarnings("deprecation")
-//    @Test
-//    public void testCreateUserAndMembership() {
-//        final UnitDto unit1 = createDefaultUnit();
-//        User userA = new User();
-//        userA.setUsername("a");
-//        userA.setFullname("a a");
-//        userA.setPassword("a");
-//        userA = userService.createUser(userA, unit1.getId(), MembershipDto.Type.MEMBER, 0);
-//        assertNotNull(userA);
-//
-//        User userB = new User();
-//        userB.setUsername("b");
-//        userB.setFullname("b b");
-//        userB.setPassword("b");
-//        userB = userService.createUser(userB, unit1.getId(), MembershipDto.Type.ADMIN, 6);
-//        assertNotNull(userB);
-//
-//        final List<User> found = userService.getAllUsers();
-//        assertNotNull(found);
-//        assertEquals(2, found.size());
-//
-//        User badUser = new User();
-//        badUser.setUsername("a");
-//        badUser.setFullname("a a");
-//        badUser.setPassword("a");
-//
-//        try { // existing username
-//            userService.createUser(badUser, unit1.getId(), MembershipDto.Type.MEMBER, 0);
-//            assertEquals("expected ValidationException", true, false);
-//        } catch (ValidationException e) { assertEquals(true, true); }
-//
-//        try { // invalid significance
-//            badUser.setUsername("badUser");
-//            userService.createUser(badUser, unit1.getId(), MembershipDto.Type.MEMBER, -1);
-//            assertEquals("expected IllegalArgumentException", true, false);
-//        } catch (IllegalArgumentException e) { assertEquals(true, true); }
-//
-//        List<MembershipDto> memberships = userService.findMembershipsByUser(userA.getId());
+    /** UserService.createUser. */
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testCreateUserAndMembership() {
+        final Unit unit1 = createDefaultUnit();
+        User userA = new User();
+        userA.setUsername("a");
+        userA.setFullname("a a");
+        userA.setPassword("a");
+        userA = userService.createUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
+        assertNotNull(userA);
+
+        User userB = new User();
+        userB.setUsername("b");
+        userB.setFullname("b b");
+        userB.setPassword("b");
+        userB = userService.createUser(userB, unit1.getId(), Membership.Role.ADMIN, 6);
+        assertNotNull(userB);
+
+        final List<User> found = userService.getAllUsers();
+        assertNotNull(found);
+        assertEquals(2, found.size());
+
+        User badUser = new User();
+        badUser.setUsername("a");
+        badUser.setFullname("a a");
+        badUser.setPassword("a");
+
+        try { // existing username
+            userService.createUser(badUser, unit1.getId(), Membership.Role.MEMBER, 0);
+            assertEquals("expected ValidationException", true, false);
+        } catch (ValidationException e) { assertEquals(true, true); }
+
+        try { // invalid significance
+            badUser.setUsername("badUser");
+            userService.createUser(badUser, unit1.getId(), Membership.Role.MEMBER, -1);
+            assertEquals("expected IllegalArgumentException", true, false);
+        } catch (IllegalArgumentException e) { assertEquals(true, true); }
+
+//XXX        List<Membership> memberships = userService.findMembershipsByUser(userA.getId());
 //        assertNotNull(memberships);
 //        assertEquals(1, memberships.size());
 //        assertEquals(0, memberships.get(0).getSignificance());
@@ -105,7 +107,7 @@ public class UserServiceTest extends AbstractBaseTest {
 //        userService.deleteUser(userA.getId());
 //        assertEquals(1, userService.getAllUsers().size());
 //        assertEquals(0, userService.findMembershipsByUser(userA.getId()).size());
-//    }
+    }
 
     /** UserService.getUser. */
     @Test

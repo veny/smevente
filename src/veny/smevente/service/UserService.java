@@ -43,7 +43,7 @@ public interface UserService {
      * @param significance significance of membership
      * @return created user
      */
-    User createUser(User user, String unitId, final Membership.Role role, final Integer significance);
+    User createUser(User user, Object unitId, final Membership.Role role, final Integer significance);
 
     /**
      * Gets user by given ID.
@@ -154,19 +154,19 @@ public interface UserService {
 //     * @see #getUsersByUnit(Long, User)
 //     */
 //    List<UnitDto> getUnitsOfUser(User user);
-//
-//    // ------------------------------------------------------- Membership Stuff
-//
-//    /**
-//     * Adds user to unit.
-//     *
-//     * @param unitId ID of unit
-//     * @param userId ID of user
-//     * @param type membership type
-//     * @param significance significance of the membership to other memberships of a user
-//     */
-//    void createMembership(Long unitId, Long userId, MembershipDto.Type type, int significance);
-//
+
+    // ------------------------------------------------------- Membership Stuff
+
+    /**
+     * Adds user to unit.
+     *
+     * @param unitId ID of unit
+     * @param userId ID of user
+     * @param role membership role
+     * @param significance significance of the membership to other memberships of a user
+     */
+    void createMembership(Object unitId, Object userId, Membership.Role role, int significance);
+
 //    /**
 //     * Finds memberships for given user.
 //     * @param userId ID of user

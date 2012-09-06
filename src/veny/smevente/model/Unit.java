@@ -1,8 +1,12 @@
 package veny.smevente.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -57,10 +61,12 @@ public class Unit extends AbstractEntity {
      * <li>'null' - unlimited
      * </ul>
      */
+    @Column
     private Long limitedSmss;
 
     /** Members in units. */
-    private List<Membership> members;
+    @OneToMany
+    private Set<Membership> memberships;
 
 
     // CHECKSTYLE:OFF
@@ -95,11 +101,11 @@ public class Unit extends AbstractEntity {
     public void setLimitedSmss(Long limitedSmss) {
         this.limitedSmss = limitedSmss;
     }
-    public List<Membership> getMembers() {
-        return members;
+    public Set<Membership> getMemberships() {
+        return memberships;
     }
-    public void setMembers(List<Membership> members) {
-        this.members = members;
+    public void setMemberships(Set<Membership> memberships) {
+        this.memberships = memberships;
     }
     // CHECKSTYLE:ON
 
@@ -125,8 +131,8 @@ public class Unit extends AbstractEntity {
      */
     public void addMember(final Membership member) {
         if (null == member.getUser()) { throw new IllegalArgumentException("membership has to have a user"); }
-//        if (null == members) { members = new ArrayList<MembershipDto>(); }
-//        members.add(member);
+        if (null == memberships) { memberships = new HashSet<Membership>(); }
+        memberships.add(member);
     }
 
     /** {@inheritDoc} */
@@ -138,16 +144,16 @@ public class Unit extends AbstractEntity {
             .append(name)
             .append("', limitedSmss=")
             .append(limitedSmss);
-//XXX        if (null == members) {
-//            rslt.append(", members=null");
-//        } else {
-//            rslt.append(", members=[");
-//            for (MembershipDto u : members) {
-//                rslt.append(u.getUser().getUsername()).append(',');
-//            }
-//            rslt.deleteCharAt(rslt.length() - 1);
-//            rslt.append(']');
-//        }
+        if (null == memberships) {
+            rslt.append(", members=null");
+        } else {
+            rslt.append(", members=[");
+            for (Membership u : memberships) {
+                rslt.append(u.getUser().getUsername()).append(',');
+            }
+            rslt.deleteCharAt(rslt.length() - 1);
+            rslt.append(']');
+        }
         rslt.append(")");
         return rslt.toString();
     }

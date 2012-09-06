@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.springframework.beans.factory.DisposableBean;
 
+import veny.smevente.model.Membership;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
@@ -80,9 +81,9 @@ public final class DatabaseWrapper implements DisposableBean {
 
     public void setInit(final boolean init) {
         this.init = init;
-        if (init) {
-            final OObjectDatabaseTx db = get();
+        final OObjectDatabaseTx db = get();
 
+        if (init) {
 
             // delete classes
             if (db.getMetadata().getSchema().existsClass("User")) {
@@ -110,10 +111,11 @@ public final class DatabaseWrapper implements DisposableBean {
             // Unit
             OClass unit = db.getMetadata().getSchema().createClass("Unit", entity);
             unit.createProperty("memberships", OType.LINKSET, membership);
-
-            db.getEntityManager().registerEntityClass(User.class);
-            db.getEntityManager().registerEntityClass(Unit.class);
         }
+
+        db.getEntityManager().registerEntityClass(User.class);
+        db.getEntityManager().registerEntityClass(Unit.class);
+        db.getEntityManager().registerEntityClass(Membership.class);
     }
 
 

@@ -1,6 +1,7 @@
 package veny.smevente.model;
 
 import javax.persistence.Column;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -30,22 +31,23 @@ public class Membership extends AbstractEntity {
     }
 
     /** Membership role (User, Admin, ...). */
+    @Column
     private String role;
     /** Significance of the membership to other memberships of a user. */
+    @Column
     private int significance;
 
     /** User in unit. */
+    @OneToOne
     private User user;
 
     // CHECKSTYLE:OFF
-    @Column
     public String getRole() {
         return role;
     }
     public void setRole(String role) {
         this.role = role;
     }
-    @Column
     public int getSignificance() {
         return significance;
     }

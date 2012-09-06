@@ -2,6 +2,7 @@ package veny.smevente;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -137,7 +138,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         assertEquals(Unit.TextVariant.PATIENT.toString(), unit.getType());
         assertTrue(11L == unit.getLimitedSmss());
         assertEquals("usr:x,passwd:y", unit.getSmsEngine());
-//XXX        assertNull(unit.getMembers());
+        assertNull(unit.getMembers());
     }
 
 //    // CHECKSTYLE:OFF

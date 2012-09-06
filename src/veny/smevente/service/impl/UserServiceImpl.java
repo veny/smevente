@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +99,7 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize("hasPermission(#unitId, 'V_UNIT_ADMIN')")
     @Override
     public User createUser(
-            final User user, final String unitId, final Membership.Role role, final Integer significance) {
+            final User user, final Object unitId, final Membership.Role role, final Integer significance) {
 
         if (significance < 0) {
             throw new IllegalArgumentException("invalid value of significance: " + significance);
@@ -118,6 +119,8 @@ public class UserServiceImpl implements UserService {
         membershipDao.persist(memb);
 
         // add membership to unit
+        unit.addMember(memb);
+        unitDao.persist(unit);
 
         return rslt;
     }
@@ -289,12 +292,9 @@ public class UserServiceImpl implements UserService {
         LOG.info("changed password, userId=" + userId);
     }
 
-    /*
-     * Here is not used a TX because of GAE Entity Group limit for transaction.
-     * I avoided to use TX (not needed here).
-     */
     // no authorization - used in AuthenticationProvider
     /** {@inheritDoc} */
+    @Transactional
     @Override
     public User performLogin(final String username, final String password) {
         if (Strings.isNullOrEmpty(username)) { throw new NullPointerException("username cannot be blank"); }
@@ -359,7 +359,7 @@ public class UserServiceImpl implements UserService {
 ////        rslt.add(beanMapper.map(userDao.getById(me.getId()), UserDto.class));
 ////
 ////        // load my Membership
-////        final List<MembershipGae> myMemberships = membershipDao.findBy("userId", me.getId(), "unitId", unitId, null);
+////        final List<MembershipGae> myMemberships=membershipDao.findBy("userId", me.getId(), "unitId", unitId, null);
 ////        if (1 != myMemberships.size()) {
 ////            throw new IllegalStateException("invalid amount of membership in unit, userId="
 ////                    + me.getId() + ", unitId=" + unitId + ", amount=" + myMemberships.size());
@@ -423,43 +423,48 @@ public class UserServiceImpl implements UserService {
 //        LOG.info("found " + rslt.size() + " membership(s), userId=" + user.getId());
 //        return rslt;
 //    }
-//
-//    // ------------------------------------------------------- Membership Stuff
-//
-//    /*
-//     * Here is not used a TX because of GAE Entity Group limit for transaction.
-//     * I avoided to use TX (not needed here).
-//     */
-//    /** {@inheritDoc} */
-//    @Override
-//    public void createMembership(
-//            final Long unitId, final Long userId,
-//            final MembershipDto.Type type, final int significance) {
-//
-//        if (LOG.isLoggable(Level.FINER)) {
-//            LOG.finer("trying to create membership, userId=" + userId + ", unitId=" + unitId + ", type=" + type);
-//        }
-//        // test existence of such combination
-//        List<Membership> memberships = membershipDao.findBy("userId", userId, "unitId", unitId, null);
-//        if (memberships.size() > 0) {
-//            throw new IllegalStateException("membership already exists, userId=" + userId + ", unitId=" + unitId);
-//        }
-//
-//        // test existence of unit
-//        unitDao.getById(unitId);
-//        // test existence of user
-//        userDao.getById(userId);
-//
-//        final Membership m = new Membership();
-//        m.setType(type);
-//        m.setSignificance(significance);
-//        m.setUserId(userId);
-//        m.setUnitId(unitId);
-//        membershipDao.persist(m);
-//
-//        LOG.info("created membership, userId=" + userId + ", unitId=" + unitId + ", type=" + type);
-//    }
-//
+
+    // ------------------------------------------------------- Membership Stuff
+
+    /** {@inheritDoc} */
+    @Transactional
+    @Override
+    public void createMembership(
+            final Object unitId, final Object userId,
+            final Membership.Role role, final int significance) {
+
+        if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
+        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
+        if (LOG.isLoggable(Level.FINER)) {
+            LOG.finer("trying to create membership, userId=" + userId + ", unitId=" + unitId + ", role=" + role);
+        }
+
+        // test existence of such combination
+        final Unit unit = unitDao.getById(unitId);
+        Membership toStore = null;
+        for (Membership m : unit.getMemberships()) {
+            if (userId.equals(m.getUser().getId())) {
+                toStore = m;
+                break;
+            }
+        }
+
+        if (null != toStore) {
+            toStore.setRole(role.toString());
+            toStore.setSignificance(significance);
+        } else {
+            toStore = new Membership();
+            toStore.setUser(userDao.getById(userId));
+            toStore.setRole(role.toString());
+            toStore.setSignificance(significance);
+            // --
+            unit.addMember(toStore);
+        }
+        membershipDao.persist(toStore);
+
+        LOG.info("created membership, userId=" + userId + ", unitId=" + unitId + ", role=" + role);
+    }
+
 //    /*
 //     * Here is not used a TX because of GAE Entity Group limit for transaction.
 //     * I avoided to use TX (not needed here).
