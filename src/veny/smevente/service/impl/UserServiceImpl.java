@@ -8,7 +8,6 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,22 +80,17 @@ public class UserServiceImpl implements UserService {
     public User createUser(final User user) {
         validateUser(user);
         // to be sure that reused object will be created as new
-        if (null != user.getId()) { user.setId(null); user.setVersion(null); }
+        if (null != user.getId()) { user.setId(null); }
 
         final List<User> check = userDao.findBy("username", user.getUsername(), null);
         if (!check.isEmpty()) {
             ServerValidation.exception("duplicateValue", "username", (Object[]) null);
         }
 
-        userDao.persist(user);
+        User rslt = userDao.persist(user);
 
-        LOG.info("created new user, " + user);
-        try {
-            // clone original object
-            return (User) BeanUtils.cloneBean(user);
-        } catch (Exception e) {
-            throw new IllegalStateException("failed to clone user", e);
-        }
+        LOG.info("created new user, " + rslt);
+        return rslt;
     }
 
     /** {@inheritDoc} */
@@ -132,7 +126,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
-    public User getUser(final String id) {
+    public User getUser(final Object id) {
         final User rslt = userDao.getById(id);
         LOG.info("found user by id=" + id);
         return rslt;
@@ -182,7 +176,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     // TODO [veny,B] think of authorization
     @Override
-    public void deleteUser(final String id) {
+    public void deleteUser(final Object id) {
 //        final List<MembershipDto> memberships = findMembershipsByUser(id);
 //        if (memberships != null) {
 //            for (MembershipDto membership: memberships) {
@@ -278,8 +272,8 @@ public class UserServiceImpl implements UserService {
     /** {@inheritDoc} */
     @PreAuthorize("hasPermission(#userId, 'V_MY_USER')")
     @Override
-    public void updateUserPassword(final String userId, final String oldPassword, final String newPassword) {
-        if (Strings.isNullOrEmpty(userId)) { throw new NullPointerException("user ID cannot be blank"); }
+    public void updateUserPassword(final Object userId, final String oldPassword, final String newPassword) {
+        if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
         if (Strings.isNullOrEmpty(oldPassword)) { throw new NullPointerException("old password cannot be blank"); }
         if (Strings.isNullOrEmpty(newPassword)) { throw new NullPointerException("new password cannot be blank"); }
 

@@ -45,9 +45,9 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     @Before
     public void deleteEntries() {
         final DatabaseWrapper dbw = (DatabaseWrapper) applicationContext.getBean("databaseWrapper");
-//        dbw.get().command(new OCommandSQL("DELETE FROM Unit")).execute();
-//        dbw.get().command(new OCommandSQL("DELETE FROM Membership")).execute();
-//        dbw.get().command(new OCommandSQL("DELETE FROM User")).execute();
+        dbw.get().command(new OCommandSQL("DELETE FROM Unit")).execute();
+        dbw.get().command(new OCommandSQL("DELETE FROM Membership")).execute();
+        dbw.get().command(new OCommandSQL("DELETE FROM User")).execute();
     }
 
 
@@ -85,7 +85,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     protected void assertDefaultUser(final User user) {
         assertNotNull(user);
         assertNotNull(user.getId());
-        assertTrue(user.getId().length() > 0);
+        assertTrue(user.getId().toString().length() > 0);
         assertEquals(USERNAME, user.getUsername());
         assertEquals(userService.encodePassword(PASSWORD), user.getPassword());
         assertEquals(FULLNAME, user.getFullname());

@@ -1,7 +1,9 @@
 package veny.smevente.model;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 /**
  * Basic class for all entities that holds common properties.
@@ -17,7 +19,8 @@ public abstract class AbstractEntity {
      * It's not a number because many storage engines like OrientDB or CouchDB
      * represents the entity identification in a textual form.
      */
-    private String id;
+    @Id
+    private Object id;
 
     /**
      * Version of the entry.
@@ -25,7 +28,8 @@ public abstract class AbstractEntity {
      * It's specific for some storage engines
      * or can be used for optimistic locking mechanism in RDBMS.
      */
-    private String version;
+    @Version
+    private Object version;
 
     /**
      * Flag if the entity has been soft deleted
@@ -40,18 +44,17 @@ public abstract class AbstractEntity {
     private String revision;
 
     // CHECKSTYLE:OFF
-    @Transient
-    public String getId() {
+    public Object getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(Object id) {
         this.id = id;
     }
     @Transient
-    public String getVersion() {
+    public Object getVersion() {
         return version;
     }
-    public void setVersion(String version) {
+    public void setVersion(Object version) {
         this.version = version;
     }
     @Column

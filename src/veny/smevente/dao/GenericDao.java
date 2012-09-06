@@ -18,7 +18,7 @@ public interface GenericDao< T > {
      * @return desired entity
      * @throws ObjectNotFoundException if entity with given id is not found.
      */
-    T getById(String id) throws ObjectNotFoundException;
+    T getById(Object id) throws ObjectNotFoundException;
 
     /**
      * Get all entities of concrete type (excluding the deleted by SoftDelete entities).
@@ -73,30 +73,16 @@ public interface GenericDao< T > {
      * Store entity into storage.
      *
      * @param entity entity to store
+     * @return persisted entity
      */
-    void persist(T entity);
-
-    /**
-     * Merge entity into storage.
-     *
-     * @param entity the entity to merge
-     * @return merged entity
-     */
-    T merge(T entity);
+    T persist(T entity);
 
     /**
      * Delete entity from storage.
      *
-     * @param entity the entity to delete
+     * @param id id of entity
      */
-    void remove(T entity);
-
-    /**
-     * Delete entity from storage by ID.
-     *
-     * @param entityId the entity ID to delete
-     */
-    void remove(String entityId);
+    void remove(Object id);
 
 //    /**
 //     * Count entities.

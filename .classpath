@@ -15,7 +15,7 @@
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/org.springframework.web-3.0.5.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/org.springframework.web.servlet-3.0.5.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-security-core-3.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/orientdb-core-1.2.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/orientdb-core-1.2.0-SNAPSHOT.jar" sourcepath="/ORIENTDB_SRC_HOME/core/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/jackson-core-asl-1.5.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/gwt-validation-0.9b2-SNAPSHOT-without-hibernate.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/com.springsource.org.aopalliance-1.0.0.jar"/>
@@ -23,6 +23,7 @@
 	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/orientdb-client-1.2.0-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/guava-13.0.1.jar"/>
-	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orientdb-object-1.2.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/orientdb-object-1.2.0-SNAPSHOT.jar" sourcepath="/ORIENTDB_SRC_HOME/object/src/main/java"/>
+	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/javassist.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

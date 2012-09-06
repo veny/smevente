@@ -52,7 +52,7 @@ public interface UserService {
      * @return the found user
      * @throws ObjectNotFoundException if the ID doesn't exist
      */
-    User getUser(String id) throws ObjectNotFoundException;
+    User getUser(Object id) throws ObjectNotFoundException;
 
 //    /**
 //     * Updates a given user into DB.
@@ -77,7 +77,7 @@ public interface UserService {
      * Deletes user.
      * @param id user ID to be deleted
      */
-    void deleteUser(String id);
+    void deleteUser(Object id);
 
     /**
      * Finds user by given user name.
@@ -103,7 +103,7 @@ public interface UserService {
      * @param newPassword the new password
      * @throws ValidationException if the old password doesn't match
      */
-    void updateUserPassword(String userId, String oldPassword, String newPassword) throws ValidationException;
+    void updateUserPassword(Object userId, String oldPassword, String newPassword) throws ValidationException;
 
     /**
      * Loads the user by user name and password.

@@ -1,24 +1,16 @@
 package veny.smevente.dao.orientdb;
 
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.Column;
-
-import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.DisposableBean;
 
-import veny.smevente.model.AbstractEntity;
+import veny.smevente.model.Unit;
+import veny.smevente.model.User;
 
-import com.google.gwt.thirdparty.guava.common.base.Strings;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
-import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
@@ -58,7 +50,7 @@ public final class DatabaseWrapper implements DisposableBean {
          * @param db interface to work with OrientDB engine
          * @return a result object, or <code>null</code> if none
          */
-        T doWithDatabase(ODatabaseDocument db);
+        T doWithDatabase(OObjectDatabaseTx db);
     }
 
 
@@ -119,8 +111,8 @@ public final class DatabaseWrapper implements DisposableBean {
             OClass unit = db.getMetadata().getSchema().createClass("Unit", entity);
             unit.createProperty("memberships", OType.LINKSET, membership);
 
-            db.getEntityManager().registerEntityClasses("veny.smevente.model.User");
-            db.getEntityManager().registerEntityClasses("veny.smevente.model.Unit");
+            db.getEntityManager().registerEntityClass(User.class);
+            db.getEntityManager().registerEntityClass(Unit.class);
         }
     }
 
@@ -167,6 +159,10 @@ public final class DatabaseWrapper implements DisposableBean {
 
             if (tx) { db.commit(); }
 
+        } catch (final RuntimeException e) {
+            LOG.log(Level.SEVERE, "failed to execute callback: " + e.getMessage(), e);
+            if (tx) { db.rollback(); }
+            throw e;
         } catch (final Exception e) {
             LOG.log(Level.SEVERE, "failed to execute callback: " + e.getMessage(), e);
             if (tx) { db.rollback(); }
@@ -190,53 +186,53 @@ public final class DatabaseWrapper implements DisposableBean {
 
     // ---------------------------------------- Document<->Entity Mapping Stuff
 
-    public ODocument createDocument(AbstractEntity entity) {
-        final ODocument doc = new ODocument(entity.getClass().getSimpleName());
-
-        final PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(entity);
-        for (PropertyDescriptor pd : pds) {
-            final Annotation col = pd.getReadMethod().getAnnotation(Column.class);
-            if (null != col) {
-                final String propName = pd.getName();
-                try {
-                    doc.field(propName, PropertyUtils.getProperty(entity, propName));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        // RID, Version
-        if (!Strings.isNullOrEmpty(entity.getId())) { doc.setIdentity(new ORecordId(entity.getId())); }
-        if (!Strings.isNullOrEmpty(entity.getVersion())) { doc.setVersion(Integer.parseInt(entity.getVersion())); }
-        doc.setClassName(entity.getClass().getSimpleName());
-
-        return doc;
-    }
-
-    public AbstractEntity createValueObject(final ODocument doc, final Class clazz) {
-        AbstractEntity rslt = null;
-        try {
-            rslt = (AbstractEntity) clazz.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // RID -> ID
-        rslt.setId(doc.getIdentity().toString());
-        // document version
-        rslt.setVersion(Integer.toString(doc.getVersion()));
-
-        final String[] fieldNames = doc.fieldNames();
-        for (String fieldName : fieldNames) {
-            try {
-                PropertyUtils.setProperty(rslt, fieldName, doc.field(fieldName));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return rslt;
-    }
+//    public ODocument createDocument(AbstractEntity entity) {
+//        final ODocument doc = new ODocument(entity.getClass().getSimpleName());
+//
+//        final PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(entity);
+//        for (PropertyDescriptor pd : pds) {
+//            final Annotation col = pd.getReadMethod().getAnnotation(Column.class);
+//            if (null != col) {
+//                final String propName = pd.getName();
+//                try {
+//                    doc.field(propName, PropertyUtils.getProperty(entity, propName));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//
+//        // RID, Version
+//        if (!Strings.isNullOrEmpty(entity.getId())) { doc.setIdentity(new ORecordId(entity.getId())); }
+//        if (!Strings.isNullOrEmpty(entity.getVersion())) { doc.setVersion(Integer.parseInt(entity.getVersion())); }
+//        doc.setClassName(entity.getClass().getSimpleName());
+//
+//        return doc;
+//    }
+//
+//    public AbstractEntity createValueObject(final ODocument doc, final Class clazz) {
+//        AbstractEntity rslt = null;
+//        try {
+//            rslt = (AbstractEntity) clazz.newInstance();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        // RID -> ID
+//        rslt.setId(doc.getIdentity().toString());
+//        // document version
+//        rslt.setVersion(Integer.toString(doc.getVersion()));
+//
+//        final String[] fieldNames = doc.fieldNames();
+//        for (String fieldName : fieldNames) {
+//            try {
+//                PropertyUtils.setProperty(rslt, fieldName, doc.field(fieldName));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return rslt;
+//    }
 
 }
