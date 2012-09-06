@@ -81,7 +81,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             @Override
             public T doWithDatabase(final OObjectDatabaseTx db) {
                 if (!(id instanceof ORID)) {
-                    throw new IllegalArgumentException("ID has to be OrientDB RID");
+                    throw new ObjectNotFoundException("ID has to be OrientDB RID");
                 }
                 try {
                     final AbstractEntity rslt = db.load((ORID) id);
@@ -187,6 +187,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
         return databaseWrapper.execute(new ODatabaseCallback< T >() {
             @Override
             public T doWithDatabase(final OObjectDatabaseTx db) {
+                throw new IllegalStateException("not implemented yet");
 //                final StringBuilder sql = new StringBuilder("SELECT e FROM ").append(getPersistentClass().getName())
 //                    .append(" e WHERE e.").append(paramName).append("=:").append(paramName);
 //                final Query q = em.createQuery(sql.toString());
@@ -196,7 +197,6 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
 //                assertNotSoftDeleted(rslt);
 //
 //                return rslt;
-                return null;
             }
         }, false);
     }

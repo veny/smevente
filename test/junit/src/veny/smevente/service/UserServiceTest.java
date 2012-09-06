@@ -3,7 +3,9 @@ package veny.smevente.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -114,8 +116,8 @@ public class UserServiceTest extends AbstractBaseTest {
 
         try { // invalid ID class
             userService.getUser("xx");
-            assertEquals("expected IllegalArgumentException", true, false);
-        } catch (IllegalArgumentException e) { assertEquals(true, true); }
+            assertEquals("expected ObjectNotFoundException", true, false);
+        } catch (ObjectNotFoundException e) { assertEquals(true, true); }
 
         try { // invalid ID
             userService.getUser(new ORecordId("#1001:123456789"));
@@ -350,20 +352,25 @@ public class UserServiceTest extends AbstractBaseTest {
 //    }
 
     /** UserService.updateUserPassword. */
-    //@Test
+    @Test
+    @SuppressWarnings("deprecation")
     public void testUpdateUserPassword() {
         final User created = createDefaultUser();
 
         final String newPassword = PASSWORD + "x";
         assertEquals(1, userService.getAllUsers().size());
         userService.updateUserPassword(created.getId(), PASSWORD, newPassword);
-        assertEquals(1, userService.getAllUsers().size()); // stored existing user, no duplicate
+        assertEquals(1, userService.getAllUsers().size()); // stored existing user, no duplicate caused by Dao#persist
 
         assertNotNull(userService.performLogin(USERNAME, newPassword));
         assertEquals(userService.encodePassword(newPassword), userService.findUserByUsername(USERNAME).getPassword());
 
-        try { // bad user ID
+        try { // bad user ID class
             userService.updateUserPassword("xx", PASSWORD, newPassword);
+            assertEquals("expected ObjectNotFoundException", true, false);
+        } catch (ObjectNotFoundException e) { assertEquals(true, true); }
+        try { // bad user ID
+            userService.updateUserPassword(new ORecordId("#1001:123456789"), PASSWORD, newPassword);
             assertEquals("expected ObjectNotFoundException", true, false);
         } catch (ObjectNotFoundException e) { assertEquals(true, true); }
         try { // bad old password
@@ -373,12 +380,15 @@ public class UserServiceTest extends AbstractBaseTest {
     }
 
     /** UserService.performLogin. */
-    //@Test
+    @Test
     public void testPerformLogin() {
-        createDefaultUser();
+        User created = createDefaultUser();
+        assertNull(created.getLastLoggedIn());
+        final Date now = new Date();
         final User found = userService.performLogin(USERNAME, PASSWORD);
         assertDefaultUser(found);
         assertNotNull(found.getLastLoggedIn());
+        assertTrue(found.getLastLoggedIn().getTime() > now.getTime());
 
         assertNull(userService.performLogin(USERNAME, PASSWORD + "x"));
         assertNull(userService.performLogin(USERNAME + "x", PASSWORD));

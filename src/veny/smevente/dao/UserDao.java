@@ -10,14 +10,14 @@ import veny.smevente.model.User;
  */
 public interface UserDao extends GenericDao<User> {
 
-    /**
-     * Checks whether given username and password represents a user.
-     *
-     * @param username user name
-     * @param password password
-     * @return <i>true</i> if the combination is valid
-     */
-    boolean login(String username, String password);
+//    /**
+//     * Checks whether given username and password represents a user.
+//     *
+//     * @param username user name
+//     * @param password password
+//     * @return <i>true</i> if the combination is valid
+//     */
+//    boolean login(String username, String password);
 
     /**
      * Finds user by given user name and password.
