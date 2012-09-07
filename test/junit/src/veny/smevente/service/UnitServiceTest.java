@@ -3,19 +3,21 @@ package veny.smevente.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Test;
 
 import veny.smevente.AbstractBaseTest;
+import veny.smevente.dao.DeletedObjectException;
 import veny.smevente.dao.ObjectNotFoundException;
-import veny.smevente.model.Membership;
+import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
-import veny.smevente.model.User;
 
 import com.orientechnologies.orient.core.id.ORecordId;
+
+import eu.maydu.gwt.validation.client.ValidationException;
 
 /**
  * Test of <code>UnitService</code>.
@@ -31,10 +33,6 @@ public class UnitServiceTest extends AbstractBaseTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testCreateUnit() {
-//Unit u = unitService.getUnit(new ORecordId("#9:0"));
-//Set<Membership> mbs = u.getMemberships();
-//User us = mbs.iterator().next().getUser();
-//if (true) return;
         final Unit firstUnit = createDefaultUnit();
         final List<Unit> found = unitService.getAllUnits();
         assertEquals(1, found.size());
@@ -61,7 +59,7 @@ public class UnitServiceTest extends AbstractBaseTest {
     }
 
     /** UnitService.getUnit. */
-    //@Test
+    @Test
     public void testGetById() {
         final Unit firstCreated = createDefaultUnit();
         final Unit firstFound = unitService.getUnit(firstCreated.getId());
@@ -85,59 +83,59 @@ public class UnitServiceTest extends AbstractBaseTest {
 
     // ---------------------------------------------------------- Patient Stuff
 
-//    /** UnitService.createPatient. */
-//    @Test
-//    public void testCreatePatient() {
-//        final Unit unit = createDefaultUnit();
-//
-//        // first patient in the first unit
-//        final PatientDto toCreate = new PatientDto();
-//        toCreate.setUnit(unit);
-//        toCreate.setFirstname(FIRSTNAME);
-//        toCreate.setSurname(SURNAME);
-//        toCreate.setPhoneNumber(PHONE_NUMBER);
-//        toCreate.setBirthNumber(BIRTH_NUMBER);
-//        toCreate.setDegree("degree");
-//        toCreate.setStreet("street");
-//        toCreate.setCity("city");
-//        toCreate.setZipCode("zip code");
-//        toCreate.setEmployer("employer");
-//        toCreate.setCareers("careers");
-//
-//        final PatientDto firstCreated = unitService.createPatient(toCreate);
-//        assertDefaultPatient(firstCreated, true);
-//        assertEquals(unit.getId(), firstCreated.getUnit().getId());
-//        assertEquals("degree", firstCreated.getDegree());
-//        assertEquals("street", firstCreated.getStreet());
-//        assertEquals("city", firstCreated.getCity());
-//        assertEquals("zip code", firstCreated.getZipCode());
-//        assertEquals("employer", firstCreated.getEmployer());
-//        assertEquals("careers", firstCreated.getCareers());
-//        assertEquals(1, unitService.getPatientsByUnit(unit.getId()).size());
-//
-//        // second patient in the first unit
-//        final PatientDto secondCreated = createPatient("a", "b", null, null, unit);
-//        assertNotNull(secondCreated);
-//        assertNotNull(secondCreated.getId());
-//        assertNotNull(secondCreated.getUnit());
-//        assertNotNull(secondCreated.getUnit().getId());
-//        assertEquals(unit.getId(), secondCreated.getUnit().getId());
-//        assertEquals("a", secondCreated.getFirstname());
-//        assertEquals("b", secondCreated.getSurname());
-//        assertNull(secondCreated.getPhoneNumber());
-//        assertNull(secondCreated.getBirthNumber());
-//        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
-//
-//        final PatientDto badPatient = new PatientDto();
-//        badPatient.setUnit(unit);
-//        badPatient.setFirstname("aa");
-//        badPatient.setSurname("bb");
-//        badPatient.setBirthNumber(BIRTH_NUMBER);
-//        try { // existing birth number
-//            unitService.createPatient(badPatient);
-//            assertEquals("expected ValidationException", true, false);
-//        } catch (ValidationException e) { assertEquals(true, true); }
-//
+    /** UnitService.createPatient. */
+    @Test
+    public void testCreatePatient() {
+        final Unit unit = createDefaultUnit();
+
+        // first patient in the first unit
+        final Patient toCreate = new Patient();
+        toCreate.setUnit(unit);
+        toCreate.setFirstname(FIRSTNAME);
+        toCreate.setSurname(SURNAME);
+        toCreate.setPhoneNumber(PHONE_NUMBER);
+        toCreate.setBirthNumber(BIRTH_NUMBER);
+        toCreate.setDegree("degree");
+        toCreate.setStreet("street");
+        toCreate.setCity("city");
+        toCreate.setZipCode("zip code");
+        toCreate.setEmployer("employer");
+        toCreate.setCareers("careers");
+
+        final Patient firstCreated = unitService.createPatient(toCreate);
+        assertDefaultPatient(firstCreated, true);
+        assertEquals(unit.getId(), firstCreated.getUnit().getId());
+        assertEquals("degree", firstCreated.getDegree());
+        assertEquals("street", firstCreated.getStreet());
+        assertEquals("city", firstCreated.getCity());
+        assertEquals("zip code", firstCreated.getZipCode());
+        assertEquals("employer", firstCreated.getEmployer());
+        assertEquals("careers", firstCreated.getCareers());
+//XXX        assertEquals(1, unitService.getPatientsByUnit(unit.getId()).size());
+
+        // second patient in the first unit
+        final Patient secondCreated = createPatient("a", "b", null, null, unit);
+        assertNotNull(secondCreated);
+        assertNotNull(secondCreated.getId());
+        assertNotNull(secondCreated.getUnit());
+        assertNotNull(secondCreated.getUnit().getId());
+        assertEquals(unit.getId(), secondCreated.getUnit().getId());
+        assertEquals("a", secondCreated.getFirstname());
+        assertEquals("b", secondCreated.getSurname());
+        assertNull(secondCreated.getPhoneNumber());
+        assertNull(secondCreated.getBirthNumber());
+//XXX        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
+
+        final Patient badPatient = new Patient();
+        badPatient.setUnit(unit);
+        badPatient.setFirstname("aa");
+        badPatient.setSurname("bb");
+        badPatient.setBirthNumber(BIRTH_NUMBER);
+        try { // existing birth number
+            unitService.createPatient(badPatient);
+            assertEquals("expected ValidationException", true, false);
+        } catch (ValidationException e) { assertEquals(true, true); }
+
 //        // second unit (I can create user with Birth Number in other unit)
 //        final Unit secondUnit = createUnit("x", getDefaultUnitMetadata(), LIMITED_SMSS);
 //        badPatient.setUnit(secondUnit);
@@ -192,38 +190,38 @@ public class UnitServiceTest extends AbstractBaseTest {
 //        softDel.setSurname("bb");
 //        softDel.setBirthNumber(BIRTH_NUMBER);
 //        unitService.createPatient(softDel);
-//    }
-//
-//    /** UnitService.updatePatient. */
-//    @Test
-//    public void testUpdatePatient() {
-//        final PatientDto created = createDefaultPatient();
-//        assertNull(created.getCity());
-//        assertNull(created.getDegree());
-//
-//        created.setCity("city");
-//        unitService.updatePatient(created);
-//        PatientDto found = unitService.getPatientById(created.getId());
-//        assertDefaultPatient(found, true);
-//        assertEquals("city", found.getCity());
-//        assertNull(created.getDegree());
-//
-//        created.setDegree("degree");
-//        unitService.updatePatient(created);
-//        found = unitService.getPatientById(created.getId());
-//        assertDefaultPatient(found, true);
-//        assertEquals("city", found.getCity());
-//        assertEquals("degree", created.getDegree());
-//
-//        // phone + birth number
-//        created.setPhoneNumber("987987987");
-//        created.setBirthNumber("789789789");
-//        unitService.updatePatient(created);
-//        found = unitService.getPatientById(created.getId());
-//        assertEquals("987987987", created.getPhoneNumber());
-//        assertEquals("789789789", found.getBirthNumber());
-//    }
-//
+    }
+
+    /** UnitService.updatePatient. */
+    @Test
+    public void testUpdatePatient() {
+        final Patient created = createDefaultPatient();
+        assertNull(created.getCity());
+        assertNull(created.getDegree());
+
+        created.setCity("city");
+        unitService.updatePatient(created);
+        Patient found = unitService.getPatientById(created.getId());
+        assertDefaultPatient(found, true);
+        assertEquals("city", found.getCity());
+        assertNull(created.getDegree());
+
+        created.setDegree("degree");
+        unitService.updatePatient(created);
+        found = unitService.getPatientById(created.getId());
+        assertDefaultPatient(found, true);
+        assertEquals("city", found.getCity());
+        assertEquals("degree", created.getDegree());
+
+        // phone + birth number
+        created.setPhoneNumber("987987987");
+        created.setBirthNumber("789789789");
+        unitService.updatePatient(created);
+        found = unitService.getPatientById(created.getId());
+        assertEquals("987987987", created.getPhoneNumber());
+        assertEquals("789789789", found.getBirthNumber());
+    }
+
 //    /** UnitService.getPatientsByUnit. */
 //    @Test
 //    public void testGetPatientsByUnit() {
@@ -309,47 +307,47 @@ public class UnitServiceTest extends AbstractBaseTest {
 //        assertEquals(0, unitService.findPatients(unit.getId(), null, "011111111", null).size());
 //        assertEquals(0, unitService.findPatients(unit.getId(), null, null, "7001022222").size());
 //    }
-//
-//    /** UnitService.deletePatient. */
-//    @Test
-//    public void testDeletePatient() {
-//        final PatientDto firstCreated = createDefaultPatient();
-//        final Unit unit = firstCreated.getUnit();
-//        final PatientDto secondCreated = createPatient("a", "a", null, null, unit);
-//        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
-//
-//        // delete first
-//        unitService.deletePatient(firstCreated.getId());
-//        try {
-//            unitService.getPatientById(firstCreated.getId());
-//            assertEquals("expected DeletedObjectException", true, false);
-//        } catch (DeletedObjectException e) { assertEquals(true, true); }
-//        List<PatientDto> found = unitService.getPatientsByUnit(unit.getId());
-//        assertEquals(1, found.size());
-//        assertEquals(secondCreated.getId(), found.get(0).getId());
-//
-//        final PatientDto thirdCreated = createPatient("b", "b", null, null, unit);
-//        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
-//        unitService.deletePatient(firstCreated.getId()); // DO NOTHING
-//        unitService.deletePatient(secondCreated.getId());
-//        try {
-//            unitService.getPatientById(secondCreated.getId());
-//            assertEquals("expected DeletedObjectException", true, false);
-//        } catch (DeletedObjectException e) { assertEquals(true, true); }
-//        found = unitService.getPatientsByUnit(unit.getId());
-//        assertEquals(1, found.size());
-//        assertEquals(thirdCreated.getId(), found.get(0).getId());
-//        unitService.deletePatient(thirdCreated.getId());
-//
-//        unitService.deletePatient(thirdCreated.getId());
-//        try {
-//            unitService.getPatientById(thirdCreated.getId());
-//            assertEquals("expected DeletedObjectException", true, false);
-//        } catch (DeletedObjectException e) { assertEquals(true, true); }
-//        found = unitService.getPatientsByUnit(unit.getId());
-//        assertEquals(0, found.size());
-//    }
-//
+
+    /** UnitService.deletePatient. */
+    @Test
+    public void testDeletePatient() {
+        final Patient firstCreated = createDefaultPatient();
+        final Unit unit = firstCreated.getUnit();
+        final Patient secondCreated = createPatient("a", "a", null, null, unit);
+        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
+
+        // delete first
+        unitService.deletePatient(firstCreated.getId());
+        try {
+            unitService.getPatientById(firstCreated.getId());
+            assertEquals("expected DeletedObjectException", true, false);
+        } catch (DeletedObjectException e) { assertEquals(true, true); }
+        List<Patient> found = unitService.getPatientsByUnit(unit.getId());
+        assertEquals(1, found.size());
+        assertEquals(secondCreated.getId(), found.get(0).getId());
+
+        final Patient thirdCreated = createPatient("b", "b", null, null, unit);
+        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
+        unitService.deletePatient(firstCreated.getId()); // DO NOTHING
+        unitService.deletePatient(secondCreated.getId());
+        try {
+            unitService.getPatientById(secondCreated.getId());
+            assertEquals("expected DeletedObjectException", true, false);
+        } catch (DeletedObjectException e) { assertEquals(true, true); }
+        found = unitService.getPatientsByUnit(unit.getId());
+        assertEquals(1, found.size());
+        assertEquals(thirdCreated.getId(), found.get(0).getId());
+        unitService.deletePatient(thirdCreated.getId());
+
+        unitService.deletePatient(thirdCreated.getId());
+        try {
+            unitService.getPatientById(thirdCreated.getId());
+            assertEquals("expected DeletedObjectException", true, false);
+        } catch (DeletedObjectException e) { assertEquals(true, true); }
+        found = unitService.getPatientsByUnit(unit.getId());
+        assertEquals(0, found.size());
+    }
+
 //    // ---------------------------------------------- MedicalHelpCategory Stuff
 //
 //    /**

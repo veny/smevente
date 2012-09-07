@@ -1,7 +1,6 @@
 package veny.smevente.dao.orientdb;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +73,6 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
     // ----------------------------------------------------- GenericDao Methods
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public T getById(final Object id) throws ObjectNotFoundException {
         return databaseWrapper.execute(new ODatabaseCallback<T>() {
@@ -83,15 +81,18 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 if (!(id instanceof ORID)) {
                     throw new ObjectNotFoundException("ID has to be OrientDB RID");
                 }
+
+                T rslt;
                 try {
-                    final AbstractEntity rslt = db.load((ORID) id);
+                    rslt = db.load((ORID) id);
                     // check if not deleted
-                    assertNotSoftDeleted((T) rslt);
-                    return (T) rslt;
                 } catch (final Exception e) {
                     throw new ObjectNotFoundException(
                             "entity '" + getPersistentClass().getSimpleName() + "' not found, id=" + id, e);
                 }
+
+                assertNotSoftDeleted(rslt);
+                return (T) rslt;
             }
         }, true);
     }
@@ -103,7 +104,6 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public List< T > getAll(final boolean withDeleted) {
         return databaseWrapper.execute(new ODatabaseCallback<List< T >>() {
@@ -111,24 +111,12 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             public List< T > doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql =
                         new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName());
-                List<AbstractEntity> result;
-                if (withDeleted) {
-                    final OSQLSynchQuery<AbstractEntity> query = new OSQLSynchQuery<AbstractEntity>(sql.toString());
-                    result = db.command(query).execute();
-                } else {
-                    result = executeWithSoftDelete(db, sql.toString(), null);
-                }
-                final List<T> rslt = new ArrayList<T>();
-                for (AbstractEntity e : result) {
-                    rslt.add((T) db.detach(e));
-                }
-                return rslt;
+                return executeWithSoftDelete(db, sql.toString(), null, !withDeleted);
             }
         }, false);
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public List< T > findBy(final String paramName, final Object value, final String orderBy) {
         return databaseWrapper.execute(new ODatabaseCallback<List< T >>() {
@@ -142,18 +130,12 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put(paramName, value);
 
-                final List<T> rslt = new ArrayList<T>();
-                final List<AbstractEntity> result = executeWithSoftDelete(db, sql.toString(), params);
-                for (AbstractEntity e : result) {
-                    rslt.add((T) db.detach(e));
-                }
-                return rslt;
+                return executeWithSoftDelete(db, sql.toString(), params, true);
             }
         }, false);
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public List< T > findBy(
             final String paramName1, final Object value1,
@@ -173,10 +155,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 params.put(paramName1, value1);
                 params.put(paramName2, value2);
 
-                final List<T> rslt = new ArrayList<T>();
-                final List<AbstractEntity> result = executeWithSoftDelete(db, sql.toString(), params);
-                for (AbstractEntity e : result) { rslt.add((T) db.detach(e)); }
-                return rslt;
+                return executeWithSoftDelete(db, sql.toString(), params, true);
             }
         }, false);
     }
@@ -205,16 +184,15 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
     @Override
     public T persist(final T entity) {
         return databaseWrapper.execute(new ODatabaseCallback<T>() {
-            @SuppressWarnings("unchecked")
             @Override
             public T doWithDatabase(final OObjectDatabaseTx db) {
-                final AbstractEntity rslt = db.save(entity);
+                final T rslt = db.save(entity);
                 db.detach(rslt);
 
-                if (null == ((AbstractEntity) entity).getId()) {
+                if (null == entity.getId()) {
                     db.commit(); // to obtain RID, TODO [veny,A] other solution?
                 }
-                return (T) rslt;
+                return rslt;
             }
         }, true);
     }
@@ -229,7 +207,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                     throw new IllegalArgumentException("entity ID cannot be null");
                 }
 
-                final AbstractEntity entity = db.load((ORID) id);
+                final T entity = db.load((ORID) id);
 
                 if (null != softDeleteAnnotation) {
                     entity.setDeleted(true);
@@ -266,16 +244,18 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
      * Decorates a SQL query with a extension of WHERE clause to eliminate soft deleted entities.
      * @param db database
      * @param origSql original SQL
-     * @param origParams original query paramaters
+     * @param origParams original query parameters
+     * @param apply flag whether the 'soft delete' filter should be applied
      * @return result set from database
      */
-    protected List<AbstractEntity> executeWithSoftDelete(
-            final OObjectDatabaseTx db, final String origSql, final Map<String, Object> origParams) {
+    protected List<T> executeWithSoftDelete(
+            final OObjectDatabaseTx db, final String origSql,
+            final Map<String, Object> origParams, final boolean apply) {
 
         StringBuffer sql = new StringBuffer(origSql);
         Map<String, Object> params = origParams;
 
-        if (null != softDeleteAnnotation) {
+        if (null != softDeleteAnnotation && apply) {
             if (sql.indexOf(" WHERE ") > 0 || sql.indexOf(" where ") > 0) {
                 sql.append(" AND ");
             } else {
@@ -286,7 +266,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             params.put("softDelete", Boolean.FALSE);
         }
 
-        final OSQLSynchQuery<AbstractEntity> query = new OSQLSynchQuery<AbstractEntity>(sql.toString());
+        final OSQLSynchQuery<T> query = new OSQLSynchQuery<T>(sql.toString());
         if (null == params) {
             return db.command(query).execute();
         } else {

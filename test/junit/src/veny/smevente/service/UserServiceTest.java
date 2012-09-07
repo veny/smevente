@@ -310,9 +310,7 @@ public class UserServiceTest extends AbstractBaseTest {
         assertEquals(1, membs.size());
         assertEquals(Membership.Role.MEMBER, membs.get(0).enumRole());
         assertEquals(1, membs.get(0).getSignificance());
-        assertEquals(1, membs.get(0).getUnits().size());
-        assertEquals(unit.getId(), membs.get(0).getUnits().iterator().next().getId());
-        assertEquals(thirdCreated.getId(), membs.get(0).getUser().getId());
+        assertDefaultUnit(membs.get(0).getUnit());
 
         // delete third
         userService.deleteUser(thirdCreated.getId());

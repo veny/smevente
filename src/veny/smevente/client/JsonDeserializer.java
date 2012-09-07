@@ -9,7 +9,7 @@ import java.util.Map;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.MedicalHelpCategoryDto;
 import veny.smevente.model.Membership;
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -72,7 +72,7 @@ public class JsonDeserializer {
             result = (T) unitFromJson(jsObj);
         } else if (User.class == classToCreate) {
             result = (T) userFromJson(jsObj);
-        } else if (PatientDto.class == classToCreate) {
+        } else if (Patient.class == classToCreate) {
             result = (T) patientFromJson(jsObj);
         } else if (MedicalHelpCategoryDto.class == classToCreate) {
             result = (T) mhcFromJson(jsObj);
@@ -116,7 +116,7 @@ public class JsonDeserializer {
             rslt = (List<T>) unitListFromJson(jsArr);
         } else if (User.class == classToCreate) {
             rslt = (List<T>) userListFromJson(jsArr);
-        } else if (PatientDto.class == classToCreate) {
+        } else if (Patient.class == classToCreate) {
             rslt = (List<T>) patientListFromJson(jsArr);
         } else if (MedicalHelpCategoryDto.class == classToCreate) {
             rslt = (List<T>) mhcListFromJson(jsArr);
@@ -295,8 +295,8 @@ public class JsonDeserializer {
      * @param jsObj JSON object to deserialize
      * @return <code>Patient</code> object
      */
-    private PatientDto patientFromJson(final JSONObject jsObj) {
-        final PatientDto rslt = new PatientDto();
+    private Patient patientFromJson(final JSONObject jsObj) {
+        final Patient rslt = new Patient();
         rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
         final JSONObject jsUnitObj = jsObj.get("unit").isObject();
         if (null != jsUnitObj) {
@@ -318,8 +318,8 @@ public class JsonDeserializer {
      * @param jsArr JSON array to deserialize
      * @return list of <code>Patient</code> objects
      */
-    private List<PatientDto> patientListFromJson(final JSONArray jsArr) {
-        final List<PatientDto> rslt = new ArrayList<PatientDto>();
+    private List<Patient> patientListFromJson(final JSONArray jsArr) {
+        final List<Patient> rslt = new ArrayList<Patient>();
 
         for (int i = 0; i < jsArr.size(); i++) {
             JSONValue jsonValue = jsArr.get(i);
@@ -459,7 +459,7 @@ public class JsonDeserializer {
      * @param representation JSON string
      * @return pair composed by patient and list of his <code>Sms</code>
      */
-    public Pair<PatientDto, List<SmsDto>> patientHistoryFomJson(final String representation) {
+    public Pair<Patient, List<SmsDto>> patientHistoryFomJson(final String representation) {
         final JSONValue jsonValue = JSONParser.parseStrict(representation);
         final JSONObject jsonRoot = jsonValue.isObject();
         if (null == jsonRoot) { throw new IllegalArgumentException("not JSON object: " + representation); }
@@ -471,9 +471,9 @@ public class JsonDeserializer {
         final JSONArray jsonSmss = jsonPair.get("b").isArray();
         if (null == jsonSmss) { throw new IllegalArgumentException("not JSON array: history/b"); }
 
-        final PatientDto patient = patientFromJson(jsonPatient);
+        final Patient patient = patientFromJson(jsonPatient);
         final List<SmsDto> smss = smsListFromJson(jsonSmss);
-        return new Pair<PatientDto, List<SmsDto>>(patient, smss);
+        return new Pair<Patient, List<SmsDto>>(patient, smss);
     }
 
     /**

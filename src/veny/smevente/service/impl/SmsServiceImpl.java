@@ -26,7 +26,7 @@ import veny.smevente.dao.jpa.gae.SmsDaoGae;
 import veny.smevente.dao.jpa.gae.UserDaoGae;
 import veny.smevente.dao.orientdb.UnitDaoImpl;
 import veny.smevente.model.Membership;
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -258,8 +258,8 @@ public class SmsServiceImpl implements SmsService {
 
     /** {@inheritDoc} */
     @Override
-    public Pair<PatientDto, List<SmsDto>> findSmsByPatient(final Long patientId) {
-        final PatientDto patient = patientDao.getById(patientId).mapToDto();
+    public Pair<Patient, List<SmsDto>> findSmsByPatient(final Long patientId) {
+        final Patient patient = patientDao.getById(patientId).mapToDto();
 
         final List<Sms> foundSmsGae = smsDao.findByPatient(patientId);
         final List<SmsDto> smss = new ArrayList<SmsDto>();
@@ -282,7 +282,7 @@ public class SmsServiceImpl implements SmsService {
         }
 
         LOG.info("found SMSs by patient, patientId=" + patientId + ", size=" + smss.size());
-        return new Pair<PatientDto, List<SmsDto>>(patient, smss);
+        return new Pair<Patient, List<SmsDto>>(patient, smss);
     }
 
     /** {@inheritDoc} */

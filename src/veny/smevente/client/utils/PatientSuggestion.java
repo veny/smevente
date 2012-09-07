@@ -1,6 +1,6 @@
 package veny.smevente.client.utils;
 
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 
@@ -13,14 +13,14 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 public class PatientSuggestion extends MultiWordSuggestion {
 
     /** Wrapped patient. */
-    private PatientDto patient;
+    private Patient patient;
 
     /**
      * Constructor.
      * @param patient patient to be wrapped
      * @param formattedSuggestions formatted suggestion
      */
-    public PatientSuggestion(final PatientDto patient, final String formattedSuggestions) {
+    public PatientSuggestion(final Patient patient, final String formattedSuggestions) {
         super(patient.getFirstname() + " " + patient.getSurname(), formattedSuggestions);
         this.patient = patient;
     }
@@ -29,7 +29,7 @@ public class PatientSuggestion extends MultiWordSuggestion {
      * Gets wrapped patient.
      * @return patient
      */
-    public PatientDto getPatient() {
+    public Patient getPatient() {
         return patient;
     }
 

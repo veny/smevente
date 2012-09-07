@@ -34,7 +34,7 @@ public class SmsDto {
     /** Author. */
     private User author;
     /** Patient. */
-    private PatientDto patient;
+    private Patient patient;
     /** Medical Help Category. */
     private MedicalHelpCategoryDto medicalHelpCategory;
     /** Medical help start time. */
@@ -69,10 +69,10 @@ public class SmsDto {
     public void setAuthor(User author) {
         this.author = author;
     }
-    public PatientDto getPatient() {
+    public Patient getPatient() {
         return patient;
     }
-    public void setPatient(PatientDto patient) {
+    public void setPatient(Patient patient) {
         this.patient = patient;
     }
     public MedicalHelpCategoryDto getMedicalHelpCategory() {
@@ -141,7 +141,7 @@ public class SmsDto {
         if (null == patientId || patientId.longValue() <= 0) {
             throw new IllegalArgumentException("invalid patient ID (null or less than 0)");
         }
-        setPatient(new PatientDto());
+        setPatient(new Patient());
         getPatient().setId(patientId);
     }
 

@@ -1,37 +1,14 @@
 package veny.smevente.server;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
-import veny.smevente.dao.jpa.gae.PatientDaoGae;
-import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.Membership;
-import veny.smevente.model.Unit;
 import veny.smevente.model.User;
-import veny.smevente.model.gae.Patient;
 import veny.smevente.security.AuthenticationSuccessHandlerImpl;
-import veny.smevente.service.SmsGatewayService;
-import veny.smevente.service.SmsGatewayService.SmsException;
-import veny.smevente.service.impl.GaeCache;
-import veny.smevente.service.TextUtils;
-import veny.smevente.service.UnitService;
-import veny.smevente.service.UserService;
 
 /**
  * Controller to initialize the datastore.

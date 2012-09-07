@@ -3,6 +3,7 @@ package veny.smevente.service;
 import java.util.List;
 
 import veny.smevente.dao.ObjectNotFoundException;
+import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
 
 /**
@@ -40,48 +41,41 @@ public interface UnitService {
     @Deprecated // only for unit testing purposes
     List<Unit> getAllUnits();
 
-//    // ---------------------------------------------------------- Patient Stuff
-//
-//    /**
-//     * Creates a new patient in DB.
-//     * The patient has to have an associated unit where he belongs to.
-//     * The unit can be fulfilled only with an unit ID.
-//     *
-//     * @param patient patient
-//     * @return created patient
-//     */
-//    PatientDto createPatient(PatientDto patient);
-//
-//    /**
-//     * Gets patient by ID.
-//     *
-//     * @param patientId patient ID
-//     * @return found patient
-//     */
-//    PatientDto getPatientById(Long patientId);
-//
-//    /**
-//     * Updates the given patient.
-//     *
-//     * @param patient patient
-//     */
-//    void updatePatient(PatientDto patient);
-//
-////    /**
-////     * Loads all patients.
-////     *
-////     * @return list of all patients
-////     * @deprecated 100722
-////     */
-////    List<PatientDto> getAllPatients();
-//
-//    /**
-//     * Gets patients by unit.
-//     * @param unitId unit ID
-//     * @return list of patients in given unit
-//     */
-//    List<PatientDto> getPatientsByUnit(Long unitId);
-//
+    // ---------------------------------------------------------- Patient Stuff
+
+    /**
+     * Creates a new patient in DB.
+     * The patient has to have an associated unit where he belongs to.
+     * The unit can be fulfilled only with an unit ID.
+     *
+     * @param patient patient
+     * @return created patient
+     */
+    Patient createPatient(Patient patient);
+
+    /**
+     * Gets patient by ID.
+     *
+     * @param id patient ID
+     * @return found patient
+     */
+    Patient getPatientById(Object id);
+
+    /**
+     * Gets patients by unit.
+     *
+     * @param unitId unit ID
+     * @return list of patients in given unit
+     */
+    List<Patient> getPatientsByUnit(Object unitId);
+
+    /**
+     * Updates the given patient.
+     *
+     * @param patient patient to update
+     */
+    void updatePatient(Patient patient);
+
 //    /**
 //     * Finds patients according to given name and/or phone number and/or birth number.
 //     * @param unitId ID to search in
@@ -91,13 +85,13 @@ public interface UnitService {
 //     * @return list of found patients
 //     */
 //    List<PatientDto> findPatients(Long unitId, String name, String phoneNumber, String birthNumber);
-//
-//    /**
-//     * Deletes patient.
-//     * @param id patient ID
-//     */
-//    void deletePatient(Long id);
-//
+
+    /**
+     * Deletes patient.
+     * @param id patient ID
+     */
+    void deletePatient(Object id);
+
 //    // ---------------------------------------------- MedicalHelpCategory Stuff
 //
 //    /**

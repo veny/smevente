@@ -25,7 +25,7 @@ import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.client.utils.SmsWidgetEvent;
 import veny.smevente.client.utils.SmsWidgetEvent.SmsWidgetHandler;
 import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.User;
 import veny.smevente.shared.EntityTypeEnum;
@@ -100,7 +100,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     private final PopupPanel menuPopupPanel = new PopupPanel(false, false);
 
     /** List of available patients loaded by 'onShow' action. */
-    private List<PatientDto> patients;
+    private List<Patient> patients;
     /** List of available Medical Help Categories. */
     private List<MedicalHelpCategoryDto> medicalHelpCategories;
 
@@ -151,7 +151,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     @Override
     public void create(final CrudEvent event) {
         if (EntityTypeEnum.PATIENT == event.getEntityType() && null != patients) {
-            patients.add((PatientDto) event.getData());
+            patients.add((Patient) event.getData());
         } else if (EntityTypeEnum.MHC == event.getEntityType() && null != medicalHelpCategories) {
             MedicalHelpCategoryDto newMhc = (MedicalHelpCategoryDto) event.getData();
             if (MedicalHelpCategoryDto.TYPE_STANDARD == newMhc.getType()) {
@@ -167,9 +167,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     @Override
     public void update(final CrudEvent event) {
         if (EntityTypeEnum.PATIENT == event.getEntityType()) {
-            final int idx = getPatientIndex(((PatientDto) event.getData()).getId());
+            final int idx = getPatientIndex(((Patient) event.getData()).getId());
             if (-1 != idx) {
-                patients.set(idx, (PatientDto) event.getData());
+                patients.set(idx, (Patient) event.getData());
             }
         } else if (EntityTypeEnum.MHC == event.getEntityType()) {
             final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategoryDto) event.getData()).getId());
@@ -182,7 +182,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     @Override
     public void delete(final CrudEvent event) {
         if (EntityTypeEnum.PATIENT == event.getEntityType()) {
-            final int idx = getPatientIndex(((PatientDto) event.getData()).getId());
+            final int idx = getPatientIndex(((Patient) event.getData()).getId());
             patients.remove(idx);
         } else if (EntityTypeEnum.MHC == event.getEntityType()) {
             final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategoryDto) event.getData()).getId());
@@ -433,7 +433,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                patients = App.get().getJsonDeserializer().deserializeList(PatientDto.class, "patients", jsonText);
+                patients = App.get().getJsonDeserializer().deserializeList(Patient.class, "patients", jsonText);
                 medicalHelpCategories = App.get().getJsonDeserializer().deserializeList(
                         MedicalHelpCategoryDto.class, "medicalHelpCategories", jsonText);
             }

@@ -9,7 +9,7 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import veny.smevente.AbstractBaseTestWithAuth;
 import veny.smevente.model.MedicalHelpCategoryDto;
 import veny.smevente.model.Membership;
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
@@ -131,7 +131,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.createPatient. */
     @Test
     public void testCreatePatient() {
-        final PatientDto toCreate = new PatientDto();
+        final Patient toCreate = new Patient();
         toCreate.setUnit(unit1);
         toCreate.setFirstname(FIRSTNAME);
         toCreate.setSurname(SURNAME);
@@ -156,7 +156,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.updatePatient. */
     @Test
     public void testUpdatePatient() {
-        final PatientDto toCreate = new PatientDto();
+        final Patient toCreate = new Patient();
         toCreate.setUnit(unit1);
         toCreate.setFirstname(FIRSTNAME);
         toCreate.setSurname(SURNAME);
@@ -169,7 +169,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         toCreate.setEmployer("employer");
         toCreate.setCareers("careers");
 
-        final PatientDto created = unitService.createPatient(toCreate);
+        final Patient created = unitService.createPatient(toCreate);
         // CHECKSTYLE:OFF
         final String NEW_PHONE_NUMBER = "666123456";
         // CHECKSTYLE:ON
@@ -193,7 +193,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.getPatientsByUnit. */
     @Test
     public void testGetPatientsByUnit() {
-        final PatientDto toCreate = new PatientDto();
+        final Patient toCreate = new Patient();
         toCreate.setUnit(unit1);
         toCreate.setFirstname(FIRSTNAME);
         toCreate.setSurname(SURNAME);
@@ -231,7 +231,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.getPatientById. */
     @Test
     public void testGetPatientById() {
-        final PatientDto toCreate = new PatientDto();
+        final Patient toCreate = new Patient();
         toCreate.setUnit(unit1);
         toCreate.setFirstname(FIRSTNAME);
         toCreate.setSurname(SURNAME);
@@ -244,7 +244,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         toCreate.setEmployer("employer");
         toCreate.setCareers("careers");
 
-        final PatientDto created = unitService.createPatient(toCreate);
+        final Patient created = unitService.createPatient(toCreate);
         assertEquals(FIRSTNAME, unitService.getPatientById(created.getId()).getFirstname());
 
         logout();
@@ -257,7 +257,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.deletePatient. */
     @Test
     public void testDeletePatient() {
-        final PatientDto toCreate = new PatientDto();
+        final Patient toCreate = new Patient();
         toCreate.setUnit(unit1);
         toCreate.setFirstname(FIRSTNAME);
         toCreate.setSurname(SURNAME);
@@ -270,9 +270,9 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         toCreate.setEmployer("employer");
         toCreate.setCareers("careers");
 
-        final PatientDto created1 = unitService.createPatient(toCreate);
+        final Patient created1 = unitService.createPatient(toCreate);
         unitService.deletePatient(created1.getId());
-        final PatientDto created2 = unitService.createPatient(created1);
+        final Patient created2 = unitService.createPatient(created1);
 
         logout();
         try { // hasRole('ROLE_AUTHENTICATED')

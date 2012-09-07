@@ -7,7 +7,6 @@ import java.util.Map;
 
 import veny.smevente.dao.UserDao;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
-import veny.smevente.model.AbstractEntity;
 import veny.smevente.model.User;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -56,7 +55,7 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
                 params.put("username", username);
                 params.put("password", password);
 
-                final List<AbstractEntity> users = executeWithSoftDelete(db, sql.toString(), params);
+                final List<User> users = executeWithSoftDelete(db, sql.toString(), params, true);
                 if (users.size() > 1) {
                     throw new IllegalStateException("expected max 1 user, but found " + users.size());
                 }

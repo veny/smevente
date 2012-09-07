@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.User;
 import veny.smevente.service.SmsGatewayService.SmsException;
@@ -96,7 +96,7 @@ public interface SmsService {
      * @return the patient and his list of SMS sorted descending by start date
      * (author & MHC is set, NO the unit)
      */
-    Pair<PatientDto, List<SmsDto>> findSmsByPatient(Long patientId);
+    Pair<Patient, List<SmsDto>> findSmsByPatient(Long patientId);
 
     /**
      * Sends SMS with given ID.

@@ -1,10 +1,6 @@
 package veny.smevente.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Column;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
@@ -45,8 +41,8 @@ public class Membership extends AbstractEntity {
     @OneToOne
     private User user;
     /** Units where a user is member in. */
-    @OneToMany
-    private Set<Unit> units;
+    @OneToOne
+    private Unit unit;
 
     // CHECKSTYLE:OFF
     public String getRole() {
@@ -67,23 +63,14 @@ public class Membership extends AbstractEntity {
     public void setUser(User user) {
         this.user = user;
     }
-    public Set<Unit> getUnits() {
-        return units;
+    public Unit getUnit() {
+        return unit;
     }
-    public void setUnits(Set<Unit> units) {
-        this.units = units;
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
     // CHECKSTYLE:ON
 
-
-    /**
-     * Adds a new unit.
-     * @param unit new unit to be added
-     */
-    public void addUnit(final Unit unit) {
-        if (null == units) { units = new HashSet<Unit>(); }
-        units.add(unit);
-    }
 
     /**
      * Virtual attribute providing an enumeration entry to identify role.
@@ -113,8 +100,8 @@ public class Membership extends AbstractEntity {
             .append(significance)
             .append(", user=")
             .append(user.getUsername())
-            .append(", units=")
-            .append(null == units ? "null" : units.size())
+            .append(", unit=")
+            .append(unit.getName())
             .append(")")
             .toString();
     }

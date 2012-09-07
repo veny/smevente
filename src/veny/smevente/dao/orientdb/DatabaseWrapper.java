@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.DisposableBean;
 
 import veny.smevente.model.Membership;
+import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
@@ -90,14 +91,17 @@ public final class DatabaseWrapper implements DisposableBean {
         if (init) {
 
             // delete classes
-            if (db.getMetadata().getSchema().existsClass("User")) {
-                db.getMetadata().getSchema().dropClass("User");
+            if (db.getMetadata().getSchema().existsClass("Patient")) {
+                db.getMetadata().getSchema().dropClass("Patient");
             }
             if (db.getMetadata().getSchema().existsClass("Membership")) {
                 db.getMetadata().getSchema().dropClass("Membership");
             }
             if (db.getMetadata().getSchema().existsClass("Unit")) {
                 db.getMetadata().getSchema().dropClass("Unit");
+            }
+            if (db.getMetadata().getSchema().existsClass("User")) {
+                db.getMetadata().getSchema().dropClass("User");
             }
             if (db.getMetadata().getSchema().existsClass("AbstractEntity")) {
                 db.getMetadata().getSchema().dropClass("AbstractEntity");
@@ -114,12 +118,16 @@ public final class DatabaseWrapper implements DisposableBean {
             // Membership
             OClass membership = db.getMetadata().getSchema().createClass("Membership", entity);
             membership.createProperty("user", OType.LINK, user).setMandatory(true);
-            membership.createProperty("units", OType.LINKSET, unit);
+            membership.createProperty("unit", OType.LINK, unit).setMandatory(true);
+            // Patient
+            OClass patient = db.getMetadata().getSchema().createClass("Patient", entity);
+            patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
         }
 
         db.getEntityManager().registerEntityClass(User.class);
         db.getEntityManager().registerEntityClass(Unit.class);
         db.getEntityManager().registerEntityClass(Membership.class);
+        db.getEntityManager().registerEntityClass(Patient.class);
         db.close();
     }
 
@@ -162,7 +170,6 @@ public final class DatabaseWrapper implements DisposableBean {
     public <T> T execute(final ODatabaseCallback<T> callback, final boolean tx) {
         final OObjectDatabaseTx db = this.get();
         T rslt = null;
-System.out.println("YYYYYYYYYYYYYYYY OPEN");
 
         try {
             if (tx) { db.begin(); }
@@ -181,7 +188,6 @@ System.out.println("YYYYYYYYYYYYYYYY OPEN");
             throw new IllegalStateException("failed to execute callback: " + e.getMessage(), e);
         } finally {
             if (null != db) {
-System.out.println("XXXXXXXXXXXXXXX CLOSED");
                 db.close();
             }
         }

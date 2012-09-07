@@ -14,7 +14,7 @@ import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -187,8 +187,8 @@ public class StorePatientPresenter
     public void onShow(final Object parameter) {
         view.getFirstname().setFocus(true);
 
-        if (null != parameter && parameter instanceof PatientDto) {
-            final PatientDto p = (PatientDto) parameter;
+        if (null != parameter && parameter instanceof Patient) {
+            final Patient p = (Patient) parameter;
             view.getPatientId().setValue(p.getId().toString());
             view.getFirstname().setText(p.getFirstname());
             view.getSurname().setText(p.getSurname());
@@ -289,7 +289,7 @@ public class StorePatientPresenter
      * Creates a new patient.
      */
     private void storePatient() {
-        final PatientDto p = new PatientDto();
+        final Patient p = new Patient();
         if (null == view.getPatientId().getValue() || view.getPatientId().getValue().trim().isEmpty()) {
             p.setId(null);
         } else {
@@ -326,8 +326,8 @@ public class StorePatientPresenter
             @Override
             public void onSuccess(final String jsonText) {
                 if (null == p.getId()) {
-                    final PatientDto patient = App.get().getJsonDeserializer().deserialize(
-                            PatientDto.class, "patient", jsonText);
+                    final Patient patient = App.get().getJsonDeserializer().deserialize(
+                            Patient.class, "patient", jsonText);
                     eventBus.fireEvent(new CrudEvent(EntityTypeEnum.PATIENT, OperationType.CREATE, patient));
                     Window.alert(CONSTANTS.patientAdded()[App.get().getSelectedUnitTextVariant()]);
                 } else {

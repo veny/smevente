@@ -19,7 +19,7 @@ import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -68,7 +68,7 @@ public class SmsServiceTest extends AbstractBaseTest {
         } catch (IllegalArgumentException e) { assertEquals(true, true); }
         try { // not the same unit by patient & unit
             final Unit unit = createUnit("zx", new HashMap<String, String>(), 0L);
-            final PatientDto patient = createPatient("A", "B", null, null, unit);
+            final Patient patient = createPatient("A", "B", null, null, unit);
             createSms("a", now, 0, "a", created.getAuthor(), patient, created.getMedicalHelpCategory());
             assertEquals("expected IllegalArgumentException", true, false);
         } catch (IllegalArgumentException e) { assertEquals(true, true); }
@@ -78,7 +78,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     @Test
     public void testCreateAndSendSpecialSms() {
         final User author = createDefaultUser();
-        final PatientDto patient = createDefaultPatient();
+        final Patient patient = createDefaultPatient();
         final SmsDto sms = new SmsDto();
         sms.setAuthor(author);
         sms.setPatient(patient);
@@ -118,7 +118,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     public void testCreateAndSendSpecialSmsByLimitedUnit() {
         final User author = createDefaultUser();
         final Unit limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
-        final PatientDto patient = createPatient("a", "b", "606146177", null, limitedUnit);
+        final Patient patient = createPatient("a", "b", "606146177", null, limitedUnit);
         assertEquals(1L, limitedUnit.getLimitedSmss().longValue());
 
         final SmsDto sms = new SmsDto();
@@ -232,8 +232,8 @@ public class SmsServiceTest extends AbstractBaseTest {
         final Unit unitB = createUnit("B", metadata, 0L);
         final User authorA = createUser("A", "A", "AA", false);
         final User authorB = createUser("B", "B", "B", false);
-        final PatientDto patientA = createPatient("A", "A", null, null, unitA);
-        final PatientDto patientB = createPatient("B", "B", null, null, unitB);
+        final Patient patientA = createPatient("A", "A", null, null, unitA);
+        final Patient patientB = createPatient("B", "B", null, null, unitB);
         final MedicalHelpCategoryDto mhcA = createMedicalHelpCategory("A", "AAAAAA", 10, "text", unitA);
         final MedicalHelpCategoryDto mhcB = createMedicalHelpCategory("B", "BBBBBB", 10, "text", unitB);
 
@@ -293,7 +293,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     @Test
     public void testFindSmsByPatient() {
         final SmsDto first = createDefaultSms();
-        Pair<PatientDto, List<SmsDto>> pair = smsService.findSmsByPatient(first.getPatient().getId());
+        Pair<Patient, List<SmsDto>> pair = smsService.findSmsByPatient(first.getPatient().getId());
         assertNotNull(pair.getA());
         assertEquals(1, pair.getB().size());
         assertNull(pair.getB().get(0).getPatient());
@@ -346,7 +346,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     @Test
     public void testSendSms() {
         final User author = createDefaultUser();
-        final PatientDto patient = createDefaultPatient();
+        final Patient patient = createDefaultPatient();
         final MedicalHelpCategoryDto mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, patient.getUnit());
 
@@ -368,7 +368,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     public void testSendSmsByLimitedUnit() {
         final User author = createDefaultUser();
         final Unit limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
-        final PatientDto patient = createPatient("a", "b", "606146177", null, limitedUnit);
+        final Patient patient = createPatient("a", "b", "606146177", null, limitedUnit);
         final MedicalHelpCategoryDto mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, limitedUnit);
 
@@ -399,7 +399,7 @@ public class SmsServiceTest extends AbstractBaseTest {
      * @throws Exception because of reflection */
     @Test
     public void testBF29() throws Exception {
-        final PatientDto patient = createDefaultPatient();
+        final Patient patient = createDefaultPatient();
         final MedicalHelpCategoryDto mhc = createMedicalHelpCategory(
                 MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, patient.getUnit());
         @SuppressWarnings("deprecation")
@@ -431,7 +431,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     public void testBulkSendByLimitedUnit() {
         final User author = createDefaultUser();
         final Unit limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
-        final PatientDto patient = createPatient("a", "b", "606146177", null, limitedUnit);
+        final Patient patient = createPatient("a", "b", "606146177", null, limitedUnit);
         final MedicalHelpCategoryDto mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, limitedUnit);
 

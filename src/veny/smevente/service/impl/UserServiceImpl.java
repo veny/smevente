@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
         memb.setRole(role.toString());
         memb.setSignificance(significance);
         memb.setUser(rslt);
-        memb.addUnit(unit);
+        memb.setUnit(unit);
         membershipDao.persist(memb);
 
         return rslt;
@@ -447,7 +447,7 @@ public class UserServiceImpl implements UserService {
             final Unit unit = unitDao.getById(unitId);
             toStore = new Membership();
             toStore.setUser(userDao.getById(userId));
-            toStore.addUnit(unit);
+            toStore.setUnit(unit);
             toStore.setRole(role.toString());
             toStore.setSignificance(significance);
         }

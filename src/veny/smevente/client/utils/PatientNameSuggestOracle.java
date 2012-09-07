@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 
 import com.google.gwt.user.client.ui.SuggestOracle;
 
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 public class PatientNameSuggestOracle extends SuggestOracle {
 
     /** List of available patients. */
-    private List<PatientDto> patients = null;
+    private List<Patient> patients = null;
 
     /** {@inheritDoc} */
     @Override
@@ -54,7 +54,7 @@ public class PatientNameSuggestOracle extends SuggestOracle {
      * Sets list of patients.
      * @param patients list of patients
      */
-    public void setPatients(final List<PatientDto> patients) {
+    public void setPatients(final List<Patient> patients) {
         this.patients = patients;
     }
 
@@ -73,7 +73,7 @@ public class PatientNameSuggestOracle extends SuggestOracle {
      * @param prefixToMatch current entered prefix
      * @return real suggestions
      */
-    private String convertToFormattedSuggestions(final PatientDto patient, final String prefixToMatch) {
+    private String convertToFormattedSuggestions(final Patient patient, final String prefixToMatch) {
         final StringBuilder rslt = new StringBuilder();
 
         // search in form "firstname surname"
@@ -123,7 +123,7 @@ public class PatientNameSuggestOracle extends SuggestOracle {
      * @param prefixToMatch text to test
      * @return <i>true</i> if matches
      */
-    private boolean matches(final PatientDto patient, final String prefixToMatch) {
+    private boolean matches(final Patient patient, final String prefixToMatch) {
         // search in form "firstname surname"
         if (prefixToMatch.contains(" ")) {
             final String firstname = prefixToMatch.substring(0, prefixToMatch.indexOf(' '));

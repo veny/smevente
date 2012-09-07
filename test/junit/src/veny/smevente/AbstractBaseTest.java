@@ -2,7 +2,6 @@ package veny.smevente;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -13,6 +12,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import veny.smevente.dao.orientdb.DatabaseWrapper;
+import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.UnitService;
@@ -48,6 +48,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     public void deleteEntries() {
         final DatabaseWrapper dbw = (DatabaseWrapper) applicationContext.getBean("databaseWrapper");
         final OObjectDatabaseTx db = dbw.get();
+        db.command(new OCommandSQL("DELETE FROM Patient")).execute();
         db.command(new OCommandSQL("DELETE FROM Membership")).execute();
         db.command(new OCommandSQL("DELETE FROM Unit")).execute();
         db.command(new OCommandSQL("DELETE FROM User")).execute();
@@ -143,51 +144,53 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         assertEquals("usr:x,passwd:y", unit.getSmsEngine());
     }
 
-//    // CHECKSTYLE:OFF
-//    public static final String PHONE_NUMBER = "606123456";
-//    public static final String BIRTH_NUMBER = "7001012222";
-//    // CHECKSTYLE:ON
-//
-//    /** @return a new created default patient */
-//    protected PatientDto createDefaultPatient() {
-//        final UnitDto unit = createDefaultUnit();
-//        return createPatient(FIRSTNAME, SURNAME, PHONE_NUMBER, BIRTH_NUMBER, unit);
-//    }
-//    /**
-//     * Creates a new patient with given attributes.
-//     * @param firstname firstname
-//     * @param surname surname
-//     * @param phoneNumber phone number
-//     * @param birthNumber birth number
-//     * @param unit unit to be the patient put into
-//     * @return a new created patient
-//     */
-//    protected PatientDto createPatient(
-//            final String firstname, final String surname,
-//            final String phoneNumber, final String birthNumber, final UnitDto unit) {
-//        final PatientDto toCreate = new PatientDto();
-//        toCreate.setUnit(unit);
-//        toCreate.setFirstname(firstname);
-//        toCreate.setSurname(surname);
-//        toCreate.setPhoneNumber(phoneNumber);
-//        toCreate.setBirthNumber(birthNumber);
-//        return unitService.createPatient(toCreate);
-//    }
-//    /**
-//     * Asserts default patient.
-//     * @param patient patient to be checked
-//     * @param aggregated whether to assert the aggregated objects too
-//     */
-//    protected void assertDefaultPatient(final PatientDto patient, final boolean aggregated) {
-//        assertNotNull(patient);
-//        assertNotNull(patient.getId());
-//        if (aggregated) { assertDefaultUnit(patient.getUnit()); }
-//        assertEquals(FIRSTNAME, patient.getFirstname());
-//        assertEquals(SURNAME, patient.getSurname());
-//        assertEquals(PHONE_NUMBER, patient.getPhoneNumber());
-//        assertEquals(BIRTH_NUMBER, patient.getBirthNumber());
-//    }
-//
+    // ------------------------------------------------ Patient Assistant Stuff
+
+    // CHECKSTYLE:OFF
+    public static final String PHONE_NUMBER = "606123456";
+    public static final String BIRTH_NUMBER = "7001012222";
+    // CHECKSTYLE:ON
+
+    /** @return a new created default patient */
+    protected Patient createDefaultPatient() {
+        final Unit unit = createDefaultUnit();
+        return createPatient(FIRSTNAME, SURNAME, PHONE_NUMBER, BIRTH_NUMBER, unit);
+    }
+    /**
+     * Creates a new patient with given attributes.
+     * @param firstname firstname
+     * @param surname surname
+     * @param phoneNumber phone number
+     * @param birthNumber birth number
+     * @param unit unit to be the patient put into
+     * @return a new created patient
+     */
+    protected Patient createPatient(
+            final String firstname, final String surname,
+            final String phoneNumber, final String birthNumber, final Unit unit) {
+        final Patient toCreate = new Patient();
+        toCreate.setUnit(unit);
+        toCreate.setFirstname(firstname);
+        toCreate.setSurname(surname);
+        toCreate.setPhoneNumber(phoneNumber);
+        toCreate.setBirthNumber(birthNumber);
+        return unitService.createPatient(toCreate);
+    }
+    /**
+     * Asserts default patient.
+     * @param patient patient to be checked
+     * @param aggregated whether to assert the aggregated objects too
+     */
+    protected void assertDefaultPatient(final Patient patient, final boolean aggregated) {
+        assertNotNull(patient);
+        assertNotNull(patient.getId());
+        if (aggregated) { assertDefaultUnit(patient.getUnit()); }
+        assertEquals(FIRSTNAME, patient.getFirstname());
+        assertEquals(SURNAME, patient.getSurname());
+        assertEquals(PHONE_NUMBER, patient.getPhoneNumber());
+        assertEquals(BIRTH_NUMBER, patient.getBirthNumber());
+    }
+
 //    // CHECKSTYLE:OFF
 //    public static final String MHC_NAME = "MedicalHelpCategory XY";
 //    public static final String MHC_COLOR = "AABBCC";

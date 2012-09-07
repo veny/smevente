@@ -15,10 +15,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.dao.jpa.gae.MembershipDaoGae;
+import veny.smevente.dao.MembershipDao;
+import veny.smevente.model.Membership;
 import veny.smevente.model.User;
-import veny.smevente.model.Membership.Type;
-import veny.smevente.model.gae.Membership;
+import veny.smevente.model.Membership.Role;
 import veny.smevente.service.UserService;
 
 /**
@@ -34,7 +34,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     /** Dependency. */
     @Autowired
-    private MembershipDaoGae membershipDao;
+    private MembershipDao membershipDao;
 
     /** Dependency. */
     @Autowired
@@ -82,18 +82,18 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         authorities.add(new GrantedAuthorityImpl(SmeventeRole.ROLE_AUTHENTICATED.name()));
 
         // get all admin memberships
-        final List<Long> adminUnits = new ArrayList<Long>();
-        final List<Membership> memberships = membershipDao.findBy("userId", user.getId(), null);
+        final List<Object> adminUnits = new ArrayList<Object>();
+        final List<Membership> memberships = membershipDao.findBy("user", user.getId(), null);
 
         for (Membership m : memberships) {
-            if (Type.ADMIN == m.getType()) { adminUnits.add(m.getUnitId()); }
+            if (Role.ADMIN == m.enumRole()) { adminUnits.add(m.getUnit().getId()); }
         }
 
         // create the authentication token to be returned
         final UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(username, password, authorities);
         // the detail is pair of user ID and all unit IDs where the user is admin in
-        authenticationToken.setDetails(new Pair<Long, List<Long>>(user.getId(), adminUnits));
+        authenticationToken.setDetails(new Pair<Object, List<Object>>(user.getId(), adminUnits));
 
         LOG.info("user logged in, " + user.toString() + ", authorities=" + authorities
                 + ", adminUnit(s)=" + adminUnits);

@@ -1,53 +1,56 @@
 package veny.smevente.model;
 
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.ManyToOne;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import veny.smevente.misc.SoftDelete;
+
 /**
- * DTO entity representing the Patient.
+ * Entity class representing the Patient.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 14.11.2010
  */
-public class PatientDto implements Serializable {
-
-    /** Generated (1110303) serial version UID. */
-    private static final long serialVersionUID = 502793953437559774L;
-
-    /** Primary Key. */
-    private Long id;
+@SoftDelete
+public class Patient extends AbstractEntity {
 
     /** Unit which is master of this. */
+    @ManyToOne
     private Unit unit;
     /** Patient's first name. */
+    @Column
     private String firstname;
     /** Patient's surname. */
+    @Column
     private String surname;
     /** Patient's phone number. */
+    @Column
     private String phoneNumber;
     /** Patient's birth date. */
+    @Column
     private String birthNumber;
     /** Patient's degree. */
+    @Column
     private String degree;
     /** Patient's degree. */
+    @Column
     private String street;
     /** Patient's degree. */
+    @Column
     private String city;
     /** Patient's degree. */
+    @Column
     private String zipCode;
     /** Patient's degree. */
+    @Column
     private String employer;
     /** Patient's degree. */
+    @Column
     private String careers;
 
     // CHECKSTYLE:OFF
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
     public Unit getUnit() {
         return unit;
     }
@@ -121,7 +124,7 @@ public class PatientDto implements Serializable {
      * @return fullname
      */
     @JsonIgnore
-    public String getFullname() {
+    public String fullname() {
         return new StringBuilder(getFirstname())
             .append(' ')
             .append(getSurname())
@@ -133,7 +136,7 @@ public class PatientDto implements Serializable {
      * @return formatted birth number
      */
     @JsonIgnore
-    public String getFormattedBirthNumber() {
+    public String formattedBirthNumber() {
         if (null != birthNumber && birthNumber.length() > 6) {
             return birthNumber.substring(0, 6) + "/" + birthNumber.substring(6);
         }
@@ -142,17 +145,17 @@ public class PatientDto implements Serializable {
 
     // ---------------------------------------------------- Convenience Methods
 
-    /**
-     * Sets unit ID to a new unit object.
-     * @param unitId unit ID
-     */
-    public void setUnitId(final Long unitId) {
-        if (null == unitId || unitId.longValue() <= 0) {
-            throw new IllegalArgumentException("invalid unit ID (null or less than 0)");
-        }
-        setUnit(new Unit());
-        getUnit().setId(unitId);
-    }
+//    /**
+//     * Sets unit ID to a new unit object.
+//     * @param unitId unit ID
+//     */
+//    public void setUnitId(final Long unitId) {
+//        if (null == unitId || unitId.longValue() <= 0) {
+//            throw new IllegalArgumentException("invalid unit ID (null or less than 0)");
+//        }
+//        setUnit(new Unit());
+//        getUnit().setId(unitId);
+//    }
 
     // ----------------------------------------------------------- Object Stuff
 
@@ -179,15 +182,15 @@ public class PatientDto implements Serializable {
     @Override
     public boolean equals(final Object other) {
         if (this == other) { return true; }
-        if (!(other instanceof PatientDto)) { return false; }
+        if (!(other instanceof Patient)) { return false; }
 
-        return id.equals(((PatientDto) other).getId());
+        return getId().equals(((Patient) other).getId());
     }
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return id.intValue();
+        return getId().hashCode();
     }
 
 }

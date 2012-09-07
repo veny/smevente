@@ -10,7 +10,7 @@ import veny.smevente.client.rest.AbstractRestCallbackWithErrorHandling;
 import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.UiUtils;
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -99,7 +99,7 @@ public class PatientHistoryPresenter
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final Pair<PatientDto, List<SmsDto>> historyPair =
+                final Pair<Patient, List<SmsDto>> historyPair =
                     App.get().getJsonDeserializer().patientHistoryFomJson(jsonText);
                 processHistory(historyPair);
             }
@@ -111,7 +111,7 @@ public class PatientHistoryPresenter
      * Process the history response delivered from server.
      * @param historyPair pair of patient and his SMSs
      */
-    private void processHistory(final Pair<PatientDto, List<SmsDto>> historyPair) {
+    private void processHistory(final Pair<Patient, List<SmsDto>> historyPair) {
         view.getFullname().setText(historyPair.getA().getFullname()
                 + " [" + historyPair.getA().getFormattedBirthNumber() + "]");
 

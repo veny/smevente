@@ -10,7 +10,7 @@ import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.PatientNameSuggestOracle;
 import veny.smevente.client.utils.PatientSuggestion;
 import veny.smevente.model.MedicalHelpCategoryDto;
-import veny.smevente.model.PatientDto;
+import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -118,7 +118,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
     /** List of available Medical Help Categories. */
     private List<MedicalHelpCategoryDto> medicalHelpCategories;
     /** Selected patient. */
-    private PatientDto selectedPatient = null;
+    private Patient selectedPatient = null;
 
     /**
      * Initializes presenter for Create.
@@ -127,7 +127,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * @param mhcs list of medical help categories
      */
     @SuppressWarnings("deprecation")
-    public void init(final Date startTime, final List<PatientDto> patients, final List<MedicalHelpCategoryDto> mhcs) {
+    public void init(final Date startTime, final List<Patient> patients, final List<MedicalHelpCategoryDto> mhcs) {
         // clear all the stuff
         clean();
 
@@ -162,7 +162,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * @param mhcs list of medical help categories
      */
     public void init(
-            final SmsDto sms, final List<PatientDto> patients, final List<MedicalHelpCategoryDto> mhcs) {
+            final SmsDto sms, final List<Patient> patients, final List<MedicalHelpCategoryDto> mhcs) {
 
         this.init(sms.getMedicalHelpStartTime(), patients, mhcs);
 
@@ -205,7 +205,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * Gets the selected patient.
      * @return selected patient
      */
-    public PatientDto getSelectedPatient() {
+    public Patient getSelectedPatient() {
         return selectedPatient;
     }
 
