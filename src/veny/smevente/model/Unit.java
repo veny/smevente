@@ -1,12 +1,6 @@
 package veny.smevente.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Column;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -64,10 +58,6 @@ public class Unit extends AbstractEntity {
     @Column
     private Long limitedSmss;
 
-    /** Members in units. */
-    @OneToMany
-    private Set<Membership> memberships;
-
 
     // CHECKSTYLE:OFF
     public String getName() {
@@ -101,12 +91,6 @@ public class Unit extends AbstractEntity {
     public void setLimitedSmss(Long limitedSmss) {
         this.limitedSmss = limitedSmss;
     }
-    public Set<Membership> getMemberships() {
-        return memberships;
-    }
-    public void setMemberships(Set<Membership> memberships) {
-        this.memberships = memberships;
-    }
     // CHECKSTYLE:ON
 
     /**
@@ -125,16 +109,6 @@ public class Unit extends AbstractEntity {
         }
     }
 
-    /**
-     * Adds a new members.
-     * @param member new member to be added
-     */
-    public void addMember(final Membership member) {
-        if (null == member.getUser()) { throw new IllegalArgumentException("membership has to have a user"); }
-        if (null == memberships) { memberships = new HashSet<Membership>(); }
-        memberships.add(member);
-    }
-
     /** {@inheritDoc} */
     @Override
     public String toString() {
@@ -144,16 +118,6 @@ public class Unit extends AbstractEntity {
             .append(name)
             .append("', limitedSmss=")
             .append(limitedSmss);
-        if (null == memberships) {
-            rslt.append(", members=null");
-        } else {
-            rslt.append(", members=[");
-            for (Membership u : memberships) {
-                rslt.append(u.getUser().getUsername()).append(',');
-            }
-            rslt.deleteCharAt(rslt.length() - 1);
-            rslt.append(']');
-        }
         rslt.append(")");
         return rslt.toString();
     }

@@ -158,14 +158,14 @@ public interface UserService {
     // ------------------------------------------------------- Membership Stuff
 
     /**
-     * Adds user to unit.
+     * Creates a new one membership or update an existing.
      *
      * @param unitId ID of unit
      * @param userId ID of user
      * @param role membership role
      * @param significance significance of the membership to other memberships of a user
      */
-    void createMembership(Object unitId, Object userId, Membership.Role role, int significance);
+    Membership storeMembership(Object unitId, Object userId, Membership.Role role, int significance);
 
 //    /**
 //     * Finds memberships for given user.

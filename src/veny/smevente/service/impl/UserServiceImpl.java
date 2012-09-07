@@ -116,11 +116,8 @@ public class UserServiceImpl implements UserService {
         memb.setRole(role.toString());
         memb.setSignificance(significance);
         memb.setUser(rslt);
+        memb.addUnit(unit);
         membershipDao.persist(memb);
-
-        // add membership to unit
-        unit.addMember(memb);
-        unitDao.persist(unit);
 
         return rslt;
     }
@@ -429,40 +426,35 @@ public class UserServiceImpl implements UserService {
     /** {@inheritDoc} */
     @Transactional
     @Override
-    public void createMembership(
+    public Membership storeMembership(
             final Object unitId, final Object userId,
             final Membership.Role role, final int significance) {
 
         if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
         if (LOG.isLoggable(Level.FINER)) {
-            LOG.finer("trying to create membership, userId=" + userId + ", unitId=" + unitId + ", role=" + role);
+            LOG.finer("trying to store membership, userId=" + userId + ", unitId=" + unitId + ", role=" + role);
         }
 
-        // test existence of such combination
-        final Unit unit = unitDao.getById(unitId);
-        Membership toStore = null;
-        for (Membership m : unit.getMemberships()) {
-            if (userId.equals(m.getUser().getId())) {
-                toStore = m;
-                break;
-            }
-        }
+        Membership toStore = membershipDao.findByUserAndUnit(userId, unitId);
 
         if (null != toStore) {
+            // update existing
             toStore.setRole(role.toString());
             toStore.setSignificance(significance);
         } else {
+            // create new one
+            final Unit unit = unitDao.getById(unitId);
             toStore = new Membership();
             toStore.setUser(userDao.getById(userId));
+            toStore.addUnit(unit);
             toStore.setRole(role.toString());
             toStore.setSignificance(significance);
-            // --
-            unit.addMember(toStore);
         }
         membershipDao.persist(toStore);
 
-        LOG.info("created membership, userId=" + userId + ", unitId=" + unitId + ", role=" + role);
+        LOG.info("stored membership, userId=" + userId + ", unitId=" + unitId + ", role=" + role);
+        return toStore;
     }
 
 //    /*
