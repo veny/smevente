@@ -164,14 +164,16 @@ public interface UserService {
      * @param userId ID of user
      * @param role membership role
      * @param significance significance of the membership to other memberships of a user
+     * @return found or created membership object
      */
     Membership storeMembership(Object unitId, Object userId, Membership.Role role, int significance);
 
-//    /**
-//     * Finds memberships for given user.
-//     * @param userId ID of user
-//     * @return the list of memberships for given user
-//     */
-//    List<MembershipDto> findMembershipsByUser(Long userId);
+    /**
+     * Finds memberships for given user.
+     *
+     * @param userId ID of user
+     * @return the list of memberships for given user
+     */
+    List<Membership> findMembershipsByUser(Object userId);
 
 }

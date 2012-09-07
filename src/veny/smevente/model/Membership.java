@@ -93,11 +93,12 @@ public class Membership extends AbstractEntity {
      */
     @Transient
     @JsonIgnore
-    public Role getRoleEnum() {
-        if (Strings.isNullOrEmpty(role)) {
+    public Role enumRole() {
+        String r = getRole();
+        if (Strings.isNullOrEmpty(r)) {
             return Role.MEMBER;
         } else {
-            return Role.valueOf(role.trim());
+            return Role.valueOf(r.trim());
         }
     }
 

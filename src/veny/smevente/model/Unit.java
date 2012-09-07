@@ -101,7 +101,7 @@ public class Unit extends AbstractEntity {
      */
     @Transient
     @JsonIgnore
-    public TextVariant getTypeEnum() {
+    public TextVariant enumTextVariant() {
         if (Strings.isNullOrEmpty(type)) {
             return TextVariant.PATIENT;
         } else {

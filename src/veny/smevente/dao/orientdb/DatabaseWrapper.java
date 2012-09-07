@@ -79,6 +79,10 @@ public final class DatabaseWrapper implements DisposableBean {
         this.password = password;
     }
 
+    /**
+     * Sets a flag if schema initialization should be applied.
+     * @param init <i>true</i> for schema initialization
+     */
     public void setInit(final boolean init) {
         this.init = init;
         final OObjectDatabaseTx db = get();
@@ -101,7 +105,7 @@ public final class DatabaseWrapper implements DisposableBean {
 
             // AbstractEntity
             OClass entity = db.getMetadata().getSchema().createClass("AbstractEntity");
-            entity.createProperty("deleted", OType.BOOLEAN).setMandatory(true);
+            entity.createProperty("deleted", OType.BOOLEAN); //.setMandatory(true);
             entity.createProperty("revision", OType.STRING);
             // User
             OClass user = db.getMetadata().getSchema().createClass("User", entity);
@@ -116,6 +120,7 @@ public final class DatabaseWrapper implements DisposableBean {
         db.getEntityManager().registerEntityClass(User.class);
         db.getEntityManager().registerEntityClass(Unit.class);
         db.getEntityManager().registerEntityClass(Membership.class);
+        db.close();
     }
 
 
@@ -129,6 +134,10 @@ public final class DatabaseWrapper implements DisposableBean {
 //    }
     public OObjectDatabaseTx get() {
         return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
+//    	OObjectDatabaseTx database = new ODatabaseDocumentTx(databaseUrl);
+//        database.setProperty("minPool", 2);
+//        database.setProperty("maxPool", 5);
+//        database.open("admin", "admin");
     }
 
     /**
@@ -153,6 +162,7 @@ public final class DatabaseWrapper implements DisposableBean {
     public <T> T execute(final ODatabaseCallback<T> callback, final boolean tx) {
         final OObjectDatabaseTx db = this.get();
         T rslt = null;
+System.out.println("YYYYYYYYYYYYYYYY OPEN");
 
         try {
             if (tx) { db.begin(); }
@@ -171,6 +181,7 @@ public final class DatabaseWrapper implements DisposableBean {
             throw new IllegalStateException("failed to execute callback: " + e.getMessage(), e);
         } finally {
             if (null != db) {
+System.out.println("XXXXXXXXXXXXXXX CLOSED");
                 db.close();
             }
         }

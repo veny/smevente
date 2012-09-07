@@ -177,16 +177,16 @@ public class UserServiceImpl implements UserService {
     // TODO [veny,B] think of authorization
     @Override
     public void deleteUser(final Object id) {
-//        final List<MembershipDto> memberships = findMembershipsByUser(id);
-//        if (memberships != null) {
-//            for (MembershipDto membership: memberships) {
-//                membershipDao.remove(membership.getId());
-//                LOG.info("membership (for user with id=" + id + ") deleted, id=" + membership.getId());
-//            }
-//        }
-        // TODO [veny,A] delete membership
+        final List<Membership> memberships = findMembershipsByUser(id);
+        if (memberships != null) {
+            for (Membership membership: memberships) {
+                membershipDao.remove(membership.getId());
+                LOG.info("membership (for user with id=" + id + ") deleted, id=" + membership.getId());
+            }
+        }
+
         userDao.remove(id);
-        LOG.info("user deleted, id=" + id);
+        LOG.info("user deleted, id=" + id + ", memberships=" + memberships.size());
     }
 
     // no authorization - used in AuthenticationProvider
@@ -457,31 +457,15 @@ public class UserServiceImpl implements UserService {
         return toStore;
     }
 
-//    /*
-//     * Here is not used a TX because of GAE Entity Group limit for transaction.
-//     * I avoided to use TX (not needed here).
-//     */
-//    /** {@inheritDoc} */
-//    @Override
-//    public List<MembershipDto> findMembershipsByUser(final Long userId) {
-//        final List<MembershipDto> rslt = new ArrayList<MembershipDto>();
-//        final List<Membership> memberships = membershipDao.findBy("userId", userId, "significance");
-//        LOG.info("membership(s) found, size=" + memberships.size());
-//
-//        if (!memberships.isEmpty()) {
-//            final User userGae = userDao.getById(userId);
-//            if (userGae == null) {
-//                throw new IllegalStateException("no user found, userId=" + userId);
-//            }
-//            for (Membership m : memberships) {
-//                final MembershipDto membership = m.mapToDto();
-//                membership.setUser(userGae.mapToDto());
-//                rslt.add(membership);
-//            }
-//        }
-//
-//        return rslt;
-//    }
+    /** {@inheritDoc} */
+    @Transactional
+    @Override
+    public List<Membership> findMembershipsByUser(final Object userId) {
+        final List<Membership> memberships = membershipDao.findBy("user", userId, "significance");
+        LOG.info("membership(s) found, size=" + memberships.size());
+        return memberships;
+    }
+
     // -------------------------------------------------------- Assistant Stuff
 
     /**

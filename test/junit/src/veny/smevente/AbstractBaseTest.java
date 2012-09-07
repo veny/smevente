@@ -19,6 +19,7 @@ import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
 
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
  * Base class for the <i>Smevente</i> unit tests.
@@ -46,9 +47,11 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     @Before
     public void deleteEntries() {
         final DatabaseWrapper dbw = (DatabaseWrapper) applicationContext.getBean("databaseWrapper");
-        dbw.get().command(new OCommandSQL("DELETE FROM Membership")).execute();
-        dbw.get().command(new OCommandSQL("DELETE FROM Unit")).execute();
-        dbw.get().command(new OCommandSQL("DELETE FROM User")).execute();
+        final OObjectDatabaseTx db = dbw.get();
+        db.command(new OCommandSQL("DELETE FROM Membership")).execute();
+        db.command(new OCommandSQL("DELETE FROM Unit")).execute();
+        db.command(new OCommandSQL("DELETE FROM User")).execute();
+        db.close();
     }
 
 
