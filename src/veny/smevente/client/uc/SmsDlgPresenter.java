@@ -9,7 +9,7 @@ import veny.smevente.client.mvp.View;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.PatientNameSuggestOracle;
 import veny.smevente.client.utils.PatientSuggestion;
-import veny.smevente.model.MedicalHelpCategoryDto;
+import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 
@@ -116,7 +116,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
     /** Initial date and time to send SMS. */
     private Date startTime;
     /** List of available Medical Help Categories. */
-    private List<MedicalHelpCategoryDto> medicalHelpCategories;
+    private List<MedicalHelpCategory> medicalHelpCategories;
     /** Selected patient. */
     private Patient selectedPatient = null;
 
@@ -127,7 +127,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * @param mhcs list of medical help categories
      */
     @SuppressWarnings("deprecation")
-    public void init(final Date startTime, final List<Patient> patients, final List<MedicalHelpCategoryDto> mhcs) {
+    public void init(final Date startTime, final List<Patient> patients, final List<MedicalHelpCategory> mhcs) {
         // clear all the stuff
         clean();
 
@@ -143,7 +143,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
 
         // Medical Help Category
         medicalHelpCategories = mhcs;
-        for (MedicalHelpCategoryDto mhc : medicalHelpCategories) {
+        for (MedicalHelpCategory mhc : medicalHelpCategories) {
             view.getMedicalHelp().addItem(mhc.getName());
         }
         view.getMedicalHelp().addChangeHandler(new ChangeHandler() {
@@ -162,7 +162,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * @param mhcs list of medical help categories
      */
     public void init(
-            final SmsDto sms, final List<Patient> patients, final List<MedicalHelpCategoryDto> mhcs) {
+            final SmsDto sms, final List<Patient> patients, final List<MedicalHelpCategory> mhcs) {
 
         this.init(sms.getMedicalHelpStartTime(), patients, mhcs);
 
@@ -182,7 +182,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
         }
         // MHC
         int idx = 0;
-        for (MedicalHelpCategoryDto mhc : mhcs) {
+        for (MedicalHelpCategory mhc : mhcs) {
             if (mhc.getId().equals(sms.getMedicalHelpCategory().getId())) {
                 view.getMedicalHelp().setSelectedIndex(idx);
                 break;
@@ -213,7 +213,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * Gets selected Medical Help Category.
      * @return selected Medical Help Category
      */
-    public MedicalHelpCategoryDto getSelectedMedicalHelpCategory() {
+    public MedicalHelpCategory getSelectedMedicalHelpCategory() {
         return medicalHelpCategories.get(view.getMedicalHelp().getSelectedIndex());
     }
 
@@ -321,7 +321,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * @param switchTimeAndText whether to change the MH length and SMS text
      */
     private void changedMedicalHelpCategory(final int index, final boolean switchTimeAndText) {
-        final MedicalHelpCategoryDto mhc = medicalHelpCategories.get(index);
+        final MedicalHelpCategory mhc = medicalHelpCategories.get(index);
 
         // color
         DOM.setStyleAttribute(view.getMedicalHelpHeader().getElement(), "backgroundColor", "#" + mhc.getColor());

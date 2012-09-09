@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.MedicalHelpCategoryDto;
+import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
@@ -74,7 +74,7 @@ public class JsonDeserializer {
             result = (T) userFromJson(jsObj);
         } else if (Patient.class == classToCreate) {
             result = (T) patientFromJson(jsObj);
-        } else if (MedicalHelpCategoryDto.class == classToCreate) {
+        } else if (MedicalHelpCategory.class == classToCreate) {
             result = (T) mhcFromJson(jsObj);
         } else if (SmsDto.class == classToCreate) {
             result = (T) smsFromJson(jsObj);
@@ -118,7 +118,7 @@ public class JsonDeserializer {
             rslt = (List<T>) userListFromJson(jsArr);
         } else if (Patient.class == classToCreate) {
             rslt = (List<T>) patientListFromJson(jsArr);
-        } else if (MedicalHelpCategoryDto.class == classToCreate) {
+        } else if (MedicalHelpCategory.class == classToCreate) {
             rslt = (List<T>) mhcListFromJson(jsArr);
         } else if (SmsDto.class == classToCreate) {
             rslt = (List<T>) smsListFromJson(jsArr);
@@ -337,18 +337,18 @@ public class JsonDeserializer {
      * @param jsObj JSON object
      * @return instance of <code>MedicalHelpCategory</code>
      */
-    private MedicalHelpCategoryDto mhcFromJson(final JSONObject jsObj) {
-        final MedicalHelpCategoryDto rslt = new MedicalHelpCategoryDto();
+    private MedicalHelpCategory mhcFromJson(final JSONObject jsObj) {
+        final MedicalHelpCategory rslt = new MedicalHelpCategory();
         rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
         rslt.setName(jsObj.get("name").isString().stringValue());
         rslt.setSmsText(jsObj.get("smsText").isString().stringValue());
         JSONValue type = jsObj.get("type");
         if (type == null || type.isNumber() == null) {
-            rslt.setType(MedicalHelpCategoryDto.TYPE_STANDARD);
+            rslt.setType(MedicalHelpCategory.TYPE_STANDARD);
         } else {
             rslt.setType((short) type.isNumber().doubleValue());
         }
-        if (rslt.getType() == MedicalHelpCategoryDto.TYPE_STANDARD) {
+        if (rslt.getType() == MedicalHelpCategory.TYPE_STANDARD) {
             rslt.setColor(jsObj.get("color").isString().stringValue());
             rslt.setTime((long) jsObj.get("time").isNumber().doubleValue());
         }
@@ -359,8 +359,8 @@ public class JsonDeserializer {
      * @param jsArr JSON array
      * @return list of <code>MedicalHelpCategory</code>
      */
-    private List<MedicalHelpCategoryDto> mhcListFromJson(final JSONArray jsArr) {
-        final List<MedicalHelpCategoryDto> rslt = new ArrayList<MedicalHelpCategoryDto>();
+    private List<MedicalHelpCategory> mhcListFromJson(final JSONArray jsArr) {
+        final List<MedicalHelpCategory> rslt = new ArrayList<MedicalHelpCategory>();
 
         for (int i = 0; i < jsArr.size(); i++) {
             JSONValue jsonValue = jsArr.get(i);

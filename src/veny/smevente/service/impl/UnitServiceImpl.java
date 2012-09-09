@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
+import veny.smevente.dao.MedicalHelpCategoryDao;
 import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.model.Patient;
@@ -37,9 +38,9 @@ public class UnitServiceImpl implements UnitService {
     /** Dependency. */
     @Autowired
     private PatientDao patientDao;
-//    /** Dependency. */
-//    @Autowired
-//    private MedicalHelpCategoryDaoGae mhcDao;
+    /** Dependency. */
+    @Autowired
+    private MedicalHelpCategoryDao mhcDao;
     /** Dependency. */
     @Autowired
     private ValidationContainer validationContainer;

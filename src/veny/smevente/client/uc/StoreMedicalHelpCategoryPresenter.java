@@ -15,7 +15,7 @@ import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
-import veny.smevente.model.MedicalHelpCategoryDto;
+import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -122,7 +122,7 @@ public class StoreMedicalHelpCategoryPresenter
     /**
      * Type of category to be created or updated.
      */
-    private short type = MedicalHelpCategoryDto.TYPE_STANDARD;
+    private short type = MedicalHelpCategory.TYPE_STANDARD;
 
     /**
      *
@@ -217,7 +217,7 @@ public class StoreMedicalHelpCategoryPresenter
         // register this to display/hide the loading progress bar
         ebusUnitSelection = eventBus.addHandler(HeaderEvent.TYPE, this);
 
-        if (type == MedicalHelpCategoryDto.TYPE_STANDARD) {
+        if (type == MedicalHelpCategory.TYPE_STANDARD) {
             pickerDialog = new ColorPickerDialog(view.getColor());
 
             view.getSelectColor().addClickHandler(new ClickHandler() {
@@ -258,7 +258,7 @@ public class StoreMedicalHelpCategoryPresenter
         view.getCancel().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
-                App.get().switchToPresenterByType(type == MedicalHelpCategoryDto.TYPE_STANDARD
+                App.get().switchToPresenterByType(type == MedicalHelpCategory.TYPE_STANDARD
                         ? PresenterEnum.MEDICAL_HELP_CATEGORY_TYPES
                         : PresenterEnum.SPECIAL_MESSAGES, null);
             }
@@ -285,12 +285,12 @@ public class StoreMedicalHelpCategoryPresenter
     public void onShow(final Object parameter) {
         view.getName().setFocus(true);
 
-        if (null != parameter && parameter instanceof MedicalHelpCategoryDto) {
-            final MedicalHelpCategoryDto mhc = (MedicalHelpCategoryDto) parameter;
+        if (null != parameter && parameter instanceof MedicalHelpCategory) {
+            final MedicalHelpCategory mhc = (MedicalHelpCategory) parameter;
             view.getMedicalHelpCategoryId().setValue(mhc.getId().toString());
             view.getName().setText(mhc.getName());
             view.getSmsText().setText(mhc.getSmsText());
-            if (type == MedicalHelpCategoryDto.TYPE_STANDARD) {
+            if (type == MedicalHelpCategory.TYPE_STANDARD) {
                 view.getTime().setText("" + mhc.getTime());
                 view.getColor().setText(mhc.getColor());
                 // color
@@ -300,7 +300,7 @@ public class StoreMedicalHelpCategoryPresenter
             // Using a null as argument on IE7 will lead to the setting of
             // string "null" as value, therefore the empty string is used instead.
             view.getMedicalHelpCategoryId().setValue("");
-            if (type == MedicalHelpCategoryDto.TYPE_STANDARD) {
+            if (type == MedicalHelpCategory.TYPE_STANDARD) {
                 // color
                 DOM.setStyleAttribute(view.getColor().getElement(), "backgroundColor", "#FFFFFF");
             }
@@ -315,7 +315,7 @@ public class StoreMedicalHelpCategoryPresenter
         view.getMedicalHelpCategoryId().setValue("");
         view.getName().setText("");
         view.getSmsText().setText("");
-        if (type == MedicalHelpCategoryDto.TYPE_STANDARD) {
+        if (type == MedicalHelpCategory.TYPE_STANDARD) {
             view.getTime().setText("");
             view.getTime().removeStyleName("validationFailedBorder");
             view.getColor().setText("");
@@ -366,7 +366,7 @@ public class StoreMedicalHelpCategoryPresenter
                 new EmptyValidator(view.getSmsText())
                     .addActionForFailure(focusAction)
                     .addActionForFailure(new StyleAction("validationFailedBorder")));
-        if (type == MedicalHelpCategoryDto.TYPE_STANDARD) {
+        if (type == MedicalHelpCategory.TYPE_STANDARD) {
             validator.addValidators("time",
                     new LongValidator(view.getTime(), false, "notNumber")
                         .addActionForFailure(focusAction)
@@ -382,7 +382,7 @@ public class StoreMedicalHelpCategoryPresenter
      * Creates a new patient.
      */
     private void storeMedicalHelpCategory() {
-        final MedicalHelpCategoryDto mhc = new MedicalHelpCategoryDto();
+        final MedicalHelpCategory mhc = new MedicalHelpCategory();
         if (null == view.getMedicalHelpCategoryId().getValue()
             || view.getMedicalHelpCategoryId().getValue().trim().isEmpty()) {
             mhc.setId(null);
@@ -394,7 +394,7 @@ public class StoreMedicalHelpCategoryPresenter
         mhc.setName(view.getName().getText());
         mhc.setSmsText(view.getSmsText().getText());
         mhc.setType(type);
-        if (type == MedicalHelpCategoryDto.TYPE_STANDARD) {
+        if (type == MedicalHelpCategory.TYPE_STANDARD) {
             mhc.setTime(Long.parseLong(view.getTime().getText()));
             mhc.setColor(view.getColor().getText());
         }
@@ -404,7 +404,7 @@ public class StoreMedicalHelpCategoryPresenter
         params.put("name", mhc.getName());
         params.put("smsText", mhc.getSmsText());
         params.put("type", "" + mhc.getType());
-        if (type == MedicalHelpCategoryDto.TYPE_STANDARD) {
+        if (type == MedicalHelpCategory.TYPE_STANDARD) {
             params.put("time", "" + mhc.getTime());
             params.put("color", mhc.getColor());
         }
@@ -416,7 +416,7 @@ public class StoreMedicalHelpCategoryPresenter
             public void onSuccess(final String jsonText) {
                 fireEvents(mhc, jsonText);
 
-                App.get().switchToPresenterByType(type == MedicalHelpCategoryDto.TYPE_STANDARD
+                App.get().switchToPresenterByType(type == MedicalHelpCategory.TYPE_STANDARD
                         ? PresenterEnum.MEDICAL_HELP_CATEGORY_TYPES
                         : PresenterEnum.SPECIAL_MESSAGES, null);
             }
@@ -438,18 +438,18 @@ public class StoreMedicalHelpCategoryPresenter
      * @param mhc the created/updated category
      * @param jsonText server response
      */
-    private void fireEvents(final MedicalHelpCategoryDto mhc, final String jsonText) {
+    private void fireEvents(final MedicalHelpCategory mhc, final String jsonText) {
         final int textType = App.get().getSelectedUnitTextVariant();
         if (null == mhc.getId()) {
-            final MedicalHelpCategoryDto medicalHelpCategory = App.get().getJsonDeserializer().deserialize(
-                    MedicalHelpCategoryDto.class, "medicalHelpCategory", jsonText);
+            final MedicalHelpCategory medicalHelpCategory = App.get().getJsonDeserializer().deserialize(
+                    MedicalHelpCategory.class, "medicalHelpCategory", jsonText);
             eventBus.fireEvent(new CrudEvent(EntityTypeEnum.MHC, OperationType.CREATE, medicalHelpCategory));
-            Window.alert(type == MedicalHelpCategoryDto.TYPE_STANDARD
+            Window.alert(type == MedicalHelpCategory.TYPE_STANDARD
                     ? CONSTANTS.medicalHelpAdded()[textType]
                     : CONSTANTS.specialSmsAdded());
         } else {
             eventBus.fireEvent(new CrudEvent(EntityTypeEnum.MHC, OperationType.UPDATE, mhc));
-            Window.alert(type == MedicalHelpCategoryDto.TYPE_STANDARD
+            Window.alert(type == MedicalHelpCategory.TYPE_STANDARD
                     ? CONSTANTS.medicalHelpUpdated()[textType]
                     : CONSTANTS.specialSmsUpdated());
         }

@@ -35,7 +35,7 @@ import veny.smevente.client.uc.SmsStatisticPresenter;
 import veny.smevente.client.uc.SmsStatisticViewImpl;
 import veny.smevente.client.uc.StoreUserPresenter;
 import veny.smevente.client.uc.StoreUserViewImpl;
-import veny.smevente.model.MedicalHelpCategoryDto;
+import veny.smevente.model.MedicalHelpCategory;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -223,28 +223,28 @@ public class PresenterCollection {
                 break;
             case STORE_MEDICAL_HELP_CATEGORY:
                 StoreMedicalHelpCategoryPresenter createMedicalHelpCategoryPresenter =
-                    new StoreMedicalHelpCategoryPresenter(MedicalHelpCategoryDto.TYPE_STANDARD);
+                    new StoreMedicalHelpCategoryPresenter(MedicalHelpCategory.TYPE_STANDARD);
                 createMedicalHelpCategoryPresenter.bind(new StoreMedicalHelpCategoryViewImpl());
                 presenter = createMedicalHelpCategoryPresenter;
                 break;
             case MEDICAL_HELP_CATEGORY_TYPES:
                 MedicalHelpCategoryTypesPresenter medicalHelpCategoryTypesPresenter =
-                    new MedicalHelpCategoryTypesPresenter(MedicalHelpCategoryDto.TYPE_STANDARD);
+                    new MedicalHelpCategoryTypesPresenter(MedicalHelpCategory.TYPE_STANDARD);
                 medicalHelpCategoryTypesPresenter.bind(
-                        new MedicalHelpCategoryTypesViewImpl(MedicalHelpCategoryDto.TYPE_STANDARD));
+                        new MedicalHelpCategoryTypesViewImpl(MedicalHelpCategory.TYPE_STANDARD));
                 presenter = medicalHelpCategoryTypesPresenter;
                 break;
             case STORE_SPECIAL_MEDICAL_HELP_CATEGORY:
                 StoreMedicalHelpCategoryPresenter createSpecialMedicalHelpCategoryPresenter =
-                    new StoreMedicalHelpCategoryPresenter(MedicalHelpCategoryDto.TYPE_SPECIAL);
+                    new StoreMedicalHelpCategoryPresenter(MedicalHelpCategory.TYPE_SPECIAL);
                 createSpecialMedicalHelpCategoryPresenter.bind(new StoreMedicalHelpCategoryViewImpl());
                 presenter = createSpecialMedicalHelpCategoryPresenter;
                 break;
             case SPECIAL_MESSAGES:
                 MedicalHelpCategoryTypesPresenter specialMedicalHelpCategoryTypesPresenter =
-                    new MedicalHelpCategoryTypesPresenter(MedicalHelpCategoryDto.TYPE_SPECIAL);
+                    new MedicalHelpCategoryTypesPresenter(MedicalHelpCategory.TYPE_SPECIAL);
                 specialMedicalHelpCategoryTypesPresenter.bind(
-                        new MedicalHelpCategoryTypesViewImpl(MedicalHelpCategoryDto.TYPE_SPECIAL));
+                        new MedicalHelpCategoryTypesViewImpl(MedicalHelpCategory.TYPE_SPECIAL));
                 presenter = specialMedicalHelpCategoryTypesPresenter;
                 break;
             case SMS_STATISTIC:

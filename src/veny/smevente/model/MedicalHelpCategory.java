@@ -1,28 +1,24 @@
 package veny.smevente.model;
 
-import java.io.Serializable;
+import javax.persistence.ManyToOne;
+
 
 
 /**
- * DTO representing the Medical Help Category.
+ * Entity class representing the Medical Help Category.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 8.11.2010
  */
-public class MedicalHelpCategoryDto implements Serializable {
+public class MedicalHelpCategory extends AbstractEntity {
 
     /** Standard category. */
     public static final short TYPE_STANDARD = 0;
     /** Category used in special Sms. */
     public static final short TYPE_SPECIAL = 1;
 
-    /** Generated (1110304) serial version UID. */
-    private static final long serialVersionUID = -3133008636581757261L;
-
-    /** Primary Key. */
-    private Long id;
-
     /** Unit which is master of this. */
+    @ManyToOne
     private Unit unit;
     /** Category name. */
     private String name;
@@ -36,12 +32,6 @@ public class MedicalHelpCategoryDto implements Serializable {
     private Short type;
 
     // CHECKSTYLE:OFF
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
     public Unit getUnit() {
         return unit;
     }
@@ -79,20 +69,6 @@ public class MedicalHelpCategoryDto implements Serializable {
         this.type = type;
     }
     // CHECKSTYLE:ON
-
-    // ---------------------------------------------------- Convenience Methods
-
-    /**
-     * Sets unit ID to a new unit object.
-     * @param unitId unit ID
-     */
-    public void setUnitId(final Long unitId) {
-        if (null == unitId || unitId.longValue() <= 0) {
-            throw new IllegalArgumentException("invalid unit ID (null or less than 0)");
-        }
-        setUnit(new Unit());
-        getUnit().setId(unitId);
-    }
 
     // ----------------------------------------------------------- Object Stuff
 

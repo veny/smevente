@@ -7,7 +7,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 
 import veny.smevente.AbstractBaseTestWithAuth;
-import veny.smevente.model.MedicalHelpCategoryDto;
+import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
@@ -284,11 +284,11 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.createMedicalHelpCategory. */
     @Test
     public void testCreateMedicalHelpCategory() {
-        final MedicalHelpCategoryDto toCreate = new MedicalHelpCategoryDto();
+        final MedicalHelpCategory toCreate = new MedicalHelpCategory();
         toCreate.setUnit(unit1);
         toCreate.setName(MHC_NAME);
         toCreate.setSmsText(MHC_MSGTEXT);
-        toCreate.setType(MedicalHelpCategoryDto.TYPE_STANDARD);
+        toCreate.setType(MedicalHelpCategory.TYPE_STANDARD);
         toCreate.setColor(MHC_COLOR);
         toCreate.setTime(MHC_TIME);
 
@@ -304,15 +304,15 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.updateMedicalHelpCategory. */
     @Test
     public void testUpdateMedicalHelpCategory() {
-        final MedicalHelpCategoryDto toCreate = new MedicalHelpCategoryDto();
+        final MedicalHelpCategory toCreate = new MedicalHelpCategory();
         toCreate.setUnit(unit1);
         toCreate.setName(MHC_NAME);
         toCreate.setSmsText(MHC_MSGTEXT);
-        toCreate.setType(MedicalHelpCategoryDto.TYPE_STANDARD);
+        toCreate.setType(MedicalHelpCategory.TYPE_STANDARD);
         toCreate.setColor(MHC_COLOR);
         toCreate.setTime(MHC_TIME);
 
-        final MedicalHelpCategoryDto created = unitService.createMedicalHelpCategory(toCreate);
+        final MedicalHelpCategory created = unitService.createMedicalHelpCategory(toCreate);
         // CHECKSTYLE:OFF
         final String NEW_MHC_COLOR = "CCBBAA";
         // CHECKSTYLE:ON
@@ -336,21 +336,21 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.getMedicalHelpCategoriesByUnit. */
     @Test
     public void testGetMedicalHelpCategoriesByUnit() {
-        final MedicalHelpCategoryDto toCreate = new MedicalHelpCategoryDto();
+        final MedicalHelpCategory toCreate = new MedicalHelpCategory();
         toCreate.setUnit(unit1);
         toCreate.setName(MHC_NAME);
         toCreate.setSmsText(MHC_MSGTEXT);
-        toCreate.setType(MedicalHelpCategoryDto.TYPE_STANDARD);
+        toCreate.setType(MedicalHelpCategory.TYPE_STANDARD);
         toCreate.setColor(MHC_COLOR);
         toCreate.setTime(MHC_TIME);
 
         unitService.createMedicalHelpCategory(toCreate);
         assertEquals(1, unitService.getMedicalHelpCategoriesByUnit(unit1.getId(),
-                MedicalHelpCategoryDto.TYPE_STANDARD).size());
+                MedicalHelpCategory.TYPE_STANDARD).size());
 
         logout();
         try { // hasRole('ROLE_AUTHENTICATED')
-            unitService.getMedicalHelpCategoriesByUnit(unit1.getId(), MedicalHelpCategoryDto.TYPE_STANDARD);
+            unitService.getMedicalHelpCategoriesByUnit(unit1.getId(), MedicalHelpCategory.TYPE_STANDARD);
             assertEquals("expected AuthenticationCredentialsNotFoundException", true, false);
         } catch (AuthenticationCredentialsNotFoundException e) { assertEquals(true, true); }
     }
@@ -358,15 +358,15 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.getMedicalHelpCategoryById. */
     @Test
     public void testGetMedicalHelpCategoryById() {
-        final MedicalHelpCategoryDto toCreate = new MedicalHelpCategoryDto();
+        final MedicalHelpCategory toCreate = new MedicalHelpCategory();
         toCreate.setUnit(unit1);
         toCreate.setName(MHC_NAME);
         toCreate.setSmsText(MHC_MSGTEXT);
-        toCreate.setType(MedicalHelpCategoryDto.TYPE_STANDARD);
+        toCreate.setType(MedicalHelpCategory.TYPE_STANDARD);
         toCreate.setColor(MHC_COLOR);
         toCreate.setTime(MHC_TIME);
 
-        final MedicalHelpCategoryDto created = unitService.createMedicalHelpCategory(toCreate);
+        final MedicalHelpCategory created = unitService.createMedicalHelpCategory(toCreate);
         assertEquals(MHC_NAME, unitService.getMedicalHelpCategoryById(created.getId()).getName());
 
         logout();
@@ -379,17 +379,17 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UnitService.deleteMedicalHelpCategory. */
     @Test
     public void testDeleteMedicalHelpCategory() {
-        final MedicalHelpCategoryDto toCreate = new MedicalHelpCategoryDto();
+        final MedicalHelpCategory toCreate = new MedicalHelpCategory();
         toCreate.setUnit(unit1);
         toCreate.setName(MHC_NAME);
         toCreate.setSmsText(MHC_MSGTEXT);
-        toCreate.setType(MedicalHelpCategoryDto.TYPE_STANDARD);
+        toCreate.setType(MedicalHelpCategory.TYPE_STANDARD);
         toCreate.setColor(MHC_COLOR);
         toCreate.setTime(MHC_TIME);
 
-        final MedicalHelpCategoryDto created1 = unitService.createMedicalHelpCategory(toCreate);
+        final MedicalHelpCategory created1 = unitService.createMedicalHelpCategory(toCreate);
         unitService.deleteMedicalHelpCategory(created1.getId());
-        final MedicalHelpCategoryDto created2 = unitService.createMedicalHelpCategory(created1);
+        final MedicalHelpCategory created2 = unitService.createMedicalHelpCategory(created1);
 
         logout();
         try { // hasRole('ROLE_AUTHENTICATED')

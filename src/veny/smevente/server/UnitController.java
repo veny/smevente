@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.MedicalHelpCategoryDto;
+import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 import veny.smevente.service.SmsService;

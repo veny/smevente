@@ -24,7 +24,7 @@ import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.client.utils.SmsWidgetEvent;
 import veny.smevente.client.utils.SmsWidgetEvent.SmsWidgetHandler;
-import veny.smevente.model.MedicalHelpCategoryDto;
+import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Patient;
 import veny.smevente.model.SmsDto;
 import veny.smevente.model.User;
@@ -102,7 +102,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** List of available patients loaded by 'onShow' action. */
     private List<Patient> patients;
     /** List of available Medical Help Categories. */
-    private List<MedicalHelpCategoryDto> medicalHelpCategories;
+    private List<MedicalHelpCategory> medicalHelpCategories;
 
 
     // ---------------------------------------------------- HeaderHandler Stuff
@@ -153,8 +153,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         if (EntityTypeEnum.PATIENT == event.getEntityType() && null != patients) {
             patients.add((Patient) event.getData());
         } else if (EntityTypeEnum.MHC == event.getEntityType() && null != medicalHelpCategories) {
-            MedicalHelpCategoryDto newMhc = (MedicalHelpCategoryDto) event.getData();
-            if (MedicalHelpCategoryDto.TYPE_STANDARD == newMhc.getType()) {
+            MedicalHelpCategory newMhc = (MedicalHelpCategory) event.getData();
+            if (MedicalHelpCategory.TYPE_STANDARD == newMhc.getType()) {
                 medicalHelpCategories.add(newMhc);
             }
         }
@@ -172,9 +172,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
                 patients.set(idx, (Patient) event.getData());
             }
         } else if (EntityTypeEnum.MHC == event.getEntityType()) {
-            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategoryDto) event.getData()).getId());
+            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategory) event.getData()).getId());
             if (-1 != idx) {
-                medicalHelpCategories.set(idx, (MedicalHelpCategoryDto) event.getData());
+                medicalHelpCategories.set(idx, (MedicalHelpCategory) event.getData());
             }
         }
     }
@@ -185,7 +185,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             final int idx = getPatientIndex(((Patient) event.getData()).getId());
             patients.remove(idx);
         } else if (EntityTypeEnum.MHC == event.getEntityType()) {
-            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategoryDto) event.getData()).getId());
+            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategory) event.getData()).getId());
             medicalHelpCategories.remove(idx);
         }
     }
@@ -435,7 +435,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             public void onSuccess(final String jsonText) {
                 patients = App.get().getJsonDeserializer().deserializeList(Patient.class, "patients", jsonText);
                 medicalHelpCategories = App.get().getJsonDeserializer().deserializeList(
-                        MedicalHelpCategoryDto.class, "medicalHelpCategories", jsonText);
+                        MedicalHelpCategory.class, "medicalHelpCategories", jsonText);
             }
         });
         rest.get();

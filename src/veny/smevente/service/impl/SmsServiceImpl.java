@@ -19,11 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.client.utils.Triple;
+import veny.smevente.dao.MembershipDao;
+import veny.smevente.dao.PatientDao;
+import veny.smevente.dao.UnitDao;
+import veny.smevente.dao.UserDao;
 import veny.smevente.dao.jpa.gae.MedicalHelpCategoryDaoGae;
-import veny.smevente.dao.jpa.gae.MembershipDaoGae;
-import veny.smevente.dao.jpa.gae.PatientDaoGae;
 import veny.smevente.dao.jpa.gae.SmsDaoGae;
-import veny.smevente.dao.jpa.gae.UserDaoGae;
 import veny.smevente.dao.orientdb.UnitDaoImpl;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
@@ -31,11 +32,7 @@ import veny.smevente.model.SmsDto;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.model.gae.MedicalHelpCategory;
-import veny.smevente.model.gae.Membership;
-import veny.smevente.model.gae.Patient;
 import veny.smevente.model.gae.Sms;
-import veny.smevente.model.gae.Unit;
-import veny.smevente.model.gae.User;
 import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.SmsService;
@@ -55,16 +52,16 @@ public class SmsServiceImpl implements SmsService {
 
     /** Dependency. */
     @Autowired
-    private UserDaoGae userDao;
+    private UserDao userDao;
     /** Dependency. */
     @Autowired
-    private MembershipDaoGae membershipDao;
+    private MembershipDao membershipDao;
     /** Dependency. */
     @Autowired
-    private UnitDaoImpl unitDao;
+    private UnitDao unitDao;
     /** Dependency. */
     @Autowired
-    private PatientDaoGae patientDao;
+    private PatientDao patientDao;
     /** Dependency. */
     @Autowired
     private MedicalHelpCategoryDaoGae mhcDao;

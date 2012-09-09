@@ -36,7 +36,7 @@ public class SmsDto {
     /** Patient. */
     private Patient patient;
     /** Medical Help Category. */
-    private MedicalHelpCategoryDto medicalHelpCategory;
+    private MedicalHelpCategory medicalHelpCategory;
     /** Medical help start time. */
     private Date medicalHelpStartTime;
     /** Medical help length [minutes]. */
@@ -75,10 +75,10 @@ public class SmsDto {
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
-    public MedicalHelpCategoryDto getMedicalHelpCategory() {
+    public MedicalHelpCategory getMedicalHelpCategory() {
         return medicalHelpCategory;
     }
-    public void setMedicalHelpCategory(MedicalHelpCategoryDto medicalHelpCategory) {
+    public void setMedicalHelpCategory(MedicalHelpCategory medicalHelpCategory) {
         this.medicalHelpCategory = medicalHelpCategory;
     }
     public Date getMedicalHelpStartTime() {
@@ -153,7 +153,7 @@ public class SmsDto {
         if (null == mhcId || mhcId.longValue() <= 0) {
             throw new IllegalArgumentException("invalid MHC ID (null or less than 0)");
         }
-        setMedicalHelpCategory(new MedicalHelpCategoryDto());
+        setMedicalHelpCategory(new MedicalHelpCategory());
         getMedicalHelpCategory().setId(mhcId);
     }
 

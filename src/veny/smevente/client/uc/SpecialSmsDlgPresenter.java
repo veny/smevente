@@ -7,7 +7,7 @@ import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.MedicalHelpCategoryDto;
+import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Patient;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -69,7 +69,7 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
      * @param patient the recipient
      * @param specialCategories the list of special categories
      */
-    public void init(final Patient patient, final List<MedicalHelpCategoryDto> specialCategories) {
+    public void init(final Patient patient, final List<MedicalHelpCategory> specialCategories) {
         // clear all the stuff
         clean();
 
@@ -188,9 +188,9 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
      *
      * @param specialCategories the categories used in dialog
      */
-    private void initTypes(final List<MedicalHelpCategoryDto> specialCategories) {
+    private void initTypes(final List<MedicalHelpCategory> specialCategories) {
         if (specialCategories != null) {
-            for (MedicalHelpCategoryDto mhc : specialCategories) {
+            for (MedicalHelpCategory mhc : specialCategories) {
                 Pair<String, String> type = new Pair<String, String>(mhc.getName(),
                         mhc.getSmsText());
                 types.add(type);
