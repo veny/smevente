@@ -25,5 +25,6 @@
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/guava-13.0.1.jar"/>
 	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/orientdb-object-1.2.0-SNAPSHOT.jar" sourcepath="/ORIENTDB_SRC_HOME/object/src/main/java"/>
 	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/javassist.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

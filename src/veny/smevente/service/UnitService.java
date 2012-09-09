@@ -76,15 +76,16 @@ public interface UnitService {
      */
     void updatePatient(Patient patient);
 
-//    /**
-//     * Finds patients according to given name and/or phone number and/or birth number.
-//     * @param unitId ID to search in
-//     * @param name name to search
-//     * @param phoneNumber phone number to search
-//     * @param birthNumber birth number to search
-//     * @return list of found patients
-//     */
-//    List<PatientDto> findPatients(Long unitId, String name, String phoneNumber, String birthNumber);
+    /**
+     * Finds patients according to given name and/or phone number and/or birth number.
+     *
+     * @param unitId ID to search in
+     * @param name name to search
+     * @param phoneNumber phone number to search
+     * @param birthNumber birth number to search
+     * @return list of found patients
+     */
+    List<Patient> findPatients(Object unitId, String name, String phoneNumber, String birthNumber);
 
     /**
      * Deletes patient.

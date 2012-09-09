@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -162,73 +163,67 @@ public class UnitServiceImpl implements UnitService {
                 + ", fisrtname=" + patient.getFirstname() + ", surname=" + patient.getSurname());
     }
 
-//    /** {@inheritDoc} */
-//    @SuppressWarnings("unchecked")
-//    @Transactional(readOnly = true)
-//    @Override
-//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-//    public List<PatientDto> findPatients(
-//            final Long unitId, final String name, final String phoneNumber, final String birthNumber) {
-//
-//        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
-//        final Unit unit = getById(unitId);
-//        LOG.info("findPatients, unitId=" + unitId + ", name=" + name
-//                + ", phone=" + phoneNumber + ", birthNumber=" + birthNumber);
-//
-//        if (null == name && null == phoneNumber && null == birthNumber) {
-//            return getPatientsByUnit(unitId);
-//        }
-//
-//        List<Patient> collectedRslt = null;
-//
-//        // name
-//        if (null != name) {
-//            collectedRslt = patientDao.findByFirstname(unitId, name);
-//            if (LOG.isLoggable(Level.FINER)) {
-//                LOG.finer("patient(s) found by first name, size=" + collectedRslt.size());
-//            }
-//            List<Patient> found = patientDao.findBySurname(unitId, name);
-//            if (LOG.isLoggable(Level.FINER)) {
-//                LOG.finer("patient(s) found by surname, size=" + found.size());
-//            }
-//            collectedRslt = (List<Patient>) CollectionUtils.union(collectedRslt, found);
-//        }
-//
-//        // phone number
-//        if (null != phoneNumber) {
-//            final List<Patient> found = patientDao.findByPhoneNumber(unitId, phoneNumber);
-//            if (LOG.isLoggable(Level.FINER)) {
-//                LOG.finer("patient(s) found by phone number, size=" + found.size());
-//            }
-//            if (null == collectedRslt) {
-//                collectedRslt = found;
-//            } else {
-//                collectedRslt = (List<Patient>) CollectionUtils.intersection(collectedRslt, found);
-//            }
-//        }
-//
-//        // birth number
-//        if (null != birthNumber) {
-//            final List<Patient> found = patientDao.findByBirthNumberPrefix(unitId, birthNumber);
-//            if (LOG.isLoggable(Level.FINER)) {
-//                LOG.finer("patient(s) found by birth number, size=" + found.size());
-//            }
-//            if (null == collectedRslt) {
-//                collectedRslt = found;
-//            } else {
-//                collectedRslt = (List<Patient>) CollectionUtils.intersection(collectedRslt, found);
-//            }
-//        }
-//
-//        LOG.info("patient(s) found, size=" + collectedRslt.size());
-//        final List<PatientDto> rslt = new ArrayList<PatientDto>();
-//        for (Patient p : collectedRslt) {
-//            final PatientDto patient = p.mapToDto();
-//            patient.setUnit(unit);
-//            rslt.add(patient);
-//        }
-//        return rslt;
-//    }
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
+    @Override
+    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+    public List<Patient> findPatients(
+            final Object unitId, final String name, final String phoneNumber, final String birthNumber) {
+
+        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
+        final Unit unit = getUnit(unitId);
+        LOG.info("findPatients, unitId=" + unitId + ", name=" + name
+                + ", phone=" + phoneNumber + ", birthNumber=" + birthNumber);
+
+        if (null == name && null == phoneNumber && null == birthNumber) {
+            return getPatientsByUnit(unitId);
+        }
+
+        List<Patient> collectedRslt = null;
+
+        // name
+        if (null != name) {
+            collectedRslt = patientDao.findLikeBy(unitId, "firstname", name);
+            if (LOG.isLoggable(Level.FINER)) {
+                LOG.finer("patient(s) found by first name, size=" + collectedRslt.size());
+            }
+            List<Patient> found = patientDao.findLikeBy(unitId, "surname", name);
+            if (LOG.isLoggable(Level.FINER)) {
+                LOG.finer("patient(s) found by surname, size=" + found.size());
+            }
+            collectedRslt = (List<Patient>) CollectionUtils.union(collectedRslt, found);
+        }
+
+        // phone number
+        if (null != phoneNumber) {
+            final List<Patient> found = patientDao.findLikeBy(unitId, "phoneNumber", phoneNumber);
+            if (LOG.isLoggable(Level.FINER)) {
+                LOG.finer("patient(s) found by phone number, size=" + found.size());
+            }
+            if (null == collectedRslt) {
+                collectedRslt = found;
+            } else {
+                collectedRslt = (List<Patient>) CollectionUtils.intersection(collectedRslt, found);
+            }
+        }
+
+        // birth number
+        if (null != birthNumber) {
+            final List<Patient> found = patientDao.findLikeBy(unitId, "birthNumber", birthNumber);
+            if (LOG.isLoggable(Level.FINER)) {
+                LOG.finer("patient(s) found by birth number, size=" + found.size());
+            }
+            if (null == collectedRslt) {
+                collectedRslt = found;
+            } else {
+                collectedRslt = (List<Patient>) CollectionUtils.intersection(collectedRslt, found);
+            }
+        }
+
+        LOG.info("patient(s) found, size=" + collectedRslt.size());
+        return collectedRslt;
+    }
 
     /** {@inheritDoc} */
     @Transactional
