@@ -54,13 +54,13 @@ public interface UserService {
      */
     User getUser(Object id) throws ObjectNotFoundException;
 
-//    /**
-//     * Updates a given user into DB.
-//     *
-//     * @param user the user to be updated
-//     */
-//    void updateUser(final User user);
-//
+    /**
+     * Updates given user into DB.
+     *
+     * @param user user to be updated
+     */
+    void updateUser(User user);
+
 //    /**
 //     * Updates a given user into DB.
 //     *
@@ -86,14 +86,14 @@ public interface UserService {
      */
     User findUserByUsername(String username);
 
-//    /**
-//     * Finds users according to given user name and/or full name for given unit.
-//     * @param unitId the ID of unit the searched users must belong into
-//     * @param userName the user name
-//     * @param fullName full name
-//     * @return list of found users
-//     */
-//    List<User> findUsers(Long unitId, String userName, String fullName);
+    /**
+     * Finds users according to given user name and/or full name for given unit.
+     * @param unitId the ID of unit the searched users must belong into
+     * @param userName the user name
+     * @param fullName full name
+     * @return list of found users
+     */
+    List<User> findUsers(Object unitId, String userName, String fullName);
 
     /**
      * Changes password of given user.

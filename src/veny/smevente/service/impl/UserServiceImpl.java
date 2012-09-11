@@ -130,31 +130,28 @@ public class UserServiceImpl implements UserService {
         return rslt;
     }
 
-//    /** {@inheritDoc} */
-//    @Transactional
-//    // TODO [veny,B] think of authorization
-//    @Override
-//    public void updateUser(final User user) {
-//        if (null == user.getId()) { throw new NullPointerException("ID cannot be null"); }
-//        validateUser(user);
-//
-//        // unique user name
-//        List<User> check = userDao.findBy("username", user.getUsername(), null);
-//        if (null != check && !check.isEmpty() && !check.get(0).getId().equals(user.getId())) {
-//            ServerValidation.exception("duplicateValue", "username", (Object[]) null);
-//        } else {
-//            if (LOG.isLoggable(Level.FINER)) {
-//                LOG.finer("duplicite user name check OK, un=" + user.getUsername());
-//            }
-//        }
-//
-//        final User userGae = userDao.getById(user.getId());
-//        User.mapFromDto(user, userGae);
-//        userDao.persist(userGae);
-//        LOG.info("user updated, id=" + user.getId()
-//                + ", username=" + user.getUsername() + ", fullname=" + user.getFullname());
-//    }
-//
+    /** {@inheritDoc} */
+    @Transactional
+    // TODO [veny,B] think of authorization
+    @Override
+    public void updateUser(final User user) {
+        validateUser(user, false);
+
+        // unique user name
+        final List<User> check = userDao.findBy("username", user.getUsername(), null);
+        if (null != check && !check.isEmpty() && !check.get(0).getId().equals(user.getId())) {
+            ServerValidation.exception("duplicateValue", "username", (Object[]) null);
+        } else {
+            if (LOG.isLoggable(Level.FINER)) {
+                LOG.finer("duplicite user name check OK, userName=" + user.getUsername());
+            }
+        }
+
+        userDao.persist(user);
+        LOG.info("user updated, id=" + user.getId()
+                + ", username=" + user.getUsername() + ", fullname=" + user.getFullname());
+    }
+
 //    /** {@inheritDoc} */
 //    @Transactional
 //    @PreAuthorize("hasPermission(#unitId, 'V_UNIT_ADMIN')")
@@ -210,16 +207,17 @@ public class UserServiceImpl implements UserService {
         return rslt;
     }
 
-//    /** {@inheritDoc} */
-//    @SuppressWarnings("unchecked")
-//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-//    @Override
-//    public List<User> findUsers(final Long unitId, final String userName, final String fullName) {
-//        if (null == unitId) { throw new IllegalArgumentException("unit id cannot be null"); }
+    /** {@inheritDoc} */
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+    @Override
+    public List<User> findUsers(final Object unitId, final String userName, final String fullName) {
+        if (null == unitId) { throw new IllegalArgumentException("unit id cannot be null"); }
+
+        LOG.info("findUsers, unitId=" + unitId + ", user name=" + userName + ", full name=" + fullName);
+        throw new IllegalStateException("not implemented yet");
 //
-//        LOG.info("findUsers, unit id=" + unitId + ", user name=" + userName + ", full name=" + fullName);
-//
-//        List<User> users = null;
+//        final List<User> users = null;
 //        if (null == userName && null == fullName) {
 //            users = getAllUsers();
 //        } else {
@@ -245,12 +243,6 @@ public class UserServiceImpl implements UserService {
 //                    collectedRslt = (List<User>) CollectionUtils.intersection(collectedRslt, found);
 //                }
 //            }
-//
-//            users = new ArrayList<User>();
-//            for (User u : collectedRslt) {
-//                final User user = u.mapToDto();
-//                users.add(user);
-//            }
 //        }
 //
 //        // exist the found users in specified unit?
@@ -266,7 +258,7 @@ public class UserServiceImpl implements UserService {
 //        }
 //        LOG.info("returned users, size=" + rslt.size());
 //        return rslt;
-//    }
+    }
 
     /** {@inheritDoc} */
     @PreAuthorize("hasPermission(#userId, 'V_MY_USER')")

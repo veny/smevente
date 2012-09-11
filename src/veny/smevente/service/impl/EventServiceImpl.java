@@ -317,16 +317,16 @@ public class EventServiceImpl implements EventService {
         }
 
         final List<Pair<User, Map<String, Integer>>> rslt = new ArrayList<Pair<User, Map<String, Integer>>>();
-        long smsCount = 0;
+        long eventCount = 0;
 
-        // get SMS statistics for collected users
+        // get event statistics for collected users
         for (User u : users) {
-            final List<Event> foundSmsGae = eventDao.findByAuthorAndPeriod(u.getId(), from, to, true);
-            smsCount += foundSmsGae.size();
+            final List<Event> foundEvents = eventDao.findByAuthorAndPeriod(u.getId(), from, to, true);
+            eventCount += foundEvents.size();
             int sent = 0;
             int failed = 0;
             int deleted = 0;
-            for (Event s : foundSmsGae) {
+            for (Event s : foundEvents) {
                 if (null != s.getSent()) { sent++; }
                 if (s.getSendAttemptCount() >= Event.MAX_SEND_ATTEMPTS) { failed++; }
                 if (0 != (s.getStatus() & Event.STATUS_DELETED)) { deleted++; }
@@ -335,10 +335,10 @@ public class EventServiceImpl implements EventService {
             stat.put(Event.DELETED, deleted);
             stat.put(Event.SENT, sent);
             stat.put(Event.FAILED, failed);
-            stat.put(Event.SUM, foundSmsGae.size());
+            stat.put(Event.SUM, foundEvents.size());
             rslt.add(new Pair<User, Map<String, Integer>>(u, stat));
         }
-        LOG.info("collected statistics for " + rslt.size() + " user(s), smsCount=" + smsCount);
+        LOG.info("collected statistics for " + rslt.size() + " user(s), eventCount=" + eventCount);
 
         return rslt;
     }
@@ -375,7 +375,7 @@ public class EventServiceImpl implements EventService {
     private String format(final Event event) {
         final Map<String, String> replaceConf = new HashMap<String, String>();
         // date & time
-        if (null != event.getStartTime()) { // can be null for special SMSs
+        if (null != event.getStartTime()) { // can be null for special events
             replaceConf.put("#{date}", dateFormatter.format(event.getStartTime()));
             replaceConf.put("#{time}", timeFormatter.format(event.getStartTime()));
         }

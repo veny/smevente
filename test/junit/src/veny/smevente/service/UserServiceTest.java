@@ -127,72 +127,42 @@ public class UserServiceTest extends AbstractBaseTest {
         } catch (ObjectNotFoundException e) { assertEquals(true, true); }
     }
 
-//    /** UserService.updateUser. */
-//    @SuppressWarnings("deprecation")
-//    @Test
-//    public void testUpdateUser() {
-//        final UnitDto unit1 = createDefaultUnit();
-//        final User user1 = userService.createUser(USERNAME, PASSWORD, FULLNAME, false);
-//        userService.createMembership(unit1.getId(), user1.getId(), MembershipDto.Type.MEMBER, 0);
-//        final List<User> found = userService.findUsers(unit1.getId(), USERNAME, FULLNAME);
-//        assertNotNull(found);
-//        assertEquals(1, found.size());
-//        assertDefaultUser(found.get(0));
-//
-//        User userA = new User();
-//        userA.setUsername("a");
-//        userA.setPassword("a");
-//        userA.setFullname("a a");
-//        userA = userService.createUser(userA, unit1.getId(), MembershipDto.Type.MEMBER, 0);
-//        assertNotNull(userA);
-//
-//        User userB = new User();
-//        userB.setUsername("b");
-//        userB.setPassword("b");
-//        userB.setFullname("b b");
-//        userB = userService.createUser(userB, unit1.getId(), MembershipDto.Type.MEMBER, 0);
-//        assertNotNull(userB);
-//
-//        assertEquals(3, userService.getAllUsers().size());
-//
-//        try { // existing username
-//            userB.setUsername(USERNAME);
-//            userService.updateUser(userB);
-//            assertEquals("expected ValidationException", true, false);
-//        } catch (ValidationException e) { assertEquals(true, true); }
-//        try { // existing username
-//            userB.setUsername("a");
-//            userService.updateUser(userB);
-//            assertEquals("expected ValidationException", true, false);
-//        } catch (ValidationException e) { assertEquals(true, true); }
-//        try { // invalid username
-//            userB.setUsername(null);
-//            userService.updateUser(userB);
-//            assertEquals("expected NullPointerException", true, false);
-//        } catch (NullPointerException e) { assertEquals(true, true); }
-//        try { // invalid password
-//            userB.setUsername("B");
-//            userB.setPassword(null);
-//            userService.updateUser(userB);
-//            assertEquals("expected NullPointerException", true, false);
-//        } catch (NullPointerException e) { assertEquals(true, true); }
-//        try { // existing username
-//            userB.setPassword("B");
-//            userB.setFullname(null);
-//            userService.updateUser(userB);
-//            assertEquals("expected NullPointerException", true, false);
-//        } catch (NullPointerException e) { assertEquals(true, true); }
-//        try { // invalid fullname
-//            userB.setFullname("B B");
-//            userService.updateUser(userB);
-//            assertEquals(true, true);
-//        } catch (Exception e) { e.printStackTrace(); assertEquals(" Not expected any Exception", true, false); }
-//
-//        assertEquals(3, userService.getAllUsers().size());
-//        assertNotNull("User should exist", userService.findUserByUsername("B"));
-//        assertEquals(1, userService.findUsers(unit1.getId(), "B", "B B").size());
-//    }
-//
+    /** UserService.updateUser. */
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testUpdateUser() {
+        final Unit unit1 = createDefaultUnit();
+        userService.createUser(USERNAME, PASSWORD, FULLNAME, false);
+
+        User userA = new User();
+        userA.setUsername("a");
+        userA.setPassword("a");
+        userA.setFullname("a a");
+        userA = userService.createUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
+        assertNotNull(userA);
+
+        assertEquals(2, userService.getAllUsers().size());
+
+        try { // existing username
+            userA.setUsername(USERNAME);
+            userService.updateUser(userA);
+            assertEquals("expected ValidationException", true, false);
+        } catch (ValidationException e) { assertEquals(true, true); }
+        try { // null username
+            userA.setUsername(null);
+            userService.updateUser(userA);
+            assertEquals("expected NullPointerException", true, false);
+        } catch (NullPointerException e) { assertEquals(true, true); }
+
+        userA.setUsername("B");
+        userA.setFullname("B B");
+        userService.updateUser(userA);
+
+        assertEquals(2, userService.getAllUsers().size());
+        assertNotNull("User should exist", userService.findUserByUsername("B"));
+        assertEquals(1, userService.findUsers(unit1.getId(), "B", "B B").size());
+    }
+
 //    /** UserService.createUser. */
 //    @SuppressWarnings("deprecation")
 //    @Test

@@ -16,15 +16,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.dao.jpa.gae.MembershipDaoGae;
-import veny.smevente.dao.jpa.gae.UserDaoGae;
+import veny.smevente.dao.MembershipDao;
+import veny.smevente.dao.UserDao;
 import veny.smevente.dao.orientdb.UnitDaoImpl;
-import veny.smevente.model.Membership.Type;
+import veny.smevente.model.Membership;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
-import veny.smevente.model.gae.Membership;
-import veny.smevente.model.gae.Unit;
-import veny.smevente.model.gae.User;
 import veny.smevente.security.SmeventeRole;
 
 /**
@@ -44,13 +41,13 @@ public abstract class AbstractBaseTestWithAuth extends AbstractBaseTest {
 
     /** User DAO. */
     @Autowired
-    private UserDaoGae userDao;
+    private UserDao userDao;
     /** Unit DAO. */
     @Autowired
     private UnitDaoImpl unitDao;
     /** Membership DAO. */
     @Autowired
-    private MembershipDaoGae membershipDao;
+    private MembershipDao membershipDao;
 
     /**
      * Prepare users/units and corresponding memberships.
@@ -61,31 +58,28 @@ public abstract class AbstractBaseTestWithAuth extends AbstractBaseTest {
         user.setUsername("aXrt34");
         user.setPassword(userService.encodePassword("a"));
         user.setFullname("V aXrt34");
-        userDao.persist(user);
-        user1 = user.mapToDto();
+        user1 = userDao.persist(user);
 
         Unit unit = new Unit();
         unit.setName("aKhfU89");
-        unit.setMetadata("a=a");
-        unitDao.persist(unit);
-        unit1 = unit.mapToDto();
+//XXX        unit.setMetadata("a=a");
+        unit1 = unitDao.persist(unit);
         // --
         unit = new Unit();
         unit.setName("bOpDe88");
-        unit.setMetadata("b=b");
-        unitDao.persist(unit);
-        unit2 = unit.mapToDto();
+//XXX        unit.setMetadata("b=b");
+        unit2 = unitDao.persist(unit);
 
         Membership m = new Membership();
-        m.setUserId(user1.getId());
-        m.setUnitId(unit1.getId());
-        m.setType(Type.ADMIN);
+        m.setUser(user1);
+        m.setUnit(unit1);
+        m.setRole(Membership.Role.ADMIN.toString());
         membershipDao.persist(m);
         // --
         m = new Membership();
-        m.setUserId(user1.getId());
-        m.setUnitId(unit2.getId());
-        m.setType(Type.MEMBER);
+        m.setUser(user1);
+        m.setUnit(unit2);
+        m.setRole(Membership.Role.MEMBER.toString());
         membershipDao.persist(m);
 
         login(user1);
@@ -107,8 +101,8 @@ public abstract class AbstractBaseTestWithAuth extends AbstractBaseTest {
         authorities.add(new GrantedAuthorityImpl(SmeventeRole.ROLE_AUTHENTICATED.name()));
         final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 user.getUsername(), user.getPassword(), authorities);
-        final List<Long> adminUnits = Arrays.asList(new Long[] { unit1.getId() });
-        auth.setDetails(new Pair<Long, List<Long>>(user.getId(), adminUnits));
+        final List<Object> adminUnits = Arrays.asList(new Object[] { unit1.getId() });
+        auth.setDetails(new Pair<Object, List<Object>>(user.getId(), adminUnits));
         sc.setAuthentication(auth);
     }
 
