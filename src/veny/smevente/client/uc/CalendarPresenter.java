@@ -26,7 +26,7 @@ import veny.smevente.client.utils.SmsWidgetEvent;
 import veny.smevente.client.utils.SmsWidgetEvent.SmsWidgetHandler;
 import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Patient;
-import veny.smevente.model.SmsDto;
+import veny.smevente.model.Event;
 import veny.smevente.model.User;
 import veny.smevente.shared.EntityTypeEnum;
 import veny.smevente.shared.ExceptionJsonWrapper;
@@ -326,7 +326,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final SmsDto sms = App.get().getJsonDeserializer().deserialize(SmsDto.class, "sms", jsonText);
+                final Event sms = App.get().getJsonDeserializer().deserialize(Event.class, "sms", jsonText);
                 if (update) {
                     final DayColumn col = (DayColumn) smsWidget.getParent();
                     col.remove(smsWidget);
@@ -358,10 +358,10 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final List<SmsDto> smss = App.get().getJsonDeserializer().deserializeList(
-                        SmsDto.class, "smss", jsonText);
+                final List<Event> smss = App.get().getJsonDeserializer().deserializeList(
+                        Event.class, "smss", jsonText);
                 int sentCnt = 0;
-                for (SmsDto sms : smss) {
+                for (Event sms : smss) {
                     addSmsWidget(sms);
                     if (null != sms.getSent()) { sentCnt++; }
                 }
@@ -394,7 +394,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * @param smsWidget SMS widget
      */
     private void sendSms(final SmsWidget smsWidget) {
-        final SmsDto sms2send = smsWidget.getSms();
+        final Event sms2send = smsWidget.getSms();
         final RestHandler rest = new RestHandler("/rest/user/sms/" + sms2send.getId() + "/");
         rest.setCallback(new RestCallback() {
             @Override
@@ -408,7 +408,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             }
             @Override
             public void onSuccess(final String jsonText) {
-                final SmsDto sms = App.get().getJsonDeserializer().deserialize(SmsDto.class, "sms", jsonText);
+                final Event sms = App.get().getJsonDeserializer().deserialize(Event.class, "sms", jsonText);
                 sms2send.setSent(sms.getSent());
                 smsWidget.removeStyleName("sms-widget");
                 smsWidget.addStyleName("sms-widget-sent");
@@ -597,7 +597,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * Adds SMS widget to corresponding place in week calendar.
      * @param sms SMS to be represented with the widget
      */
-    private void addSmsWidget(final SmsDto sms) {
+    private void addSmsWidget(final Event sms) {
         // coordinates
         final int dayIdx = DateUtils.getWeekIndex(sms.getMedicalHelpStartTime());
         final DayColumn col = (DayColumn) view.getCalendarBody().getWidget(0, dayIdx);

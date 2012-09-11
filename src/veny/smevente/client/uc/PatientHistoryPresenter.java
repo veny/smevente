@@ -11,7 +11,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.UiUtils;
 import veny.smevente.model.Patient;
-import veny.smevente.model.SmsDto;
+import veny.smevente.model.Event;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -99,7 +99,7 @@ public class PatientHistoryPresenter
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final Pair<Patient, List<SmsDto>> historyPair =
+                final Pair<Patient, List<Event>> historyPair =
                     App.get().getJsonDeserializer().patientHistoryFomJson(jsonText);
                 processHistory(historyPair);
             }
@@ -111,7 +111,7 @@ public class PatientHistoryPresenter
      * Process the history response delivered from server.
      * @param historyPair pair of patient and his SMSs
      */
-    private void processHistory(final Pair<Patient, List<SmsDto>> historyPair) {
+    private void processHistory(final Pair<Patient, List<Event>> historyPair) {
         view.getFullname().setText(historyPair.getA().getFullname()
                 + " [" + historyPair.getA().getFormattedBirthNumber() + "]");
 
@@ -120,7 +120,7 @@ public class PatientHistoryPresenter
         final Date now = new Date();
         boolean future = true;
         int line = 1;
-        for (SmsDto sms : historyPair.getB()) {
+        for (Event sms : historyPair.getB()) {
             if (future && sms.getMedicalHelpStartTime().compareTo(now) < 0) {
                 future = false;
                 if (1 == line) { // no SMSs in future
@@ -154,7 +154,7 @@ public class PatientHistoryPresenter
      * @param future flag whether the item is in future
      * @param line line where the patient will be inserted on
      */
-    private void addHistoryItem(final SmsDto sms, final boolean future, final int line) {
+    private void addHistoryItem(final Event sms, final boolean future, final int line) {
         final Date startTime = sms.getMedicalHelpStartTime();
         final Date endTime = new Date(startTime.getTime() + (sms.getMedicalHelpLength() * 60 * 1000));
         final FlexTable table = view.getResultTable();

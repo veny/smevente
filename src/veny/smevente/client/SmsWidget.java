@@ -6,7 +6,7 @@ import veny.smevente.client.mvp.SingletonEventBus;
 import veny.smevente.client.utils.SmsWidgetEvent;
 import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Patient;
-import veny.smevente.model.SmsDto;
+import veny.smevente.model.Event;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,13 +26,13 @@ import com.google.gwt.user.client.ui.Label;
 public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDoubleClickHandlers*/ {
 
     /** Wrapped SMS. */
-    private final SmsDto sms;
+    private final Event sms;
 
     /**
      * Constructor.
      * @param sms SMS to be wrapped
      */
-    public SmsWidget(final SmsDto sms) {
+    public SmsWidget(final Event sms) {
         // PRE-CONDITIONS
         if (null == sms) { throw new NullPointerException("SMS cannot be null"); }
         if (null == sms.getAuthor()) { throw new NullPointerException("SMS author cannot be null"); }
@@ -53,7 +53,7 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
         final MedicalHelpCategory mhc = sms.getMedicalHelpCategory();
 
         if (null == sms.getSent()) {
-            if (sms.getSendAttemptCount() >= SmsDto.MAX_SEND_ATTEMPTS) {
+            if (sms.getSendAttemptCount() >= Event.MAX_SEND_ATTEMPTS) {
                 addStyleName("sms-widget-failed");
             } else {
                 addStyleName("sms-widget");
@@ -105,7 +105,7 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
      * Gets wrapped SMS triple.
      * @return wrapped SMS triple
      */
-    public SmsDto getSms() {
+    public Event getSms() {
         return sms;
     }
 

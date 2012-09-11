@@ -19,7 +19,7 @@ import com.google.gwt.thirdparty.guava.common.base.Strings;
 public class Membership extends AbstractEntity {
 
     /**
-     * Enumeration of membership types.
+     * Enumeration of membership roles.
      * @author Vaclav Sykora [vaclav.sykora@gmail.com]
      * @since 5.7.2010
      */

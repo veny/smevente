@@ -20,7 +20,7 @@ import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Patient;
-import veny.smevente.model.SmsDto;
+import veny.smevente.model.Event;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
@@ -43,10 +43,10 @@ public class SmsServiceTest extends AbstractBaseTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testCreateSms() {
-        final SmsDto created = createDefaultSms();
+        final Event created = createDefaultSms();
         assertDefaultSms(created, true);
 
-        final List<SmsDto> found = smsService.getAllSmss();
+        final List<Event> found = smsService.getAllSmss();
         assertEquals(1, found.size());
         assertDefaultSms(found.get(0), true);
 
@@ -79,19 +79,19 @@ public class SmsServiceTest extends AbstractBaseTest {
     public void testCreateAndSendSpecialSms() {
         final User author = createDefaultUser();
         final Patient patient = createDefaultPatient();
-        final SmsDto sms = new SmsDto();
+        final Event sms = new Event();
         sms.setAuthor(author);
         sms.setPatient(patient);
         sms.setText("text");
 
-        final SmsDto created = smsService.createAndSendSpecialSms(sms);
+        final Event created = smsService.createAndSendSpecialSms(sms);
         assertNotNull(created);
         assertNotNull(created.getId());
         assertDefaultUser(created.getAuthor());
         assertDefaultPatient(created.getPatient(), false);
         assertNull(created.getMedicalHelpCategory());
         assertNotNull(created.getSent());
-        assertTrue((created.getStatus().intValue() & SmsDto.STATUS_SPECIAL) > 0);
+        assertTrue((created.getStatus().intValue() & Event.STATUS_SPECIAL) > 0);
 
         // Validation
 
@@ -121,7 +121,7 @@ public class SmsServiceTest extends AbstractBaseTest {
         final Patient patient = createPatient("a", "b", "606146177", null, limitedUnit);
         assertEquals(1L, limitedUnit.getLimitedSmss().longValue());
 
-        final SmsDto sms = new SmsDto();
+        final Event sms = new Event();
         sms.setAuthor(author);
         sms.setPatient(patient);
         sms.setText("text");
@@ -143,13 +143,13 @@ public class SmsServiceTest extends AbstractBaseTest {
     /** SmsService.updateSms. */
     @Test
     public void testUpdateSms() {
-        final SmsDto created = createDefaultSms();
+        final Event created = createDefaultSms();
         final MedicalHelpCategory mhc =
             createMedicalHelpCategory("zzz", "000000", 1, "sms text", createUnit("iii", getDefaultUnitMetadata(), 0L));
         created.setText("Esemeskus");
         created.setNotice("zxc123asdf");
         created.setMedicalHelpCategory(mhc);
-        final SmsDto updated = smsService.updateSms(created);
+        final Event updated = smsService.updateSms(created);
         assertEquals(created.getId(), updated.getId());
         assertEquals(created.getAuthor().getId(), updated.getAuthor().getId());
         assertEquals(created.getPatient().getId(), updated.getPatient().getId());
@@ -162,8 +162,8 @@ public class SmsServiceTest extends AbstractBaseTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testDeleteSms() {
-        SmsDto sms = createDefaultSms();
-        List<SmsDto> found = smsService.findSms(sms.getAuthor().getId(), new Date(0), new Date());
+        Event sms = createDefaultSms();
+        List<Event> found = smsService.findSms(sms.getAuthor().getId(), new Date(0), new Date());
         assertEquals(1, found.size());
         assertEquals(0, found.get(0).getStatus().intValue());
 
@@ -182,13 +182,13 @@ public class SmsServiceTest extends AbstractBaseTest {
         found = smsService.getAllSmss();
         assertEquals(1, found.size());
         assertEquals(sms.getId(), found.get(0).getId());
-        assertTrue((found.get(0).getStatus() & SmsDto.STATUS_DELETED) > 0);
+        assertTrue((found.get(0).getStatus() & Event.STATUS_DELETED) > 0);
     }
 
     /** SmsService.getSmsText. */
     @Test
     public void testGetSmsText() {
-        final SmsDto sms = createDefaultSms();
+        final Event sms = createDefaultSms();
         assertEquals(SMS_TEXT, smsService.getSmsText(sms.getId()));
 
         sms.setText("replacement #{doctor}");
@@ -210,8 +210,8 @@ public class SmsServiceTest extends AbstractBaseTest {
     /** SmsService.getById. */
     @Test
     public void testGetById() {
-        final SmsDto created = createDefaultSms();
-        final SmsDto found = smsService.getById(created.getId());
+        final Event created = createDefaultSms();
+        final Event found = smsService.getById(created.getId());
         assertDefaultSms(found, true);
 
         try {
@@ -265,10 +265,10 @@ public class SmsServiceTest extends AbstractBaseTest {
         assertEquals(2, smsService.findSms(authorB.getId(), from, to).size());
 
         // deleted SMS
-        final SmsDto toDel = createSms("text", new Date(110, 2, 1, 12, 0), 10, "notice", authorB, patientB, mhcB);
+        final Event toDel = createSms("text", new Date(110, 2, 1, 12, 0), 10, "notice", authorB, patientB, mhcB);
         assertEquals(3, smsService.findSms(authorA.getId(), from, to).size());
         assertEquals(3, smsService.findSms(authorB.getId(), from, to).size());
-        toDel.setStatus(0 | SmsDto.STATUS_DELETED);
+        toDel.setStatus(0 | Event.STATUS_DELETED);
         smsService.updateSms(toDel);
         assertEquals(3, smsService.findSms(authorA.getId(), from, to).size());
         assertEquals(2, smsService.findSms(authorB.getId(), from, to).size());
@@ -292,8 +292,8 @@ public class SmsServiceTest extends AbstractBaseTest {
     /** SmsService.findSmsByPatient. */
     @Test
     public void testFindSmsByPatient() {
-        final SmsDto first = createDefaultSms();
-        Pair<Patient, List<SmsDto>> pair = smsService.findSmsByPatient(first.getPatient().getId());
+        final Event first = createDefaultSms();
+        Pair<Patient, List<Event>> pair = smsService.findSmsByPatient(first.getPatient().getId());
         assertNotNull(pair.getA());
         assertEquals(1, pair.getB().size());
         assertNull(pair.getB().get(0).getPatient());
@@ -302,17 +302,17 @@ public class SmsServiceTest extends AbstractBaseTest {
         assertNotNull(pair.getB().get(0).getMedicalHelpCategory());
         assertEquals(first.getMedicalHelpCategory().getId(), pair.getB().get(0).getMedicalHelpCategory().getId());
         // second, first (ordered by Start Time)
-        final SmsDto second = createSms(
+        final Event second = createSms(
                 "a", new Date(first.getMedicalHelpStartTime().getTime() + 2000L), 10,
                 "a", first.getAuthor(), first.getPatient(), first.getMedicalHelpCategory());
         pair = smsService.findSmsByPatient(first.getPatient().getId());
-        List<SmsDto> found = pair.getB();
+        List<Event> found = pair.getB();
         assertEquals(2, found.size());
         // ordered by Start Time
         assertEquals(second.getId(), found.get(0).getId());
         assertEquals(first.getId(), found.get(1).getId());
         // second, third, first (ordered by Start Time)
-        final SmsDto third = createSms(
+        final Event third = createSms(
                 "b", new Date(first.getMedicalHelpStartTime().getTime() + 1000L), 20,
                 "b", first.getAuthor(), first.getPatient(), first.getMedicalHelpCategory());
         pair = smsService.findSmsByPatient(first.getPatient().getId());
@@ -332,7 +332,7 @@ public class SmsServiceTest extends AbstractBaseTest {
         assertEquals(2, found.size());
 
         // filter special SMSs
-        final SmsDto sms = new SmsDto();
+        final Event sms = new Event();
         sms.setAuthor(first.getAuthor());
         sms.setPatient(first.getPatient());
         sms.setText("text");
@@ -350,7 +350,7 @@ public class SmsServiceTest extends AbstractBaseTest {
         final MedicalHelpCategory mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, patient.getUnit());
 
-        final SmsDto sms = new SmsDto();
+        final Event sms = new Event();
         sms.setAuthor(author);
         sms.setPatient(patient);
         sms.setMedicalHelpCategory(mhc);
@@ -358,9 +358,9 @@ public class SmsServiceTest extends AbstractBaseTest {
         sms.setMedicalHelpStartTime(new Date());
         sms.setMedicalHelpLength(10);
 
-        final SmsDto created = smsService.createSms(sms);
+        final Event created = smsService.createSms(sms);
         smsService.sendSms(created.getId());
-        final SmsDto found = smsService.getById(created.getId());
+        final Event found = smsService.getById(created.getId());
         assertTrue(null != found.getSent());
     }
     /** SmsService.sendSms by Limited Unit. */
@@ -372,14 +372,14 @@ public class SmsServiceTest extends AbstractBaseTest {
         final MedicalHelpCategory mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, limitedUnit);
 
-        final SmsDto sms = new SmsDto();
+        final Event sms = new Event();
         sms.setAuthor(author);
         sms.setPatient(patient);
         sms.setMedicalHelpCategory(mhc);
         sms.setText("text");
         sms.setMedicalHelpStartTime(new Date());
         sms.setMedicalHelpLength(10);
-        final SmsDto created = smsService.createSms(sms);
+        final Event created = smsService.createSms(sms);
 
         // first time - OK
         smsService.sendSms(created.getId());
@@ -404,11 +404,11 @@ public class SmsServiceTest extends AbstractBaseTest {
                 MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, patient.getUnit());
         @SuppressWarnings("deprecation")
         final Date date = new Date(111, 0, 1, 12, 30); // 1.1.2011 12:30
-        final SmsDto created = createSms("#{date} #{time}", date, SMS_MH_LEN, SMS_NOTICE,
+        final Event created = createSms("#{date} #{time}", date, SMS_MH_LEN, SMS_NOTICE,
                 createDefaultUser(), patient, mhc);
 
         // test formating
-        final Method m = smsService.getClass().getDeclaredMethod("format", SmsDto.class);
+        final Method m = smsService.getClass().getDeclaredMethod("format", Event.class);
         m.setAccessible(true);
         final String smsText = (String) m.invoke(smsService, created);
         assertEquals("01.01.11 12:30", smsText);
@@ -417,7 +417,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     /** SmsService.bulkSend. */
     @Test
     public void testBulkSend() {
-        final SmsDto created = createDefaultSms();
+        final Event created = createDefaultSms();
         assertEquals(1, smsService.bulkSend());
         assertEquals(0, smsService.bulkSend());
 
@@ -435,23 +435,23 @@ public class SmsServiceTest extends AbstractBaseTest {
         final MedicalHelpCategory mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, limitedUnit);
 
-        final SmsDto firstSms = new SmsDto();
+        final Event firstSms = new Event();
         firstSms.setAuthor(author);
         firstSms.setPatient(patient);
         firstSms.setMedicalHelpCategory(mhc);
         firstSms.setText("text");
         firstSms.setMedicalHelpStartTime(new Date());
         firstSms.setMedicalHelpLength(10);
-        final SmsDto firstCreated = smsService.createSms(firstSms);
+        final Event firstCreated = smsService.createSms(firstSms);
 
-        final SmsDto secondSms = new SmsDto();
+        final Event secondSms = new Event();
         secondSms.setAuthor(author);
         secondSms.setPatient(patient);
         secondSms.setMedicalHelpCategory(mhc);
         secondSms.setText("text");
         secondSms.setMedicalHelpStartTime(new Date());
         secondSms.setMedicalHelpLength(10);
-        final SmsDto secondCreated = smsService.createSms(secondSms);
+        final Event secondCreated = smsService.createSms(secondSms);
 
         // bulk send
         smsService.bulkSend();

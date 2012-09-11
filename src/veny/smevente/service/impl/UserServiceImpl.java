@@ -30,7 +30,7 @@ import eu.maydu.gwt.validation.client.server.ServerValidation;
  * Implementation of User service.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
- * @since 0.1
+ * @since 12.7.2012
  */
 public class UserServiceImpl implements UserService {
 
@@ -79,9 +79,7 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
     public User createUser(final User user) {
-        validateUser(user);
-        // to be sure that reused object will be created as new
-        if (null != user.getId()) { user.setId(null); }
+        validateUser(user, true);
 
         final List<User> check = userDao.findBy("username", user.getUsername(), null);
         if (!check.isEmpty()) {
@@ -191,6 +189,7 @@ public class UserServiceImpl implements UserService {
 
     // no authorization - used in AuthenticationProvider
     /** {@inheritDoc} */
+    @Transactional(readOnly = true)
     @Override
     public User findUserByUsername(final String username) {
         if (Strings.isNullOrEmpty(username)) { throw new NullPointerException("username cannot be blank"); }
@@ -470,9 +469,11 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Validation of a user before persistence.
-     * @param user the user to be validated
+     * @param user user to be validated
+     * @param forCreate whether the object has to be created as new entry in DB
      */
-    private void validateUser(final User user) {
+    private void validateUser(final User user, final boolean forCreate) {
+        if (null == user) { throw new NullPointerException("user cannot be null"); }
         if (Strings.isNullOrEmpty(user.getUsername())) {
             throw new IllegalArgumentException("username cannot be blank");
         }
@@ -481,6 +482,11 @@ public class UserServiceImpl implements UserService {
         }
         if (Strings.isNullOrEmpty(user.getFullname())) {
             throw new IllegalArgumentException("fullname cannot be blank");
+        }
+        if (forCreate) {
+            if (null != user.getId()) {
+                throw new IllegalArgumentException("expected object with empty ID");
+            }
         }
     }
 

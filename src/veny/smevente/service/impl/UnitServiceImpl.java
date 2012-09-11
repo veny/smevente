@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
-import veny.smevente.dao.MedicalHelpCategoryDao;
 import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.model.Patient;
@@ -38,9 +37,9 @@ public class UnitServiceImpl implements UnitService {
     /** Dependency. */
     @Autowired
     private PatientDao patientDao;
-    /** Dependency. */
-    @Autowired
-    private MedicalHelpCategoryDao mhcDao;
+//    /** Dependency. */
+//    @Autowired
+//    private MedicalHelpCategoryDao mhcDao;
     /** Dependency. */
     @Autowired
     private ValidationContainer validationContainer;
@@ -53,11 +52,7 @@ public class UnitServiceImpl implements UnitService {
     @Transactional
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     public Unit createUnit(final Unit unit) {
-        if (null == unit) { throw new NullPointerException("unit cannot be null"); }
-        if (Strings.isNullOrEmpty(unit.getName())) { throw new IllegalArgumentException("unit name cannot be blank"); }
-
-        // to be sure that reused object will be created as new
-        if (null != unit.getId()) { unit.setId(null); unit.setVersion(null); }
+        validateUnit(unit, true);
 
         final String name = unit.getName();
         final List<Unit> check = unitDao.findBy("name", name, null);
@@ -173,7 +168,6 @@ public class UnitServiceImpl implements UnitService {
             final Object unitId, final String name, final String phoneNumber, final String birthNumber) {
 
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
-        final Unit unit = getUnit(unitId);
         LOG.info("findPatients, unitId=" + unitId + ", name=" + name
                 + ", phone=" + phoneNumber + ", birthNumber=" + birthNumber);
 
@@ -349,10 +343,26 @@ public class UnitServiceImpl implements UnitService {
     // -------------------------------------------------------- Assistant Stuff
 
     /**
+     * Validation of a unit before persistence.
+     * @param unit unit to be validated
+     * @param forCreate whether the object has to be created as new entry in DB
+     */
+    private void validateUnit(final Unit unit, final boolean forCreate) {
+        if (null == unit) { throw new NullPointerException("unit cannot be null"); }
+        if (Strings.isNullOrEmpty(unit.getName())) { throw new IllegalArgumentException("unit name cannot be blank"); }
+        if (forCreate) {
+            if (null != unit.getId()) {
+                throw new IllegalArgumentException("expected object with empty ID");
+            }
+        }
+    }
+
+    /**
      * Validation of a patient before persistence.
      * @param patient patient to be validated
      */
     private void validatePatient(final Patient patient) {
+        if (null == patient) { throw new NullPointerException("patient cannot be null"); }
         if (null == patient.getUnit()) { throw new NullPointerException("unit cannot be null"); }
         if (null == patient.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
         if (null == patient.getFirstname()) { throw new NullPointerException("first name cannot be null"); }

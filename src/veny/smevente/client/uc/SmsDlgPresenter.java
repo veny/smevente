@@ -11,7 +11,7 @@ import veny.smevente.client.utils.PatientNameSuggestOracle;
 import veny.smevente.client.utils.PatientSuggestion;
 import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Patient;
-import veny.smevente.model.SmsDto;
+import veny.smevente.model.Event;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -162,7 +162,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * @param mhcs list of medical help categories
      */
     public void init(
-            final SmsDto sms, final List<Patient> patients, final List<MedicalHelpCategory> mhcs) {
+            final Event sms, final List<Patient> patients, final List<MedicalHelpCategory> mhcs) {
 
         this.init(sms.getMedicalHelpStartTime(), patients, mhcs);
 

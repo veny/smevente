@@ -10,7 +10,7 @@ import veny.smevente.client.utils.Pair;
 import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
-import veny.smevente.model.SmsDto;
+import veny.smevente.model.Event;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
@@ -76,7 +76,7 @@ public class JsonDeserializer {
             result = (T) patientFromJson(jsObj);
         } else if (MedicalHelpCategory.class == classToCreate) {
             result = (T) mhcFromJson(jsObj);
-        } else if (SmsDto.class == classToCreate) {
+        } else if (Event.class == classToCreate) {
             result = (T) smsFromJson(jsObj);
         } else {
             throw new IllegalArgumentException("no deserialization, class=" + classToCreate);
@@ -120,7 +120,7 @@ public class JsonDeserializer {
             rslt = (List<T>) patientListFromJson(jsArr);
         } else if (MedicalHelpCategory.class == classToCreate) {
             rslt = (List<T>) mhcListFromJson(jsArr);
-        } else if (SmsDto.class == classToCreate) {
+        } else if (Event.class == classToCreate) {
             rslt = (List<T>) smsListFromJson(jsArr);
         } else {
             throw new IllegalArgumentException("no list deserialization, class=" + classToCreate);
@@ -379,8 +379,8 @@ public class JsonDeserializer {
      * @param jsObj JSON object
      * @return instance of <code>Sms</code>
      */
-    private SmsDto smsFromJson(final JSONObject jsObj) {
-        final SmsDto rslt = new SmsDto();
+    private Event smsFromJson(final JSONObject jsObj) {
+        final Event rslt = new Event();
         rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
         final JSONObject jsUserObj = jsObj.get("author").isObject();
         if (null != jsUserObj) {
@@ -408,8 +408,8 @@ public class JsonDeserializer {
      * @param jsArr JSON array
      * @return list of <code>Sms</code>
      */
-    private List<SmsDto> smsListFromJson(final JSONArray jsArr) {
-        final List<SmsDto> rslt = new ArrayList<SmsDto>();
+    private List<Event> smsListFromJson(final JSONArray jsArr) {
+        final List<Event> rslt = new ArrayList<Event>();
 
         for (int i = 0; i < jsArr.size(); i++) {
             JSONValue jsonValue = jsArr.get(i);
@@ -444,10 +444,10 @@ public class JsonDeserializer {
 
             final JSONValue jsonStats = jsArr.get(i).isObject().get("b");
             final Map<String, Long> stats = new HashMap<String, Long>();
-            stats.put(SmsDto.SUM, getLong(jsonStats.isObject().get(SmsDto.SUM)));
-            stats.put(SmsDto.SENT, getLong(jsonStats.isObject().get(SmsDto.SENT)));
-            stats.put(SmsDto.FAILED, getLong(jsonStats.isObject().get(SmsDto.FAILED)));
-            stats.put(SmsDto.DELETED, getLong(jsonStats.isObject().get(SmsDto.DELETED)));
+            stats.put(Event.SUM, getLong(jsonStats.isObject().get(Event.SUM)));
+            stats.put(Event.SENT, getLong(jsonStats.isObject().get(Event.SENT)));
+            stats.put(Event.FAILED, getLong(jsonStats.isObject().get(Event.FAILED)));
+            stats.put(Event.DELETED, getLong(jsonStats.isObject().get(Event.DELETED)));
 
             rslt.add(new Pair<User, Map<String, Long>>(user, stats));
         }
@@ -459,7 +459,7 @@ public class JsonDeserializer {
      * @param representation JSON string
      * @return pair composed by patient and list of his <code>Sms</code>
      */
-    public Pair<Patient, List<SmsDto>> patientHistoryFomJson(final String representation) {
+    public Pair<Patient, List<Event>> patientHistoryFomJson(final String representation) {
         final JSONValue jsonValue = JSONParser.parseStrict(representation);
         final JSONObject jsonRoot = jsonValue.isObject();
         if (null == jsonRoot) { throw new IllegalArgumentException("not JSON object: " + representation); }
@@ -472,8 +472,8 @@ public class JsonDeserializer {
         if (null == jsonSmss) { throw new IllegalArgumentException("not JSON array: history/b"); }
 
         final Patient patient = patientFromJson(jsonPatient);
-        final List<SmsDto> smss = smsListFromJson(jsonSmss);
-        return new Pair<Patient, List<SmsDto>>(patient, smss);
+        final List<Event> smss = smsListFromJson(jsonSmss);
+        return new Pair<Patient, List<Event>>(patient, smss);
     }
 
     /**

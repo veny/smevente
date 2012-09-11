@@ -65,7 +65,7 @@ public class ValidationContainer {
             vc.validate("birthNumber", "PN", "010101203x");
         } catch (ValidationException e) {
             final InvalidValueSerializable iv = e.getInvalidValues().get(0);
-            System.out.println("validation failed, msgKey=" + iv.getMessage() // CSOFF
+            System.out.println("validation failed, msgKey=" + iv.getMessage() //CSOFF
                     + ", propertyName=" + iv.getPropertyName());
         }
     }

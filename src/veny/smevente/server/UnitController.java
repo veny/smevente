@@ -17,8 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Patient;
-import veny.smevente.model.SmsDto;
-import veny.smevente.service.SmsService;
+import veny.smevente.model.Event;
+import veny.smevente.service.EventService;
 import veny.smevente.service.UnitService;
 
 /**

@@ -83,7 +83,6 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
             .append("&auth=")
             .append(getAuth(msg, login, password))
             .toString();
-//        System.out.println(data.toString());
 
         // do NOT send the SMS physically if system property 'sms.gateway.fake' set to 'true'.
         // [it's mostly for JUnit test that do not want to send a SMS.]
@@ -124,7 +123,6 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
                     body.append(line);
                     line = reader.readLine();
                 }
-//                System.out.println(body.toString());
 
                 // is response OK?
                 final SmsException failure = assertResponse(body.toString());
@@ -277,14 +275,14 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
         service.send("606 146 177", "ahoj, toto je z aplikace. http:", metadata);
 //        service.send("606 146 177", "0hoj, toto je z aplikace. http:");
 
-//        System.out.println(
+//        System.out.println(//CSOFF
 //                service.assertResponse(
 //                        "<status><id>200</id><message>Zprava byla uspesne odeslana</message></status>"));
-//        System.out.println(
+//        System.out.println(//CSOFF
 //                service.assertResponse(
 //                        "<status><id>400;1</id><message>Chybne telefonni cislo  Prefix don't exists. "
 //                        + "500146177</message></status>"));
-//        System.out.println(
+//        System.out.println(//CSOFF
 //                service.assertResponse("<status><id>401</id><message>Chybne prihlaseni</message></status>"));
     }
 

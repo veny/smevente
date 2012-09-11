@@ -21,10 +21,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.Membership;
-import veny.smevente.model.SmsDto;
+import veny.smevente.model.Event;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
-import veny.smevente.service.SmsService;
+import veny.smevente.service.EventService;
 import veny.smevente.service.UserService;
 
 /**
@@ -205,10 +205,10 @@ public class UserController {
      * @return SMS triple as JSON
      */
     @RequestMapping(value = "/sms/", method = RequestMethod.POST)
-    public ModelAndView createSms(final SmsDto sms, @RequestParam("authorId") final Long authorId) {
+    public ModelAndView createSms(final Event sms, @RequestParam("authorId") final Long authorId) {
 
         sms.setAuthorId(authorId);
-        final SmsDto created = smsService.createSms(sms);
+        final Event created = smsService.createSms(sms);
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("sms", created);
@@ -225,7 +225,7 @@ public class UserController {
      */
     @RequestMapping(value = "/special-sms/", method = RequestMethod.POST)
     public void createAndSendSpecialSms(final HttpServletResponse response,
-            final SmsDto sms, @RequestParam("authorId") final Long authorId) {
+            final Event sms, @RequestParam("authorId") final Long authorId) {
 
         sms.setAuthorId(authorId);
         smsService.createAndSendSpecialSms(sms);
@@ -239,10 +239,10 @@ public class UserController {
      * @return SMS triple as JSON
      */
     @RequestMapping(value = "/sms/", method = RequestMethod.PUT)
-    public ModelAndView updateSms(final SmsDto sms, @RequestParam("authorId") final Long authorId) {
+    public ModelAndView updateSms(final Event sms, @RequestParam("authorId") final Long authorId) {
 
         sms.setAuthorId(authorId);
-        final SmsDto updated = smsService.updateSms(sms);
+        final Event updated = smsService.updateSms(sms);
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("sms", updated);
@@ -267,7 +267,7 @@ public class UserController {
             @PathVariable("from") final Date from,
             @PathVariable("to") final Date to) {
 
-        final List<SmsDto> rslt = smsService.findSms(userId, from, to);
+        final List<Event> rslt = smsService.findSms(userId, from, to);
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("smss", rslt);
@@ -288,7 +288,7 @@ public class UserController {
             final HttpServletRequest request, final HttpServletResponse response,
             @PathVariable("id") final Long smsId) {
 
-        final SmsDto info = smsService.sendSms(smsId);
+        final Event info = smsService.sendSms(smsId);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("sms", info);
         return modelAndView;
@@ -338,7 +338,7 @@ public class UserController {
     @RequestMapping(value = "/sms/{id}/info/", method = RequestMethod.GET)
     public ModelAndView getSmsDetail(final HttpServletRequest request, @PathVariable("id") final Long smsId) {
 
-        final SmsDto info = smsService.getById(smsId);
+        final Event info = smsService.getById(smsId);
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("sms", info);

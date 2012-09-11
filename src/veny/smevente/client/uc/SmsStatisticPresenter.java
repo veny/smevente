@@ -13,7 +13,7 @@ import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.SmsDto;
+import veny.smevente.model.Event;
 import veny.smevente.model.User;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -189,10 +189,10 @@ public class SmsStatisticPresenter
                 int line = 1;
                 for (Pair<User, Map<String, Long>> entry : statistics) {
                     addCell(line, 0, new InlineLabel(entry.getA().getFullname()));
-                    addCell(line, 1, new Label(entry.getB().get(SmsDto.SUM).toString()));
-                    addCell(line, 2, new Label(entry.getB().get(SmsDto.SENT).toString()));
-                    addCell(line, 3, new Label(entry.getB().get(SmsDto.FAILED).toString()));
-                    addCell(line, 4, new Label(entry.getB().get(SmsDto.DELETED).toString()));
+                    addCell(line, 1, new Label(entry.getB().get(Event.SUM).toString()));
+                    addCell(line, 2, new Label(entry.getB().get(Event.SENT).toString()));
+                    addCell(line, 3, new Label(entry.getB().get(Event.FAILED).toString()));
+                    addCell(line, 4, new Label(entry.getB().get(Event.DELETED).toString()));
                     line++;
                 }
                 view.getChart().setUrl(constructChartUrl(statistics));
@@ -234,7 +234,7 @@ public class SmsStatisticPresenter
         final StringBuilder data = new StringBuilder("chd=t:");
         final StringBuilder labels = new StringBuilder("chl=");
         for (Pair<User, Map<String, Long>> entry : statistics) {
-            data.append(entry.getB().get(SmsDto.SUM).toString());
+            data.append(entry.getB().get(Event.SUM).toString());
             labels.append(entry.getA().getFullname());
             data.append(',');
             labels.append('|');

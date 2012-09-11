@@ -113,9 +113,9 @@ public final class TextUtils {
      * @param args CLI arguments
      */
     public static void main(final String[] args) {
-        System.out.println(convert2ascii("Žluťoučký kůň pěl ďábelské ódy")); // CSOFF
-        System.out.println(sanitizeNumber("608 346 123")); // CSOFF
-        System.out.println("|" + sanitizeNumber("") + "|"); // CSOFF
+        System.out.println(convert2ascii("Žluťoučký kůň pěl ďábelské ódy")); //CSOFF
+        System.out.println(sanitizeNumber("608 346 123")); //CSOFF
+        System.out.println("|" + sanitizeNumber("") + "|"); //CSOFF
 
         final Map<String, String> map = new HashMap<String, String>();
         map.put("color", "red");

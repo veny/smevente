@@ -43,10 +43,10 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         userA.setUsername("a");
         userA.setFullname("a a");
         userA.setPassword("a");
-        userService.createUser(userA, unit1.getId(), MembershipDto.Membership.MEMBER, 0);
+        userService.createUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
 
         try { // hasPermission(#unitId, 'V_UNIT_ADMIN')
-            userService.createUser(userA, unit2.getId(), MembershipDto.Membership.MEMBER, 0);
+            userService.createUser(userA, unit2.getId(), Membership.Role.MEMBER, 0);
             assertEquals("expected AccessDeniedException", true, false);
         } catch (AccessDeniedException e) { assertEquals(true, true); }
     }
@@ -54,10 +54,10 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
     /** UserService.updateUser(UserDto, Long, MembershipDto.Type, Integer). */
     @Test
     public void testUserServiceUpdateUser() {
-        userService.updateUser(user1, unit1.getId(), MembershipDto.Membership.MEMBER, 0);
+        userService.updateUser(user1, unit1.getId(), Membership.Role.MEMBER, 0);
 
         try { // hasPermission(#unitId, 'V_UNIT_ADMIN')
-            userService.createUser(user1, unit2.getId(), MembershipDto.Membership.MEMBER, 0);
+            userService.createUser(user1, unit2.getId(), Membership.Role.MEMBER, 0);
             assertEquals("expected AccessDeniedException", true, false);
         } catch (AccessDeniedException e) { assertEquals(true, true); }
     }

@@ -6,7 +6,7 @@ import veny.smevente.client.App;
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
 import veny.smevente.model.Patient;
-import veny.smevente.model.SmsDto;
+import veny.smevente.model.Event;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -69,7 +69,7 @@ public class SmsDetailDlgPresenter extends AbstractPresenter<SmsDetailDlgPresent
      * Initializes presenter.
      * @param sms SMS
      */
-    public void init(final SmsDto sms) {
+    public void init(final Event sms) {
         // clear all the stuff
         clean();
 
