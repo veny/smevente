@@ -151,7 +151,7 @@ public class UserController {
 
         // as first encode the password
         user.setPassword(userService.encodePassword(user.getPassword()));
-        Membership.Type etype = Membership.Type.values()[type.intValue()];
+        Membership.Role etype = Membership.Role.values()[type.intValue()];
         final User created = userService.createUser(user, unitId, etype, significance);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("user", created);
@@ -180,7 +180,7 @@ public class UserController {
         if (!User.DO_NOT_CHANGE_PASSWORD.equals(user.getPassword())) {
             user.setPassword(userService.encodePassword(user.getPassword()));
         }
-        Membership.Type etype = Membership.Type.values()[type.intValue()];
+        Membership.Role etype = Membership.Role.values()[type.intValue()];
         userService.updateUser(user, unitId, etype, significance);
         response.setStatus(200);
     }

@@ -27,5 +27,7 @@
 	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/javassist.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-security-web-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-mapper-asl-1.5.4.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
