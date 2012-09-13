@@ -203,7 +203,7 @@ public class Menu extends MenuBar implements HeaderHandler {
     /** {@inheritDoc} */
     @Override
     public void unitChanged(final HeaderEvent event) {
-        final TextVariant variant = event.getUnit().getType();
+        final TextVariant variant = event.getUnit().enumTextVariant();
         findPatient.setText(CONSTANTS.findPatient()[variant.ordinal()]);
         addPatient.setText(CONSTANTS.addPatient()[variant.ordinal()]);
         medicalHelps.setText(CONSTANTS.medicalHelps()[variant.ordinal()]);

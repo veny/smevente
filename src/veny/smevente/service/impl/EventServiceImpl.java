@@ -2,7 +2,6 @@ package veny.smevente.service.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -16,11 +15,8 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.gwt.thirdparty.guava.common.base.Strings;
-
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
-import veny.smevente.client.utils.Triple;
 import veny.smevente.dao.EventDao;
 import veny.smevente.dao.MedicalHelpCategoryDao;
 import veny.smevente.dao.MembershipDao;
@@ -28,8 +24,6 @@ import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
 import veny.smevente.model.Event;
-import veny.smevente.model.MedicalHelpCategory;
-import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -37,6 +31,8 @@ import veny.smevente.service.EventService;
 import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.TextUtils;
+
+import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 
 /**
@@ -293,54 +289,55 @@ public class EventServiceImpl implements EventService {
     public List<Pair<User, Map<String, Integer>>> getEventStatistic(
             final Object unitId, final Object userId, final Date from, final Date to) {
 
-        // find membership for given user on given unit
-        final List<Membership> memberships = membershipDao.findBy("unit", unitId, "user", userId, null);
-        if (0 == memberships.size()) {
-            throw new IllegalStateException("membership not found, unitId=" + unitId + ", userId=" + userId);
-        } else if (memberships.size() > 1) {
-            throw new IllegalStateException("too many membership found, unitId=" + unitId + ", userId=" + userId);
-        }
-        final Membership userMemb = memberships.get(0);
-
-        // get user included into statistic
-        final List<User> users = new ArrayList<User>();
-
-        // Admin -> return other members
-        if (Membership.Role.ADMIN.equals(userMemb.enumRole())) {
-            // find other users
-            final List<Membership> other = membershipDao.findBy("unit", unitId, null);
-            for (Membership m : other) {
-                users.add(m.getUser());
-            }
-        } else {
-            users.add(userMemb.getUser());
-        }
-
-        final List<Pair<User, Map<String, Integer>>> rslt = new ArrayList<Pair<User, Map<String, Integer>>>();
-        long eventCount = 0;
-
-        // get event statistics for collected users
-        for (User u : users) {
-            final List<Event> foundEvents = eventDao.findByAuthorAndPeriod(u.getId(), from, to, true);
-            eventCount += foundEvents.size();
-            int sent = 0;
-            int failed = 0;
-            int deleted = 0;
-            for (Event s : foundEvents) {
-                if (null != s.getSent()) { sent++; }
-                if (s.getSendAttemptCount() >= Event.MAX_SEND_ATTEMPTS) { failed++; }
-                if (0 != (s.getStatus() & Event.STATUS_DELETED)) { deleted++; }
-            }
-            Map<String, Integer> stat = new HashMap<String, Integer>();
-            stat.put(Event.DELETED, deleted);
-            stat.put(Event.SENT, sent);
-            stat.put(Event.FAILED, failed);
-            stat.put(Event.SUM, foundEvents.size());
-            rslt.add(new Pair<User, Map<String, Integer>>(u, stat));
-        }
-        LOG.info("collected statistics for " + rslt.size() + " user(s), eventCount=" + eventCount);
-
-        return rslt;
+        throw new IllegalStateException("not implemented yet");
+//        // find membership for given user on given unit
+//        final List<Membership> memberships = membershipDao.findBy("unit", unitId, "user", userId, null);
+//        if (0 == memberships.size()) {
+//            throw new IllegalStateException("membership not found, unitId=" + unitId + ", userId=" + userId);
+//        } else if (memberships.size() > 1) {
+//            throw new IllegalStateException("too many membership found, unitId=" + unitId + ", userId=" + userId);
+//        }
+//        final Membership userMemb = memberships.get(0);
+//
+//        // get user included into statistic
+//        final List<User> users = new ArrayList<User>();
+//
+//        // Admin -> return other members
+//        if (Membership.Role.ADMIN.equals(userMemb.enumRole())) {
+//            // find other users
+//            final List<Membership> other = membershipDao.findBy("unit", unitId, null);
+//            for (Membership m : other) {
+//                users.add(m.getUser());
+//            }
+//        } else {
+//            users.add(userMemb.getUser());
+//        }
+//
+//        final List<Pair<User, Map<String, Integer>>> rslt = new ArrayList<Pair<User, Map<String, Integer>>>();
+//        long eventCount = 0;
+//
+//        // get event statistics for collected users
+//        for (User u : users) {
+//            final List<Event> foundEvents = eventDao.findByAuthorAndPeriod(u.getId(), from, to, true);
+//            eventCount += foundEvents.size();
+//            int sent = 0;
+//            int failed = 0;
+//            int deleted = 0;
+//            for (Event s : foundEvents) {
+//                if (null != s.getSent()) { sent++; }
+//                if (s.getSendAttemptCount() >= Event.MAX_SEND_ATTEMPTS) { failed++; }
+//                if (0 != (s.getStatus() & Event.STATUS_DELETED)) { deleted++; }
+//            }
+//            Map<String, Integer> stat = new HashMap<String, Integer>();
+//            stat.put(Event.DELETED, deleted);
+//            stat.put(Event.SENT, sent);
+//            stat.put(Event.FAILED, failed);
+//            stat.put(Event.SUM, foundEvents.size());
+//            rslt.add(new Pair<User, Map<String, Integer>>(u, stat));
+//        }
+//        LOG.info("collected statistics for " + rslt.size() + " user(s), eventCount=" + eventCount);
+//
+//        return rslt;
     }
 
     /** {@inheritDoc} */

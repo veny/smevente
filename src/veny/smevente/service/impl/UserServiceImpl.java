@@ -261,6 +261,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /** {@inheritDoc} */
+    @Transactional
     @PreAuthorize("hasPermission(#userId, 'V_MY_USER')")
     @Override
     public void updateUserPassword(final Object userId, final String oldPassword, final String newPassword) {
@@ -368,49 +369,16 @@ public class UserServiceImpl implements UserService {
 ////        LOG.info("found " + rslt.size() + " member(s), unitId=" + unitId);
 ////        return rslt;
 ////    }
-//
-//    /*
-//     * Here is not used a TX because of GAE Entity Group limit for transaction.
-//     * I avoided to use TX (not needed here).
-//     */
-//    /** {@inheritDoc} */
-//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-//    @Override
-//    public List<UnitDto> getUnitsOfUser(final User user) {
-//        final List<UnitDto> rslt = new ArrayList<UnitDto>();
-//
-//        // get memberships of given user
-//        final List<Membership> memberships = membershipDao.findBy("userId", user.getId(), "significance");
-//
-//        for (Membership userMembGae : memberships) {
-//            final Unit unitGae = unitDao.getById(userMembGae.getUnitId());
-//            final UnitDto unit = unitGae.mapToDto();
-//            rslt.add(unit);
-//
-//            // add the given user at first place
-//            final MembershipDto memb = userMembGae.mapToDto();
-//            final User uDto = userDao.getById(userMembGae.getUserId()).mapToDto();
-//            memb.setUser(uDto);
-//            unit.addMember(memb);
-//
-//            // Admin -> return other members
-//            if (MembershipDto.Type.ADMIN.equals(userMembGae.getType())) {
-//                // find other users
-//                final List<Membership> other = membershipDao.findBy("unitId", userMembGae.getUnitId(), null);
-//                for (Membership mGae : other) {
-//                    if (!user.getId().equals(mGae.getUserId())) { // don't include 'me' again
-//                        final MembershipDto membershipDto = mGae.mapToDto();
-//                        final User userDto = userDao.getById(mGae.getUserId()).mapToDto();
-//                        membershipDto.setUser(userDto);
-//                        unit.addMember(membershipDto);
-//                    }
-//                }
-//            }
-//        }
-//
-//        LOG.info("found " + rslt.size() + " membership(s), userId=" + user.getId());
-//        return rslt;
-//    }
+
+    /** {@inheritDoc} */
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+    @Override
+    public List<Unit> getUnitsOfUser(final Object userId) {
+        final List<Unit> rslt = unitDao.getUnitsByUser(userId);
+        LOG.info("found " + rslt.size() + " units(s), userId=" + userId);
+        return rslt;
+    }
 
     // ------------------------------------------------------- Membership Stuff
 

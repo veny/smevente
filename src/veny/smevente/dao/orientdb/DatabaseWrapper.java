@@ -32,7 +32,6 @@ public final class DatabaseWrapper implements DisposableBean {
     private String databaseUrl;
     private String username;
     private String password;
-    private boolean init = false;
     // CHECKSTYLE:ON
 
     /**
@@ -85,7 +84,6 @@ public final class DatabaseWrapper implements DisposableBean {
      * @param init <i>true</i> for schema initialization
      */
     public void setInit(final boolean init) {
-        this.init = init;
         final OObjectDatabaseTx db = get();
 
         if (init) {
@@ -142,7 +140,7 @@ public final class DatabaseWrapper implements DisposableBean {
 //    }
     public OObjectDatabaseTx get() {
         return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
-//    	OObjectDatabaseTx database = new ODatabaseDocumentTx(databaseUrl);
+//        OObjectDatabaseTx database = new ODatabaseDocumentTx(databaseUrl);
 //        database.setProperty("minPool", 2);
 //        database.setProperty("maxPool", 5);
 //        database.open("admin", "admin");

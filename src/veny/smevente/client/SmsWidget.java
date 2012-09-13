@@ -64,8 +64,8 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
         DOM.setStyleAttribute(getElement(), "backgroundColor", "#" + mhc.getColor());
 
         // header text
-        final Date startTime = sms.getMedicalHelpStartTime();
-        final Date endTime = new Date(startTime.getTime() + (sms.getMedicalHelpLength() * 60 * 1000));
+        final Date startTime = sms.getStartTime();
+        final Date endTime = new Date(startTime.getTime() + (sms.getLength() * 60 * 1000));
 
         @SuppressWarnings("deprecation")
         final StringBuilder text = new StringBuilder(patient.getFirstname())

@@ -13,13 +13,13 @@ import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.LoginPresenter;
 import veny.smevente.client.uc.LoginViewImpl;
 import veny.smevente.model.Membership.Role;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
@@ -65,7 +65,7 @@ public final class App implements ValueChangeHandler<String> {
     private Presenter< ? > activeMainPresenter = null;
 
     /** List of units sorted by significance for the current logged in user. */
-    private List<veny.smevente.model.Unit> units;
+    private List<Unit> units;
     /** Index of currently selected unit. */
     private int selectedUnitIndex;
     /** Index of currently selected unit member. */
@@ -107,9 +107,9 @@ public final class App implements ValueChangeHandler<String> {
         Element body = DOM.getElementById("body");
         if (body != null) {
             if (Window.getClientWidth() > MIN_PAGE_WIDTH) {
-                body.getStyle().setWidth(100, Unit.PCT);
+                body.getStyle().setWidth(100, com.google.gwt.dom.client.Style.Unit.PCT);
             } else {
-                body.getStyle().setWidth(MIN_PAGE_WIDTH, Unit.PX);
+                body.getStyle().setWidth(MIN_PAGE_WIDTH, com.google.gwt.dom.client.Style.Unit.PX);
             }
         }
     }
@@ -360,7 +360,7 @@ public final class App implements ValueChangeHandler<String> {
      * Gets list of units sorted by significance for the current logged in user.
      * @return list of units sorted by significance for the current logged in user
      */
-    public List<veny.smevente.model.Unit> getUnits() {
+    public List<Unit> getUnits() {
         return units;
     }
 
@@ -383,7 +383,7 @@ public final class App implements ValueChangeHandler<String> {
      * Gets the current selected unit.
      * @return the current selected unit
      */
-    public veny.smevente.model.Unit getSelectedUnit() {
+    public Unit getSelectedUnit() {
         return units.get(selectedUnitIndex);
     }
     /**
@@ -394,7 +394,7 @@ public final class App implements ValueChangeHandler<String> {
         if (null == units || null == getSelectedUnit()) {
             return 0;
         }
-        return getSelectedUnit().getType().ordinal();
+        return getSelectedUnit().enumTextVariant().ordinal();
     }
 
     /**
