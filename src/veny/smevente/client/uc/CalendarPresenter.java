@@ -308,7 +308,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      */
     private void storeSms(
             final String smsId,
-            final Pair<Long, Long> patientIdAndMhcId, final Pair<String, String> smsTextAndNotice,
+            final Pair<Object, Object> patientIdAndMhcId, final Pair<String, String> smsTextAndNotice,
             final Date mhStartTime, final int mhLen, final SmsWidget smsWidget) {
 
         final boolean update = (null != smsId);
@@ -423,7 +423,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * Loads unit info (patients, medical help categories, ...).
      * @param unitId unit ID
      */
-    private void loadUnitInfo(final Long unitId) {
+    private void loadUnitInfo(final Object unitId) {
         // get all Patients & Medical Help Categories
 
         // there cannot be used method 'createClientRestHandler'
@@ -507,7 +507,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         final Command deleteCommand = new Command() {
             public void execute() {
                 popupPanel.hide();
-                if (Window.confirm(MESSAGES.deleteSmsQuestion(smsWidget.getSms().getPatient().getFullname()))) {
+                if (Window.confirm(MESSAGES.deleteSmsQuestion(smsWidget.getSms().getPatient().fullname()))) {
                     deleteSms(smsWidget);
                 }
             }
@@ -519,7 +519,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             final Command sendCommand = new Command() {
                 public void execute() {
                     popupPanel.hide();
-                    if (Window.confirm(MESSAGES.sendNowQuestion(smsWidget.getSms().getPatient().getFullname()))) {
+                    if (Window.confirm(MESSAGES.sendNowQuestion(smsWidget.getSms().getPatient().fullname()))) {
                         sendSms(smsWidget);
                     }
                 }
@@ -599,10 +599,10 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      */
     private void addSmsWidget(final Event sms) {
         // coordinates
-        final int dayIdx = DateUtils.getWeekIndex(sms.getMedicalHelpStartTime());
+        final int dayIdx = DateUtils.getWeekIndex(sms.getStartTime());
         final DayColumn col = (DayColumn) view.getCalendarBody().getWidget(0, dayIdx);
-        final int y = DateUtils.calculateYFromDate(sms.getMedicalHelpStartTime());
-        final int height = DateUtils.calculateWidgetHeight(sms.getMedicalHelpLength());
+        final int y = DateUtils.calculateYFromDate(sms.getStartTime());
+        final int height = DateUtils.calculateWidgetHeight(sms.getLength());
 
         final SmsWidget smsWidget = new SmsWidget(sms);
         if (height > 25) {
@@ -633,8 +633,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
         // validation
         if (!smsDlgPresenter.getValidator().validate()) { return; }
-        final Long patientId = smsDlgPresenter.getSelectedPatient().getId();
-        final long mhcId = smsDlgPresenter.getSelectedMedicalHelpCategory().getId();
+        final Object patientId = smsDlgPresenter.getSelectedPatient().getId();
+        final Object mhcId = smsDlgPresenter.getSelectedMedicalHelpCategory().getId();
         final String smsText = smsDlgPresenter.getView().getSmsText().getText();
         final String notice = smsDlgPresenter.getView().getNotice().getText();
         final Date mhDateTime = smsDlgPresenter.getStartTime();
@@ -648,7 +648,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             return;
         }
         dlg.hide(); // invokes clean and deletes upper collected data
-        storeSms(smsId, new Pair<Long, Long>(patientId, mhcId),
+        storeSms(smsId, new Pair<Object, Object>(patientId, mhcId),
                 new Pair<String, String>(smsText, notice), mhDateTime, mhLen, smsWidget);
     }
 
@@ -657,11 +657,11 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * @param patientId ID to search
      * @return <i>-1</i> if not found, otherwise the patient index
      */
-    private int getPatientIndex(final Long patientId) {
+    private int getPatientIndex(final Object patientId) {
         if (null == patientId) { throw new NullPointerException("patient ID cannot be null"); }
         if (null != patients) {
             for (int i = 0; i < patients.size(); i++) {
-                if (patients.get(i).getId().longValue() == patientId.longValue()) { return i; }
+                if (patients.get(i).getId().equals(patientId)) { return i; }
             }
         }
         return -1;
@@ -672,11 +672,11 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * @param categoryId ID to search
      * @return <i>-1</i> if not found, otherwise the category index
      */
-    private int getMedicalHelpCategoryIndex(final Long categoryId) {
+    private int getMedicalHelpCategoryIndex(final Object categoryId) {
         if (null == categoryId) { throw new NullPointerException("category ID cannot be null"); }
         if (null != medicalHelpCategories) {
             for (int i = 0; i < medicalHelpCategories.size(); i++) {
-                if (medicalHelpCategories.get(i).getId().longValue() == categoryId.longValue()) { return i; }
+                if (medicalHelpCategories.get(i).getId().equals(categoryId)) { return i; }
             }
         }
         return -1;

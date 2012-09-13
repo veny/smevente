@@ -246,12 +246,11 @@ public class MedicalHelpCategoryTypesPresenter
             @Override
             public void onSuccess(final String jsonText) {
                 final MedicalHelpCategory mhc = new MedicalHelpCategory();
-                long idValue = Long.parseLong(id);
-                mhc.setId(idValue);
+                mhc.setId(id);
                 eventBus.fireEvent(new CrudEvent(EntityTypeEnum.MHC, OperationType.DELETE, mhc));
                 view.getResultTable().removeRow(line);
                 for (MedicalHelpCategory foundCategory : foundMedicalHelpCategories) {
-                    if (foundCategory.getId() == idValue) {
+                    if (foundCategory.getId().equals(id)) {
                         foundMedicalHelpCategories.remove(foundCategory);
                         break;
                     }
@@ -349,10 +348,9 @@ public class MedicalHelpCategoryTypesPresenter
     private int getIndexById(final String idAsText) {
         if (null == foundMedicalHelpCategories) { throw new NullPointerException("patients collection is null"); }
 
-        final Long id = Long.parseLong(idAsText);
         int i = 0;
         for (MedicalHelpCategory mhc : foundMedicalHelpCategories) {
-            if (id.longValue() == mhc.getId().longValue()) { return i; }
+            if (idAsText.equals(mhc.getId())) { return i; }
             i++;
         }
         throw new IllegalStateException("medical help category not found, id=" + idAsText

@@ -73,8 +73,8 @@ public class SmsDetailDlgPresenter extends AbstractPresenter<SmsDetailDlgPresent
         // clear all the stuff
         clean();
 
-        final Date startTime = sms.getMedicalHelpStartTime();
-        final Date endTime = new Date(startTime.getTime() + (sms.getMedicalHelpLength() * 60 * 1000));
+        final Date startTime = sms.getStartTime();
+        final Date endTime = new Date(startTime.getTime() + (sms.getLength() * 60 * 1000));
         final Patient patient = sms.getPatient();
 
         getView().getDate().setText(DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG).format(startTime));
@@ -86,7 +86,7 @@ public class SmsDetailDlgPresenter extends AbstractPresenter<SmsDetailDlgPresent
         getView().getSent().setText(
                 DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(sms.getSent())
                 + " [id=" + sms.getId() + "]");
-        getView().getName().setText(patient.getFullname() + " [" + patient.getFormattedBirthNumber() + "]");
+        getView().getName().setText(patient.fullname() + " [" + patient.formattedBirthNumber() + "]");
         getView().getPhoneNumber().setText(patient.getPhoneNumber());
         getView().getMedicalHelpLabel().setText(
                 CONSTANTS.medicalHelp()[App.get().getSelectedUnitTextVariant()]);

@@ -203,11 +203,11 @@ public class JsonDeserializer {
         rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
         rslt.setName(jsObj.get("name").isString().stringValue());
         rslt.setLimitedSmss(getLong(jsObj.get("limitedSmss")));
-        rslt.addMetadata(Unit.UNIT_TYPE, getString(jsObj.get("type")));
+//XXX        rslt.addMetadata(Unit.UNIT_TYPE, getString(jsObj.get("type")));
         // members
         final JSONArray jsArr = jsObj.get("members").isArray();
         if (null != jsArr) {
-            rslt.setMembers(membershipListFromJson(jsArr));
+//XXX            rslt.setMembers(membershipListFromJson(jsArr));
         }
         return rslt;
     }
@@ -236,7 +236,7 @@ public class JsonDeserializer {
     private Membership membershipFromJson(final JSONObject jsObj) {
         final Membership rslt = new Membership();
         rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
-        rslt.setType(Membership.Type.valueOf(jsObj.get("type").isString().stringValue()));
+        rslt.setRole(jsObj.get("role").isString().stringValue());
         rslt.setSignificance((int) jsObj.get("significance").isNumber().doubleValue());
         final JSONObject jsUserObj = jsObj.get("user").isObject();
         if (null != jsUserObj) {
@@ -394,8 +394,8 @@ public class JsonDeserializer {
         if (null != jsStObj) {
             rslt.setMedicalHelpCategory(mhcFromJson(jsStObj));
         }
-        rslt.setMedicalHelpStartTime(new Date((long) jsObj.get("medicalHelpStartTime").isNumber().doubleValue()));
-        rslt.setMedicalHelpLength((int) jsObj.get("medicalHelpLength").isNumber().doubleValue());
+        rslt.setStartTime(new Date((long) jsObj.get("medicalHelpStartTime").isNumber().doubleValue()));
+        rslt.setLength((int) jsObj.get("medicalHelpLength").isNumber().doubleValue());
         rslt.setSent(getDate(jsObj.get("sent")));
         rslt.setText(jsObj.get("text").isString().stringValue());
         rslt.setNotice(getString(jsObj.get("notice")));

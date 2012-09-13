@@ -112,8 +112,8 @@ public class PatientHistoryPresenter
      * @param historyPair pair of patient and his SMSs
      */
     private void processHistory(final Pair<Patient, List<Event>> historyPair) {
-        view.getFullname().setText(historyPair.getA().getFullname()
-                + " [" + historyPair.getA().getFormattedBirthNumber() + "]");
+        view.getFullname().setText(historyPair.getA().fullname()
+                + " [" + historyPair.getA().formattedBirthNumber() + "]");
 
         final String delimiter = "<img src='images/arrow-up.png' /> " + CONSTANTS.future() + " / "
                 + CONSTANTS.history() + " <img src='images/arrow-down.png' />";
@@ -121,7 +121,7 @@ public class PatientHistoryPresenter
         boolean future = true;
         int line = 1;
         for (Event sms : historyPair.getB()) {
-            if (future && sms.getMedicalHelpStartTime().compareTo(now) < 0) {
+            if (future && sms.getStartTime().compareTo(now) < 0) {
                 future = false;
                 if (1 == line) { // no SMSs in future
                     UiUtils.addCell(view.getResultTable(), line, 0, new Label("-- " + CONSTANTS.noItems() + " --"));
@@ -155,8 +155,8 @@ public class PatientHistoryPresenter
      * @param line line where the patient will be inserted on
      */
     private void addHistoryItem(final Event sms, final boolean future, final int line) {
-        final Date startTime = sms.getMedicalHelpStartTime();
-        final Date endTime = new Date(startTime.getTime() + (sms.getMedicalHelpLength() * 60 * 1000));
+        final Date startTime = sms.getStartTime();
+        final Date endTime = new Date(startTime.getTime() + (sms.getLength() * 60 * 1000));
         final FlexTable table = view.getResultTable();
 
         UiUtils.addCell(table, line, 0, new Label(

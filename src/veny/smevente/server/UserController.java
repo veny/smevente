@@ -2,7 +2,6 @@ package veny.smevente.server;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,18 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import veny.smevente.client.utils.Pair;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Event;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
-import veny.smevente.service.EventService;
 import veny.smevente.service.UserService;
 
 /**
@@ -158,220 +153,220 @@ public class UserController {
         return modelAndView;
     }
 
-    /**
-     * Updates an existing user.
-     * @param request HTTP request
-     * @param response HTTP response
-     * @param user the user to be updated
-     * @param unitId unit ID
-     * @param type the membership type
-     * @param significance the membership significance
-     */
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public void updateUser(
-        final HttpServletRequest request,
-        final HttpServletResponse response,
-        final User user,
-        @RequestParam("unitId") final Long unitId,
-        @RequestParam("type") final Integer type,
-        @RequestParam("significance") final Integer significance) {
-
-        // as first encode the password if it should be also updated
-        if (!User.DO_NOT_CHANGE_PASSWORD.equals(user.getPassword())) {
-            user.setPassword(userService.encodePassword(user.getPassword()));
-        }
-        Membership.Role etype = Membership.Role.values()[type.intValue()];
-        userService.updateUser(user, unitId, etype, significance);
-        response.setStatus(200);
-    }
-
-    /**
-     * Deletes a user.
-     * @param response HTTP response
-     * @param userId user ID
-     */
-    @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
-    public void deleteUser(final HttpServletResponse response, @PathVariable("id") final Long userId) {
-        userService.deleteUser(userId);
-        response.setStatus(200);
-    }
-    // -------------------------------------------------------------- SMS Stuff
-
-    /**
-     * Creates a new SMS.
-     *
-     * @param sms SMS to be created
-     * @param authorId author ID
-     * @return SMS triple as JSON
-     */
-    @RequestMapping(value = "/sms/", method = RequestMethod.POST)
-    public ModelAndView createSms(final Event sms, @RequestParam("authorId") final Long authorId) {
-
-        sms.setAuthorId(authorId);
-        final Event created = smsService.createSms(sms);
-
-        final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("sms", created);
-
-        return modelAndView;
-    }
-
-    /**
-     * Creates a new special SMS.
-     *
-     * @param response HTTP response
-     * @param sms SMS to be created
-     * @param authorId author ID
-     */
-    @RequestMapping(value = "/special-sms/", method = RequestMethod.POST)
-    public void createAndSendSpecialSms(final HttpServletResponse response,
-            final Event sms, @RequestParam("authorId") final Long authorId) {
-
-        sms.setAuthorId(authorId);
-        smsService.createAndSendSpecialSms(sms);
-        response.setStatus(HttpServletResponse.SC_OK);
-    }
-
-    /**
-     * Updates given SMS.
-     * @param sms SMS to update
-     * @param authorId author ID
-     * @return SMS triple as JSON
-     */
-    @RequestMapping(value = "/sms/", method = RequestMethod.PUT)
-    public ModelAndView updateSms(final Event sms, @RequestParam("authorId") final Long authorId) {
-
-        sms.setAuthorId(authorId);
-        final Event updated = smsService.updateSms(sms);
-
-        final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("sms", updated);
-
-        return modelAndView;
-    }
-
-    /**
-     * Gets list of SMSs for given period.
-     * This methods does not distinguish between units to see all terms of a given author.
-     *
-     * @param request HTTP request
-     * @param userId author ID
-     * @param from date from
-     * @param to date to
-     * @return list of <code>Sms</code> as JSON
-     */
-    @RequestMapping(value = "/{userId}/sms/from/{from}/to/{to}/", method = RequestMethod.GET)
-    public ModelAndView findSms(
-            final HttpServletRequest request,
-            @PathVariable("userId") final Long userId,
-            @PathVariable("from") final Date from,
-            @PathVariable("to") final Date to) {
-
-        final List<Event> rslt = smsService.findSms(userId, from, to);
-
-        final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("smss", rslt);
-
-        return modelAndView;
-    }
-
-    /**
-     * Sends SMS.
-     *
-     * @param request HTTP request
-     * @param response HTTP response
-     * @param smsId SMS ID
-     * @return list of <code>Sms</code> as JSON
-     */
-    @RequestMapping(value = "/sms/{id}/", method = RequestMethod.POST)
-    public ModelAndView sendSms(
-            final HttpServletRequest request, final HttpServletResponse response,
-            @PathVariable("id") final Long smsId) {
-
-        final Event info = smsService.sendSms(smsId);
-        final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("sms", info);
-        return modelAndView;
-    }
-
-    /**
-     * Deletes SMS.
-     *
-     * @param request HTTP request
-     * @param response HTTP response
-     * @param smsId SMS ID
-     */
-    @RequestMapping(value = "/sms/{id}/", method = RequestMethod.DELETE)
-    public void deleteSms(
-            final HttpServletRequest request, final HttpServletResponse response,
-            @PathVariable("id") final Long smsId) {
-
-        smsService.deleteSms(smsId);
-        response.setStatus(HttpServletResponse.SC_OK);
-    }
-
-    /**
-     * Gets SMS detail (it means triplet of Sms, its patient and MHC).
-     *
-     * @param request HTTP request
-     * @param smsId SMS ID
-     * @return <code>Sms</code> as JSON
-     */
-    @RequestMapping(value = "/sms/{id}/text/", method = RequestMethod.GET)
-    public ModelAndView getSmsText(final HttpServletRequest request, @PathVariable("id") final Long smsId) {
-
-        final String text2send = smsService.getSmsText(smsId);
-
-        final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("sms-text", text2send);
-
-        return modelAndView;
-    }
-
-    /**
-     * Gets SMS detail (it means triplet of Sms, its patient and MHC).
-     *
-     * @param request HTTP request
-     * @param smsId SMS ID
-     * @return <code>Sms</code> as JSON
-     */
-    @RequestMapping(value = "/sms/{id}/info/", method = RequestMethod.GET)
-    public ModelAndView getSmsDetail(final HttpServletRequest request, @PathVariable("id") final Long smsId) {
-
-        final Event info = smsService.getById(smsId);
-
-        final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("sms", info);
-
-        return modelAndView;
-    }
-
-    /**
-     * Gets list of SMSs for given period.
-     *
-     * @param request HTTP request
-     * @param userId author ID
-     * @param unitId unit ID
-     * @param from date from
-     * @param to date to
-     * @return list of <code>Sms</code> as JSON
-     */
-    @RequestMapping(value = "/{userId}/unit/{unitId}/from/{from}/to/{to}/", method = RequestMethod.GET)
-    public ModelAndView getSmsStatistics(
-            final HttpServletRequest request,
-            @PathVariable("userId") final Long userId,
-            @PathVariable("unitId") final Long unitId,
-            @PathVariable("from") final long from,
-            @PathVariable("to") final long to) {
-
-        List<Pair<User, Map<String, Integer>>> rslt =
-            smsService.getSmsStatistic(unitId, userId, new Date(from), new Date(to));
-
-        final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("smsStatistics", rslt);
-
-        return modelAndView;
-    }
+//    /**
+//     * Updates an existing user.
+//     * @param request HTTP request
+//     * @param response HTTP response
+//     * @param user the user to be updated
+//     * @param unitId unit ID
+//     * @param type the membership type
+//     * @param significance the membership significance
+//     */
+//    @RequestMapping(value = "/", method = RequestMethod.PUT)
+//    public void updateUser(
+//        final HttpServletRequest request,
+//        final HttpServletResponse response,
+//        final User user,
+//        @RequestParam("unitId") final Long unitId,
+//        @RequestParam("type") final Integer type,
+//        @RequestParam("significance") final Integer significance) {
+//
+//        // as first encode the password if it should be also updated
+//        if (!User.DO_NOT_CHANGE_PASSWORD.equals(user.getPassword())) {
+//            user.setPassword(userService.encodePassword(user.getPassword()));
+//        }
+//        Membership.Role etype = Membership.Role.values()[type.intValue()];
+//        userService.updateUser(user, unitId, etype, significance);
+//        response.setStatus(200);
+//    }
+//
+//    /**
+//     * Deletes a user.
+//     * @param response HTTP response
+//     * @param userId user ID
+//     */
+//    @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
+//    public void deleteUser(final HttpServletResponse response, @PathVariable("id") final Long userId) {
+//        userService.deleteUser(userId);
+//        response.setStatus(200);
+//    }
+//    // -------------------------------------------------------------- SMS Stuff
+//
+//    /**
+//     * Creates a new SMS.
+//     *
+//     * @param sms SMS to be created
+//     * @param authorId author ID
+//     * @return SMS triple as JSON
+//     */
+//    @RequestMapping(value = "/sms/", method = RequestMethod.POST)
+//    public ModelAndView createSms(final Event sms, @RequestParam("authorId") final Long authorId) {
+//
+//        sms.setAuthorId(authorId);
+//        final Event created = smsService.createSms(sms);
+//
+//        final ModelAndView modelAndView = new ModelAndView("jsonView");
+//        modelAndView.addObject("sms", created);
+//
+//        return modelAndView;
+//    }
+//
+//    /**
+//     * Creates a new special SMS.
+//     *
+//     * @param response HTTP response
+//     * @param sms SMS to be created
+//     * @param authorId author ID
+//     */
+//    @RequestMapping(value = "/special-sms/", method = RequestMethod.POST)
+//    public void createAndSendSpecialSms(final HttpServletResponse response,
+//            final Event sms, @RequestParam("authorId") final Long authorId) {
+//
+//        sms.setAuthorId(authorId);
+//        smsService.createAndSendSpecialSms(sms);
+//        response.setStatus(HttpServletResponse.SC_OK);
+//    }
+//
+//    /**
+//     * Updates given SMS.
+//     * @param sms SMS to update
+//     * @param authorId author ID
+//     * @return SMS triple as JSON
+//     */
+//    @RequestMapping(value = "/sms/", method = RequestMethod.PUT)
+//    public ModelAndView updateSms(final Event sms, @RequestParam("authorId") final Long authorId) {
+//
+//        sms.setAuthorId(authorId);
+//        final Event updated = smsService.updateSms(sms);
+//
+//        final ModelAndView modelAndView = new ModelAndView("jsonView");
+//        modelAndView.addObject("sms", updated);
+//
+//        return modelAndView;
+//    }
+//
+//    /**
+//     * Gets list of SMSs for given period.
+//     * This methods does not distinguish between units to see all terms of a given author.
+//     *
+//     * @param request HTTP request
+//     * @param userId author ID
+//     * @param from date from
+//     * @param to date to
+//     * @return list of <code>Sms</code> as JSON
+//     */
+//    @RequestMapping(value = "/{userId}/sms/from/{from}/to/{to}/", method = RequestMethod.GET)
+//    public ModelAndView findSms(
+//            final HttpServletRequest request,
+//            @PathVariable("userId") final Long userId,
+//            @PathVariable("from") final Date from,
+//            @PathVariable("to") final Date to) {
+//
+//        final List<Event> rslt = smsService.findSms(userId, from, to);
+//
+//        final ModelAndView modelAndView = new ModelAndView("jsonView");
+//        modelAndView.addObject("smss", rslt);
+//
+//        return modelAndView;
+//    }
+//
+//    /**
+//     * Sends SMS.
+//     *
+//     * @param request HTTP request
+//     * @param response HTTP response
+//     * @param smsId SMS ID
+//     * @return list of <code>Sms</code> as JSON
+//     */
+//    @RequestMapping(value = "/sms/{id}/", method = RequestMethod.POST)
+//    public ModelAndView sendSms(
+//            final HttpServletRequest request, final HttpServletResponse response,
+//            @PathVariable("id") final Long smsId) {
+//
+//        final Event info = smsService.sendSms(smsId);
+//        final ModelAndView modelAndView = new ModelAndView("jsonView");
+//        modelAndView.addObject("sms", info);
+//        return modelAndView;
+//    }
+//
+//    /**
+//     * Deletes SMS.
+//     *
+//     * @param request HTTP request
+//     * @param response HTTP response
+//     * @param smsId SMS ID
+//     */
+//    @RequestMapping(value = "/sms/{id}/", method = RequestMethod.DELETE)
+//    public void deleteSms(
+//            final HttpServletRequest request, final HttpServletResponse response,
+//            @PathVariable("id") final Long smsId) {
+//
+//        smsService.deleteSms(smsId);
+//        response.setStatus(HttpServletResponse.SC_OK);
+//    }
+//
+//    /**
+//     * Gets SMS detail (it means triplet of Sms, its patient and MHC).
+//     *
+//     * @param request HTTP request
+//     * @param smsId SMS ID
+//     * @return <code>Sms</code> as JSON
+//     */
+//    @RequestMapping(value = "/sms/{id}/text/", method = RequestMethod.GET)
+//    public ModelAndView getSmsText(final HttpServletRequest request, @PathVariable("id") final Long smsId) {
+//
+//        final String text2send = smsService.getSmsText(smsId);
+//
+//        final ModelAndView modelAndView = new ModelAndView("jsonView");
+//        modelAndView.addObject("sms-text", text2send);
+//
+//        return modelAndView;
+//    }
+//
+//    /**
+//     * Gets SMS detail (it means triplet of Sms, its patient and MHC).
+//     *
+//     * @param request HTTP request
+//     * @param smsId SMS ID
+//     * @return <code>Sms</code> as JSON
+//     */
+//    @RequestMapping(value = "/sms/{id}/info/", method = RequestMethod.GET)
+//    public ModelAndView getSmsDetail(final HttpServletRequest request, @PathVariable("id") final Long smsId) {
+//
+//        final Event info = smsService.getById(smsId);
+//
+//        final ModelAndView modelAndView = new ModelAndView("jsonView");
+//        modelAndView.addObject("sms", info);
+//
+//        return modelAndView;
+//    }
+//
+//    /**
+//     * Gets list of SMSs for given period.
+//     *
+//     * @param request HTTP request
+//     * @param userId author ID
+//     * @param unitId unit ID
+//     * @param from date from
+//     * @param to date to
+//     * @return list of <code>Sms</code> as JSON
+//     */
+//    @RequestMapping(value = "/{userId}/unit/{unitId}/from/{from}/to/{to}/", method = RequestMethod.GET)
+//    public ModelAndView getSmsStatistics(
+//            final HttpServletRequest request,
+//            @PathVariable("userId") final Long userId,
+//            @PathVariable("unitId") final Long unitId,
+//            @PathVariable("from") final long from,
+//            @PathVariable("to") final long to) {
+//
+//        List<Pair<User, Map<String, Integer>>> rslt =
+//            smsService.getSmsStatistic(unitId, userId, new Date(from), new Date(to));
+//
+//        final ModelAndView modelAndView = new ModelAndView("jsonView");
+//        modelAndView.addObject("smsStatistics", rslt);
+//
+//        return modelAndView;
+//    }
 
     // ----------------------------------------------------------- Helper Stuff
 

@@ -202,7 +202,7 @@ public class StoreUserPresenter
             view.getUserId().setValue(u.getId().toString());
             view.getUsername().setText(u.getUsername());
             view.getFullname().setText(u.getFullname());
-            view.getUnitAdmin().setValue(m.getType() == MembershipDto.Membership.ADMIN);
+            view.getUnitAdmin().setValue(m.enumRole() == Membership.Role.ADMIN);
             view.getUnitOrder().setValue("" + (m.getSignificance() + 1));
             view.getUpdatePassword().setValue(null);
             view.getUpdatePassword().setEnabled(true);
@@ -365,7 +365,7 @@ public class StoreUserPresenter
         final Map<String, String> params = new HashMap<String, String>();
         params.put("unitId", App.get().getSelectedUnit().getId().toString());
         params.put("type", "" + (view.getUnitAdmin().getValue()
-                ? MembershipDto.Membership.ADMIN.ordinal() : MembershipDto.Membership.MEMBER.ordinal()));
+                ? Membership.Role.ADMIN.ordinal() : Membership.Role.MEMBER.ordinal()));
         params.put("significance", "" + (Integer.parseInt(view.getUnitOrder().getValue()) - 1));
         params.put("username", u.getUsername());
         params.put("fullname", u.getFullname());
@@ -405,7 +405,7 @@ public class StoreUserPresenter
      * @return the membership for given user and current unit
      */
     private Membership getMembership(final User user) {
-        List<Membership> memberships = App.get().getSelectedUnit().getMembers();
+        List<Membership> memberships = null;//XXX App.get().getSelectedUnit().getMembers();
 
         if (memberships != null) {
             for (Membership membership: memberships) {

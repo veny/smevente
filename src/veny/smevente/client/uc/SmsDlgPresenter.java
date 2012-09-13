@@ -164,18 +164,18 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
     public void init(
             final Event sms, final List<Patient> patients, final List<MedicalHelpCategory> mhcs) {
 
-        this.init(sms.getMedicalHelpStartTime(), patients, mhcs);
+        this.init(sms.getStartTime(), patients, mhcs);
 
         // set all form elements
         selectedPatient = sms.getPatient();
         view.getSmsId().setValue(sms.getId().toString());
-        view.getNameSuggestBox().getTextBox().setText(selectedPatient.getFullname());
+        view.getNameSuggestBox().getTextBox().setText(selectedPatient.fullname());
         view.getPhoneNumber().setText(selectedPatient.getPhoneNumber());
         view.getSmsText().setText(sms.getText());
         view.getNotice().setText(sms.getNotice());
         // MHC length
         for (int i = 0; i < MH_LENGTHS.length; i++) {
-            if (sms.getMedicalHelpLength() <= Long.parseLong(MH_LENGTHS[i])) {
+            if (sms.getLength() <= Long.parseLong(MH_LENGTHS[i])) {
                 view.getMedicalHelpLength().setSelectedIndex(i);
                 break;
             }

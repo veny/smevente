@@ -111,7 +111,7 @@ public class PatientNameSuggestOracle extends SuggestOracle {
 
         // birth number
         rslt.append(" [")
-            .append(patient.getFormattedBirthNumber())
+            .append(patient.formattedBirthNumber())
             .append(']');
 
         return rslt.toString();

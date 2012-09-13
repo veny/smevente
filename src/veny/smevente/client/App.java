@@ -6,13 +6,12 @@ import java.util.List;
 import veny.smevente.client.PresenterCollection.PresenterEnum;
 import veny.smevente.client.mvp.Presenter;
 import veny.smevente.client.mvp.View;
-import veny.smevente.client.rest.RestCallback;
 import veny.smevente.client.rest.AbstractRestCallbackWithErrorHandling;
+import veny.smevente.client.rest.RestCallback;
 import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.LoginPresenter;
 import veny.smevente.client.uc.LoginViewImpl;
-import veny.smevente.model.Membership.Role;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
@@ -409,7 +408,8 @@ public final class App implements ValueChangeHandler<String> {
      * @return the current selected unit member
      */
     public User getSelectedUnitMember() {
-        return getSelectedUnit().getMembers().get(selectedUnitMemberIndex).getUser();
+//XXX        return getSelectedUnit().getMembers().get(selectedUnitMemberIndex).getUser();
+        return null;
     }
     /**
      * Returns the true if the current selected unit member
@@ -418,7 +418,8 @@ public final class App implements ValueChangeHandler<String> {
      * is administrator, otherwise false
      */
     public boolean isSelectedUnitMemberAdmin() {
-        return Type.ADMIN == getSelectedUnit().getMembers().get(selectedUnitMemberIndex).getType();
+//XXX        return Type.ADMIN == getSelectedUnit().getMembers().get(selectedUnitMemberIndex).getType();
+        return false;
     }
     /**
      * Gets a date in currently displayed week in calendar.

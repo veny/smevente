@@ -258,12 +258,11 @@ public class FindPatientPresenter
             @Override
             public void onSuccess(final String jsonText) {
                 final Patient patient = new Patient();
-                long idValue = Long.parseLong(id);
-                patient.setId(idValue);
+                patient.setId(id);
                 eventBus.fireEvent(new CrudEvent(EntityTypeEnum.PATIENT, OperationType.DELETE, patient));
                 view.getResultTable().removeRow(line);
                 for (Patient foundPatient : foundPatients) {
-                    if (foundPatient.getId() == idValue) {
+                    if (foundPatient.equals(id)) {
                         foundPatients.remove(foundPatient);
                         break;
                     }
@@ -322,7 +321,7 @@ public class FindPatientPresenter
     private void addPatient(final Patient p, final int line) {
         final FlexTable table = view.getResultTable();
         UiUtils.addCell(table, line, 0, new Label("" + line));
-        UiUtils.addCell(table, line, 1, new Label(p.getFullname()));
+        UiUtils.addCell(table, line, 1, new Label(p.fullname()));
         UiUtils.addCell(table, line, 3, new Label(p.getPhoneNumber()));
         UiUtils.addCell(table, line, 4, new Label(p.getBirthNumber()));
         UiUtils.addCell(table, line, 5, new Label(p.getDegree()));
@@ -364,10 +363,9 @@ public class FindPatientPresenter
     private int getIndexById(final String idAsText) {
         if (null == foundPatients) { throw new NullPointerException("patients collection is null"); }
 
-        final Long id = Long.parseLong(idAsText);
         int i = 0;
         for (Patient p : foundPatients) {
-            if (id.longValue() == p.getId().longValue()) { return i; }
+            if (idAsText.equals(p.getId())) { return i; }
             i++;
         }
         throw new IllegalStateException("patient not found, id=" + idAsText

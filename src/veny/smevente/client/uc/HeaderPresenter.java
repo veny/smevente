@@ -5,8 +5,8 @@ import java.util.List;
 import veny.smevente.client.App;
 import veny.smevente.client.IdleBar;
 import veny.smevente.client.Menu;
-import veny.smevente.client.SwitchLocalilzationEvent;
 import veny.smevente.client.PresenterCollection.PresenterEnum;
+import veny.smevente.client.SwitchLocalilzationEvent;
 import veny.smevente.client.SwitchLocalilzationEvent.SwitchLocalilzationEventHandler;
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
@@ -17,7 +17,6 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.CrudEventHandler;
 import veny.smevente.client.utils.HeaderEvent;
-import veny.smevente.model.Membership;
 import veny.smevente.model.Unit;
 import veny.smevente.shared.EntityTypeEnum;
 
@@ -39,7 +38,7 @@ import com.google.gwt.user.client.ui.Panel;
  * Portal Header Presenter.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
- * @since 0.1
+ * @since 12.8.2010
  */
 public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderView>
     implements AjaxEventHandler, SwitchLocalilzationEventHandler, CrudEventHandler {
@@ -303,9 +302,9 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
                         usedUnits.add(selectedUnitIndex, newUnit);
                         // change content of members drop down
                         view.getUnitMembers().clear();
-                        for (Membership m : newUnit.getMembers()) {
-                            view.getUnitMembers().addItem(m.getUser().getFullname());
-                        }
+//XXX                        for (Membership m : newUnit.getMembers()) {
+//                            view.getUnitMembers().addItem(m.getUser().getFullname());
+//                        }
                         break;
                     }
                 }
@@ -341,9 +340,9 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
 
         // change content of members drop down
         view.getUnitMembers().clear();
-        for (Membership m : newUnit.getMembers()) {
-            view.getUnitMembers().addItem(m.getUser().getFullname());
-        }
+//XXX        for (Membership m : newUnit.getMembers()) {
+//            view.getUnitMembers().addItem(m.getUser().getFullname());
+//        }
         // the current logged in user is always on the first position (index 0)
         App.get().setSelectedUnitMemberIndex(0);
 

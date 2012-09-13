@@ -75,7 +75,7 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
 
         initTypes(specialCategories);
 
-        view.getFullname().setText(patient.getFullname());
+        view.getFullname().setText(patient.fullname());
         view.getPhoneNumber().setText(patient.getPhoneNumber());
 
         // default type - the first one

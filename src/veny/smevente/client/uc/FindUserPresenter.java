@@ -14,7 +14,6 @@ import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.UiUtils;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Membership.Type;
 import veny.smevente.model.User;
 import veny.smevente.shared.EntityTypeEnum;
 
@@ -237,12 +236,11 @@ public class FindUserPresenter
             @Override
             public void onSuccess(final String jsonText) {
                 final User user = new User();
-                long idValue = Long.parseLong(id);
-                user.setId(idValue);
+                user.setId(id);
                 eventBus.fireEvent(new CrudEvent(EntityTypeEnum.USER, OperationType.DELETE, user));
                 view.getResultTable().removeRow(line);
                 for (User foundUser : foundUsers) {
-                    if (foundUser.getId() == idValue) {
+                    if (foundUser.getId().equals(id)) {
                         foundUsers.remove(foundUser);
                         break;
                     }
@@ -303,14 +301,14 @@ public class FindUserPresenter
      * @return true if specified user is an administrator of selected unit
      */
     private boolean isAdmin(final User user) {
-        List<Membership> unitMembers = App.get().getSelectedUnit().getMembers();
+        List<Membership> unitMembers=null;//XXX = App.get().getSelectedUnit().getMembers();
 
         // just to be sure
         if (null == unitMembers) { throw new IllegalStateException("selected unit members cannot be null"); }
 
         for (Membership unitMember: unitMembers) {
             if (unitMember.getUser().getId() == user.getId()) {
-                return Type.ADMIN == unitMember.getType();
+                return Membership.Role.ADMIN == unitMember.enumRole();
             }
         }
 
@@ -345,10 +343,9 @@ public class FindUserPresenter
     private int getIndexById(final String idAsText) {
         if (null == foundUsers) { throw new NullPointerException("users collection is null"); }
 
-        final Long id = Long.parseLong(idAsText);
         int i = 0;
         for (User u : foundUsers) {
-            if (id.longValue() == u.getId().longValue()) { return i; }
+            if (idAsText.equals(u.getId())) { return i; }
             i++;
         }
         throw new IllegalStateException("user not found, id=" + idAsText
