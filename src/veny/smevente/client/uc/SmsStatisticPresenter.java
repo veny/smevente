@@ -154,7 +154,7 @@ public class SmsStatisticPresenter
     public void clean() {
         view.getFrom().getTextBox().setText("");
         view.getTo().getTextBox().setText("");
-        view.getChart().setUrl(null);
+        view.getChart().setUrl((String) null);
         cleanResultTable();
 
         // validation

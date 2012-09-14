@@ -1,0 +1,471 @@
+/** Add css rules here for your application. */
+
+/** ============== GENERAL ============= */
+
+body {
+  background:#FFFFFF none repeat scroll 0 0;
+  color: #444444;
+}
+.gwt-Label{
+  color: #444444;
+
+}
+.hyperlink {
+  cursor:pointer;
+  display:inline;
+}
+
+.text-bold {
+  font-weight:bold;
+  text-align:left;
+}
+
+.padded-left {
+  padding-left:5px;
+}
+.padded-right {
+  padding-right:5px;
+}
+.padded-both {
+  padding-left:5px;
+  padding-right:5px;
+}
+
+.uc-standard {
+  margin:10px;
+}
+
+/** ============== LOGIN FORM ============= */
+.login-form-holder {
+  border:1px solid #96AFD6;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:200px;
+  padding:10px;
+  width:300px;
+}
+
+.serverResponseLabelError {
+  color: red;
+}
+
+.buildNumber {
+  color:#376092;
+  font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;
+  font-size:11px;
+}
+
+.gae-logo {
+  position:absolute;
+  bottom:0.7em;
+  right: 1.0em
+}
+
+/** ============== HEADER ============= */
+.header {
+}
+.header-loadingBar-holder {
+  width: 100%;
+  position: absolute;
+  top: 4px;
+  text-align: center;
+}
+.header-loadingBar {
+  width: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #FFFF00;
+  border: 1px solid black;
+}
+.header-dashboard-holder {
+  padding-bottom:4px;
+  padding-top:2px;
+  background-color: #008FD5;
+  color: white;
+  border-bottom: 5px solid #B5B4B4;
+  margin-bottom:5px;
+}
+.header-dashboard-holder a,
+.header-dashboard-holder a:visited,
+.header-dashboard-holder a:hover {
+  color: white;
+}
+.menuPopupMiddleCenter td {
+  border-bottom: 0px solid white;
+}
+.header-dashboard-left {
+  float:left;
+  padding-left:10px;
+}
+.header-dashboard-right {
+  text-align:right;
+  padding-right:10px;
+}
+.header-bold {
+  font-weight:bold !important;
+}
+.header-limitedVersion {
+  background-color: red;
+  color: yellow;
+  font-weight: bold;
+  padding: 3px 5px 3px 5px;
+}
+
+
+/** ============== IDLE BAR ============= */
+.idleBar-loading {
+  width:100px;
+  height: 100px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  background: transparent url("images/ajax-loader.gif") no-repeat center;
+  text-align:center;
+  padding:10px;
+  font:normal 12px;
+  /** border:1px solid #666; */
+  margin-left: -50px;
+  margin-top: -50px;
+  z-index:2;
+  overflow: auto;
+}
+
+
+/** ============== SMS STATISTICS ============= */
+
+.chart-centered {
+  width:400px;
+  margin:0 auto;
+}
+
+
+/** ============== WEEK CALENDER ============= */
+
+.calender-weektop {
+  padding: 0px;
+  border-top:1px solid #B5B4B4;
+  font-size:11px;
+  line-height:14px;
+  overflow:hidden;
+  table-layout:fixed;
+  width:100%;
+  border-collapse: collapse;
+}
+.calender-1row1col {
+  width:40px;
+  text-align:center;
+  font-size:9px;
+  color:#666666;
+  cursor:default;
+}
+.calender-1col {
+  width: 40px;
+}
+.calender-week-scrollcontainer .calender-1col {
+  background-color: #F6F9FC;
+}
+.calender-weektop-day {
+  color:#666666;
+  text-align: center;
+  font-weight:normal;
+  padding:2px 4px;
+  white-space:nowrap;
+}
+.calender-weektop-today {
+  background-color:#B5B4B4;
+  color:white;
+  font-weight:normal;
+  padding:1px;
+  text-align: center;
+  font-weight:bolder;
+  margin-right: 2px;
+}
+
+.calender-week-scrollcontainer {
+  border-bottom:1px solid #BBCCFF;
+  border-left:0 none;
+  border-top:1px solid #BBCCFF;
+  font-size:11px;
+  line-height:normal;
+  overflow-x:hidden;
+  overflow-y:scroll;
+  padding:0;
+  height:600px;
+  position: relative;
+}
+.calender-week {
+  font-size:11px;
+  line-height:14px;
+  overflow:hidden;
+  table-layout:fixed;
+  width:100%;
+  border-collapse: collapse;
+}
+.calender-week-day {
+  color:#2200CC;
+  text-align: center;
+  font-weight:normal;
+  padding:2px 0px;
+  white-space:nowrap;
+  border-right:1px solid #DDDDDD;
+  width:100%;
+  height:2016px; /* CALENDAR ROWS */
+  background-image: url('images/calendar-background.png');
+  background-position: 0px 2px;
+}
+.calender-hour-interval {
+  color:#008FD5;
+  text-align:right;
+  height:83px; /* CALENDAR ROWS */
+  border-bottom:1px solid #DDDDDD;
+  padding-right:2px;
+}
+
+/* TODO [veny,B] hard layouting - 95% */
+.sms-widget {
+  width:95%;
+  color:#222222;
+  border:2px dashed gray;
+  padding:2px;
+}
+.sms-widget-sent {
+  width:95%;
+  color:#222222;
+  border:2px solid gray;
+  padding:2px;
+
+  background-image: url("images/ok.png");
+  background-repeat: no-repeat;
+  background-position: right top;
+  right: -5px\9;   /* Hacks: IE only */
+  bottom: -5px\9;  /* Hacks: IE only */
+}
+.sms-widget-failed {
+  width:95%;
+  color:#222222;
+  border:2px solid gray;
+  padding:2px;
+
+  background-image: url("images/error.png");
+  background-repeat: no-repeat;
+  background-position: right top;
+  right: -5px\9;   /* Hacks: IE only */
+  bottom: -5px\9;  /* Hacks: IE only */
+}
+.sms-widget-header {
+  text-align:left;
+  color:#111111;
+  font:11px Arial,Sans-serif;
+}
+.sms-widget-notice {
+  text-align:left;
+  color:#222222;
+  font:11px Arial,Sans-serif;
+  font-style:italic;
+}
+
+/** ============= FIND PATIEN / SMS STATISTICS ============= */
+.resultTable {
+  margin-top:20px;
+  margin-bottom:20px;
+  width:100%;
+  border-collapse:collapse;
+}
+.resultTable .gwt-Label{
+    color: white;
+}
+.resultTable-header-cell {
+  background:none repeat scroll 0 0 #008FD5;
+  color:white;
+  font-weight:bold;
+  padding:4px;
+}
+.resultTable-header-thin {
+  width:10%;
+}
+.resultTable-cell-odd {
+  background:none repeat scroll 0 0 #FFFFFF;
+  color:#444444;
+  padding:4px;
+}
+.resultTable-cell-even {
+  background:none repeat scroll 0 0 #E8EDFF;
+  color:#444444;
+  padding:4px;
+  align:center;
+}
+
+/** ================ DIALOG =============== */
+.gwt-DialogBox .Caption {
+  cursor: move !important;
+}
+.smevente-dlg {
+}
+.sms-dlg-categoryColor {
+  border:1px solid gray;
+}
+.sms-detail-dlg-content {
+    align:left;
+    width:100%;
+}
+
+/** ============== VALIDATION ============= */
+.validationFailedBorder {
+  border:2px solid #FF0000;
+}
+.redText {
+  color:#FF0000;
+}
+
+/** ============== MENU ============= */
+.gwt-MenuBar-vertical .gwt-MenuItem-selected{
+    border-bottom: 0px solid transparent;
+}
+.gwt-MenuBar-vertical  .gwt-MenuItem {
+    border-bottom: 0px solid transparent;
+}
+.gwt-MenuBar-horizontal{
+    background:none repeat-x scroll 0 0 white !important;
+    height: 30px;
+    border: 0px solid white !important;
+}
+.gwt-MenuBar table {
+    border-spacing: 10px 2px;
+}
+.gwt-MenuBar table td {
+    color: #666666;
+}
+.gwt-MenuBar-horizontal .gwt-MenuItem{
+    color: #888888 !important;
+    padding: 0px 4px !important;
+    font-size: 14px;
+}
+.gwt-MenuBar table td.gwt-MenuItem-selected {
+    color: #008FD5;
+}
+.gwt-MenuItem {
+    border-bottom: 5px solid #b5b4b4;
+    color: #b5b4b4;
+    margin-right: 17px;
+
+}
+.gwt-MenuItem-selected {
+    border-bottom: 5px solid #008FD5;
+    background:none repeat scroll 0 0 white !important;
+    color: #008FD5;
+}
+.gwt-MenuBar-horizontal .gwt-MenuItemSeparator{
+    border-width: 0 0 0 0 !important;
+    width: 50% !important;
+}
+.gwt-MenuBar-vertical *, .gwt-MenuBarPopup *{
+    background:none #008FD5 !important;
+    color: white;
+}
+.gwt-MenuBar-vertical table{
+    width: 190px;
+}
+.gwt-MenuBar-vertical .gwt-MenuItemSeparator .menuSeparatorInner {
+    border-color: white !important;
+}
+.gwt-MenuBar-vertical .menuPopupTopLeft {
+    background:none no-repeat scroll 0 -36px #008FD5 !important;
+}
+.gwt-MenuBar-vertical .menuPopupTopCenter {
+    background:none no-repeat scroll 0 -36px #008FD5 !important;
+}
+.gwt-MenuBar-vertical .menuPopupTopRight {
+    background:none no-repeat scroll 0 -36px #008FD5 !important;
+}
+.gwt-MenuBar-vertical .menuPopupMiddleRight {
+    background:none no-repeat scroll 0 -36px #008FD5 !important;
+}
+.gwt-MenuBar-vertical .menuPopupMiddleLeft {
+    background:none no-repeat scroll 0 -36px #008FD5 !important;
+}
+.gwt-MenuBar-vertical .menuPopupBottomLeft{
+   background:none no-repeat scroll 0 -36px #008FD5 !important;
+}
+.gwt-MenuBar-vertical .menuPopupBottomCenter{
+   background:none no-repeat scroll 0 -36px #008FD5 !important;
+}
+.gwt-MenuBar-vertical .menuPopupBottomRight{
+   background:none no-repeat scroll 0 -36px #008FD5 !important;
+}
+.gwt-MenuBar-vertical table td.gwt-MenuItem-selected {
+    color:white;
+    font-weight: bolder;
+}
+.gwt-MenuBar-vertical table td.gwt-MenuItem {
+    color:white;
+}
+.gwt-PopupPanel{
+   background:none no-repeat scroll 0 -36px #008FD5 !important;
+   border: 1px solid #B5B4B4 !important;
+}
+#main{
+    margin-top: 10px;
+}
+
+.gwt-DialogBox .dialogTopLeft {
+    background:none no-repeat scroll 0 0 #008FD5 !important;
+}
+.gwt-DialogBox .Caption{
+    background:none no-repeat scroll 0 0 #008FD5 !important;
+    border-top: 0px solid #008FD5 !important;
+    color: white;
+    font-weight: bolder;
+}
+.gwt-DialogBox .dialogMiddleLeft{
+    background:none no-repeat scroll 0 0 #008FD5 !important;
+    width: 1px;
+}
+.gwt-DialogBox .dialogBottomLeftInner{
+    width: 1px  !important;
+}
+.gwt-DialogBox .dialogBottomLeft{
+    width: 1px  !important;
+    height: 1px !important;
+    background:none no-repeat scroll 0 0 #008FD5 !important;
+}
+.gwt-DialogBox .dialogBottomCenter{
+    background:none no-repeat scroll 0 0 #008FD5 !important;
+}
+.gwt-DialogBox .dialogMiddleRight{
+    background:none no-repeat scroll 0 0 #008FD5 !important;
+}
+.gwt-DialogBox .dialogTopRight{
+    background:none no-repeat scroll 0 0 #008FD5 !important;
+}
+.gwt-DialogBox .dialogBottomRight{
+    background:none no-repeat scroll 0 0 #008FD5 !important;
+}
+.resultTable-cell-even  .gwt-Label {
+    color: #444444;
+}
+.resultTable-cell-odd  .gwt-Label {
+    color: #444444;
+}
+
+
+/** ============== Medical ============= */
+.medicalHelpElementHolder{
+    width: 400px;
+}
+.medicalHelpElementHolder .gwt-Label,
+.elementLabel{
+    width: 150px;
+    float: left;
+}
+.medicalHelpElementHolder textarea,
+.medicalHelpElementHolder input{
+    width: 230px;
+}
+.medicalHelpElementHolder textarea{
+    height: 70px;
+}
+
+/** ============== Store Medical Help Category ============= */
+.storeMedicalHelpElementHolder{
+    width: 200px;
+}

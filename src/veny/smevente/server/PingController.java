@@ -21,7 +21,7 @@ import veny.smevente.model.User;
  * </pre>
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
- * @since 0.1
+ * @since 10.7.2010
  */
 @Controller
 public class PingController {

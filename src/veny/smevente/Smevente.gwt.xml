@@ -15,7 +15,7 @@
 
   <!-- Other module inherits                                      -->
   <inherits name='eu.maydu.gwt.validation.ValidationLibrary'/>
-  <inherits name='net.auroris.ColorPicker.ColorPicker'/>
+  <inherits name='net.auroris.ColorPicker.client'/>
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='veny.smevente.client.Smevente'/>
