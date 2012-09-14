@@ -60,7 +60,7 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
                     throw new IllegalStateException("expected max 1 user, but found " + users.size());
                 }
 
-                return users.isEmpty() ? null : (User) db.detach(users.get(0));
+                return users.isEmpty() ? null : (User) users.get(0);
             }
         });
     }

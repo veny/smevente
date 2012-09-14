@@ -51,11 +51,11 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
         try {
             @SuppressWarnings("unchecked")
-            final Pair<Long, List<Long>> userDetail = (Pair<Long, List<Long>>) auth.getDetails();
+            final Pair<Object, List<Object>> userDetail = (Pair<Object, List<Object>>) auth.getDetails();
             if (null == userDetail) {
                 throw new AuthenticationServiceException("user detail of the caller cannot be null");
             }
-            final Long userId = userDetail.getA();
+            final Object userId = userDetail.getA();
             if (null == userId) { throw new AuthenticationServiceException("user ID in user detail cannot be null"); }
 
             final User user;

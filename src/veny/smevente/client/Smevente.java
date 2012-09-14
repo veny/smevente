@@ -6,7 +6,7 @@ import com.google.gwt.core.client.EntryPoint;
  * Entry point classes define <code>onModuleLoad()</code>.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
- * @since 0.1
+ * @since 10.7.2010
  */
 public class Smevente implements EntryPoint {
 //    /**

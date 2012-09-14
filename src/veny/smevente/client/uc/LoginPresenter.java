@@ -34,7 +34,7 @@ import eu.maydu.gwt.validation.client.i18n.ValidationMessages;
  * Presenter for the login form.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
- * @since 0.1
+ * @since 10.7.2010
  */
 public class LoginPresenter extends AbstractPresenter<LoginPresenter.LoginView>
     implements UnauthorizedEvent.UnauthorizedEventHandler {
@@ -43,7 +43,7 @@ public class LoginPresenter extends AbstractPresenter<LoginPresenter.LoginView>
      * View interface for the login form.
      *
      * @author Vaclav Sykora
-     * @since 0.1
+     * @since 10.7.2010
      */
     public interface LoginView extends View {
         /**

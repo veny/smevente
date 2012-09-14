@@ -166,7 +166,7 @@ public final class App implements ValueChangeHandler<String> {
         }
 
         // check validity of the found session
-        RestHandler rest = new RestHandler("/rest/ping/");
+        final RestHandler rest = new RestHandler("/rest/ping/");
         rest.setCallback(new RestCallback() {
             @Override
             public void onSuccess(final String jsonText) {
