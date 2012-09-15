@@ -111,15 +111,17 @@ public final class DatabaseWrapper implements DisposableBean {
             entity.createProperty("revision", OType.STRING);
             // User
             OClass user = db.getMetadata().getSchema().createClass("User", entity);
-            entity.createProperty("username", OType.STRING).setMandatory(true).setNotNull(true);
-            entity.createProperty("password", OType.STRING).setMandatory(true).setNotNull(true);
-            entity.createProperty("fullname", OType.STRING).setMandatory(true).setNotNull(true);
+            user.createProperty("username", OType.STRING).setMandatory(true).setNotNull(true);
+            user.createProperty("password", OType.STRING).setMandatory(true).setNotNull(true);
+            user.createProperty("fullname", OType.STRING).setMandatory(true).setNotNull(true);
             // Unit
             OClass unit = db.getMetadata().getSchema().createClass("Unit", entity);
+            unit.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
             // Membership
             OClass membership = db.getMetadata().getSchema().createClass("Membership", entity);
             membership.createProperty("user", OType.LINK, user).setMandatory(true);
             membership.createProperty("unit", OType.LINK, unit).setMandatory(true);
+            membership.createProperty("role", OType.STRING).setMandatory(true).setNotNull(true);
             // Patient
             OClass patient = db.getMetadata().getSchema().createClass("Patient", entity);
             patient.createProperty("unit", OType.LINK, unit).setMandatory(true);

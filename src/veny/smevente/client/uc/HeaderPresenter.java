@@ -262,7 +262,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
      */
     private void loadUserInfo() {
         // get user info
-        RestHandler rest = new RestHandler("/rest/user/info/");
+        final RestHandler rest = new RestHandler("/rest/user/info/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {

@@ -7,8 +7,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import veny.smevente.misc.SoftDelete;
 
-import com.google.gwt.thirdparty.guava.common.base.Strings;
-
 /**
  * Entity class representing the Organizational Unit.
  *
@@ -102,7 +100,8 @@ public class Unit extends AbstractEntity {
     @Transient
     @JsonIgnore
     public TextVariant enumTextVariant() {
-        if (Strings.isNullOrEmpty(type)) {
+        String t = getType();
+        if (null == t || 0 == t.trim().length()) {
             return TextVariant.PATIENT;
         } else {
             return TextVariant.valueOf(type.trim());

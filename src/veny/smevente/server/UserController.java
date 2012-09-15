@@ -43,6 +43,7 @@ public class UserController {
      * This is an overridden version of initBinder method of Spring baseCommandController.
      * It is used by Spring to register a custom editor for a String field coming in a HTTP request.
      * This lets you have any data type in your command and not just String.
+     *
      * @param binder Spring data binder
      */
     @InitBinder
@@ -76,7 +77,7 @@ public class UserController {
         modelAndView.addObject("username", user.getUsername());
 
         // units where the user is member in
-        final List<Unit> units = userService.getUnitsOfUser(user);
+        final List<Unit> units = userService.getUnitsOfUser(user.getId());
         modelAndView.addObject("units", units);
 
         return modelAndView;

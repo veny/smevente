@@ -8,7 +8,6 @@ import javax.persistence.Transient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 import veny.smevente.misc.SoftDelete;
 
@@ -149,7 +148,7 @@ public class Event extends AbstractEntity {
     @JsonIgnore
     public Type enumType() {
         String t = getType();
-        if (Strings.isNullOrEmpty(t)) {
+        if (null == t || 0 == t.trim().length()) {
             return Type.STANDARD;
         } else {
             return Type.valueOf(t.trim());

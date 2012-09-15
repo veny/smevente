@@ -27,11 +27,12 @@ public class UnitDaoImpl extends AbstractDaoOrientdb<Unit> implements UnitDao {
             @Override
             public List<Unit> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM (TRAVERSE unit FROM (")
-                        .append("SELECT FROM membership WHERE user = :userId))")
-                        .append(" WHERE @class = :clazz");
+                        .append("SELECT FROM Membership WHERE user = ")
+                        .append(userId.toString()) //!!!
+                        .append(")) WHERE @class = :clazz");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
-                params.put("userId", userId);
+                params.put("x", userId);
                 params.put("clazz", getPersistentClass().getSimpleName());
 
                 return executeWithSoftDelete(db, sql.toString(), params, true);
