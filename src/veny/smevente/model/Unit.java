@@ -3,9 +3,9 @@ package veny.smevente.model;
 import javax.persistence.Column;
 import javax.persistence.Transient;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import veny.smevente.misc.SoftDelete;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Entity class representing the Organizational Unit.

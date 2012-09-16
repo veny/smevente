@@ -5,6 +5,9 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /**
  * Basic class for all entities that holds common properties.
  *
@@ -20,6 +23,7 @@ public abstract class AbstractEntity {
      * represents the entity identification in a textual form.
      */
     @Id
+    @JsonSerialize(using=IdSer.class)
     private Object id;
 
     /**

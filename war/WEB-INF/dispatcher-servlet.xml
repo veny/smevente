@@ -14,7 +14,7 @@
 
   <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
 
-  <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+  <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
   <bean id="simpleView" class="veny.smevente.server.SimpleView" />
 
   <bean id="exceptionResolver" class="veny.smevente.server.JsonExceptionResolver">

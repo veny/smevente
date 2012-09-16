@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import veny.smevente.shared.SmeventeException;
 import eu.maydu.gwt.validation.client.InvalidValueSerializable;
