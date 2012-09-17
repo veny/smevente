@@ -25,7 +25,7 @@
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/org.springframework.core-3.1.2.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/org.springframework.expression-3.1.2.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/org.springframework.transaction-3.1.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web-3.1.2.RELEASE.jar" sourcepath="/opt/spring-framework-3.1.2.RELEASE/src/org.springframework.web-sources-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web.servlet-3.1.2.RELEASE.jar" sourcepath="/opt/spring-framework-3.1.2.RELEASE/src/org.springframework.web.servlet-sources-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-core-2.0.6.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-databind-2.0.6.jar"/>

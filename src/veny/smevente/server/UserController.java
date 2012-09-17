@@ -77,7 +77,8 @@ public class UserController {
         modelAndView.addObject("username", user.getUsername());
 
         // units where the user is member in
-        final List<Unit> units = userService.getUnitsOfUser(user.getId());
+//        final List<Unit> units = userService.getUnitsOfUser(user.getId());
+List<Membership> units = userService.findMembershipsByUser(user.getId());
         modelAndView.addObject("units", units);
 
         return modelAndView;

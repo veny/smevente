@@ -5,7 +5,9 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import veny.smevente.server.OrientdbRid2JsonSerializer;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 20.8.2012
  */
+@JsonIgnoreProperties({ "handler", "doc" })
 public abstract class AbstractEntity {
 
     /**
@@ -21,9 +24,11 @@ public abstract class AbstractEntity {
      *
      * It's not a number because many storage engines like OrientDB or CouchDB
      * represents the entity identification in a textual form.
+     *
+     * @see OrientdbRid2JsonSerializer
      */
     @Id
-    @JsonSerialize(using=IdSer.class)
+    @JsonSerialize(using = OrientdbRid2JsonSerializer.class)
     private Object id;
 
     /**

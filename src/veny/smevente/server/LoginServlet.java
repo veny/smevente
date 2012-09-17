@@ -18,7 +18,7 @@ import veny.smevente.service.UserService;
  * Servlet implementing the login mechanism.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
- * @since 0.1
+ * @since 10.7.2010
  */
 @SuppressWarnings("serial")
 @Deprecated
