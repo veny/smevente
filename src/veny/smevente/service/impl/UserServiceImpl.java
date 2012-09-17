@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
     // TODO [veny,B] think of authorization
     @Override
     public void deleteUser(final Object id) {
-        final List<Membership> memberships = findMembershipsByUser(id);
+        final List<Membership> memberships = getMembershipsByUser(id);
         if (memberships != null) {
             for (Membership membership: memberships) {
                 membershipDao.remove(membership.getId());
@@ -370,15 +370,15 @@ public class UserServiceImpl implements UserService {
 ////        return rslt;
 ////    }
 
-    /** {@inheritDoc} */
-    @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    @Override
-    public List<Unit> getUnitsOfUser(final Object userId) {
-        final List<Unit> rslt = unitDao.getUnitsByUser(userId);
-        LOG.info("found " + rslt.size() + " units(s), userId=" + userId);
-        return rslt;
-    }
+//    /** {@inheritDoc} */
+//    @Transactional(readOnly = true)
+//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+//    @Override
+//    public List<Unit> getUnitsOfUser(final Object userId) {
+//        final List<Unit> rslt = unitDao.getUnitsByUser(userId);
+//        LOG.info("found " + rslt.size() + " units(s), userId=" + userId);
+//        return rslt;
+//    }
 
     // ------------------------------------------------------- Membership Stuff
 
@@ -419,7 +419,7 @@ public class UserServiceImpl implements UserService {
     /** {@inheritDoc} */
     @Transactional
     @Override
-    public List<Membership> findMembershipsByUser(final Object userId) {
+    public List<Membership> getMembershipsByUser(final Object userId) {
         final List<Membership> memberships = membershipDao.findBy("user", userId, "significance");
         LOG.info("membership(s) found, size=" + memberships.size());
         return memberships;

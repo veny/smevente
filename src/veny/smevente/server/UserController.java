@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.model.Membership;
-import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.UserService;
 
@@ -62,7 +61,7 @@ public class UserController {
      * Gets the current logged in user info.
      * <ul>
      * <li>username
-     * <li>units sorted by 'significance'
+     * <li>memberships sorted by 'significance'
      * </ul>
      *
      * @param request HTTP request
@@ -74,12 +73,15 @@ public class UserController {
 
         // username
         final ModelAndView modelAndView = new ModelAndView("jsonView");
+
         modelAndView.addObject("username", user.getUsername());
 
-        // units where the user is member in
+        // memberships where the user is in
 //        final List<Unit> units = userService.getUnitsOfUser(user.getId());
-List<Membership> units = userService.findMembershipsByUser(user.getId());
-        modelAndView.addObject("units", units);
+        final List<Membership> membs = userService.getMembershipsByUser(user.getId());
+        // we don't need user
+        for (Membership m : membs) { m.setUser(null); }
+        modelAndView.addObject("memberships", membs);
 
         return modelAndView;
     }

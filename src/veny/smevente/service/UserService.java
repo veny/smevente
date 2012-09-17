@@ -4,7 +4,6 @@ import java.util.List;
 
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import eu.maydu.gwt.validation.client.ValidationException;
 
@@ -143,17 +142,17 @@ public interface UserService {
 ////     */
 ////    List<UserDto> getUsersByUnit(Long unitId, UserDto me);
 
-    /**
-     * Gets units for given user.
-     *
-     * Business rules:<br>
-     * A user can see other users only if he has an ADMIN membership in the unit.<br>
-     * The currently logged in user is on the first place of a unit members.<br>
-     *
-     * @param userId user ID
-     * @return list of units where given user is member in
-     */
-    List<Unit> getUnitsOfUser(Object userId);
+//    /**
+//     * Gets units for given user.
+//     *
+//     * Business rules:<br>
+//     * A user can see other users only if he has an ADMIN membership in the unit.<br>
+//     * The currently logged in user is on the first place of a unit members.<br>
+//     *
+//     * @param userId user ID
+//     * @return list of units where given user is member in
+//     */
+//    List<Unit> getUnitsOfUser(Object userId);
 
     // ------------------------------------------------------- Membership Stuff
 
@@ -169,11 +168,11 @@ public interface UserService {
     Membership storeMembership(Object unitId, Object userId, Membership.Role role, int significance);
 
     /**
-     * Finds memberships for given user.
+     * Gets memberships for given user.
      *
      * @param userId ID of user
-     * @return the list of memberships for given user
+     * @return list of memberships for given user
      */
-    List<Membership> findMembershipsByUser(Object userId);
+    List<Membership> getMembershipsByUser(Object userId);
 
 }

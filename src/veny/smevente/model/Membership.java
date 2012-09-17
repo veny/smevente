@@ -5,7 +5,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 

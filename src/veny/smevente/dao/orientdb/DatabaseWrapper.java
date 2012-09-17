@@ -122,6 +122,7 @@ public final class DatabaseWrapper implements DisposableBean {
             membership.createProperty("user", OType.LINK, user).setMandatory(true);
             membership.createProperty("unit", OType.LINK, unit).setMandatory(true);
             membership.createProperty("role", OType.STRING).setMandatory(true).setNotNull(true);
+            membership.createProperty("significance", OType.INTEGER);
             // Patient
             OClass patient = db.getMetadata().getSchema().createClass("Patient", entity);
             patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
