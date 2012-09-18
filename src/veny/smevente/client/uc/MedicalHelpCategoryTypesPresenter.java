@@ -215,7 +215,7 @@ public class MedicalHelpCategoryTypesPresenter
         // but if the initial presenter is other one according to history token (e.g. FindPatient)
         // -> medical help category presenter not created -> not registered on Bus -> info is not loaded
         // [if App.get().getUnits() is null <- post login process in progress -> wait for HeaderEvent]
-        if (null != App.get().getUnits()) {
+        if (null != App.get().getMemberships()) {
             findMedicalHelpCategories();
         } else {
             App.get().switchToPresenterByType(PresenterEnum.CALENDER, null);

@@ -88,6 +88,20 @@ public class Membership extends AbstractEntity {
         }
     }
 
+    /**
+     * Gets name of aggregated unit.
+     *
+     * @return name of aggregated unit
+     */
+    @Transient
+    @JsonIgnore
+    public String unitName() {
+        if (null == getUnit() || null == getUnit().getName() || 0 == getUnit().getName().trim().length()) {
+            throw new IllegalStateException("unit name not presented");
+        }
+        return getUnit().getName();
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString() {

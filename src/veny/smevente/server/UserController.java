@@ -61,7 +61,7 @@ public class UserController {
      * Gets the current logged in user info.
      * <ul>
      * <li>username
-     * <li>memberships sorted by 'significance'
+     * <li>memberships sorted by 'significance' (without user that is the currently logged in)
      * </ul>
      *
      * @param request HTTP request

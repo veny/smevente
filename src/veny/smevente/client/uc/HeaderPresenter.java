@@ -17,6 +17,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.CrudEventHandler;
 import veny.smevente.client.utils.HeaderEvent;
+import veny.smevente.model.Membership;
 import veny.smevente.model.Unit;
 import veny.smevente.shared.EntityTypeEnum;
 
@@ -270,13 +271,14 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
                 final String username = App.get().getJsonDeserializer().createString("username", jsonText);
                 view.getUsername().setText(username);
 
-                // units
-                List<Unit> units = App.get().getJsonDeserializer().deserializeList(Unit.class, "units", jsonText);
-                appInit(units);
+                // memberships
+                final List<Membership> membs =
+                        App.get().getJsonDeserializer().deserializeList(Membership.class, "memberships", jsonText);
+                appInit(membs);
                 // fill the drop down again
                 view.getUnits().clear();
                 view.getUnits().setSelectedIndex(0);
-                for (Unit u : units) { view.getUnits().addItem(u.getName()); }
+                for (Membership m : membs) { view.getUnits().addItem(m.unitName()); }
                 // simulate selection on first unit -> fire event
                 unitSelected(0);
             }
@@ -288,37 +290,38 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
      * Reload the current unit info, used when some user CRUD occurred.
      */
     private void reloadCurrentUnitInfo() {
-        // get unit info
-        RestHandler rest = new RestHandler("/rest/user/info/");
-        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
-            @Override
-            public void onSuccess(final String jsonText) {
-                List<Unit> usedUnits = App.get().getUnits();
-                int selectedUnitIndex = view.getUnits().getSelectedIndex();
-                List<Unit> units = App.get().getJsonDeserializer().deserializeList(Unit.class, "units", jsonText);
-                for (Unit newUnit : units) {
-                    if (newUnit.getId().equals(usedUnits.get(selectedUnitIndex).getId())) {
-                        usedUnits.remove(selectedUnitIndex);
-                        usedUnits.add(selectedUnitIndex, newUnit);
-                        // change content of members drop down
-                        view.getUnitMembers().clear();
-//XXX                        for (Membership m : newUnit.getMembers()) {
+        throw new IllegalStateException("not implemented yet");
+//        // get unit info
+//        RestHandler rest = new RestHandler("/rest/user/info/");
+//        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
+//            @Override
+//            public void onSuccess(final String jsonText) {
+//                final List<Unit> usedUnits = App.get().getUnits();
+//                int selectedUnitIndex = view.getUnits().getSelectedIndex();
+//                List<Unit> units = App.get().getJsonDeserializer().deserializeList(Unit.class, "units", jsonText);
+//                for (Unit newUnit : units) {
+//                    if (newUnit.getId().equals(usedUnits.get(selectedUnitIndex).getId())) {
+//                        usedUnits.remove(selectedUnitIndex);
+//                        usedUnits.add(selectedUnitIndex, newUnit);
+//                        // change content of members drop down
+//                        view.getUnitMembers().clear();
+//                        for (Membership m : newUnit.getMembers()) {
 //                            view.getUnitMembers().addItem(m.getUser().getFullname());
 //                        }
-                        break;
-                    }
-                }
-            }
-        });
-        rest.get();
+//                        break;
+//                    }
+//                }
+//            }
+//        });
+//        rest.get();
     }
 
     /**
-     * Initialize the application with found units.
-     * @param units the list of found units
+     * Initialize the application with found memberships.
+     * @param membs list of memberships
      */
-    private void appInit(final List<Unit> units) {
-        App.get().setUnits(units);
+    private void appInit(final List<Membership> membs) {
+        App.get().setMemberships(membs);
         view.getMenu().setupAdminItems();
         if (!App.get().isSelectedUnitMemberAdmin()) {
             App.get().switchToPresenterByType(PresenterEnum.CALENDER, null);

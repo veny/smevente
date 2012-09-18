@@ -55,7 +55,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * Calendar Presenter.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
- * @since 0.1
+ * @since 10.8.2010
  */
 public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.CalendarView>
         implements HeaderHandler, SmsWidgetHandler, CrudEventHandler {
@@ -271,7 +271,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         // but if the initial presenter is other one according to history token (e.g. FindPatient)
         // -> calendar presenter not created -> not registered on Bus -> info is not loaded
         // [if App.get().getUnits() is null <- post login process in progress -> wait for HeaderEvent]
-        if (null == patients && null != App.get().getUnits()) {
+        if (null == patients && null != App.get().getMemberships()) {
             loadUnitInfo(App.get().getSelectedUnit().getId());
         }
 

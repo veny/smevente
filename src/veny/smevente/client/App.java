@@ -12,6 +12,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.LoginPresenter;
 import veny.smevente.client.uc.LoginViewImpl;
+import veny.smevente.model.Membership;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
@@ -63,8 +64,8 @@ public final class App implements ValueChangeHandler<String> {
     /** The presenter that is currently active and present in the main panel. */
     private Presenter< ? > activeMainPresenter = null;
 
-    /** List of units sorted by significance for the current logged in user. */
-    private List<Unit> units;
+    /** List of memberships sorted by significance for the current logged in user. */
+    private List<Membership> memberships;
     /** Index of currently selected unit. */
     private int selectedUnitIndex;
     /** Index of currently selected unit member. */
@@ -146,7 +147,7 @@ public final class App implements ValueChangeHandler<String> {
         // business
         selectedUnitIndex = 0;
         selectedUnitMemberIndex = 0;
-        units = null;
+        memberships = null;
 
         // inform all presenters
         for (Presenter< ? extends View> p : presenterCollection.getAll()) {
@@ -356,19 +357,19 @@ public final class App implements ValueChangeHandler<String> {
     // --------------------------------------------------------- Business Stuff
 
     /**
-     * Gets list of units sorted by significance for the current logged in user.
-     * @return list of units sorted by significance for the current logged in user
+     * Gets list of memberships sorted by significance for the current logged in user.
+     * @return list of memberships sorted by significance for the current logged in user
      */
-    public List<Unit> getUnits() {
-        return units;
+    public List<Membership> getMemberships() {
+        return memberships;
     }
 
     /**
-     * Sets list of units sorted by significance for the current logged in user.
-     * @param units list of units sorted by significance for the current logged in user
+     * Sets list of memberships sorted by significance for the current logged in user.
+     * @param memberships list of memberships sorted by significance for the current logged in user
      */
-    public void setUnits(final List<veny.smevente.model.Unit> units) {
-        this.units = units;
+    public void setMemberships(final List<Membership> memberships) {
+        this.memberships = memberships;
     }
 
     /**
@@ -383,16 +384,17 @@ public final class App implements ValueChangeHandler<String> {
      * @return the current selected unit
      */
     public Unit getSelectedUnit() {
-        return units.get(selectedUnitIndex);
+        if (null == memberships) { throw new NullPointerException("memberships is null"); }
+        final Membership memb = memberships.get(selectedUnitIndex);
+        if (null == memb) { throw new NullPointerException("selected membership is null"); }
+        if (null == memb.getUnit()) { throw new NullPointerException("unit of selected membership is null"); }
+        return memb.getUnit();
     }
     /**
      * Gets the text variant of the current selected unit.
      * @return the text variant
      */
     public int getSelectedUnitTextVariant() {
-        if (null == units || null == getSelectedUnit()) {
-            return 0;
-        }
         return getSelectedUnit().enumTextVariant().ordinal();
     }
 
