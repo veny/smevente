@@ -116,6 +116,8 @@ public class JsonDeserializer {
             rslt = (List<T>) unitListFromJson(jsArr);
         } else if (User.class == classToCreate) {
             rslt = (List<T>) userListFromJson(jsArr);
+        } else if (Membership.class == classToCreate) {
+            rslt = (List<T>) membershipListFromJson(jsArr);
         } else if (Patient.class == classToCreate) {
             rslt = (List<T>) patientListFromJson(jsArr);
         } else if (MedicalHelpCategory.class == classToCreate) {
@@ -200,15 +202,10 @@ public class JsonDeserializer {
      */
     private Unit unitFromJson(final JSONObject jsObj) {
         final Unit rslt = new Unit();
-        rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
+        rslt.setId(jsObj.get("id").isString().stringValue());
         rslt.setName(jsObj.get("name").isString().stringValue());
         rslt.setLimitedSmss(getLong(jsObj.get("limitedSmss")));
 //XXX        rslt.addMetadata(Unit.UNIT_TYPE, getString(jsObj.get("type")));
-        // members
-        final JSONArray jsArr = jsObj.get("members").isArray();
-        if (null != jsArr) {
-//XXX            rslt.setMembers(membershipListFromJson(jsArr));
-        }
         return rslt;
     }
     /**
@@ -235,12 +232,18 @@ public class JsonDeserializer {
      */
     private Membership membershipFromJson(final JSONObject jsObj) {
         final Membership rslt = new Membership();
-        rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
+        rslt.setId(jsObj.get("id").isString().stringValue());
         rslt.setRole(jsObj.get("role").isString().stringValue());
         rslt.setSignificance((int) jsObj.get("significance").isNumber().doubleValue());
+        // -> user
         final JSONObject jsUserObj = jsObj.get("user").isObject();
         if (null != jsUserObj) {
             rslt.setUser(userFromJson(jsUserObj));
+        }
+        // -> unit
+        final JSONObject jsUnitObj = jsObj.get("unit").isObject();
+        if (null != jsUnitObj) {
+            rslt.setUnit(unitFromJson(jsUnitObj));
         }
         return rslt;
     }

@@ -3,6 +3,7 @@ package veny.smevente.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
@@ -335,40 +336,39 @@ public class UserServiceImpl implements UserService {
         return found;
     }
 
-////    /*
-////     * Here is not used a TX because of GAE Entity Group limit for transaction.
-////     * I avoided to use TX (not needed here).
-////     */
-////    /** {@inheritDoc} */
-////    @Override
-////    public List<UserDto> getUsersByUnit(final Long unitId, final UserDto me) {
-////        final List<UserDto> rslt = new ArrayList<UserDto>();
-////        // load the user again <- 'me' is probably from session with memberships and units
-////        // and insert it into result list
-////        rslt.add(beanMapper.map(userDao.getById(me.getId()), UserDto.class));
-////
-////        // load my Membership
-////        final List<MembershipGae> myMemberships=membershipDao.findBy("userId", me.getId(), "unitId", unitId, null);
-////        if (1 != myMemberships.size()) {
-////            throw new IllegalStateException("invalid amount of membership in unit, userId="
-////                    + me.getId() + ", unitId=" + unitId + ", amount=" + myMemberships.size());
-////        }
-////        final MembershipGae myMembership = myMemberships.get(0);
-////
-////        // no Admin -> return only the user
-////        if (MembershipDto.Type.ADMIN.equals(myMembership.getType())) {
-////            // find other users
-////            final List<MembershipGae> other = membershipDao.findBy("unitId", unitId, null);
-////            for (MembershipGae m : other) {
-////                if (!me.getId().equals(m.getUserId())) { // don't include 'me' again
-////                    rslt.add(beanMapper.map(userDao.getById(m.getUserId()), UserDto.class));
-////                }
-////            }
-////        }
-////
-////        LOG.info("found " + rslt.size() + " member(s), unitId=" + unitId);
-////        return rslt;
-////    }
+    /** {@inheritDoc} */
+    // TODO [veny,B] think of authorization
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> getUsersInUnit(final Object unitId, final Object userId) {
+        final List<User> rslt = new ArrayList<User>();
+        // load the user again <- 'userId' is probably from session
+        // and insert it into result list
+        final User mainUser = userDao.getById(userId);
+        rslt.add(mainUser);
+
+        // load user's Membership
+        final List<Membership> membs = membershipDao.findBy("unit", unitId, "user", userId, null);
+        if (1 != membs.size()) {
+            throw new IllegalStateException("invalid amount of membership in unit, userId="
+                    + userId + ", unitId=" + unitId + ", amount=" + membs.size());
+        }
+        final Membership memb = membs.get(0);
+
+        // no Admin -> return only the user
+        if (Membership.Role.ADMIN.equals(memb.enumRole())) {
+            // find other users
+            final List<Membership> other = membershipDao.findBy("unit", unitId, null);
+            for (Membership m : other) {
+                if (!mainUser.getId().equals(m.getUser().getId())) { // don't include 'me' again
+                    rslt.add(m.getUser());
+                }
+            }
+        }
+
+        LOG.info("found " + rslt.size() + " member(s), unitId=" + unitId + ", role=" + memb.getRole());
+        return rslt;
+    }
 
 //    /** {@inheritDoc} */
 //    @Transactional(readOnly = true)

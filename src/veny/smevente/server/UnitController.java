@@ -1,25 +1,19 @@
 package veny.smevente.server;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import veny.smevente.client.utils.Pair;
-import veny.smevente.model.MedicalHelpCategory;
-import veny.smevente.model.Patient;
-import veny.smevente.model.Event;
-import veny.smevente.service.EventService;
+import veny.smevente.model.User;
 import veny.smevente.service.UnitService;
+import veny.smevente.service.UserService;
 
 /**
  * Controller of Unit REST interface.
@@ -31,43 +25,53 @@ import veny.smevente.service.UnitService;
 @RequestMapping(value = "/unit")
 public class UnitController {
 
-//    /** Dependency. */
-//    @Autowired
-//    private UnitService unitService;
+    /** Dependency. */
+    @Autowired
+    private UnitService unitService;
+    /** Dependency. */
+    @Autowired
+    private UserService userService;
 //    /** Dependency. */
 //    @Autowired
 //    private SmsService smsService;
 //
-//    // ------------------------------------------------------------- Unit Stuff
-//
-//    /**
-//     * Gets unit info.
-//     *
-//     * @param request HTTP request
-//     * @param unitId unit ID
-//     * @return model & view
-//     */
-//    @RequestMapping(value = "/{id}/info/", method = RequestMethod.GET)
-//    public ModelAndView getUnitInfo(
-//            final HttpServletRequest request,
-//            @PathVariable("id") final Long unitId) {
-//
-//        final ModelAndView modelAndView = new ModelAndView("jsonView");
-//
-//        // patients
-//        final List<PatientDto> patients = unitService.getPatientsByUnit(unitId);
+    // ------------------------------------------------------------- Unit Stuff
+
+    /**
+     * Gets unit info.
+     *
+     * @param request HTTP request
+     * @param unitId unit ID
+     * @return model & view
+     */
+    @RequestMapping(value = "/{id}/info/", method = RequestMethod.GET)
+    public ModelAndView getUnitInfo(
+            final HttpServletRequest request,
+            @PathVariable("id") final String unitId) {
+
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+
+        // other users if the logged-in user is ADMIN in given unit
+        final User user = DataController.getLoggedInUser(request);
+        List<User> other = userService.getUsersInUnit(unitId, user.getId());
+        modelAndView.addObject("users", other);
+
+        // patients
+//        final List<Patient> patients = unitService.getPatientsByUnit(unitId);
 //        modelAndView.addObject("patients", patients);
-//
-//        // medical help categories
-//        final List<MedicalHelpCategoryDto> mhcs =
-//            unitService.getMedicalHelpCategoriesByUnit(unitId, MedicalHelpCategoryDto.TYPE_STANDARD);
+modelAndView.addObject("patients", null);
+
+        // medical help categories
+//        final List<MedicalHelpCategory> mhcs =
+//            unitService.getMedicalHelpCategoriesByUnit(unitId, MedicalHelpCategory.TYPE_STANDARD);
 //        modelAndView.addObject("medicalHelpCategories", mhcs);
-//
-//        return modelAndView;
-//    }
-//
-//    // ---------------------------------------------------------- Patient Stuff
-//
+modelAndView.addObject("medicalHelpCategories", null);
+
+        return modelAndView;
+    }
+
+    // ---------------------------------------------------------- Patient Stuff
+
 //    /**
 //     * Creates a new patient.
 //     * @param request HTTP request

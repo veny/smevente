@@ -129,18 +129,17 @@ public interface UserService {
     @Deprecated // only for unit testing purposes
     List<User> getAllUsers();
 
-////    /**
-////     * Gets all users in given unit.
-////     *
-////     * Business rules:<br>
-////     * A user can see other users only if he has an ADMIN membership in the unit.<br>
-////     *
-////     * @param unitId unit ID
-////     * @param me currently logged in user will be on the first place in list
-////     * @return list of users in unit, the logged in user is always on index 0
-////     * AAA?
-////     */
-////    List<UserDto> getUsersByUnit(Long unitId, UserDto me);
+    /**
+     * Gets other users in given unit. Returns<ul>
+     * <li>all users in unit if the specified user is ADMIN in unit, the logged in user is always on index 0
+     * <li>only given user if not ADMIN
+     * </ul>
+     *
+     * @param userId currently logged in user will be on the first place in list
+     * @param unitId unit ID
+     * @return list of users in unit
+     */
+    List<User> getUsersInUnit(Object unitId, Object userId);
 
 //    /**
 //     * Gets units for given user.

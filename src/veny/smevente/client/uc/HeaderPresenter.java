@@ -352,7 +352,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
         // fire event (unit)
         eventBus.fireEvent(new HeaderEvent(newUnit));
         // fire event (unit member)
-        eventBus.fireEvent(new HeaderEvent(App.get().getSelectedUnitMember()));
+//XXX        eventBus.fireEvent(new HeaderEvent(App.get().getSelectedUnitMember()));
     }
 
     /**

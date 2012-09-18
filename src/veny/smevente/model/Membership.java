@@ -5,7 +5,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 
 
@@ -81,7 +80,7 @@ public class Membership extends AbstractEntity {
     @JsonIgnore
     public Role enumRole() {
         String r = getRole();
-        if (Strings.isNullOrEmpty(r)) {
+        if (null == r || 0 == r.trim().length()) {
             return Role.MEMBER;
         } else {
             return Role.valueOf(r.trim());
