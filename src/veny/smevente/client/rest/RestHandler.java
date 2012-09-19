@@ -217,7 +217,7 @@ public class RestHandler {
      */
     private void send(final Method method) {
         // create request
-        final RequestBuilder builder = new RequestBuilder(method, URL.encode(uri));
+        final RequestBuilder builder = new RequestBuilder(method, uri);
         builder.setHeader(
             "Accept-Language", LocaleInfo.getCurrentLocale().getLocaleName());
         builder.setHeader("Content-type", "application/x-www-form-urlencoded");

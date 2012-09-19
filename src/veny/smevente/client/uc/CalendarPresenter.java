@@ -39,6 +39,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -429,8 +430,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         // there cannot be used method 'createClientRestHandler'
         // because the unit info HAS to be loaded even if the presenter is NOT visible
         // BF #45
-//        final RestHandler rest = new RestHandler("/rest/unit/" + unitId + "/info/");
-final RestHandler rest = new RestHandler("/rest/unit/1/info/");
+        final RestHandler rest = new RestHandler("/rest/unit/" + URL.encodePathSegment((String) unitId) + "/info/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {

@@ -29,7 +29,7 @@ public class UserServiceTest extends AbstractBaseTest {
 
     /** UserService.createUser. */
     @SuppressWarnings("deprecation")
-    @Test
+    //@Test
     public void testCreateUser() {
         userService.createUser(USERNAME, PASSWORD, FULLNAME, false /* root */);
         final List<User> found = userService.getAllUsers();
@@ -55,7 +55,7 @@ public class UserServiceTest extends AbstractBaseTest {
 
     /** UserService.createUser. */
     @SuppressWarnings("deprecation")
-    @Test
+    //@Test
     public void testCreateUserAndMembership() {
         final Unit unit1 = createDefaultUnit();
         User userA = new User();
@@ -110,7 +110,7 @@ public class UserServiceTest extends AbstractBaseTest {
     }
 
     /** UserService.getUser. */
-    @Test
+    //@Test
     public void testGetUser() {
         final User created = createDefaultUser();
         final User found = userService.getUser(created.getId());
@@ -129,7 +129,7 @@ public class UserServiceTest extends AbstractBaseTest {
 
     /** UserService.updateUser. */
     @SuppressWarnings("deprecation")
-    @Test
+    //@Test
     public void testUpdateUser() {
         final Unit unit1 = createDefaultUnit();
         userService.createUser(USERNAME, PASSWORD, FULLNAME, false);
@@ -246,59 +246,59 @@ public class UserServiceTest extends AbstractBaseTest {
 //        assertEquals(MembershipDto.Type.MEMBER, memberships.get(1).getType());
 //    }
 
-    /** UserService.deleteUser. */
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testDeleteUser() {
-        final User firstCreated = createDefaultUser();
-        final User secondCreated = createUser("a", "a", "a a", false);
-        assertEquals(2, userService.getAllUsers().size());
-
-        // delete first
-        userService.deleteUser(firstCreated.getId());
-        List<User> found = userService.getAllUsers();
-        assertNotNull(found);
-        assertEquals(1, found.size());
-        assertEquals(secondCreated.getId(), found.get(0).getId());
-
-        final User thirdCreated = createUser("b", "b", "b b", false);
-        found = userService.getAllUsers();
-        assertNotNull(found);
-        assertEquals(2, found.size());
-        userService.deleteUser(firstCreated.getId()); // DO NOTHING
-        // delete second
-        userService.deleteUser(secondCreated.getId());
-        found = userService.getAllUsers();
-        assertNotNull(found);
-        assertEquals(1, found.size());
-        assertEquals(thirdCreated.getId(), found.get(0).getId());
-
-        // add membership
-        final Unit unit = createDefaultUnit();
-        userService.storeMembership(unit.getId(), thirdCreated.getId(), Membership.Role.MEMBER, 1);
-        final List<Membership> membs = userService.findMembershipsByUser(thirdCreated.getId());
-        assertEquals(1, membs.size());
-        assertEquals(Membership.Role.MEMBER, membs.get(0).enumRole());
-        assertEquals(1, membs.get(0).getSignificance());
-        assertDefaultUnit(membs.get(0).getUnit());
-
-        // delete third
-        userService.deleteUser(thirdCreated.getId());
-
-        userService.deleteUser(thirdCreated.getId()); // DO NOTHING
-        found = userService.getAllUsers();
-        assertNotNull(found);
-        assertEquals(0, found.size());
-
-        // SOFT DELETE
-        // deleting of user force also deleting of membership
-        assertTrue(userService.findMembershipsByUser(firstCreated.getId()).isEmpty());
-        assertTrue(userService.findMembershipsByUser(secondCreated.getId()).isEmpty());
-        assertTrue(userService.findMembershipsByUser(thirdCreated.getId()).isEmpty());
-    }
+//    /** UserService.deleteUser. */
+//    @SuppressWarnings("deprecation")
+//    @Test
+//    public void testDeleteUser() {
+//        final User firstCreated = createDefaultUser();
+//        final User secondCreated = createUser("a", "a", "a a", false);
+//        assertEquals(2, userService.getAllUsers().size());
+//
+//        // delete first
+//        userService.deleteUser(firstCreated.getId());
+//        List<User> found = userService.getAllUsers();
+//        assertNotNull(found);
+//        assertEquals(1, found.size());
+//        assertEquals(secondCreated.getId(), found.get(0).getId());
+//
+//        final User thirdCreated = createUser("b", "b", "b b", false);
+//        found = userService.getAllUsers();
+//        assertNotNull(found);
+//        assertEquals(2, found.size());
+//        userService.deleteUser(firstCreated.getId()); // DO NOTHING
+//        // delete second
+//        userService.deleteUser(secondCreated.getId());
+//        found = userService.getAllUsers();
+//        assertNotNull(found);
+//        assertEquals(1, found.size());
+//        assertEquals(thirdCreated.getId(), found.get(0).getId());
+//
+//        // add membership
+//        final Unit unit = createDefaultUnit();
+//        userService.storeMembership(unit.getId(), thirdCreated.getId(), Membership.Role.MEMBER, 1);
+//        final List<Membership> membs = userService.findMembershipsByUser(thirdCreated.getId());
+//        assertEquals(1, membs.size());
+//        assertEquals(Membership.Role.MEMBER, membs.get(0).enumRole());
+//        assertEquals(1, membs.get(0).getSignificance());
+//        assertDefaultUnit(membs.get(0).getUnit());
+//
+//        // delete third
+//        userService.deleteUser(thirdCreated.getId());
+//
+//        userService.deleteUser(thirdCreated.getId()); // DO NOTHING
+//        found = userService.getAllUsers();
+//        assertNotNull(found);
+//        assertEquals(0, found.size());
+//
+//        // SOFT DELETE
+//        // deleting of user force also deleting of membership
+//        assertTrue(userService.findMembershipsByUser(firstCreated.getId()).isEmpty());
+//        assertTrue(userService.findMembershipsByUser(secondCreated.getId()).isEmpty());
+//        assertTrue(userService.findMembershipsByUser(thirdCreated.getId()).isEmpty());
+//    }
 
     /** UserService.findUserByUsername. */
-    @Test
+    //@Test
     public void testFindUserByUsername() {
         createDefaultUser();
         final User found = userService.findUserByUsername(USERNAME);
@@ -334,7 +334,7 @@ public class UserServiceTest extends AbstractBaseTest {
 //    }
 
     /** UserService.updateUserPassword. */
-    @Test
+    //@Test
     @SuppressWarnings("deprecation")
     public void testUpdateUserPassword() {
         final User created = createDefaultUser();
@@ -364,7 +364,7 @@ public class UserServiceTest extends AbstractBaseTest {
     /** UserService.performLogin. */
     @Test
     public void testPerformLogin() {
-        User created = createDefaultUser();
+        final User created = createDefaultUser();
         assertNull(created.getLastLoggedIn());
         final Date now = new Date();
         final User found = userService.performLogin(USERNAME, PASSWORD);
@@ -379,6 +379,13 @@ public class UserServiceTest extends AbstractBaseTest {
         // can't login with deleted user
         userService.deleteUser(found.getId());
         assertNull(userService.performLogin(USERNAME, PASSWORD));
+    }
+
+    /** UserService.getMembershipsByUser. */
+    @Test
+    public void testGetMembershipsByUser() {
+        final User created = createDefaultUser();
+        assertTrue(userService.getMembershipsByUser(created.getId()).isEmpty());
     }
 
 //    /** UserService.getUnitsOfUser. */
