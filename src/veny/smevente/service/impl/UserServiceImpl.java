@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
             ServerValidation.exception("duplicateValue", "username", (Object[]) null);
         }
 
-        User rslt = userDao.persist(user);
+        final User rslt = userDao.persist(user);
 
         LOG.info("created new user, " + rslt);
         return rslt;

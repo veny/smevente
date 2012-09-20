@@ -187,7 +187,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             @Override
             public T doWithDatabase(final OObjectDatabaseTx db) {
                 final T rslt = db.save(entity);
-                db.detach(rslt);
+//                db.detach(rslt);
 
                 if (null == entity.getId()) {
                     db.commit(); // to obtain RID, TODO [veny,A] other solution?
