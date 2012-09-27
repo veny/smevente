@@ -1,11 +1,20 @@
 package veny.smevente.dao.orientdb;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import veny.smevente.dao.DeletedObjectException;
@@ -78,9 +87,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
         return databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
             public T doWithDatabase(final OObjectDatabaseTx db) {
-                if (!(id instanceof ORID)) {
-                    throw new ObjectNotFoundException("ID has to be OrientDB RID");
-                }
+                if (!(id instanceof ORID)) { throw new ObjectNotFoundException("ID has to be OrientDB RID"); }
 
                 T rslt;
                 try {
@@ -92,6 +99,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 }
 
                 assertNotSoftDeleted(rslt);
+                detachWithFirstLevelAssociations(rslt, db);
                 return (T) rslt;
             }
         }, true);
@@ -111,7 +119,9 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             public List< T > doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql =
                         new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName());
-                return executeWithSoftDelete(db, sql.toString(), null, !withDeleted);
+                final List<T> rslt = executeWithSoftDelete(db, sql.toString(), null, !withDeleted);
+                detachWithFirstLevelAssociations(rslt, db);
+                return rslt;
             }
         }, false);
     }
@@ -130,7 +140,9 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put(paramName, value);
 
-                return executeWithSoftDelete(db, sql.toString(), params, true);
+                final List<T> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+                detachWithFirstLevelAssociations(rslt, db);
+                return rslt;
             }
         }, false);
     }
@@ -155,7 +167,9 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 params.put(paramName1, value1);
                 params.put(paramName2, value2);
 
-                return executeWithSoftDelete(db, sql.toString(), params, true);
+                final List<T> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+                detachWithFirstLevelAssociations(rslt, db);
+                return rslt;
             }
         }, false);
     }
@@ -183,18 +197,19 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
     /** {@inheritDoc} */
     @Override
     public T persist(final T entity) {
-        return databaseWrapper.execute(new ODatabaseCallback<T>() {
+        final T r = databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
             public T doWithDatabase(final OObjectDatabaseTx db) {
+                db.attach(entity); // has to be attached, it's maybe detached by previous operation
                 final T rslt = db.save(entity);
-//                db.detach(rslt);
-
-                if (null == entity.getId()) {
-                    db.commit(); // to obtain RID, TODO [veny,A] other solution?
-                }
                 return rslt;
             }
         }, true);
+        // detach:
+        // 1) has to be after commit, otherwise ID is temporary like '#9:-2'
+        // 2) otherwise are all properties 'null'
+        databaseWrapper.get().detach(r);
+        return r;
     }
 
     /** {@inheritDoc} */
@@ -210,7 +225,9 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 final T entity = db.load((ORID) id);
 
                 if (null != softDeleteAnnotation) {
+                    db.detach(entity); // entity has to be detached, otherwise are all properties 'null'
                     entity.setDeleted(true);
+                    db.attach(entity); // all data contained in the object will be copied in the associated document
                     db.save(entity);
                 } else {
                     db.delete(entity);
@@ -236,6 +253,68 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
 //        return getHibernateTemplate().execute(callback);
 //    }
 
+
+    // --------------------------------------------------------- OrientDB Stuff
+
+
+    protected void detachWithFirstLevelAssociations(final T entity, final OObjectDatabaseTx db) {
+        if (null == entity) { throw new NullPointerException("entity is null"); }
+        final List<Method> assocMethods = getAssociationGetters();
+
+        db.detach(entity);
+        // detach aggregated fields too
+        for (Method m : assocMethods) {
+            try {
+                db.detach(m.invoke(entity));
+            } catch (Exception e) {
+                throw new IllegalStateException("failed to detach associated field", e);
+            }
+        }
+    }
+
+    /**
+     * Detaches list of given objects and on each object detach aggregated entity too.
+     * @param list objects to detach
+     * @param db object database
+     */
+    protected void detachWithFirstLevelAssociations(final List<T> list, final OObjectDatabaseTx db) {
+        if (null == list || list.isEmpty()) { return; }
+        final List<Method> assocMethods = getAssociationGetters();
+
+        // detach entries in list
+        for (T entity : list) {
+            db.detach(entity);
+            // detach aggregated fields too
+            for (Method m : assocMethods) {
+                try {
+                    db.detach(m.invoke(entity));
+                } catch (Exception e) {
+                    throw new IllegalStateException("failed to detach associated field", e);
+                }
+            }
+        }
+    }
+
+
+    private List<Method> getAssociationGetters() {
+        final Field[] fields = persistentClass.getDeclaredFields();
+        final List<Method> rslt = new ArrayList<Method>();
+
+        for (Field f : fields) {
+            if (null != f.getAnnotation(OneToOne.class)
+                    || null != f.getAnnotation(OneToMany.class)
+                    || null != f.getAnnotation(ManyToOne.class)) {
+                final String methodName = "get" + WordUtils.capitalize(f.getName());
+                try {
+                    rslt.add(persistentClass.getMethod(methodName));
+                } catch (Exception e) {
+                    throw new IllegalStateException("failed to detach associated field", e);
+                }
+            }
+        }
+
+        return rslt;
+    }
 
     // ------------------------------------------------------ Soft Delete Stuff
 

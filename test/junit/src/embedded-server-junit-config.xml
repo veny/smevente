@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<orient-server>
+  <network>
+    <protocols>
+      <protocol name="binary" implementation="com.orientechnologies.orient.server.network.protocol.binary.ONetworkProtocolBinary"/>
+    </protocols>
+    <listeners>
+      <listener ip-address="127.0.0.1" port-range="2424-2430" protocol="binary"/>
+    </listeners>
+  </network>
+  <storages/>
+  <security>
+    <users>
+      <user name="root" password="root" resources="*"/>
+    </users>
+    <resources/>
+  </security>
+  <properties>
+    <entry name="log.console.level" value="fine"/>
+  </properties>
+</orient-server>

@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
+
 import veny.smevente.misc.SoftDelete;
 
 /**

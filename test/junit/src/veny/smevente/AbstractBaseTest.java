@@ -4,7 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Properties;
+
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,6 +23,8 @@ import veny.smevente.service.UserService;
 
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.server.OServer;
+import com.orientechnologies.orient.server.OServerMain;
 
 /**
  * Base class for the <i>Smevente</i> unit tests.
@@ -42,11 +47,37 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
 
 
     /**
+     * Initializes and creates embedded database.
+     * @throws Exception if something goes wrong
+     */
+    @BeforeClass
+    public static void initEmbeddedServer() throws Exception {
+        final Properties dbProp = new Properties();
+        dbProp.load(AbstractBaseTest.class.getResourceAsStream("../../db.properties"));
+        final String dbUrl = dbProp.getProperty("db.url");
+
+        if (dbUrl.startsWith("memory:")) {
+            final OServer server = OServerMain.create();
+            server.startup(AbstractBaseTest.class.getResourceAsStream("../../embedded-server-junit-config.xml"));
+            server.activate();
+
+            // create DB if not exists
+            final OObjectDatabaseTx db = new OObjectDatabaseTx(dbUrl);
+            if (!db.exists()) {
+                db.create();
+            }
+            db.close();
+        }
+    }
+
+    /**
      * Stuff before all tests.
      */
     @Before
     public void deleteEntries() {
         final DatabaseWrapper dbw = (DatabaseWrapper) applicationContext.getBean("databaseWrapper");
+
+        // delete data from DB
         final OObjectDatabaseTx db = dbw.get();
         db.command(new OCommandSQL("DELETE FROM Patient")).execute();
         db.command(new OCommandSQL("DELETE FROM Membership")).execute();
@@ -107,25 +138,25 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     /** @return a new created default unit */
     protected Unit createDefaultUnit() {
         return createUnit(
-                UNITNAME, "unit's desc", Unit.TextVariant.PATIENT.toString(),
+                UNITNAME, "unit's desc", Unit.TextVariant.PATIENT,
                 11L, "usr:x,passwd:y");
     }
     /**
      * Creates a new unit with given attributes.
      * @param name unit name
      * @param description unit's description
-     * @param type unit's type
+     * @param variant unit's text variant
      * @param limitedSmss limited amount of SMS that can be sent
      * @param smsEngine SMS engine configuration
      * @return a new unit created
      */
     protected Unit createUnit(
-            final String name, final String description, final String type,
+            final String name, final String description, final Unit.TextVariant variant,
             final Long limitedSmss, final String smsEngine) {
         final Unit toCreate = new Unit();
         toCreate.setName(name);
         toCreate.setDescription(description);
-        toCreate.setType(type);
+        toCreate.setType(variant.toString());
         toCreate.setLimitedSmss(limitedSmss);
         toCreate.setSmsEngine(smsEngine);
         return unitService.createUnit(toCreate);

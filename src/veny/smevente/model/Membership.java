@@ -7,7 +7,6 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
-
 /**
  * Entity class representing the Membership of User in Organizational Unit.
  *

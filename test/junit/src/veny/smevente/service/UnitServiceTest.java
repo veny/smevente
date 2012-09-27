@@ -38,7 +38,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals(1, found.size());
         assertDefaultUnit(found.get(0));
 
-        final Unit secondUnit = createUnit("A", "desc", null, 10L, null);
+        final Unit secondUnit = createUnit("A", "desc", Unit.TextVariant.PATIENT, 10L, null);
         assertNotNull(secondUnit.getId());
         assertEquals("A", secondUnit.getName());
         assertEquals(new Long(10), secondUnit.getLimitedSmss());
@@ -66,7 +66,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals(firstCreated.getId(), firstFound.getId());
         assertDefaultUnit(firstFound);
 
-        final Unit secondCreated = createUnit("A", "desc", "type", 0L, "sms");
+        final Unit secondCreated = createUnit("A", "desc", Unit.TextVariant.PATIENT, 0L, "sms");
         final Unit secondFound = unitService.getUnit(secondCreated.getId());
         assertEquals(secondCreated.getId(), secondFound.getId());
         assertEquals("A", secondFound.getName());
@@ -222,35 +222,35 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals("789789789", found.getBirthNumber());
     }
 
-//    /** UnitService.getPatientsByUnit. */
-//    @Test
-//    public void testGetPatientsByUnit() {
-//        final PatientDto created = createDefaultPatient();
-//        List<PatientDto> found = unitService.getPatientsByUnit(created.getUnit().getId());
-//        assertNotNull(found);
-//        assertEquals(1, found.size());
-//        assertDefaultPatient(found.get(0), true);
-//
-//        createPatient("a", "a", null, null, created.getUnit());
-//        found = unitService.getPatientsByUnit(created.getUnit().getId());
-//        assertEquals(2, found.size());
-//        assertDefaultUnit(found.get(0).getUnit());
-//        assertDefaultUnit(found.get(1).getUnit());
-//
-//        createPatient("b", "b", null, null, created.getUnit());
-//        found = unitService.getPatientsByUnit(created.getUnit().getId());
-//        assertEquals(3, found.size());
-//        assertDefaultUnit(found.get(0).getUnit());
-//        assertDefaultUnit(found.get(1).getUnit());
-//        assertDefaultUnit(found.get(2).getUnit());
-//
-//        final Unit secondUnit = createUnit("X", getDefaultUnitMetadata(), LIMITED_SMSS);
-//        final PatientDto c = createPatient("c", "c", null, null, secondUnit);
+    /** UnitService.getPatientsByUnit. */
+    @Test
+    public void testGetPatientsByUnit() {
+        final Patient created = createDefaultPatient();
+        List<Patient> found = unitService.getPatientsByUnit(created.getUnit().getId());
+        assertNotNull(found);
+        assertEquals(1, found.size());
+        assertDefaultPatient(found.get(0), true);
+
+        createPatient("a", "a", null, null, created.getUnit());
+        found = unitService.getPatientsByUnit(created.getUnit().getId());
+        assertEquals(2, found.size());
+        assertDefaultUnit(found.get(0).getUnit());
+        assertDefaultUnit(found.get(1).getUnit());
+
+        createPatient("b", "b", null, null, created.getUnit());
+        found = unitService.getPatientsByUnit(created.getUnit().getId());
+        assertEquals(3, found.size());
+        assertDefaultUnit(found.get(0).getUnit());
+        assertDefaultUnit(found.get(1).getUnit());
+        assertDefaultUnit(found.get(2).getUnit());
+
+        final Unit secondUnit = createUnit("X", "desc", Unit.TextVariant.PATIENT, 0L, null);
+//        final Patient c = createPatient("c", "c", null, null, secondUnit);
 //        found = unitService.getPatientsByUnit(secondUnit.getId());
 //        assertEquals(1, found.size());
-//        assertEquals("X", found.get(0).getUnit().getName());
+//        assertEquals(secondUnit.getId(), found.get(0).getUnit().getId());
 //        assertEquals(3, unitService.getPatientsByUnit(created.getUnit().getId()).size());
-//
+
 //        // SOFT DELETE
 //        // first unit
 //        unitService.deletePatient(created.getId());
@@ -258,8 +258,8 @@ public class UnitServiceTest extends AbstractBaseTest {
 //        // second unit
 //        unitService.deletePatient(c.getId());
 //        assertEquals(0, unitService.getPatientsByUnit(c.getUnit().getId()).size());
-//    }
-//
+    }
+
 //    /** UnitService.findPatients. */
 //    @Test
 //    public void testFindPatients() {

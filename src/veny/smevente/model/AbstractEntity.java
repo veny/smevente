@@ -5,10 +5,10 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import veny.smevente.server.OrientdbRid2JsonSerializer;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import veny.smevente.server.OrientdbRid2JsonSerializer;
 
 /**
  * Basic class for all entities that holds common properties.

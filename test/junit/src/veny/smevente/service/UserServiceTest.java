@@ -1,8 +1,8 @@
 package veny.smevente.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -10,13 +10,14 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.orientechnologies.orient.core.id.ORecordId;
-
 import veny.smevente.AbstractBaseTest;
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
+
+import com.orientechnologies.orient.core.id.ORecordId;
+
 import eu.maydu.gwt.validation.client.ValidationException;
 
 /**
@@ -26,6 +27,16 @@ import eu.maydu.gwt.validation.client.ValidationException;
  * @since 10.11.2010
  */
 public class UserServiceTest extends AbstractBaseTest {
+
+//    @Test
+//    public void testX() {
+//        UserDao dao = (UserDao) applicationContext.getBean("userDao");
+//        User u = new User();
+//        u.setUsername("username");
+//        u.setPassword("password");
+//        u.setFullname("fullname");
+//        dao.persist(u);
+//    }
 
     /** UserService.createUser. */
     @SuppressWarnings("deprecation")
@@ -362,13 +373,17 @@ public class UserServiceTest extends AbstractBaseTest {
     }
 
     /** UserService.performLogin. */
+    @SuppressWarnings("deprecation")
     @Test
     public void testPerformLogin() {
-        final User created = createDefaultUser();
-        assertNull(created.getLastLoggedIn());
+        final User userA = createDefaultUser();
+        assertNull(userA.getLastLoggedIn());
+        createUser("foo", PASSWORD, "foo bar", true);
+        assertEquals(2, userService.getAllUsers().size());
         final Date now = new Date();
         final User found = userService.performLogin(USERNAME, PASSWORD);
         assertDefaultUser(found);
+        assertEquals(userA.getId(), found.getId());
         assertNotNull(found.getLastLoggedIn());
         assertTrue(found.getLastLoggedIn().getTime() > now.getTime());
 
@@ -384,8 +399,57 @@ public class UserServiceTest extends AbstractBaseTest {
     /** UserService.getMembershipsByUser. */
     @Test
     public void testGetMembershipsByUser() {
-        final User created = createDefaultUser();
-        assertTrue(userService.getMembershipsByUser(created.getId()).isEmpty());
+        final User userA = createDefaultUser();
+        final Unit unitA = createDefaultUnit();
+        assertTrue(userService.getMembershipsByUser(userA.getId()).isEmpty());
+
+        // user A <--> unit A
+        Membership m1 = userService.storeMembership(unitA.getId(), userA.getId(), Membership.Role.ADMIN, 0);
+        assertNotNull(m1);
+        assertNotNull(m1.getId());
+        List<Membership> membs = userService.getMembershipsByUser(userA.getId());
+        assertNotNull(membs);
+        assertEquals(1, membs.size());
+        Membership m = membs.get(0);
+        assertEquals(m1.getId(), m.getId());
+        assertEquals(unitA.getId(), m.getUnit().getId());
+        assertEquals(userA.getId(), m.getUser().getId());
+        assertEquals(Membership.Role.ADMIN, m.enumRole());
+        assertEquals(0, m.getSignificance());
+
+        // user A <--> unit A,B
+        final Unit unitB = createUnit("Foo", "foo", Unit.TextVariant.PATIENT, 0L, "");
+        Membership m2 = userService.storeMembership(unitB.getId(), userA.getId(), Membership.Role.MEMBER, 10);
+        membs = userService.getMembershipsByUser(userA.getId());
+        assertNotNull(membs);
+        assertEquals(2, membs.size());
+        m = membs.get(0); // sorted by significance
+        assertEquals(m1.getId(), m.getId());
+        m = membs.get(1); // sorted by significance
+        assertEquals(m2.getId(), m.getId());
+        assertEquals(unitB.getId(), m.getUnit().getId());
+        assertEquals(userA.getId(), m.getUser().getId());
+        assertEquals(Membership.Role.MEMBER, m.enumRole());
+        assertEquals(10, m.getSignificance());
+
+        // user B <--> unit B
+        final User userB = createUser("foo", "password", "Foo Bar", false);
+        Membership m3 = userService.storeMembership(unitB.getId(), userB.getId(), Membership.Role.MEMBER, 111);
+        membs = userService.getMembershipsByUser(userB.getId());
+        assertNotNull(membs);
+        assertEquals(1, membs.size());
+        m = membs.get(0);
+        assertEquals(m3.getId(), m.getId());
+        assertEquals(unitB.getId(), m.getUnit().getId());
+        assertEquals(userB.getId(), m.getUser().getId());
+        assertEquals(Membership.Role.MEMBER, m.enumRole());
+        assertEquals(111, m.getSignificance());
+
+        // deleted user (memberships are deleted in 'deleteUser')
+        userService.deleteUser(userB.getId());
+        membs = userService.getMembershipsByUser(userB.getId());
+        assertNotNull(membs);
+        assertTrue(membs.isEmpty());
     }
 
 //    /** UserService.getUnitsOfUser. */

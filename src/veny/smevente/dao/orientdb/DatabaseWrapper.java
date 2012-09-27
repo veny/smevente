@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.springframework.beans.factory.DisposableBean;
 
+import veny.smevente.model.AbstractEntity;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
@@ -56,6 +57,14 @@ public final class DatabaseWrapper implements DisposableBean {
 
 
     /**
+     * Gets database URL.
+     * @return database URL
+     */
+    public String getDatabaseUrl() {
+        return databaseUrl;
+    }
+
+    /**
      * Sets database URL.
      * @param databaseUrl database URL
      */
@@ -88,50 +97,61 @@ public final class DatabaseWrapper implements DisposableBean {
 
         if (init) {
 
-            // delete classes
-            if (db.getMetadata().getSchema().existsClass("Patient")) {
-                db.getMetadata().getSchema().dropClass("Patient");
-            }
-            if (db.getMetadata().getSchema().existsClass("Membership")) {
-                db.getMetadata().getSchema().dropClass("Membership");
-            }
-            if (db.getMetadata().getSchema().existsClass("Unit")) {
-                db.getMetadata().getSchema().dropClass("Unit");
-            }
-            if (db.getMetadata().getSchema().existsClass("User")) {
-                db.getMetadata().getSchema().dropClass("User");
-            }
-            if (db.getMetadata().getSchema().existsClass("AbstractEntity")) {
-                db.getMetadata().getSchema().dropClass("AbstractEntity");
-            }
+            // Object class workaround
+            // https://groups.google.com/forum/?fromgroups=#!topic/orient-database/LmvtY-rQsbg
+//            if (!db.getMetadata().getSchema().existsClass("Object")) {
+//                db.getMetadata().getSchema().createClass("Object");
+//            }
 
-            // AbstractEntity
-            OClass entity = db.getMetadata().getSchema().createClass("AbstractEntity");
-            entity.createProperty("deleted", OType.BOOLEAN); //.setMandatory(true);
-            entity.createProperty("revision", OType.STRING);
-            // User
-            OClass user = db.getMetadata().getSchema().createClass("User", entity);
-            user.createProperty("username", OType.STRING).setMandatory(true).setNotNull(true);
-            user.createProperty("password", OType.STRING).setMandatory(true).setNotNull(true);
-            user.createProperty("fullname", OType.STRING).setMandatory(true).setNotNull(true);
-            // Unit
-            OClass unit = db.getMetadata().getSchema().createClass("Unit", entity);
-            unit.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
-            // Membership
-            OClass membership = db.getMetadata().getSchema().createClass("Membership", entity);
-            membership.createProperty("user", OType.LINK, user).setMandatory(true);
-            membership.createProperty("unit", OType.LINK, unit).setMandatory(true);
-            membership.createProperty("role", OType.STRING).setMandatory(true).setNotNull(true);
-            membership.createProperty("significance", OType.INTEGER);
-            // Patient
-            OClass patient = db.getMetadata().getSchema().createClass("Patient", entity);
-            patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
+            // delete classes
+//            if (db.getMetadata().getSchema().existsClass(Patient.class.getSimpleName())) {
+//                db.command(new OCommandSQL("DELETE FROM " + Patient.class.getSimpleName())).execute();
+//                db.getMetadata().getSchema().dropClass(Patient.class.getSimpleName());
+//            }
+//            if (db.getMetadata().getSchema().existsClass("Membership")) {
+//                db.getMetadata().getSchema().dropClass("Membership");
+//            }
+//            if (db.getMetadata().getSchema().existsClass("Unit")) {
+//                db.getMetadata().getSchema().dropClass("Unit");
+//            }
+//            if (db.getMetadata().getSchema().existsClass("User")) {
+//                db.getMetadata().getSchema().dropClass("User");
+//            }
+//            if (db.getMetadata().getSchema().existsClass("AbstractEntity")) {
+//                db.getMetadata().getSchema().dropClass("AbstractEntity");
+//            }
+
+            if (!db.getMetadata().getSchema().existsClass(AbstractEntity.class.getSimpleName())) {
+                // AbstractEntity
+                OClass entity = db.getMetadata().getSchema().createClass(AbstractEntity.class.getSimpleName());
+                entity.createProperty("deleted", OType.BOOLEAN); //.setMandatory(true);
+                entity.createProperty("revision", OType.STRING);
+                // User
+                OClass user = db.getMetadata().getSchema().createClass(User.class.getSimpleName(), entity);
+                user.createProperty("username", OType.STRING).setMandatory(true).setNotNull(true);
+                user.createProperty("password", OType.STRING).setMandatory(true).setNotNull(true);
+                user.createProperty("fullname", OType.STRING).setMandatory(true).setNotNull(true);
+                // Unit
+                OClass unit = db.getMetadata().getSchema().createClass(Unit.class.getSimpleName(), entity);
+                unit.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
+                // Membership
+                OClass membership = db.getMetadata().getSchema().createClass(Membership.class.getSimpleName(), entity);
+                membership.createProperty("user", OType.LINK, user).setMandatory(true);
+                membership.createProperty("unit", OType.LINK, unit).setMandatory(true);
+                membership.createProperty("role", OType.STRING).setMandatory(true).setNotNull(true);
+                membership.createProperty("significance", OType.INTEGER);
+                // Patient
+                OClass patient = db.getMetadata().getSchema().createClass(Patient.class.getSimpleName(), entity);
+                patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
+            }
         }
 
+        db.getEntityManager().registerEntityClass(AbstractEntity.class);
         db.getEntityManager().registerEntityClass(User.class);
         db.getEntityManager().registerEntityClass(Unit.class);
         db.getEntityManager().registerEntityClass(Membership.class);
         db.getEntityManager().registerEntityClass(Patient.class);
+
         db.close();
     }
 
@@ -145,11 +165,9 @@ public final class DatabaseWrapper implements DisposableBean {
 //        return ODatabaseDocumentPool.global().acquire(databaseUrl, username, password);
 //    }
     public OObjectDatabaseTx get() {
-        return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
-//        OObjectDatabaseTx database = new ODatabaseDocumentTx(databaseUrl);
-//        database.setProperty("minPool", 2);
-//        database.setProperty("maxPool", 5);
-//        database.open("admin", "admin");
+//        return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
+        OObjectDatabaseTx db = new OObjectDatabaseTx("remote:/temp").open("admin", "admin");
+        return db;
     }
 
     /**

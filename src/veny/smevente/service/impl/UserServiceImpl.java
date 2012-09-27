@@ -410,10 +410,10 @@ public class UserServiceImpl implements UserService {
             toStore.setRole(role.toString());
             toStore.setSignificance(significance);
         }
-        membershipDao.persist(toStore);
+        final Membership rslt = membershipDao.persist(toStore);
 
         LOG.info("stored membership, userId=" + userId + ", unitId=" + unitId + ", role=" + role);
-        return toStore;
+        return rslt;
     }
 
     /** {@inheritDoc} */

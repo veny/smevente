@@ -12,7 +12,7 @@ import veny.smevente.model.AbstractEntity;
  *
  * @param <T> the entity class
  */
-public interface GenericDao< T extends AbstractEntity > {
+public interface GenericDao<T extends AbstractEntity> {
 
     /**
      * Get entity by id.

@@ -16,7 +16,7 @@ import veny.smevente.client.utils.Pair;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 18.5.2011
  */
-public abstract class AbstractPermissionVoter implements AccessDecisionVoter {
+public abstract class AbstractPermissionVoter implements AccessDecisionVoter<Object> {
 
     /** Logger. */
     private static final Logger LOG = Logger.getLogger(AbstractPermissionVoter.class.getName());
@@ -30,7 +30,7 @@ public abstract class AbstractPermissionVoter implements AccessDecisionVoter {
 
     /** {@inheritDoc} */
     @Override
-    public boolean supports(final Class< ? > clazz) {
+    public boolean supports(final Class<?> clazz) {
         return true;
     }
 

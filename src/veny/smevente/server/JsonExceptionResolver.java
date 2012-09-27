@@ -7,10 +7,11 @@ import java.util.List;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
+import veny.smevente.shared.SmeventeException;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import veny.smevente.shared.SmeventeException;
 import eu.maydu.gwt.validation.client.InvalidValueSerializable;
 import eu.maydu.gwt.validation.client.ValidationException;
 
