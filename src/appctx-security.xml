@@ -8,7 +8,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/security
-        http://www.springframework.org/schema/security/spring-security-3.0.xsd
+        http://www.springframework.org/schema/security/spring-security-3.1.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://spring-security-oauth.codehaus.org/3.0 http://spring-security-oauth.codehaus.org/schema/spring-security-oauth-3.0.xsd">
@@ -26,7 +26,6 @@
 
   <http entry-point-ref="authenticationEntryPoint" auto-config="false" use-expressions="false">
     <session-management session-fixation-protection="newSession"/>
-    <intercept-url pattern="/rest/cron/task/sms/" filters="none" />
     <intercept-url pattern="/rest/upgrade/**" access="ROLE_ROOT" />
     <intercept-url pattern="/rest/data/**" access="ROLE_ROOT" />
     <intercept-url pattern="/rest/**" access="ROLE_AUTHENTICATED" />

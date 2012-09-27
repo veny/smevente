@@ -12,8 +12,10 @@
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/org.springframework.transaction-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.springframework.web.servlet-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/com.springsource.org.aopalliance-1.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-security-core-3.1.2.RELEASE.jar" sourcepath="/opt/spring-security-3.1.2.RELEASE/dist/spring-security-core-3.1.2.RELEASE-sources.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-security-web-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-security-config-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-annotations-2.0.6.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-core-2.0.6.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-databind-2.0.6.jar"/>

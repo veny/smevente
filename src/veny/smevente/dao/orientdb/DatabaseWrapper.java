@@ -1,5 +1,6 @@
 package veny.smevente.dao.orientdb;
 
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -166,7 +167,7 @@ public final class DatabaseWrapper implements DisposableBean {
 //    }
     public OObjectDatabaseTx get() {
 //        return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
-        OObjectDatabaseTx db = new OObjectDatabaseTx("remote:/temp").open("admin", "admin");
+        OObjectDatabaseTx db = new OObjectDatabaseTx(databaseUrl).open(username, password);
         return db;
     }
 
