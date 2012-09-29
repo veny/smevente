@@ -24,11 +24,8 @@ import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.client.utils.SmsWidgetEvent;
 import veny.smevente.client.utils.SmsWidgetEvent.SmsWidgetHandler;
-import veny.smevente.model.MedicalHelpCategory;
-import veny.smevente.model.Patient;
 import veny.smevente.model.Event;
 import veny.smevente.model.User;
-import veny.smevente.shared.EntityTypeEnum;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
 import com.google.gwt.dom.client.Document;
@@ -100,18 +97,13 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** Popup panel with context menu. */
     private final PopupPanel menuPopupPanel = new PopupPanel(false, false);
 
-    /** List of available patients loaded by 'onShow' action. */
-    private List<Patient> patients;
-    /** List of available Medical Help Categories. */
-    private List<MedicalHelpCategory> medicalHelpCategories;
-
 
     // ---------------------------------------------------- HeaderHandler Stuff
 
     /** {@inheritDoc} */
     @Override
     public void unitChanged(final HeaderEvent event) {
-        loadUnitInfo(event.getUnit().getId());
+        /* I don't care */
     }
 
     /** {@inheritDoc} */
@@ -151,14 +143,15 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     public void create(final CrudEvent event) {
-        if (EntityTypeEnum.PATIENT == event.getEntityType() && null != patients) {
-            patients.add((Patient) event.getData());
-        } else if (EntityTypeEnum.MHC == event.getEntityType() && null != medicalHelpCategories) {
-            MedicalHelpCategory newMhc = (MedicalHelpCategory) event.getData();
-            if (MedicalHelpCategory.TYPE_STANDARD == newMhc.getType()) {
-                medicalHelpCategories.add(newMhc);
-            }
-        }
+        throw new IllegalStateException("has to be finished after refactoring");
+//XXX        if (EntityTypeEnum.PATIENT == event.getEntityType() && null != patients) {
+//            patients.add((Patient) event.getData());
+//        } else if (EntityTypeEnum.MHC == event.getEntityType() && null != medicalHelpCategories) {
+//            MedicalHelpCategory newMhc = (MedicalHelpCategory) event.getData();
+//            if (MedicalHelpCategory.TYPE_STANDARD == newMhc.getType()) {
+//                medicalHelpCategories.add(newMhc);
+//            }
+//        }
     }
     /** {@inheritDoc} */
     @Override
@@ -167,28 +160,30 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     public void update(final CrudEvent event) {
-        if (EntityTypeEnum.PATIENT == event.getEntityType()) {
-            final int idx = getPatientIndex(((Patient) event.getData()).getId());
-            if (-1 != idx) {
-                patients.set(idx, (Patient) event.getData());
-            }
-        } else if (EntityTypeEnum.MHC == event.getEntityType()) {
-            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategory) event.getData()).getId());
-            if (-1 != idx) {
-                medicalHelpCategories.set(idx, (MedicalHelpCategory) event.getData());
-            }
-        }
+        throw new IllegalStateException("has to be finished after refactoring");
+//XXX        if (EntityTypeEnum.PATIENT == event.getEntityType()) {
+//            final int idx = getPatientIndex(((Patient) event.getData()).getId());
+//            if (-1 != idx) {
+//                patients.set(idx, (Patient) event.getData());
+//            }
+//        } else if (EntityTypeEnum.MHC == event.getEntityType()) {
+//            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategory) event.getData()).getId());
+//            if (-1 != idx) {
+//                medicalHelpCategories.set(idx, (MedicalHelpCategory) event.getData());
+//            }
+//        }
     }
     /** {@inheritDoc} */
     @Override
     public void delete(final CrudEvent event) {
-        if (EntityTypeEnum.PATIENT == event.getEntityType()) {
-            final int idx = getPatientIndex(((Patient) event.getData()).getId());
-            patients.remove(idx);
-        } else if (EntityTypeEnum.MHC == event.getEntityType()) {
-            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategory) event.getData()).getId());
-            medicalHelpCategories.remove(idx);
-        }
+        throw new IllegalStateException("has to be finished after refactoring");
+//XXX        if (EntityTypeEnum.PATIENT == event.getEntityType()) {
+//            final int idx = getPatientIndex(((Patient) event.getData()).getId());
+//            patients.remove(idx);
+//        } else if (EntityTypeEnum.MHC == event.getEntityType()) {
+//            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategory) event.getData()).getId());
+//            medicalHelpCategories.remove(idx);
+//        }
     }
 
     // -------------------------------------------------------- Presenter Stuff
@@ -268,13 +263,13 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     protected void onShow(final Object parameter) {
-        // unit info is loaded by HeaderEvent.unitChanget
-        // but if the initial presenter is other one according to history token (e.g. FindPatient)
-        // -> calendar presenter not created -> not registered on Bus -> info is not loaded
-        // [if App.get().getUnits() is null <- post login process in progress -> wait for HeaderEvent]
-        if (null == patients && null != App.get().getMemberships()) {
-            loadUnitInfo(App.get().getSelectedUnit().getId());
-        }
+//XXX        // unit info is loaded by HeaderEvent.unitChanget
+//        // but if the initial presenter is other one according to history token (e.g. FindPatient)
+//        // -> calendar presenter not created -> not registered on Bus -> info is not loaded
+//        // [if App.get().getUnits() is null <- post login process in progress -> wait for HeaderEvent]
+//        if (null == patients && null != App.get().getMemberships()) {
+//            loadUnitInfo(App.get().getSelectedUnit().getId());
+//        }
 
         setScrollByTime();
     }
@@ -353,8 +348,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
         final Date from = DateUtils.getWeekFrom(null == weekDate ? App.get().getWeekDate() : weekDate);
         final Date to = DateUtils.getWeekTo(null == weekDate ? App.get().getWeekDate() : weekDate);
-        RestHandler rest = createExclusiveClientRestHandler(
-                "/rest/user/" + user.getId() + "/sms/from/" + from.getTime() + "/to/" + to.getTime() + "/");
+        final RestHandler rest = createExclusiveClientRestHandler(
+                "/rest/user/" + URL.encodePathSegment((String) user.getId())
+                + "/sms/from/" + from.getTime() + "/to/" + to.getTime() + "/");
 
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
@@ -421,28 +417,6 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     // -------------------------------------------------------- Assistant Stuff
 
     /**
-     * Loads unit info (patients, medical help categories, ...).
-     * @param unitId unit ID
-     */
-    private void loadUnitInfo(final Object unitId) {
-        // get all Patients & Medical Help Categories
-
-        // there cannot be used method 'createClientRestHandler'
-        // because the unit info HAS to be loaded even if the presenter is NOT visible
-        // BF #45
-        final RestHandler rest = new RestHandler("/rest/unit/" + URL.encodePathSegment((String) unitId) + "/info/");
-        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
-            @Override
-            public void onSuccess(final String jsonText) {
-                patients = App.get().getJsonDeserializer().deserializeList(Patient.class, "patients", jsonText);
-                medicalHelpCategories = App.get().getJsonDeserializer().deserializeList(
-                        MedicalHelpCategory.class, "medicalHelpCategories", jsonText);
-            }
-        });
-        rest.get();
-    }
-
-    /**
      * Display a SMS detail dialog.
      * @param smsWidget SMS widget wrapping the SMS
      */
@@ -461,7 +435,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     private void updateDlg(final SmsWidget smsWidget) {
         final SmsDlgPresenter p =
             (SmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
-        p.init(smsWidget.getSms(), patients, medicalHelpCategories);
+        p.init(smsWidget.getSms(), App.get().getPatients(), App.get().getMedicalHelpCategories());
         final SmeventeDialog dlg = new SmeventeDialog("SMS", p);
 
         dlg.getOkButton().addClickHandler(new ClickHandler() {
@@ -564,9 +538,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      */
     @SuppressWarnings("deprecation")
     private void displaySmsDialog(final int eventX, final int eventY, final DayColumn col) {
-        if (patients.isEmpty()) {
+        if (App.get().getPatients().isEmpty()) {
             Window.alert(CONSTANTS.noPatientInUnit()[App.get().getSelectedUnitTextVariant()]);
-        } else if (medicalHelpCategories.isEmpty()) {
+        } else if (App.get().getMedicalHelpCategories().isEmpty()) {
             Window.alert(CONSTANTS.noMhcInUnit()[App.get().getSelectedUnitTextVariant()]);
         } else {
             final int y = eventY - col.getAbsoluteTop() + Document.get().getScrollTop();
@@ -578,7 +552,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
             final SmsDlgPresenter smsDlgPresenter =
                 (SmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
-            smsDlgPresenter.init(dateTime, patients, medicalHelpCategories);
+            smsDlgPresenter.init(dateTime, App.get().getPatients(), App.get().getMedicalHelpCategories());
             final SmeventeDialog dlg = new SmeventeDialog("SMS", smsDlgPresenter);
 //            dlg.setPopupPosition(eventX, eventY);
             dlg.center();
@@ -660,9 +634,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      */
     private int getPatientIndex(final Object patientId) {
         if (null == patientId) { throw new NullPointerException("patient ID cannot be null"); }
-        if (null != patients) {
-            for (int i = 0; i < patients.size(); i++) {
-                if (patients.get(i).getId().equals(patientId)) { return i; }
+        if (null != App.get().getPatients()) {
+            for (int i = 0; i < App.get().getPatients().size(); i++) {
+                if (App.get().getPatients().get(i).getId().equals(patientId)) { return i; }
             }
         }
         return -1;
@@ -675,9 +649,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      */
     private int getMedicalHelpCategoryIndex(final Object categoryId) {
         if (null == categoryId) { throw new NullPointerException("category ID cannot be null"); }
-        if (null != medicalHelpCategories) {
-            for (int i = 0; i < medicalHelpCategories.size(); i++) {
-                if (medicalHelpCategories.get(i).getId().equals(categoryId)) { return i; }
+        if (null != App.get().getMedicalHelpCategories()) {
+            for (int i = 0; i < App.get().getMedicalHelpCategories().size(); i++) {
+                if (App.get().getMedicalHelpCategories().get(i).getId().equals(categoryId)) { return i; }
             }
         }
         return -1;

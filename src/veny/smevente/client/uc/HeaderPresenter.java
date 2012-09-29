@@ -17,8 +17,11 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.CrudEventHandler;
 import veny.smevente.client.utils.HeaderEvent;
+import veny.smevente.model.MedicalHelpCategory;
 import veny.smevente.model.Membership;
+import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
+import veny.smevente.model.User;
 import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -26,6 +29,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Window;
@@ -255,7 +259,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
     // -------------------------------------------------------- Assistant Stuff
 
     /**
-     * Loads information about user context:<ul>
+     * Loads information about user context (onShow == after login):<ul>
      * <li>username
      * <li>units
      * </ul>.
@@ -281,6 +285,34 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
                 for (Membership m : membs) { view.getUnits().addItem(m.unitName()); }
                 // simulate selection on first unit -> fire event
                 unitSelected(0);
+            }
+        });
+        rest.get();
+    }
+
+    /**
+     * Loads unit info (patients, medical help categories, ...).
+     * @param unitId unit ID
+     */
+    private void loadUnitInfo(final Object unitId) {
+        // get all Patients & MHCs, other users if the logged in is ADMIN
+        final RestHandler rest = new RestHandler("/rest/unit/" + URL.encodePathSegment((String) unitId) + "/info/");
+        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
+            @Override
+            public void onSuccess(final String jsonText) {
+                App.get().setPatients(
+                        App.get().getJsonDeserializer().deserializeList(Patient.class, "patients", jsonText));
+                App.get().setMedicalHelpCategories(
+                        App.get().getJsonDeserializer().deserializeList(
+                                MedicalHelpCategory.class, "medicalHelpCategories", jsonText));
+                App.get().setUnitMembers(
+                        App.get().getJsonDeserializer().deserializeList(User.class, "unitMembers", jsonText));
+
+                for (User u : App.get().getUnitMembers()) { view.getUnitMembers().addItem(u.getFullname()); }
+                // the current logged in user is always on the first position (index 0)
+                App.get().setSelectedUnitMemberIndex(0);
+                // fire event (unit member)
+                eventBus.fireEvent(new HeaderEvent(App.get().getSelectedUnitMember()));
             }
         });
         rest.get();
@@ -343,17 +375,11 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
 
         // clear content of members drop down
         view.getUnitMembers().clear();
-        // reload
-//XXX        for (Membership m : newUnit.getMembers()) {
-//            view.getUnitMembers().addItem(m.getUser().getFullname());
-//        }
-        // the current logged in user is always on the first position (index 0)
-        App.get().setSelectedUnitMemberIndex(0);
+        // reload Patients & MHCs, other users if the logged in is ADMIN
+        loadUnitInfo(newUnit.getId());
 
         // fire event (unit)
         eventBus.fireEvent(new HeaderEvent(newUnit));
-        // fire event (unit member)
-//XXX        eventBus.fireEvent(new HeaderEvent(App.get().getSelectedUnitMember()));
     }
 
     /**

@@ -271,7 +271,7 @@ public class JsonDeserializer {
      */
     private User userFromJson(final JSONObject jsObj) {
         final User rslt = new User();
-        rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
+        rslt.setId(jsObj.get("id").isString().stringValue());
         rslt.setUsername(jsObj.get("username").isString().stringValue());
         rslt.setFullname(jsObj.get("fullname").isString().stringValue());
         return rslt;

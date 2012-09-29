@@ -1,5 +1,6 @@
 package veny.smevente.server;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,11 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
 import veny.smevente.model.User;
 import veny.smevente.service.UserService;
@@ -115,7 +118,7 @@ public class UserController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView findUsers(
             final HttpServletRequest request,
-            @RequestParam("unitId") final Long unitId,
+            @RequestParam("unitId") final String unitId,
             @RequestParam("username") final String userName,
             @RequestParam("fullname") final String fullName) {
 
@@ -143,7 +146,7 @@ public class UserController {
         final HttpServletRequest request,
         final HttpServletResponse response,
         final User user,
-        @RequestParam("unitId") final Long unitId,
+        @RequestParam("unitId") final String unitId,
         @RequestParam("type") final Integer type,
         @RequestParam("significance") final Integer significance) {
 
@@ -247,32 +250,33 @@ public class UserController {
 //
 //        return modelAndView;
 //    }
-//
-//    /**
-//     * Gets list of SMSs for given period.
-//     * This methods does not distinguish between units to see all terms of a given author.
-//     *
-//     * @param request HTTP request
-//     * @param userId author ID
-//     * @param from date from
-//     * @param to date to
-//     * @return list of <code>Sms</code> as JSON
-//     */
-//    @RequestMapping(value = "/{userId}/sms/from/{from}/to/{to}/", method = RequestMethod.GET)
-//    public ModelAndView findSms(
-//            final HttpServletRequest request,
-//            @PathVariable("userId") final Long userId,
-//            @PathVariable("from") final Date from,
-//            @PathVariable("to") final Date to) {
-//
+
+    /**
+     * Gets list of SMSs for given period.
+     * This methods does not distinguish between units to see all terms of a given author.
+     *
+     * @param request HTTP request
+     * @param userId author ID
+     * @param from date from
+     * @param to date to
+     * @return list of <code>Sms</code> as JSON
+     */
+    @RequestMapping(value = "/{userId}/sms/from/{from}/to/{to}/", method = RequestMethod.GET)
+    public ModelAndView findSms(
+            final HttpServletRequest request,
+            @PathVariable("userId") final String userId,
+            @PathVariable("from") final Date from,
+            @PathVariable("to") final Date to) {
+
 //        final List<Event> rslt = smsService.findSms(userId, from, to);
-//
-//        final ModelAndView modelAndView = new ModelAndView("jsonView");
-//        modelAndView.addObject("smss", rslt);
-//
-//        return modelAndView;
-//    }
-//
+        final List<Event> rslt = new ArrayList<Event>();
+
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("smss", rslt);
+
+        return modelAndView;
+    }
+
 //    /**
 //     * Sends SMS.
 //     *
