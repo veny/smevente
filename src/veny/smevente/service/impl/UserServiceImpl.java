@@ -340,7 +340,7 @@ public class UserServiceImpl implements UserService {
     // TODO [veny,B] think of authorization
     @Transactional(readOnly = true)
     @Override
-    public List<User> getUsersInUnit(final Object unitId, final Object userId) {
+    public List<User> getOtherUsersInUnit(final Object unitId, final Object userId) {
         final List<User> rslt = new ArrayList<User>();
         // load the user again <- 'userId' is probably from session
         // and insert it into result list

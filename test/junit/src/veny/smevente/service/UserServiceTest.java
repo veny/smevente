@@ -397,7 +397,7 @@ public class UserServiceTest extends AbstractBaseTest {
     }
 
     /** UserService.getMembershipsByUser. */
-    @Test
+    @Test // user/info/
     public void testGetMembershipsByUser() {
         final User userA = createDefaultUser();
         final Unit unitA = createDefaultUnit();
@@ -450,6 +450,55 @@ public class UserServiceTest extends AbstractBaseTest {
         membs = userService.getMembershipsByUser(userB.getId());
         assertNotNull(membs);
         assertTrue(membs.isEmpty());
+    }
+
+    /** UserService.getOtherUsersInUnit. */
+    @Test // unit/{id}/info/
+    public void testGetOtherUsersInUnit() {
+        final User userA = createDefaultUser();
+        final User userB = createUser("foo", "password", "Foo Bar", false);
+        final Unit unitA = createDefaultUnit();
+        final Unit unitB = createUnit("Foo", "foo", Unit.TextVariant.PATIENT, 0L, "");
+        final Unit unitC = createUnit("Baz", "bar", Unit.TextVariant.PATIENT, 0L, "");
+
+        // userA  - ADMIN - unitA
+        // userA  - MEMBER - unitB
+        // userB  - MEMBER - unitA
+        // userB  - ADMIN - unitB
+        userService.storeMembership(unitA.getId(), userA.getId(), Membership.Role.ADMIN, 0);
+        userService.storeMembership(unitA.getId(), userB.getId(), Membership.Role.MEMBER, 0);
+        userService.storeMembership(unitB.getId(), userA.getId(), Membership.Role.MEMBER, 0);
+        userService.storeMembership(unitB.getId(), userB.getId(), Membership.Role.ADMIN, 0);
+
+        // user A
+        List<User> others = userService.getOtherUsersInUnit(unitA.getId(), userA.getId());
+        assertNotNull(others);
+        assertEquals(2, others.size());
+        assertEquals(userA.getId(), others.get(0).getId()); // A has to be first
+        assertEquals(userB.getId(), others.get(1).getId());
+        others = userService.getOtherUsersInUnit(unitB.getId(), userA.getId());
+        assertNotNull(others);
+        assertEquals(1, others.size());
+        assertEquals(userA.getId(), others.get(0).getId());
+        try {
+            userService.getOtherUsersInUnit(unitC.getId(), userA.getId());
+            assertEquals("expected IllegalStateException", true, false);
+        } catch (IllegalStateException e) { assertEquals(true, true); }
+
+        // user B
+        others = userService.getOtherUsersInUnit(unitA.getId(), userB.getId());
+        assertNotNull(others);
+        assertEquals(1, others.size());
+        assertEquals(userB.getId(), others.get(0).getId());
+        others = userService.getOtherUsersInUnit(unitB.getId(), userB.getId());
+        assertNotNull(others);
+        assertEquals(2, others.size());
+        assertEquals(userB.getId(), others.get(0).getId()); // B has to be first
+        assertEquals(userA.getId(), others.get(1).getId());
+        try {
+            userService.getOtherUsersInUnit(unitC.getId(), userB.getId());
+            assertEquals("expected IllegalStateException", true, false);
+        } catch (IllegalStateException e) { assertEquals(true, true); }
     }
 
 //    /** UserService.getUnitsOfUser. */

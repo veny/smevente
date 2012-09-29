@@ -271,7 +271,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
                 final String username = App.get().getJsonDeserializer().createString("username", jsonText);
                 view.getUsername().setText(username);
 
-                // memberships
+                // memberships with units (users are 'null')
                 final List<Membership> membs =
                         App.get().getJsonDeserializer().deserializeList(Membership.class, "memberships", jsonText);
                 appInit(membs);
@@ -341,8 +341,9 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
         // show/hide 'Limited version' text
         view.getLimitedVersion().setVisible(null != newUnit.getLimitedSmss());
 
-        // change content of members drop down
+        // clear content of members drop down
         view.getUnitMembers().clear();
+        // reload
 //XXX        for (Membership m : newUnit.getMembers()) {
 //            view.getUnitMembers().addItem(m.getUser().getFullname());
 //        }

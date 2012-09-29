@@ -131,7 +131,7 @@ public interface UserService {
 
     /**
      * Gets other users in given unit. Returns<ul>
-     * <li>all users in unit if the specified user is ADMIN in unit, the logged in user is always on index 0
+     * <li>all users in unit where the specified user is ADMIN in, the given user is always on index 0
      * <li>only given user if not ADMIN
      * </ul>
      *
@@ -139,7 +139,7 @@ public interface UserService {
      * @param unitId unit ID
      * @return list of users in unit
      */
-    List<User> getUsersInUnit(Object unitId, Object userId);
+    List<User> getOtherUsersInUnit(Object unitId, Object userId);
 
 //    /**
 //     * Gets units for given user.
