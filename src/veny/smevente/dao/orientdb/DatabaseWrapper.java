@@ -1,6 +1,5 @@
 package veny.smevente.dao.orientdb;
 
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,7 +14,6 @@ import veny.smevente.model.User;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
-import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
@@ -124,7 +122,7 @@ public final class DatabaseWrapper implements DisposableBean {
 
             if (!db.getMetadata().getSchema().existsClass(AbstractEntity.class.getSimpleName())) {
                 // AbstractEntity
-                OClass entity = db.getMetadata().getSchema().createClass(AbstractEntity.class.getSimpleName());
+                OClass entity = db.getMetadata().getSchema().createAbstractClass(AbstractEntity.class.getSimpleName());
                 entity.createProperty("deleted", OType.BOOLEAN); //.setMandatory(true);
                 entity.createProperty("revision", OType.STRING);
                 // User
@@ -144,6 +142,16 @@ public final class DatabaseWrapper implements DisposableBean {
                 // Patient
                 OClass patient = db.getMetadata().getSchema().createClass(Patient.class.getSimpleName(), entity);
                 patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
+                patient.createProperty("firstname", OType.STRING).setMandatory(true).setNotNull(true);
+                patient.createProperty("surname", OType.STRING).setMandatory(true).setNotNull(true);
+                patient.createProperty("phoneNumber", OType.STRING);
+                patient.createProperty("birthNumber", OType.STRING);
+                patient.createProperty("degree", OType.STRING);
+                patient.createProperty("street", OType.STRING);
+                patient.createProperty("city", OType.STRING);
+                patient.createProperty("zipCode", OType.STRING);
+                patient.createProperty("employer", OType.STRING);
+                patient.createProperty("careers", OType.STRING);
             }
         }
 

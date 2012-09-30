@@ -300,7 +300,7 @@ public class JsonDeserializer {
      */
     private Patient patientFromJson(final JSONObject jsObj) {
         final Patient rslt = new Patient();
-        rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
+        rslt.setId(getString(jsObj.get("id")));
         final JSONObject jsUnitObj = jsObj.get("unit").isObject();
         if (null != jsUnitObj) {
             rslt.setUnit(unitFromJson(jsUnitObj));
