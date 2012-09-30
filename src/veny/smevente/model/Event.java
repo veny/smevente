@@ -28,9 +28,9 @@ public class Event extends AbstractEntity {
      */
     public enum Type {
         /** Standard event to be sent by timer. */
-        STANDARD,
+        IN_CALENDAR,
         /** Event to be sent immediately after creation. */
-        SPECIAL
+        IMMEDIATE_MESSAGE
     }
 
     /** Maximal number of attempts to send a SMS. */
@@ -56,7 +56,7 @@ public class Event extends AbstractEntity {
     private Patient patient;
     /** Medical Help Category. */
     @ManyToOne
-    private MedicalHelpCategory medicalHelpCategory;
+    private Procedure medicalHelpCategory;
     /** Start time. */
     @Column
     private Date startTime;
@@ -95,10 +95,10 @@ public class Event extends AbstractEntity {
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
-    public MedicalHelpCategory getMedicalHelpCategory() {
+    public Procedure getMedicalHelpCategory() {
         return medicalHelpCategory;
     }
-    public void setMedicalHelpCategory(MedicalHelpCategory medicalHelpCategory) {
+    public void setMedicalHelpCategory(Procedure medicalHelpCategory) {
         this.medicalHelpCategory = medicalHelpCategory;
     }
     public Date getStartTime() {
@@ -142,15 +142,14 @@ public class Event extends AbstractEntity {
     /**
      * Virtual attribute providing an enumeration entry to identify event type.
      *
-     * @return event type or <i>Type.STANDARD</i> if not defined
-     * @see Role
+     * @return event type or <i>Type.IN_CALENDAR</i> if not defined
      */
     @Transient
     @JsonIgnore
     public Type enumType() {
         String t = getType();
         if (null == t || 0 == t.trim().length()) {
-            return Type.STANDARD;
+            return Type.IN_CALENDAR;
         } else {
             return Type.valueOf(t.trim());
         }

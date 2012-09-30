@@ -17,7 +17,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.CrudEventHandler;
 import veny.smevente.client.utils.HeaderEvent;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
@@ -304,7 +304,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
                         App.get().getJsonDeserializer().deserializeList(Patient.class, "patients", jsonText));
                 App.get().setMedicalHelpCategories(
                         App.get().getJsonDeserializer().deserializeList(
-                                MedicalHelpCategory.class, "medicalHelpCategories", jsonText));
+                                Procedure.class, "medicalHelpCategories", jsonText));
                 App.get().setUnitMembers(
                         App.get().getJsonDeserializer().deserializeList(User.class, "unitMembers", jsonText));
 

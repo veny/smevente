@@ -7,7 +7,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 
 import veny.smevente.AbstractBaseTestWithAuth;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;

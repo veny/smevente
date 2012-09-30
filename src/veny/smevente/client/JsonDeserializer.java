@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Event;
@@ -74,8 +74,8 @@ public class JsonDeserializer {
             result = (T) userFromJson(jsObj);
         } else if (Patient.class == classToCreate) {
             result = (T) patientFromJson(jsObj);
-        } else if (MedicalHelpCategory.class == classToCreate) {
-            result = (T) mhcFromJson(jsObj);
+        } else if (Procedure.class == classToCreate) {
+            result = (T) procedureFromJson(jsObj);
         } else if (Event.class == classToCreate) {
             result = (T) smsFromJson(jsObj);
         } else {
@@ -120,7 +120,7 @@ public class JsonDeserializer {
             rslt = (List<T>) membershipListFromJson(jsArr);
         } else if (Patient.class == classToCreate) {
             rslt = (List<T>) patientListFromJson(jsArr);
-        } else if (MedicalHelpCategory.class == classToCreate) {
+        } else if (Procedure.class == classToCreate) {
             rslt = (List<T>) mhcListFromJson(jsArr);
         } else if (Event.class == classToCreate) {
             rslt = (List<T>) smsListFromJson(jsArr);
@@ -340,18 +340,18 @@ public class JsonDeserializer {
      * @param jsObj JSON object
      * @return instance of <code>MedicalHelpCategory</code>
      */
-    private MedicalHelpCategory mhcFromJson(final JSONObject jsObj) {
-        final MedicalHelpCategory rslt = new MedicalHelpCategory();
-        rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
+    private Procedure procedureFromJson(final JSONObject jsObj) {
+        final Procedure rslt = new Procedure();
+        rslt.setId(jsObj.get("id").isString().stringValue());
         rslt.setName(jsObj.get("name").isString().stringValue());
-        rslt.setSmsText(jsObj.get("smsText").isString().stringValue());
+        rslt.setMessageText(jsObj.get("messageText").isString().stringValue());
         JSONValue type = jsObj.get("type");
         if (type == null || type.isNumber() == null) {
-            rslt.setType(MedicalHelpCategory.TYPE_STANDARD);
+            rslt.setType(Event.Type.IN_CALENDAR.toString());
         } else {
-            rslt.setType((short) type.isNumber().doubleValue());
+            rslt.setType(type.isString().stringValue());
         }
-        if (rslt.getType() == MedicalHelpCategory.TYPE_STANDARD) {
+        if (rslt.enumType() == Event.Type.IN_CALENDAR) {
             rslt.setColor(jsObj.get("color").isString().stringValue());
             rslt.setTime((long) jsObj.get("time").isNumber().doubleValue());
         }
@@ -362,8 +362,8 @@ public class JsonDeserializer {
      * @param jsArr JSON array
      * @return list of <code>MedicalHelpCategory</code>
      */
-    private List<MedicalHelpCategory> mhcListFromJson(final JSONArray jsArr) {
-        final List<MedicalHelpCategory> rslt = new ArrayList<MedicalHelpCategory>();
+    private List<Procedure> mhcListFromJson(final JSONArray jsArr) {
+        final List<Procedure> rslt = new ArrayList<Procedure>();
 
         for (int i = 0; i < jsArr.size(); i++) {
             JSONValue jsonValue = jsArr.get(i);
@@ -371,16 +371,16 @@ public class JsonDeserializer {
             if (jsObj == null) {
                 throw new IllegalStateException("not an JSON object: " + jsonValue);
             }
-            rslt.add(mhcFromJson(jsObj));
+            rslt.add(procedureFromJson(jsObj));
         }
         return rslt;
     }
 
 
     /**
-     * Gets <code>Sms</code> from JSON.
+     * Gets <code>Event</code> from JSON.
      * @param jsObj JSON object
-     * @return instance of <code>Sms</code>
+     * @return instance of <code>Event</code>
      */
     private Event smsFromJson(final JSONObject jsObj) {
         final Event rslt = new Event();
@@ -395,7 +395,7 @@ public class JsonDeserializer {
         }
         final JSONObject jsStObj = jsObj.get("medicalHelpCategory").isObject();
         if (null != jsStObj) {
-            rslt.setMedicalHelpCategory(mhcFromJson(jsStObj));
+            rslt.setMedicalHelpCategory(procedureFromJson(jsStObj));
         }
         rslt.setStartTime(new Date((long) jsObj.get("medicalHelpStartTime").isNumber().doubleValue()));
         rslt.setLength((int) jsObj.get("medicalHelpLength").isNumber().doubleValue());

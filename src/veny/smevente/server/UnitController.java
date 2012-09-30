@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Patient;
 import veny.smevente.model.User;
 import veny.smevente.service.UnitService;
@@ -67,7 +67,7 @@ public class UnitController {
 //        final List<MedicalHelpCategory> mhcs =
 //            unitService.getMedicalHelpCategoriesByUnit(unitId, MedicalHelpCategory.TYPE_STANDARD);
 //        modelAndView.addObject("medicalHelpCategories", mhcs);
-modelAndView.addObject("medicalHelpCategories", new ArrayList<MedicalHelpCategory>());
+modelAndView.addObject("medicalHelpCategories", new ArrayList<Procedure>());
 
         return modelAndView;
     }

@@ -18,7 +18,8 @@ import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.client.utils.UiUtils;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Event;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Patient;
 import veny.smevente.shared.EntityTypeEnum;
 import veny.smevente.shared.ExceptionJsonWrapper;
@@ -91,7 +92,7 @@ public class FindPatientPresenter
     private List<Patient> foundPatients;
 
     /** List of found special categories. */
-    private List<MedicalHelpCategory> specialCategories;
+    private List<Procedure> specialCategories;
 
     /** ID of patient where the context menu is raised. */
     private String clickedId = null;
@@ -302,12 +303,12 @@ public class FindPatientPresenter
      */
     private void findTypes() {
         final RestHandler rest = new RestHandler("/rest/unit/" + App.get().getSelectedUnit().getId()
-                + "/mhc/" + MedicalHelpCategory.TYPE_SPECIAL);
+                + "/mhc/" + Event.Type.IMMEDIATE_MESSAGE);
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
                 specialCategories = App.get().getJsonDeserializer().deserializeList(
-                        MedicalHelpCategory.class, "medicalHelpCategories", jsonText);
+                        Procedure.class, "medicalHelpCategories", jsonText);
             }
         });
         rest.get();

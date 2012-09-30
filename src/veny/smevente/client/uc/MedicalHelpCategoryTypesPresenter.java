@@ -12,7 +12,8 @@ import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Event;
+import veny.smevente.model.Procedure;
 import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -65,7 +66,7 @@ public class MedicalHelpCategoryTypesPresenter
     private final PopupPanel menuPopupPanel = new PopupPanel(true, true);
 
     /** List of found medical help categories. */
-    private List<MedicalHelpCategory> foundMedicalHelpCategories;
+    private List<Procedure> foundMedicalHelpCategories;
 
     /** ID of medical help category where the context menu is raised. */
     private String clickedId = null;
@@ -78,7 +79,7 @@ public class MedicalHelpCategoryTypesPresenter
     private int clickedRowIndex;
 
     /** Type of category to be used by presenter. */
-    private short type = MedicalHelpCategory.TYPE_STANDARD;
+    private Event.Type type = Event.Type.IN_CALENDAR;
 
     /** Handler registration for user CRUD in the Event Bus. */
     private HandlerRegistration ebusUnitSelection;
@@ -87,7 +88,7 @@ public class MedicalHelpCategoryTypesPresenter
      * Constructor.
      * @param type the type of category
      */
-    public MedicalHelpCategoryTypesPresenter(final short type) {
+    public MedicalHelpCategoryTypesPresenter(final Event.Type type) {
         this.type = type;
     }
 
@@ -129,7 +130,7 @@ public class MedicalHelpCategoryTypesPresenter
         view.getAddMhc().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
-                App.get().switchToPresenterByType(type == MedicalHelpCategory.TYPE_STANDARD
+                App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
                         ? PresenterEnum.STORE_MEDICAL_HELP_CATEGORY
                         : PresenterEnum.STORE_SPECIAL_MEDICAL_HELP_CATEGORY,
                         null);
@@ -148,8 +149,8 @@ public class MedicalHelpCategoryTypesPresenter
             @Override
             public void onDoubleClick(final DoubleClickEvent event) {
                 if (clickedRowIndex >= 0 && clickedRowIndex < foundMedicalHelpCategories.size()) {
-                    final MedicalHelpCategory mhc = foundMedicalHelpCategories.get(clickedRowIndex);
-                    App.get().switchToPresenterByType(type == MedicalHelpCategory.TYPE_STANDARD
+                    final Procedure mhc = foundMedicalHelpCategories.get(clickedRowIndex);
+                    App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
                             ? PresenterEnum.STORE_MEDICAL_HELP_CATEGORY
                             : PresenterEnum.STORE_SPECIAL_MEDICAL_HELP_CATEGORY,
                             mhc);
@@ -160,8 +161,8 @@ public class MedicalHelpCategoryTypesPresenter
         // context menu
         final Command updateCommand = new Command() {
             public void execute() {
-                final MedicalHelpCategory mhc = hideMenuAndGetSelectedMedicalHelpCategory();
-                App.get().switchToPresenterByType(type == MedicalHelpCategory.TYPE_STANDARD
+                final Procedure mhc = hideMenuAndGetSelectedMedicalHelpCategory();
+                App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
                         ? PresenterEnum.STORE_MEDICAL_HELP_CATEGORY
                         : PresenterEnum.STORE_SPECIAL_MEDICAL_HELP_CATEGORY,
                         mhc);
@@ -171,9 +172,9 @@ public class MedicalHelpCategoryTypesPresenter
             public void execute() {
                 menuPopupPanel.hide();
                 final int idx = getIndexById(clickedId);
-                final MedicalHelpCategory mhc = foundMedicalHelpCategories.get(idx);
+                final Procedure mhc = foundMedicalHelpCategories.get(idx);
                 final String name = mhc.getName();
-                final String confirmMsg = (type == MedicalHelpCategory.TYPE_STANDARD
+                final String confirmMsg = (type == Event.Type.IN_CALENDAR
                         ? CONSTANTS.deleteMedicalHelpQuestion()[App.get().getSelectedUnitTextVariant()] + "\n" + name
                         : MESSAGES.deleteSpecialSmsQuestion(name));
                 if (Window.confirm(confirmMsg)) {
@@ -207,7 +208,7 @@ public class MedicalHelpCategoryTypesPresenter
     public void onShow(final Object parameter) {
         // set unit specific text
         view.getAddMhc().setText(
-                type == MedicalHelpCategory.TYPE_STANDARD
+                type == Event.Type.IN_CALENDAR
                 ? CONSTANTS.addMedicalHelp()[App.get().getSelectedUnitTextVariant()]
                 : CONSTANTS.addSpecialSms());
 
@@ -245,11 +246,11 @@ public class MedicalHelpCategoryTypesPresenter
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final MedicalHelpCategory mhc = new MedicalHelpCategory();
+                final Procedure mhc = new Procedure();
                 mhc.setId(id);
                 eventBus.fireEvent(new CrudEvent(EntityTypeEnum.MHC, OperationType.DELETE, mhc));
                 view.getResultTable().removeRow(line);
-                for (MedicalHelpCategory foundCategory : foundMedicalHelpCategories) {
+                for (Procedure foundCategory : foundMedicalHelpCategories) {
                     if (foundCategory.getId().equals(id)) {
                         foundMedicalHelpCategories.remove(foundCategory);
                         break;
@@ -272,9 +273,9 @@ public class MedicalHelpCategoryTypesPresenter
             @Override
             public void onSuccess(final String jsonText) {
                 foundMedicalHelpCategories = App.get().getJsonDeserializer().deserializeList(
-                        MedicalHelpCategory.class, "medicalHelpCategories", jsonText);
+                        Procedure.class, "medicalHelpCategories", jsonText);
                 int line = 1;
-                for (MedicalHelpCategory mhc : foundMedicalHelpCategories) {
+                for (Procedure mhc : foundMedicalHelpCategories) {
                     addMedicalHelpCategory(mhc, line);
                     line++;
                 }
@@ -288,18 +289,18 @@ public class MedicalHelpCategoryTypesPresenter
      * @param mhc the medical help category
      * @param line line where the medical help category will be inserted on
      */
-    private void addMedicalHelpCategory(final MedicalHelpCategory mhc, final int line) {
+    private void addMedicalHelpCategory(final Procedure mhc, final int line) {
         addCell(line, 0, new Label("" + line));
         addCell(line, 1, new Label(mhc.getName()));
-        if (type == MedicalHelpCategory.TYPE_STANDARD) {
+        if (type == Event.Type.IN_CALENDAR) {
             addCell(line, 3, new Label(mhc.getColor()));
             addCell(line, 4, new Label("" + mhc.getTime()));
-            addCell(line, 5, new Label(mhc.getSmsText()));
+            addCell(line, 5, new Label(mhc.getMessageText()));
             // color
             DOM.setStyleAttribute(view.getResultTable().getWidget(line, 3).getElement(),
                     "backgroundColor", "#" + mhc.getColor());
         } else {
-            addCell(line, 3, new Label(mhc.getSmsText()));
+            addCell(line, 3, new Label(mhc.getMessageText()));
         }
         final Image menuImg = new Image("images/menu_button.png");
         // medical help category ID is stored as element ID
@@ -324,7 +325,7 @@ public class MedicalHelpCategoryTypesPresenter
      * Hides the popup menu and gets the medical help category where the action has been selected on.
      * @return selected medical help category
      */
-    public MedicalHelpCategory hideMenuAndGetSelectedMedicalHelpCategory() {
+    public Procedure hideMenuAndGetSelectedMedicalHelpCategory() {
         menuPopupPanel.hide();
         final int idx = getIndexById(clickedId);
         return foundMedicalHelpCategories.get(idx);
@@ -349,7 +350,7 @@ public class MedicalHelpCategoryTypesPresenter
         if (null == foundMedicalHelpCategories) { throw new NullPointerException("patients collection is null"); }
 
         int i = 0;
-        for (MedicalHelpCategory mhc : foundMedicalHelpCategories) {
+        for (Procedure mhc : foundMedicalHelpCategories) {
             if (idAsText.equals(mhc.getId())) { return i; }
             i++;
         }

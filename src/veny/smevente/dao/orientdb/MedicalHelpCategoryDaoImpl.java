@@ -6,7 +6,7 @@ import java.util.Map;
 
 import veny.smevente.dao.MedicalHelpCategoryDao;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Procedure;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
@@ -16,14 +16,14 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 4.7.2010
  */
-public class MedicalHelpCategoryDaoImpl extends AbstractDaoOrientdb<MedicalHelpCategory>
+public class MedicalHelpCategoryDaoImpl extends AbstractDaoOrientdb<Procedure>
         implements MedicalHelpCategoryDao {
 
     /** {@inheritDoc} */
-    public MedicalHelpCategory findByNameAndType(final Object unitId, final String name, final Short categoryType) {
-        return getDatabaseWrapper().execute(new ODatabaseCallback<MedicalHelpCategory>() {
+    public Procedure findByNameAndType(final Object unitId, final String name, final Short categoryType) {
+        return getDatabaseWrapper().execute(new ODatabaseCallback<Procedure>() {
             @Override
-            public MedicalHelpCategory doWithDatabase(final OObjectDatabaseTx db) {
+            public Procedure doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
                         .append(getPersistentClass().getSimpleName())
                         .append(" WHERE unit = :unitId AND name = :name AND type = :type");
@@ -33,18 +33,18 @@ public class MedicalHelpCategoryDaoImpl extends AbstractDaoOrientdb<MedicalHelpC
                 params.put("name", name);
                 params.put("type", categoryType);
 
-                final List<MedicalHelpCategory> mhcs = executeWithSoftDelete(db, sql.toString(), params, true);
+                final List<Procedure> mhcs = executeWithSoftDelete(db, sql.toString(), params, true);
                 if (mhcs.size() > 1) {
                     throw new IllegalStateException("expected max 1 MHC, but found " + mhcs.size());
                 }
 
-                return mhcs.isEmpty() ? null : (MedicalHelpCategory) mhcs.get(0);
+                return mhcs.isEmpty() ? null : (Procedure) mhcs.get(0);
             }
         });
     }
 
     /** {@inheritDoc} */
-    public List<MedicalHelpCategory> findByType(final Object unitId, final Short categoryType, final String orderBy) {
+    public List<Procedure> findByType(final Object unitId, final Short categoryType, final String orderBy) {
         return findBy("unit", unitId, "type", categoryType, orderBy);
     }
 

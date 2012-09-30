@@ -12,7 +12,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.LoginPresenter;
 import veny.smevente.client.uc.LoginViewImpl;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
@@ -75,7 +75,7 @@ public final class App implements ValueChangeHandler<String> {
     /** List of available patients in currently selected unit. */
     private List<Patient> patients;
     /** List of available MHCs in currently selected unit. */
-    private List<MedicalHelpCategory> medicalHelpCategories;
+    private List<Procedure> medicalHelpCategories;
 
     // Current Set Data
 
@@ -418,14 +418,14 @@ public final class App implements ValueChangeHandler<String> {
      * Gets available MHCs in currently selected unit.
      * @return MHCs in currently selected unit
      */
-    public List<MedicalHelpCategory> getMedicalHelpCategories() {
+    public List<Procedure> getMedicalHelpCategories() {
         return medicalHelpCategories;
     }
     /**
      * Sets MHCs for currently selected unit.
      * @param medicalHelpCategories MHCs for currently selected unit
      */
-    public void setMedicalHelpCategories(final List<MedicalHelpCategory> medicalHelpCategories) {
+    public void setMedicalHelpCategories(final List<Procedure> medicalHelpCategories) {
         this.medicalHelpCategories = medicalHelpCategories;
     }
 

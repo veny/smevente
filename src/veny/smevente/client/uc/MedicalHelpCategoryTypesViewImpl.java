@@ -1,7 +1,7 @@
 package veny.smevente.client.uc;
 
 import veny.smevente.client.l10n.SmeventeConstants;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Event;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -40,7 +40,7 @@ public class MedicalHelpCategoryTypesViewImpl extends Composite
      * Constructor.
      * @param type the type of category
      */
-    public MedicalHelpCategoryTypesViewImpl(final short type) {
+    public MedicalHelpCategoryTypesViewImpl(final Event.Type type) {
         initWidget(BINDER.createAndBindUi(this));
 
         getResultTable().setWidget(0, 0, new Label(""));
@@ -49,7 +49,7 @@ public class MedicalHelpCategoryTypesViewImpl extends Composite
         getResultTable().getFlexCellFormatter().addStyleName(0, 1, "resultTable-header-cell");
         getResultTable().setWidget(0, 2, new Label(""));
         getResultTable().getFlexCellFormatter().addStyleName(0, 2, "resultTable-header-cell");
-        if (type == MedicalHelpCategory.TYPE_STANDARD) {
+        if (type == Event.Type.IN_CALENDAR) {
             getResultTable().setWidget(0, 3, new Label(CONSTANTS.color()));
             getResultTable().getFlexCellFormatter().addStyleName(0, 3, "resultTable-header-cell");
             getResultTable().setWidget(0, 4, new Label(CONSTANTS.time()));

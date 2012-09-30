@@ -18,7 +18,7 @@ import veny.smevente.AbstractBaseTest;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.ObjectNotFoundException;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Event;
 import veny.smevente.model.Unit;
@@ -144,7 +144,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     @Test
     public void testUpdateSms() {
         final Event created = createDefaultSms();
-        final MedicalHelpCategory mhc =
+        final Procedure mhc =
             createMedicalHelpCategory("zzz", "000000", 1, "sms text", createUnit("iii", getDefaultUnitMetadata(), 0L));
         created.setText("Esemeskus");
         created.setNotice("zxc123asdf");
@@ -234,8 +234,8 @@ public class SmsServiceTest extends AbstractBaseTest {
         final User authorB = createUser("B", "B", "B", false);
         final Patient patientA = createPatient("A", "A", null, null, unitA);
         final Patient patientB = createPatient("B", "B", null, null, unitB);
-        final MedicalHelpCategory mhcA = createMedicalHelpCategory("A", "AAAAAA", 10, "text", unitA);
-        final MedicalHelpCategory mhcB = createMedicalHelpCategory("B", "BBBBBB", 10, "text", unitB);
+        final Procedure mhcA = createMedicalHelpCategory("A", "AAAAAA", 10, "text", unitA);
+        final Procedure mhcB = createMedicalHelpCategory("B", "BBBBBB", 10, "text", unitB);
 
         assertEquals(0, smsService.findSms(authorA.getId(), from, to).size());
         assertEquals(0, smsService.findSms(authorB.getId(), from, to).size());
@@ -347,7 +347,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     public void testSendSms() {
         final User author = createDefaultUser();
         final Patient patient = createDefaultPatient();
-        final MedicalHelpCategory mhc =
+        final Procedure mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, patient.getUnit());
 
         final Event sms = new Event();
@@ -369,7 +369,7 @@ public class SmsServiceTest extends AbstractBaseTest {
         final User author = createDefaultUser();
         final Unit limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
         final Patient patient = createPatient("a", "b", "606146177", null, limitedUnit);
-        final MedicalHelpCategory mhc =
+        final Procedure mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, limitedUnit);
 
         final Event sms = new Event();
@@ -400,7 +400,7 @@ public class SmsServiceTest extends AbstractBaseTest {
     @Test
     public void testBF29() throws Exception {
         final Patient patient = createDefaultPatient();
-        final MedicalHelpCategory mhc = createMedicalHelpCategory(
+        final Procedure mhc = createMedicalHelpCategory(
                 MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, patient.getUnit());
         @SuppressWarnings("deprecation")
         final Date date = new Date(111, 0, 1, 12, 30); // 1.1.2011 12:30
@@ -432,7 +432,7 @@ public class SmsServiceTest extends AbstractBaseTest {
         final User author = createDefaultUser();
         final Unit limitedUnit = createUnit("limited", getDefaultUnitMetadata(), 1L);
         final Patient patient = createPatient("a", "b", "606146177", null, limitedUnit);
-        final MedicalHelpCategory mhc =
+        final Procedure mhc =
             createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, limitedUnit);
 
         final Event firstSms = new Event();

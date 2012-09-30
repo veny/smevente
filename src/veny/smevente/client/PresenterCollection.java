@@ -7,35 +7,35 @@ import java.util.Map;
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.Presenter;
 import veny.smevente.client.mvp.View;
+import veny.smevente.client.uc.CalendarPresenter;
+import veny.smevente.client.uc.CalendarViewImpl;
 import veny.smevente.client.uc.ChangePasswordPresenter;
 import veny.smevente.client.uc.ChangePasswordViewImpl;
+import veny.smevente.client.uc.FindPatientPresenter;
+import veny.smevente.client.uc.FindPatientViewImpl;
 import veny.smevente.client.uc.FindUserPresenter;
 import veny.smevente.client.uc.FindUserViewImpl;
+import veny.smevente.client.uc.HeaderPresenter;
+import veny.smevente.client.uc.HeaderViewImpl;
 import veny.smevente.client.uc.MedicalHelpCategoryTypesPresenter;
 import veny.smevente.client.uc.MedicalHelpCategoryTypesViewImpl;
 import veny.smevente.client.uc.PatientHistoryPresenter;
 import veny.smevente.client.uc.PatientHistoryViewImpl;
-import veny.smevente.client.uc.SpecialSmsDlgPresenter;
-import veny.smevente.client.uc.SpecialSmsDlgViewImpl;
-import veny.smevente.client.uc.StoreMedicalHelpCategoryPresenter;
-import veny.smevente.client.uc.StoreMedicalHelpCategoryViewImpl;
-import veny.smevente.client.uc.StorePatientPresenter;
-import veny.smevente.client.uc.StorePatientViewImpl;
-import veny.smevente.client.uc.CalendarPresenter;
-import veny.smevente.client.uc.CalendarViewImpl;
-import veny.smevente.client.uc.FindPatientPresenter;
-import veny.smevente.client.uc.FindPatientViewImpl;
-import veny.smevente.client.uc.HeaderPresenter;
-import veny.smevente.client.uc.HeaderViewImpl;
 import veny.smevente.client.uc.SmsDetailDlgPresenter;
 import veny.smevente.client.uc.SmsDetailDlgViewImpl;
 import veny.smevente.client.uc.SmsDlgPresenter;
 import veny.smevente.client.uc.SmsDlgViewImpl;
 import veny.smevente.client.uc.SmsStatisticPresenter;
 import veny.smevente.client.uc.SmsStatisticViewImpl;
+import veny.smevente.client.uc.SpecialSmsDlgPresenter;
+import veny.smevente.client.uc.SpecialSmsDlgViewImpl;
+import veny.smevente.client.uc.StoreMedicalHelpCategoryPresenter;
+import veny.smevente.client.uc.StoreMedicalHelpCategoryViewImpl;
+import veny.smevente.client.uc.StorePatientPresenter;
+import veny.smevente.client.uc.StorePatientViewImpl;
 import veny.smevente.client.uc.StoreUserPresenter;
 import veny.smevente.client.uc.StoreUserViewImpl;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Event;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -223,28 +223,28 @@ public class PresenterCollection {
                 break;
             case STORE_MEDICAL_HELP_CATEGORY:
                 StoreMedicalHelpCategoryPresenter createMedicalHelpCategoryPresenter =
-                    new StoreMedicalHelpCategoryPresenter(MedicalHelpCategory.TYPE_STANDARD);
+                    new StoreMedicalHelpCategoryPresenter(Event.Type.IN_CALENDAR);
                 createMedicalHelpCategoryPresenter.bind(new StoreMedicalHelpCategoryViewImpl());
                 presenter = createMedicalHelpCategoryPresenter;
                 break;
             case MEDICAL_HELP_CATEGORY_TYPES:
                 MedicalHelpCategoryTypesPresenter medicalHelpCategoryTypesPresenter =
-                    new MedicalHelpCategoryTypesPresenter(MedicalHelpCategory.TYPE_STANDARD);
+                    new MedicalHelpCategoryTypesPresenter(Event.Type.IN_CALENDAR);
                 medicalHelpCategoryTypesPresenter.bind(
-                        new MedicalHelpCategoryTypesViewImpl(MedicalHelpCategory.TYPE_STANDARD));
+                        new MedicalHelpCategoryTypesViewImpl(Event.Type.IN_CALENDAR));
                 presenter = medicalHelpCategoryTypesPresenter;
                 break;
             case STORE_SPECIAL_MEDICAL_HELP_CATEGORY:
                 StoreMedicalHelpCategoryPresenter createSpecialMedicalHelpCategoryPresenter =
-                    new StoreMedicalHelpCategoryPresenter(MedicalHelpCategory.TYPE_SPECIAL);
+                    new StoreMedicalHelpCategoryPresenter(Event.Type.IMMEDIATE_MESSAGE);
                 createSpecialMedicalHelpCategoryPresenter.bind(new StoreMedicalHelpCategoryViewImpl());
                 presenter = createSpecialMedicalHelpCategoryPresenter;
                 break;
             case SPECIAL_MESSAGES:
                 MedicalHelpCategoryTypesPresenter specialMedicalHelpCategoryTypesPresenter =
-                    new MedicalHelpCategoryTypesPresenter(MedicalHelpCategory.TYPE_SPECIAL);
+                    new MedicalHelpCategoryTypesPresenter(Event.Type.IMMEDIATE_MESSAGE);
                 specialMedicalHelpCategoryTypesPresenter.bind(
-                        new MedicalHelpCategoryTypesViewImpl(MedicalHelpCategory.TYPE_SPECIAL));
+                        new MedicalHelpCategoryTypesViewImpl(Event.Type.IMMEDIATE_MESSAGE));
                 presenter = specialMedicalHelpCategoryTypesPresenter;
                 break;
             case SMS_STATISTIC:

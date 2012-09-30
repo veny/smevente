@@ -4,7 +4,7 @@ import java.util.Date;
 
 import veny.smevente.client.mvp.SingletonEventBus;
 import veny.smevente.client.utils.SmsWidgetEvent;
-import veny.smevente.model.MedicalHelpCategory;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Event;
 
@@ -50,7 +50,7 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
 
         this.sms = sms;
         final Patient patient = sms.getPatient();
-        final MedicalHelpCategory mhc = sms.getMedicalHelpCategory();
+        final Procedure mhc = sms.getMedicalHelpCategory();
 
         if (null == sms.getSent()) {
             if (sms.getSendAttemptCount() >= Event.MAX_SEND_ATTEMPTS) {

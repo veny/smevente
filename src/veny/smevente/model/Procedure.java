@@ -1,35 +1,39 @@
 package veny.smevente.model;
 
+import javax.persistence.Column;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
 /**
- * Entity class representing the Medical Help Category.
+ * Entity class representing the Procedure.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 8.11.2010
  */
-public class MedicalHelpCategory extends AbstractEntity {
-
-    /** Standard category. */
-    public static final short TYPE_STANDARD = 0;
-    /** Category used in special Sms. */
-    public static final short TYPE_SPECIAL = 1;
+public class Procedure extends AbstractEntity {
 
     /** Unit which is master of this. */
     @ManyToOne
     private Unit unit;
-    /** Category name. */
+    /** Procedure name. */
+    @Column
     private String name;
-    /** Default SMS text. */
-    private String smsText;
-    /** Category color in calendar. */
+    /** Default message text. */
+    @Column
+    private String messageText;
+    /** Color in calendar. */
+    @Column
     private String color;
     /** Typical time [minutes]. */
+    @Column
     private long time;
-    /** Additional type of category. */
-    private Short type;
+    /** Type of procedure. */
+    @Column
+    private String type;
 
     // CHECKSTYLE:OFF
     public Unit getUnit() {
@@ -44,11 +48,11 @@ public class MedicalHelpCategory extends AbstractEntity {
     public void setName(String name) {
         this.name = name;
     }
-    public String getSmsText() {
-        return smsText;
+    public String getMessageText() {
+        return messageText;
     }
-    public void setSmsText(String smsText) {
-        this.smsText = smsText;
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
     }
     public String getColor() {
         return color;
@@ -62,20 +66,36 @@ public class MedicalHelpCategory extends AbstractEntity {
     public void setTime(long time) {
         this.time = time;
     }
-    public Short getType() {
+    public String getType() {
         return type;
     }
-    public void setType(Short type) {
+    public void setType(String type) {
         this.type = type;
     }
     // CHECKSTYLE:ON
+
+    /**
+     * Virtual attribute providing an enumeration entry to identify procedure type.
+     *
+     * @return event type or <i>Event.Type.IN_CALENDAR</i> if not defined
+     */
+    @Transient
+    @JsonIgnore
+    public Event.Type enumType() {
+        String t = getType();
+        if (null == t || 0 == t.trim().length()) {
+            return Event.Type.IN_CALENDAR;
+        } else {
+            return Event.Type.valueOf(t.trim());
+        }
+    }
 
     // ----------------------------------------------------------- Object Stuff
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder rslt = new StringBuilder("MedicalHelpCategory(id=")
+        final StringBuilder rslt = new StringBuilder("Procedure(id=")
             .append(getId())
             .append(", name='")
             .append(name)

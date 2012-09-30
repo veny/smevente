@@ -403,7 +403,7 @@ public class EventServiceImpl implements EventService {
             throw new NullPointerException("service type ID category cannot be null");
         }
         if (Strings.isNullOrEmpty(event.getText())) { throw new IllegalArgumentException("text cannot be blank"); }
-        if (Event.Type.STANDARD == event.enumType()) {
+        if (Event.Type.IN_CALENDAR == event.enumType()) {
             if (null == event.getStartTime()) { throw new NullPointerException("start time cannot be null"); }
             if (event.getLength() <= 0) { throw new IllegalArgumentException("length lesser then 0"); }
         }
