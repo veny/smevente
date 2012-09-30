@@ -10,8 +10,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import veny.smevente.dao.PatientDao;
+import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
+import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.server.validation.ValidationContainer;
 import veny.smevente.service.UnitService;
@@ -37,9 +40,9 @@ public class UnitServiceImpl implements UnitService {
     /** Dependency. */
     @Autowired
     private PatientDao patientDao;
-//    /** Dependency. */
-//    @Autowired
-//    private MedicalHelpCategoryDao mhcDao;
+    /** Dependency. */
+    @Autowired
+    private ProcedureDao procedureDao;
     /** Dependency. */
     @Autowired
     private ValidationContainer validationContainer;
@@ -229,8 +232,8 @@ public class UnitServiceImpl implements UnitService {
         LOG.info("patient deleted, id=" + id);
     }
 
-//    // ---------------------------------------------- MedicalHelpCategory Stuff
-//
+    // -------------------------------------------------------- Procedure Stuff
+
 //    /** {@inheritDoc} */
 //    @Transactional
 //    @Override
@@ -298,27 +301,17 @@ public class UnitServiceImpl implements UnitService {
 //        LOG.info("category updated, id=" + mhc.getId()
 //                + ", name=" + mhc.getName());
 //    }
-//
-//    /** {@inheritDoc} */
-//    @Transactional(readOnly = true)
-//    @Override
-//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-//    public List<MedicalHelpCategoryDto> getMedicalHelpCategoriesByUnit(final long unitId, final Short categoryType) {
-//        // load the unit (validation at the same time that the unit exist)
-//        final Unit unit = getById(unitId);
-//
-//        final List<MedicalHelpCategory> found = mhcDao.findByType(unitId, categoryType, "name");
-//        LOG.info("found MHCs, unitId=" + unitId + ", size=" + found.size());
-//
-//        final List<MedicalHelpCategoryDto> rslt = new ArrayList<MedicalHelpCategoryDto>();
-//        for (MedicalHelpCategory mhcGae : found) {
-//            final MedicalHelpCategoryDto mhcDto = mhcGae.mapToDto();
-//            mhcDto.setUnit(unit);
-//            rslt.add(mhcDto);
-//        }
-//        return rslt;
-//    }
-//
+
+    /** {@inheritDoc} */
+    @Transactional(readOnly = true)
+    @Override
+    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+    public List<Procedure> getProceduresByUnit(final Object unitId, final Event.Type type) {
+        final List<Procedure> rslt = procedureDao.findByType(unitId, type, "name");
+        LOG.info("found proceduress, unitId=" + unitId + ", size=" + rslt.size());
+        return rslt;
+    }
+
 //    /** {@inheritDoc} */
 //    @Transactional(readOnly = true)
 //    @Override

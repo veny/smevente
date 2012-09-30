@@ -8,6 +8,7 @@ import org.springframework.beans.factory.DisposableBean;
 import veny.smevente.model.AbstractEntity;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
@@ -152,6 +153,14 @@ public final class DatabaseWrapper implements DisposableBean {
                 patient.createProperty("zipCode", OType.STRING);
                 patient.createProperty("employer", OType.STRING);
                 patient.createProperty("careers", OType.STRING);
+                // Procedure
+                OClass procedure = db.getMetadata().getSchema().createClass(Procedure.class.getSimpleName(), entity);
+                procedure.createProperty("unit", OType.LINK, unit).setMandatory(true);
+                procedure.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
+                procedure.createProperty("messageText", OType.STRING).setMandatory(true).setNotNull(true);
+                procedure.createProperty("type", OType.STRING).setMandatory(true).setNotNull(true);
+                procedure.createProperty("color", OType.STRING);
+                procedure.createProperty("time", OType.LONG);
             }
         }
 
@@ -160,6 +169,7 @@ public final class DatabaseWrapper implements DisposableBean {
         db.getEntityManager().registerEntityClass(Unit.class);
         db.getEntityManager().registerEntityClass(Membership.class);
         db.getEntityManager().registerEntityClass(Patient.class);
+        db.getEntityManager().registerEntityClass(Procedure.class);
 
         db.close();
     }

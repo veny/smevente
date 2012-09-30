@@ -304,7 +304,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
                         App.get().getJsonDeserializer().deserializeList(Patient.class, "patients", jsonText));
                 App.get().setMedicalHelpCategories(
                         App.get().getJsonDeserializer().deserializeList(
-                                Procedure.class, "medicalHelpCategories", jsonText));
+                                Procedure.class, "procedures", jsonText));
                 App.get().setUnitMembers(
                         App.get().getJsonDeserializer().deserializeList(User.class, "unitMembers", jsonText));
 

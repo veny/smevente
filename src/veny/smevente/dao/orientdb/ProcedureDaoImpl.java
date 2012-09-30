@@ -4,23 +4,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import veny.smevente.dao.MedicalHelpCategoryDao;
+import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
+import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
- * OrientDB DAO implementation for <code>MedicalHelpCategory</code> entity.
+ * OrientDB DAO implementation for <code>Procedure</code> entity.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 4.7.2010
  */
-public class MedicalHelpCategoryDaoImpl extends AbstractDaoOrientdb<Procedure>
-        implements MedicalHelpCategoryDao {
+public class ProcedureDaoImpl extends AbstractDaoOrientdb<Procedure>
+        implements ProcedureDao {
 
     /** {@inheritDoc} */
-    public Procedure findByNameAndType(final Object unitId, final String name, final Short categoryType) {
+    public Procedure findByNameAndType(final Object unitId, final String name, final Event.Type type) {
         return getDatabaseWrapper().execute(new ODatabaseCallback<Procedure>() {
             @Override
             public Procedure doWithDatabase(final OObjectDatabaseTx db) {
@@ -31,7 +32,7 @@ public class MedicalHelpCategoryDaoImpl extends AbstractDaoOrientdb<Procedure>
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("unitId", unitId);
                 params.put("name", name);
-                params.put("type", categoryType);
+                params.put("type", type.toString());
 
                 final List<Procedure> mhcs = executeWithSoftDelete(db, sql.toString(), params, true);
                 if (mhcs.size() > 1) {
@@ -44,8 +45,8 @@ public class MedicalHelpCategoryDaoImpl extends AbstractDaoOrientdb<Procedure>
     }
 
     /** {@inheritDoc} */
-    public List<Procedure> findByType(final Object unitId, final Short categoryType, final String orderBy) {
-        return findBy("unit", unitId, "type", categoryType, orderBy);
+    public List<Procedure> findByType(final Object unitId, final Event.Type type, final String orderBy) {
+        return findBy("unit", unitId, "type", type.toString(), orderBy);
     }
 
 }

@@ -1,6 +1,5 @@
 package veny.smevente.server;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import veny.smevente.model.Procedure;
+import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
@@ -63,11 +63,9 @@ public class UnitController {
         final List<Patient> patients = unitService.getPatientsByUnit(unitId);
         modelAndView.addObject("patients", patients);
 
-        // medical help categories
-//        final List<MedicalHelpCategory> mhcs =
-//            unitService.getMedicalHelpCategoriesByUnit(unitId, MedicalHelpCategory.TYPE_STANDARD);
-//        modelAndView.addObject("medicalHelpCategories", mhcs);
-modelAndView.addObject("medicalHelpCategories", new ArrayList<Procedure>());
+        // procedures
+        final List<Procedure> procedures = unitService.getProceduresByUnit(unitId, Event.Type.IN_CALENDAR);
+        modelAndView.addObject("procedures", procedures);
 
         return modelAndView;
     }

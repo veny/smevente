@@ -1,6 +1,5 @@
 package veny.smevente.dao.orientdb;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class UnitDaoImpl extends AbstractDaoOrientdb<Unit> implements UnitDao {
                         .append(")) WHERE @class = :clazz");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
-                params.put("x", userId);
+                params.put("x", userId); // TODO [veny,A] there is problem with binded userId
                 params.put("clazz", getPersistentClass().getSimpleName());
 
                 return executeWithSoftDelete(db, sql.toString(), params, true);

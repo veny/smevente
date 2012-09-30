@@ -1,7 +1,6 @@
 package veny.smevente.dao.orientdb;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -257,6 +256,11 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
     // --------------------------------------------------------- OrientDB Stuff
 
 
+    /**
+     * Detach an entity and first level associations labeled with JPA annotations.
+     * @param entity entity to detach
+     * @param db object database
+     */
     protected void detachWithFirstLevelAssociations(final T entity, final OObjectDatabaseTx db) {
         if (null == entity) { throw new NullPointerException("entity is null"); }
         final List<Method> assocMethods = getAssociationGetters();
@@ -295,7 +299,10 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
         }
     }
 
-
+    /**
+     * Gets list of 'getters' of fields labeled with JPA annotation representing an association.
+     * @return list of getters
+     */
     private List<Method> getAssociationGetters() {
         final Field[] fields = persistentClass.getDeclaredFields();
         final List<Method> rslt = new ArrayList<Method>();

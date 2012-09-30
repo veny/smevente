@@ -3,7 +3,9 @@ package veny.smevente.service;
 import java.util.List;
 
 import veny.smevente.dao.ObjectNotFoundException;
+import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 
 /**
@@ -93,8 +95,8 @@ public interface UnitService {
      */
     void deletePatient(Object id);
 
-//    // ---------------------------------------------- MedicalHelpCategory Stuff
-//
+    // -------------------------------------------------------- Procedure Stuff
+
 //    /**
 //     * Stores a given category into DB.
 //     * @param mhc category to be created
@@ -116,15 +118,16 @@ public interface UnitService {
 //     * @param mhc category
 //     */
 //    void updateMedicalHelpCategory(MedicalHelpCategoryDto mhc);
-//
-//    /**
-//     * Gets list of Medical Help Categories for given unit.
-//     * @param unitId ID of Unit
-//     * @param categoryType Type of category
-//     * @return list of all Medical Help Categories
-//     */
-//    List<MedicalHelpCategoryDto> getMedicalHelpCategoriesByUnit(long unitId, Short categoryType);
-//
+
+    /**
+     * Gets list of procedures for given unit.
+     *
+     * @param unitId ID of Unit
+     * @param type type of procedure (event type)
+     * @return list of found procedures
+     */
+    List<Procedure> getProceduresByUnit(Object unitId, Event.Type type);
+
 //    /**
 //     * Deletes category.
 //     * @param id category ID

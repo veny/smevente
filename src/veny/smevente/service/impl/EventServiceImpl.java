@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.EventDao;
-import veny.smevente.dao.MedicalHelpCategoryDao;
+import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.MembershipDao;
 import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.UnitDao;
@@ -60,7 +60,7 @@ public class EventServiceImpl implements EventService {
     private PatientDao patientDao;
     /** Dependency. */
     @Autowired
-    private MedicalHelpCategoryDao mhcDao;
+    private ProcedureDao mhcDao;
     /** Dependency. */
     @Autowired
     private EventDao eventDao;
