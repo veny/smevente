@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Strings;
+
 import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
@@ -18,8 +20,6 @@ import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.server.validation.ValidationContainer;
 import veny.smevente.service.UnitService;
-
-import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 import eu.maydu.gwt.validation.client.server.ServerValidation;
 
@@ -95,24 +95,28 @@ public class UnitServiceImpl implements UnitService {
     @Transactional
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public Patient createPatient(final Patient patient) {
-        validatePatient(patient);
+    public Patient createPatient(final Patient client, final Object unitId) {
+        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
+        final Unit unit = unitDao.getById(unitId);
+
+        client.setUnit(unit);
+        validatePatient(client);
 
         // unique birth number
-        if (!Strings.isNullOrEmpty(patient.getBirthNumber())) {
-            final Patient bn = patientDao.findByBirthNumber(patient.getUnit().getId(), patient.getBirthNumber());
+        if (!Strings.isNullOrEmpty(client.getBirthNumber())) {
+            final Patient bn = patientDao.findByBirthNumber(client.getUnit().getId(), client.getBirthNumber());
             if (null == bn) {
                 // expected state <- birth number not found
                 if (LOG.isLoggable(Level.FINER)) {
-                    LOG.finer("duplicate birth number check OK, bn=" + patient.getBirthNumber());
+                    LOG.finer("duplicate birth number check OK, bn=" + client.getBirthNumber());
                 }
             } else {
                 ServerValidation.exception("duplicateValue", "birthNumber", (Object[]) null);
             }
         }
 
-        Patient rslt = patientDao.persist(patient);
-        LOG.info("created new patient, " + rslt);
+        Patient rslt = patientDao.persist(client);
+        LOG.info("created new client, " + rslt);
         return rslt;
     }
 
@@ -358,18 +362,22 @@ public class UnitServiceImpl implements UnitService {
         if (null == patient) { throw new NullPointerException("patient cannot be null"); }
         if (null == patient.getUnit()) { throw new NullPointerException("unit cannot be null"); }
         if (null == patient.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
-        if (null == patient.getFirstname()) { throw new NullPointerException("first name cannot be null"); }
-        if (null == patient.getSurname()) { throw new NullPointerException("surname cannot be null"); }
+        if (Strings.isNullOrEmpty(patient.getFirstname())) {
+            throw new IllegalArgumentException("first name cannot be blank");
+        }
+        if (Strings.isNullOrEmpty(patient.getSurname())) {
+            throw new IllegalArgumentException("surname cannot be blank");
+        }
 
         // birth number
-        if (null == patient.getBirthNumber() || 0 == patient.getBirthNumber().trim().length()) {
+        if (Strings.isNullOrEmpty(patient.getBirthNumber())) {
             LOG.warning("birth number is empty, fisrtname=" + patient.getFirstname()
                     + ", surname=" + patient.getSurname());
         } else {
             validationContainer.validate("birthNumber", "birthNumber", patient.getBirthNumber());
         }
         // phone number
-        if (null == patient.getPhoneNumber() || 0 == patient.getPhoneNumber().trim().length()) {
+        if (Strings.isNullOrEmpty(patient.getPhoneNumber())) {
             LOG.warning("phone number is empty, fisrtname=" + patient.getFirstname()
                     + ", surname=" + patient.getSurname());
         } else {

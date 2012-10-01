@@ -74,8 +74,8 @@ public final class App implements ValueChangeHandler<String> {
     private List<User> unitMembers;
     /** List of available patients in currently selected unit. */
     private List<Patient> patients;
-    /** List of available MHCs in currently selected unit. */
-    private List<Procedure> medicalHelpCategories;
+    /** List of available procedures in currently selected unit. */
+    private List<Procedure> procedures;
 
     // Current Set Data
 
@@ -415,18 +415,18 @@ public final class App implements ValueChangeHandler<String> {
     }
 
     /**
-     * Gets available MHCs in currently selected unit.
-     * @return MHCs in currently selected unit
+     * Gets available procedures in currently selected unit.
+     * @return procedures in currently selected unit
      */
-    public List<Procedure> getMedicalHelpCategories() {
-        return medicalHelpCategories;
+    public List<Procedure> getProcedures() {
+        return procedures;
     }
     /**
-     * Sets MHCs for currently selected unit.
-     * @param medicalHelpCategories MHCs for currently selected unit
+     * Sets procedures for currently selected unit.
+     * @param procedures procedures for currently selected unit
      */
-    public void setMedicalHelpCategories(final List<Procedure> medicalHelpCategories) {
-        this.medicalHelpCategories = medicalHelpCategories;
+    public void setProcedures(final List<Procedure> procedures) {
+        this.procedures = procedures;
     }
 
     /**

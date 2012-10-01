@@ -435,7 +435,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     private void updateDlg(final SmsWidget smsWidget) {
         final SmsDlgPresenter p =
             (SmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
-        p.init(smsWidget.getSms(), App.get().getPatients(), App.get().getMedicalHelpCategories());
+        p.init(smsWidget.getSms(), App.get().getPatients(), App.get().getProcedures());
         final SmeventeDialog dlg = new SmeventeDialog("SMS", p);
 
         dlg.getOkButton().addClickHandler(new ClickHandler() {
@@ -540,7 +540,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     private void displaySmsDialog(final int eventX, final int eventY, final DayColumn col) {
         if (App.get().getPatients().isEmpty()) {
             Window.alert(CONSTANTS.noPatientInUnit()[App.get().getSelectedUnitTextVariant()]);
-        } else if (App.get().getMedicalHelpCategories().isEmpty()) {
+        } else if (App.get().getProcedures().isEmpty()) {
             Window.alert(CONSTANTS.noMhcInUnit()[App.get().getSelectedUnitTextVariant()]);
         } else {
             final int y = eventY - col.getAbsoluteTop() + Document.get().getScrollTop();
@@ -552,7 +552,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
             final SmsDlgPresenter smsDlgPresenter =
                 (SmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
-            smsDlgPresenter.init(dateTime, App.get().getPatients(), App.get().getMedicalHelpCategories());
+            smsDlgPresenter.init(dateTime, App.get().getPatients(), App.get().getProcedures());
             final SmeventeDialog dlg = new SmeventeDialog("SMS", smsDlgPresenter);
 //            dlg.setPopupPosition(eventX, eventY);
             dlg.center();
@@ -649,9 +649,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      */
     private int getMedicalHelpCategoryIndex(final Object categoryId) {
         if (null == categoryId) { throw new NullPointerException("category ID cannot be null"); }
-        if (null != App.get().getMedicalHelpCategories()) {
-            for (int i = 0; i < App.get().getMedicalHelpCategories().size(); i++) {
-                if (App.get().getMedicalHelpCategories().get(i).getId().equals(categoryId)) { return i; }
+        if (null != App.get().getProcedures()) {
+            for (int i = 0; i < App.get().getProcedures().size(); i++) {
+                if (App.get().getProcedures().get(i).getId().equals(categoryId)) { return i; }
             }
         }
         return -1;

@@ -200,12 +200,11 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
             final String firstname, final String surname,
             final String phoneNumber, final String birthNumber, final Unit unit) {
         final Patient toCreate = new Patient();
-        toCreate.setUnit(unit);
         toCreate.setFirstname(firstname);
         toCreate.setSurname(surname);
         toCreate.setPhoneNumber(phoneNumber);
         toCreate.setBirthNumber(birthNumber);
-        return unitService.createPatient(toCreate);
+        return unitService.createPatient(toCreate, unit.getId());
     }
     /**
      * Asserts default patient.

@@ -46,14 +46,13 @@ public interface UnitService {
     // ---------------------------------------------------------- Patient Stuff
 
     /**
-     * Creates a new patient in DB.
-     * The patient has to have an associated unit where he belongs to.
-     * The unit can be fulfilled only with an unit ID.
+     * Creates a new client in DB.
      *
-     * @param patient patient
-     * @return created patient
+     * @param client client to be created
+     * @param unitId unit where the client belongs to
+     * @return created client
      */
-    Patient createPatient(Patient patient);
+    Patient createPatient(Patient client, Object unitId);
 
     /**
      * Gets patient by ID.

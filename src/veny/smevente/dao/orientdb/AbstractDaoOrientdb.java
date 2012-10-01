@@ -24,6 +24,7 @@ import veny.smevente.misc.SoftDelete;
 import veny.smevente.model.AbstractEntity;
 
 import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
@@ -84,15 +85,16 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
     @Override
     public T getById(final Object id) throws ObjectNotFoundException {
         return databaseWrapper.execute(new ODatabaseCallback<T>() {
-            @Override
-            public T doWithDatabase(final OObjectDatabaseTx db) {
-                if (!(id instanceof ORID)) { throw new ObjectNotFoundException("ID has to be OrientDB RID"); }
-
-                T rslt;
-                try {
-                    rslt = db.load((ORID) id);
-                    // check if not deleted
-                } catch (final Exception e) {
+            @Override public T doWithDatabase(final OObjectDatabaseTx db) {
+                if (null == id) { throw new NullPointerException("ID cannot be null"); }
+                final ORID rid;
+                if ((id instanceof ORID)) { rid = (ORID) id; } else {
+                    try { rid = new ORecordId(id.toString()); } catch (Exception e) {
+                        throw new ObjectNotFoundException("ID has to be OrientDB RID");
+                    }
+                }
+                final T rslt;
+                try { rslt = db.load(rid); } catch (final Exception e) {
                     throw new ObjectNotFoundException(
                             "entity '" + getPersistentClass().getSimpleName() + "' not found, id=" + id, e);
                 }

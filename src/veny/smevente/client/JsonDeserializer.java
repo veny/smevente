@@ -384,7 +384,7 @@ public class JsonDeserializer {
      */
     private Event smsFromJson(final JSONObject jsObj) {
         final Event rslt = new Event();
-        rslt.setId((long) jsObj.get("id").isNumber().doubleValue());
+        rslt.setId(jsObj.get("id").isString().stringValue());
         final JSONObject jsUserObj = jsObj.get("author").isObject();
         if (null != jsUserObj) {
             rslt.setAuthor(userFromJson(jsUserObj));

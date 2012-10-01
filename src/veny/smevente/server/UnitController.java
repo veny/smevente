@@ -3,12 +3,14 @@ package veny.smevente.server;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.model.Event;
@@ -72,27 +74,26 @@ public class UnitController {
 
     // ---------------------------------------------------------- Patient Stuff
 
-//    /**
-//     * Creates a new patient.
-//     * @param request HTTP request
-//     * @param response HTTP response
-//     * @param patient patient
-//     * @param unitId unit ID
-//     * @return model & view
-//     */
-//    @RequestMapping(value = "/patient/", method = RequestMethod.POST)
-//    public ModelAndView createPatient(
-//        final HttpServletRequest request,
-//        final HttpServletResponse response,
-//        final PatientDto patient, @RequestParam("unitId") final Long unitId) {
-//
-//        patient.setUnitId(unitId);
-//        final PatientDto created = unitService.createPatient(patient);
-//        final ModelAndView modelAndView = new ModelAndView("jsonView");
-//        modelAndView.addObject("patient", created);
-//        return modelAndView;
-//    }
-//
+    /**
+     * Creates a new patient.
+     * @param request HTTP request
+     * @param response HTTP response
+     * @param patient patient
+     * @param unitId unit ID
+     * @return model & view
+     */
+    @RequestMapping(value = "/patient/", method = RequestMethod.POST)
+    public ModelAndView createPatient(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final Patient patient, @RequestParam("unitId") final String unitId) {
+
+        final Patient created = unitService.createPatient(patient, unitId);
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("patient", created);
+        return modelAndView;
+    }
+
 //    /**
 //     * Updates given patient.
 //     * @param response HTTP response

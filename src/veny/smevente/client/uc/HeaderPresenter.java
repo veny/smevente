@@ -291,18 +291,18 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
     }
 
     /**
-     * Loads unit info (patients, medical help categories, ...).
+     * Loads unit info (patients, procedures, ...).
      * @param unitId unit ID
      */
     private void loadUnitInfo(final Object unitId) {
-        // get all Patients & MHCs, other users if the logged in is ADMIN
+        // get all Patients & Procedures, other unit members if the logged in is ADMIN
         final RestHandler rest = new RestHandler("/rest/unit/" + URL.encodePathSegment((String) unitId) + "/info/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
                 App.get().setPatients(
                         App.get().getJsonDeserializer().deserializeList(Patient.class, "patients", jsonText));
-                App.get().setMedicalHelpCategories(
+                App.get().setProcedures(
                         App.get().getJsonDeserializer().deserializeList(
                                 Procedure.class, "procedures", jsonText));
                 App.get().setUnitMembers(
@@ -375,7 +375,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
 
         // clear content of members drop down
         view.getUnitMembers().clear();
-        // reload Patients & MHCs, other users if the logged in is ADMIN
+        // reload Patients & Procedures, other unit members if the logged in is ADMIN
         loadUnitInfo(newUnit.getId());
 
         // fire event (unit)
