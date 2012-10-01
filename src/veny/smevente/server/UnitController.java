@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gwt.thirdparty.guava.common.base.Strings;
+
 import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Procedure;
@@ -123,35 +125,35 @@ public class UnitController {
 //        modelAndView.addObject("patient", unitService.getPatientById(patientId));
 //        return modelAndView;
 //    }
-//
-//    /**
-//     * Gets all patients in given unit.
-//     *
-//     * @param request HTTP request
-//     * @param unitId ID to search in
-//     * @param name name to search
-//     * @param phoneNumber phone number to search
-//     * @param birthNumber birth number to search
-//     * @return model & view
-//     */
-//    @RequestMapping(value = "/{id}/patient/", method = RequestMethod.GET)
-//    public ModelAndView findPatients(
-//            final HttpServletRequest request,
-//            @PathVariable("id") final Long unitId,
-//            @RequestParam("name") final String name,
-//            @RequestParam("phoneNumber") final String phoneNumber,
-//            @RequestParam("birthNumber") final String birthNumber) {
-//
-//        String n = (null == name || 0 == name.trim().length() ? null : name.trim());
-//        String pn = (null == phoneNumber || 0 == phoneNumber.trim().length() ? null : phoneNumber.trim());
-//        String bn = (null == birthNumber || 0 == birthNumber.trim().length() ? null : birthNumber.trim());
-//        List<PatientDto> patients = unitService.findPatients(unitId, n, pn, bn);
-//
-//        ModelAndView modelAndView = new ModelAndView("jsonView");
-//        modelAndView.addObject("patients", patients);
-//        return modelAndView;
-//    }
-//
+
+    /**
+     * Finds patients in given unit according to name and/or birth number and/or phone number.
+     *
+     * @param request HTTP request
+     * @param unitId ID to search in
+     * @param name name to search
+     * @param phoneNumber phone number to search
+     * @param birthNumber birth number to search
+     * @return model & view
+     */
+    @RequestMapping(value = "/{id}/patient/", method = RequestMethod.GET)
+    public ModelAndView findPatients(
+            final HttpServletRequest request,
+            @PathVariable("id") final Long unitId,
+            @RequestParam("name") final String name,
+            @RequestParam("phoneNumber") final String phoneNumber,
+            @RequestParam("birthNumber") final String birthNumber) {
+
+        final String n = (Strings.isNullOrEmpty(name) ? null : name.trim());
+        final String pn = (Strings.isNullOrEmpty(phoneNumber) ? null : phoneNumber.trim());
+        final String bn = (Strings.isNullOrEmpty(birthNumber) ? null : birthNumber.trim());
+        final List<Patient> patients = unitService.findPatients(unitId, n, pn, bn);
+
+        ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("patients", patients);
+        return modelAndView;
+    }
+
 //    /**
 //     * Deletes a patient.
 //     * @param response HTTP response
