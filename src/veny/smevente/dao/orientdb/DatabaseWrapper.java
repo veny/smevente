@@ -15,6 +15,7 @@ import veny.smevente.model.User;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
@@ -185,9 +186,9 @@ public final class DatabaseWrapper implements DisposableBean {
 //        return ODatabaseDocumentPool.global().acquire(databaseUrl, username, password);
 //    }
     public OObjectDatabaseTx get() {
-//        return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
-        OObjectDatabaseTx db = new OObjectDatabaseTx(databaseUrl).open(username, password);
-        return db;
+        return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
+//        OObjectDatabaseTx db = new OObjectDatabaseTx(databaseUrl).open(username, password);
+//        return db;
     }
 
     /**

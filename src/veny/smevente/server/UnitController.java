@@ -6,21 +6,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gwt.thirdparty.guava.common.base.Strings;
-
-import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
+
+import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 /**
  * Controller of Unit REST interface.
@@ -154,17 +155,17 @@ public class UnitController {
         return modelAndView;
     }
 
-//    /**
-//     * Deletes a patient.
-//     * @param response HTTP response
-//     * @param patientId patient ID
-//     */
-//    @RequestMapping(value = "/patient/{id}/", method = RequestMethod.DELETE)
-//    public void deletePatient(final HttpServletResponse response, @PathVariable("id") final Long patientId) {
-//        unitService.deletePatient(patientId);
-//        response.setStatus(200);
-//    }
-//
+    /**
+     * Deletes a patient.
+     * @param response HTTP response
+     * @param patientId patient ID
+     */
+    @RequestMapping(value = "/patient/{id}/", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deletePatient(final HttpServletResponse response, @PathVariable("id") final String patientId) {
+        unitService.deletePatient(patientId);
+    }
+
 //    /**
 //     * Gets list of all sent SMSs for given patient ordered by MH Start Time.
 //     *

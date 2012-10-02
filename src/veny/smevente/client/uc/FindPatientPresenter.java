@@ -250,7 +250,7 @@ public class FindPatientPresenter
      * @param line line in the table to be removed
      */
     private void deletePatient(final String id, final int line) {
-        final RestHandler rest = new RestHandler("/rest/unit/patient/" + id + "/");
+        final RestHandler rest = new RestHandler("/rest/unit/patient/" + URL.encodePathSegment(id) + "/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {

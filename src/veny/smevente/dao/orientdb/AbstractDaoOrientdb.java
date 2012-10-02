@@ -219,20 +219,20 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
         databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
             public T doWithDatabase(final OObjectDatabaseTx db) {
-                if (null == id) {
-                    throw new IllegalArgumentException("entity ID cannot be null");
+                if (null == id) { throw new IllegalArgumentException("entity ID cannot be null"); }
+                final ORID rid;
+                if ((id instanceof ORID)) { rid = (ORID) id; } else {
+                    try { rid = new ORecordId(id.toString()); } catch (Exception e) {
+                        throw new IllegalArgumentException("ID has to be OrientDB RID");
+                    }
                 }
-
-                final T entity = db.load((ORID) id);
-
+                final T entity = db.load(rid);
                 if (null != softDeleteAnnotation) {
                     db.detach(entity); // entity has to be detached, otherwise are all properties 'null'
                     entity.setDeleted(true);
                     db.attach(entity); // all data contained in the object will be copied in the associated document
                     db.save(entity);
-                } else {
-                    db.delete(entity);
-                }
+                } else { db.delete(entity); }
                 return null;
             }
         }, true);
