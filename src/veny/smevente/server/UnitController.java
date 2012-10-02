@@ -67,8 +67,8 @@ public class UnitController {
         final List<Patient> patients = unitService.getPatientsByUnit(unitId);
         modelAndView.addObject("patients", patients);
 
-        // procedures
-        final List<Procedure> procedures = unitService.getProceduresByUnit(unitId, Event.Type.IN_CALENDAR);
+        // procedures (type=null => all)
+        final List<Procedure> procedures = unitService.getProceduresByUnit(unitId, null);
         modelAndView.addObject("procedures", procedures);
 
         return modelAndView;
@@ -139,7 +139,7 @@ public class UnitController {
     @RequestMapping(value = "/{id}/patient/", method = RequestMethod.GET)
     public ModelAndView findPatients(
             final HttpServletRequest request,
-            @PathVariable("id") final Long unitId,
+            @PathVariable("id") final String unitId,
             @RequestParam("name") final String name,
             @RequestParam("phoneNumber") final String phoneNumber,
             @RequestParam("birthNumber") final String birthNumber) {

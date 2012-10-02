@@ -91,9 +91,6 @@ public class FindPatientPresenter
     /** List of found patients. */
     private List<Patient> foundPatients;
 
-    /** List of found special categories. */
-    private List<Procedure> specialCategories;
-
     /** ID of patient where the context menu is raised. */
     private String clickedId = null;
 
@@ -133,7 +130,6 @@ public class FindPatientPresenter
             @Override
             public void onClick(final ClickEvent event) {
                 findPatients();
-                findTypes();
             }
         });
 
@@ -279,7 +275,8 @@ public class FindPatientPresenter
     private void findPatients() {
         cleanResultTable();
 
-        final RestHandler rest = new RestHandler("/rest/unit/" + App.get().getSelectedUnit().getId()
+        final RestHandler rest = new RestHandler("/rest/unit/"
+                + URL.encodePathSegment((String) App.get().getSelectedUnit().getId())
                 + "/patient/?name=" + URL.encodeQueryString(view.getName().getText().trim())
                 + "&phoneNumber=" + URL.encodeQueryString(view.getPhoneNumber().getText().trim())
                 + "&birthNumber=" + URL.encodeQueryString(view.getBirthNumber().getText().trim())
@@ -293,22 +290,6 @@ public class FindPatientPresenter
                     addPatient(p, line);
                     line++;
                 }
-            }
-        });
-        rest.get();
-    }
-
-    /**
-     * Finds special medical help categories.
-     */
-    private void findTypes() {
-        final RestHandler rest = new RestHandler("/rest/unit/" + App.get().getSelectedUnit().getId()
-                + "/mhc/" + Event.Type.IMMEDIATE_MESSAGE);
-        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
-            @Override
-            public void onSuccess(final String jsonText) {
-                specialCategories = App.get().getJsonDeserializer().deserializeList(
-                        Procedure.class, "medicalHelpCategories", jsonText);
             }
         });
         rest.get();
@@ -378,12 +359,13 @@ public class FindPatientPresenter
      * @param patient the recipient
      */
     private void specialSmsDlg(final Patient patient) {
-        if (specialCategories.isEmpty()) {
+        final List<Procedure> immediateMsgCategories = App.get().getProcedures(Event.Type.IMMEDIATE_MESSAGE);
+        if (immediateMsgCategories.isEmpty()) {
             Window.alert(CONSTANTS.noSpecialSmsInUnit());
         } else {
             final SpecialSmsDlgPresenter p =
                 (SpecialSmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SPECIAL_SMS_DLG);
-            p.init(patient, specialCategories);
+            p.init(patient, immediateMsgCategories);
             final SmeventeDialog dlg = new SmeventeDialog("SMS", p);
 
             dlg.getOkButton().setText(CONSTANTS.send());

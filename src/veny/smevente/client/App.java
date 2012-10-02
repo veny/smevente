@@ -1,5 +1,6 @@
 package veny.smevente.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.LoginPresenter;
 import veny.smevente.client.uc.LoginViewImpl;
+import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
@@ -418,8 +420,22 @@ public final class App implements ValueChangeHandler<String> {
      * Gets available procedures in currently selected unit.
      * @return procedures in currently selected unit
      */
-    public List<Procedure> getProcedures() {
+    public List<Procedure> getAllProcedures() {
         return procedures;
+    }
+    /**
+     * Gets available procedures in currently selected unit by given type.
+     * @param type type of procedure
+     * @return procedures in currently selected unit of specified type
+     */
+    public List<Procedure> getProcedures(final Event.Type type) {
+        if (null == type) { throw new NullPointerException("procedure type cannot be null"); }
+        if (null == procedures) { throw new NullPointerException("procedures are null (not loaded?)"); }
+        final List<Procedure> rslt = new ArrayList<Procedure>();
+        for (Procedure p : procedures) {
+            if (p.enumType() == type) { rslt.add(p); }
+        }
+        return rslt;
     }
     /**
      * Sets procedures for currently selected unit.

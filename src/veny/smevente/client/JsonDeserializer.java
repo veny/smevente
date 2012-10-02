@@ -121,7 +121,7 @@ public class JsonDeserializer {
         } else if (Patient.class == classToCreate) {
             rslt = (List<T>) patientListFromJson(jsArr);
         } else if (Procedure.class == classToCreate) {
-            rslt = (List<T>) mhcListFromJson(jsArr);
+            rslt = (List<T>) procedureListFromJson(jsArr);
         } else if (Event.class == classToCreate) {
             rslt = (List<T>) smsListFromJson(jsArr);
         } else {
@@ -336,21 +336,16 @@ public class JsonDeserializer {
     }
 
     /**
-     * Gets <code>MedicalHelpCategory</code> from JSON.
+     * Gets <code>Procedure</code> from JSON.
      * @param jsObj JSON object
-     * @return instance of <code>MedicalHelpCategory</code>
+     * @return instance of <code>Procedure</code>
      */
     private Procedure procedureFromJson(final JSONObject jsObj) {
         final Procedure rslt = new Procedure();
         rslt.setId(jsObj.get("id").isString().stringValue());
         rslt.setName(jsObj.get("name").isString().stringValue());
         rslt.setMessageText(jsObj.get("messageText").isString().stringValue());
-        JSONValue type = jsObj.get("type");
-        if (type == null || type.isNumber() == null) {
-            rslt.setType(Event.Type.IN_CALENDAR.toString());
-        } else {
-            rslt.setType(type.isString().stringValue());
-        }
+        rslt.setType(jsObj.get("type").isString().stringValue());
         if (rslt.enumType() == Event.Type.IN_CALENDAR) {
             rslt.setColor(jsObj.get("color").isString().stringValue());
             rslt.setTime((long) jsObj.get("time").isNumber().doubleValue());
@@ -362,7 +357,7 @@ public class JsonDeserializer {
      * @param jsArr JSON array
      * @return list of <code>MedicalHelpCategory</code>
      */
-    private List<Procedure> mhcListFromJson(final JSONArray jsArr) {
+    private List<Procedure> procedureListFromJson(final JSONArray jsArr) {
         final List<Procedure> rslt = new ArrayList<Procedure>();
 
         for (int i = 0; i < jsArr.size(); i++) {

@@ -145,6 +145,7 @@ public final class DatabaseWrapper implements DisposableBean {
                 patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
                 patient.createProperty("firstname", OType.STRING).setMandatory(true).setNotNull(true);
                 patient.createProperty("surname", OType.STRING).setMandatory(true).setNotNull(true);
+                patient.createProperty("asciiFullname", OType.STRING).setMandatory(true).setNotNull(true);
                 patient.createProperty("phoneNumber", OType.STRING);
                 patient.createProperty("birthNumber", OType.STRING);
                 patient.createProperty("degree", OType.STRING);

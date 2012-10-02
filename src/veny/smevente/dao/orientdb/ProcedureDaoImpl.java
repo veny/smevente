@@ -21,6 +21,7 @@ public class ProcedureDaoImpl extends AbstractDaoOrientdb<Procedure>
         implements ProcedureDao {
 
     /** {@inheritDoc} */
+    @Override
     public Procedure findByNameAndType(final Object unitId, final String name, final Event.Type type) {
         return getDatabaseWrapper().execute(new ODatabaseCallback<Procedure>() {
             @Override
@@ -42,11 +43,6 @@ public class ProcedureDaoImpl extends AbstractDaoOrientdb<Procedure>
                 return mhcs.isEmpty() ? null : (Procedure) mhcs.get(0);
             }
         });
-    }
-
-    /** {@inheritDoc} */
-    public List<Procedure> findByType(final Object unitId, final Event.Type type, final String orderBy) {
-        return findBy("unit", unitId, "type", type.toString(), orderBy);
     }
 
 }

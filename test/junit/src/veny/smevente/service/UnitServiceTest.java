@@ -259,33 +259,38 @@ public class UnitServiceTest extends AbstractBaseTest {
         createPatient("Norbert", "Kuře", "012344444", "7005055555", unit);
         createPatient("Gábina", "Buližníková", "012345555", "7006066666", unit);
         createPatient("Žulet", "Světlíková", "012345666", "7007077777", unit);
-        createPatient("Šón", "Ďáblík", "012345677", "7008088888", unit);
+        createPatient("Šón", "Ďáblík", "012345677", "7008088889", unit);
 
         // by name
         assertEquals(1, unitService.findPatients(unit.getId(), "ADAM", null, null).size()); // Blaha
         assertEquals(1, unitService.findPatients(unit.getId(), "blaha", null, null).size()); // Blaha
         assertEquals(3, unitService.findPatients(unit.getId(), "S", null, null).size()); // Sykora,Svetlikova,Dablik
-        assertEquals(2, unitService.findPatients(unit.getId(), "k", null, null).size()); // Kun,Kure
-        assertEquals(0, unitService.findPatients(unit.getId(), "x", null, null).size()); // Kun,Kure
+        assertEquals(2, unitService.findPatients(unit.getId(), "ova", null, null).size()); // Buliznikova,Svetlikova
+        assertEquals(3, unitService.findPatients(unit.getId(), "li", null, null).size()); // Buliznikova,Dablik
+        assertEquals(0, unitService.findPatients(unit.getId(), "x", null, null).size());
 
         // by phone number
         assertEquals(8, unitService.findPatients(unit.getId(), null, "0", null).size());
         assertEquals(4, unitService.findPatients(unit.getId(), null, "01234", null).size());
         assertEquals(1, unitService.findPatients(unit.getId(), null, "012345677", null).size());
         assertEquals(0, unitService.findPatients(unit.getId(), null, "9", null).size());
+        assertEquals(2, unitService.findPatients(unit.getId(), null, "56", null).size());
+        assertEquals(1, unitService.findPatients(unit.getId(), null, "77", null).size());
 
         // by birth number
         assertEquals(8, unitService.findPatients(unit.getId(), null, null, "70").size());
         assertEquals(2, unitService.findPatients(unit.getId(), null, null, "7001").size());
         assertEquals(1, unitService.findPatients(unit.getId(), null, null, "7003").size());
-        assertEquals(0, unitService.findPatients(unit.getId(), null, null, "8").size());
+        assertEquals(1, unitService.findPatients(unit.getId(), null, null, "88").size());
+        assertEquals(1, unitService.findPatients(unit.getId(), null, null, "89").size());
+        assertEquals(0, unitService.findPatients(unit.getId(), null, null, "123").size());
 
         // combination
         assertEquals(8, unitService.findPatients(unit.getId(), null, null, null).size());
         assertEquals(3, unitService.findPatients(unit.getId(), "s", null, "70").size()); // Sykora,Svetlikova,Dablik
         assertEquals(2, unitService.findPatients(unit.getId(), "s", "0123456", "70").size()); // Svetlikova,Dablik
         assertEquals(1, unitService.findPatients(unit.getId(), "S", "01234567", null).size()); // Dablik
-        assertEquals(0, unitService.findPatients(unit.getId(), "S", "01", "8").size());
+        assertEquals(0, unitService.findPatients(unit.getId(), "S", "01", "123").size());
 
         // SOFT DELETE
         unitService.deletePatient(adam.getId());

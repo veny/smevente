@@ -3,9 +3,11 @@ package veny.smevente.model;
 import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 
+import veny.smevente.client.utils.ClientTextUtils;
 import veny.smevente.misc.SoftDelete;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.orientechnologies.orient.core.annotation.OBeforeSerialization;
 
 /**
  * Entity class representing the Patient.
@@ -49,6 +51,8 @@ public class Patient extends AbstractEntity {
     /** Patient's degree. */
     @Column
     private String careers;
+    /** Fullname as ASCII for search. */
+    private String asciiFullname;
 
     // CHECKSTYLE:OFF
     public Unit getUnit() {
@@ -117,6 +121,9 @@ public class Patient extends AbstractEntity {
     public void setCareers(String careers) {
         this.careers = careers;
     }
+    public String getAsciiFullname() {
+        return asciiFullname;
+    }
     // CHECKSTYLE:ON
 
     /**
@@ -129,6 +136,14 @@ public class Patient extends AbstractEntity {
             .append(' ')
             .append(getSurname())
             .toString();
+    }
+
+    /**
+     * Converts firstname+surname to ASCII to be searchable without national characters like 'á'.
+     */
+    @OBeforeSerialization
+    public void asciiFullname() {
+        this.asciiFullname = ClientTextUtils.convert2ascii(fullname()).toUpperCase();
     }
 
     /**

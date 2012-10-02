@@ -29,12 +29,11 @@ public class PatientDaoImpl extends AbstractDaoOrientdb<Patient> implements Pati
             public List<Patient> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
                         .append(getPersistentClass().getSimpleName())
-                        .append(" WHERE unit = :unitId AND ").append(paramName)
-                        .append(" LIKE '%:").append(paramName).append("%'");
+                        .append(" WHERE unit = :unitId AND (").append(paramName)
+                        .append(".indexOf('").append(value).append("') > -1)"); // TODO[veny,A] SQL Injection? Java API
 
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("unitId", unitId);
-                params.put(paramName, value);
 
                 return executeWithSoftDelete(db, sql.toString(), params, true);
             }

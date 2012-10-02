@@ -186,15 +186,10 @@ public class UnitServiceImpl implements UnitService {
 
         // name
         if (null != name) {
-            collectedRslt = patientDao.findLikeBy(unitId, "firstname", name);
+            collectedRslt = patientDao.findLikeBy(unitId, "asciiFullname", name.toUpperCase());
             if (LOG.isLoggable(Level.FINER)) {
-                LOG.finer("patient(s) found by first name, size=" + collectedRslt.size());
+                LOG.finer("patient(s) found by name, size=" + collectedRslt.size());
             }
-            List<Patient> found = patientDao.findLikeBy(unitId, "surname", name);
-            if (LOG.isLoggable(Level.FINER)) {
-                LOG.finer("patient(s) found by surname, size=" + found.size());
-            }
-            collectedRslt = (List<Patient>) CollectionUtils.union(collectedRslt, found);
         }
 
         // phone number
@@ -311,7 +306,13 @@ public class UnitServiceImpl implements UnitService {
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     public List<Procedure> getProceduresByUnit(final Object unitId, final Event.Type type) {
-        final List<Procedure> rslt = procedureDao.findByType(unitId, type, "name");
+        final List<Procedure> rslt;
+        if (null != type) {
+            rslt = procedureDao.findBy("unit", unitId, "type", type.toString(), "name");
+        } else {
+            rslt = procedureDao.findBy("unit", unitId, "name");
+        }
+
         LOG.info("found proceduress, unitId=" + unitId + ", size=" + rslt.size());
         return rslt;
     }

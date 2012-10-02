@@ -122,7 +122,7 @@ public interface UnitService {
      * Gets list of procedures for given unit.
      *
      * @param unitId ID of Unit
-     * @param type type of procedure (event type)
+     * @param type type of procedure (event type) or <i>null</i> for all
      * @return list of found procedures
      */
     List<Procedure> getProceduresByUnit(Object unitId, Event.Type type);
