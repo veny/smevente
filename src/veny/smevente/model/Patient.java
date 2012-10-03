@@ -141,6 +141,7 @@ public class Patient extends AbstractEntity {
     /**
      * Converts firstname+surname to ASCII to be searchable without national characters like 'á'.
      */
+    @JsonIgnore
     @OBeforeSerialization
     public void asciiFullname() {
         this.asciiFullname = ClientTextUtils.convert2ascii(fullname()).toUpperCase();
@@ -160,17 +161,15 @@ public class Patient extends AbstractEntity {
 
     // ---------------------------------------------------- Convenience Methods
 
-//    /**
-//     * Sets unit ID to a new unit object.
-//     * @param unitId unit ID
-//     */
-//    public void setUnitId(final Long unitId) {
-//        if (null == unitId || unitId.longValue() <= 0) {
-//            throw new IllegalArgumentException("invalid unit ID (null or less than 0)");
-//        }
-//        setUnit(new Unit());
-//        getUnit().setId(unitId);
-//    }
+    /**
+     * Sets unit ID to a new unit object.
+     * @param unitId unit ID
+     */
+    public void setUnitId(final Object unitId) {
+        if (null == unitId) { throw new NullPointerException("unit ID is null"); }
+        setUnit(new Unit());
+        getUnit().setId(unitId);
+    }
 
     // ----------------------------------------------------------- Object Stuff
 

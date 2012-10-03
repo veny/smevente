@@ -96,11 +96,10 @@ public class UnitServiceImpl implements UnitService {
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     public Patient createPatient(final Patient client, final Object unitId) {
-        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
         final Unit unit = unitDao.getById(unitId);
 
         client.setUnit(unit);
-        validatePatient(client);
+        validatePatient(client, true);
 
         // unique birth number
         if (!Strings.isNullOrEmpty(client.getBirthNumber())) {
@@ -146,8 +145,14 @@ public class UnitServiceImpl implements UnitService {
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     public void updatePatient(final Patient patient) {
-        if (null == patient.getId()) { throw new NullPointerException("ID cannot be null"); }
-        validatePatient(patient);
+        // load unit
+        if (null == patient.getUnit() || null == patient.getUnit().getId()) {
+            throw new NullPointerException("unknown unit");
+        }
+        final Unit unit = getUnit(patient.getUnit().getId());
+        patient.setUnit(unit);
+
+        validatePatient(patient, false);
 
         // unique birth number
         if (!Strings.isNullOrEmpty(patient.getBirthNumber())) {
@@ -352,14 +357,17 @@ public class UnitServiceImpl implements UnitService {
             if (null != unit.getId()) {
                 throw new IllegalArgumentException("expected object with empty ID");
             }
+        } else {
+            if (null == unit.getId()) { throw new NullPointerException("object ID cannot be null"); }
         }
     }
 
     /**
      * Validation of a patient before persistence.
      * @param patient patient to be validated
+     * @param forCreate whether the object has to be created as new entry in DB
      */
-    private void validatePatient(final Patient patient) {
+    private void validatePatient(final Patient patient, final boolean forCreate) {
         if (null == patient) { throw new NullPointerException("patient cannot be null"); }
         if (null == patient.getUnit()) { throw new NullPointerException("unit cannot be null"); }
         if (null == patient.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
@@ -368,6 +376,13 @@ public class UnitServiceImpl implements UnitService {
         }
         if (Strings.isNullOrEmpty(patient.getSurname())) {
             throw new IllegalArgumentException("surname cannot be blank");
+        }
+        if (forCreate) {
+            if (null != patient.getId()) {
+                throw new IllegalArgumentException("expected object with empty ID");
+            }
+        } else {
+            if (null == patient.getId()) { throw new NullPointerException("object ID cannot be null"); }
         }
 
         // birth number

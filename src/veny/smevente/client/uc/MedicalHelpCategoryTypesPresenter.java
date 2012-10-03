@@ -14,7 +14,6 @@ import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
-import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -248,7 +247,7 @@ public class MedicalHelpCategoryTypesPresenter
             public void onSuccess(final String jsonText) {
                 final Procedure mhc = new Procedure();
                 mhc.setId(id);
-                eventBus.fireEvent(new CrudEvent(EntityTypeEnum.MHC, OperationType.DELETE, mhc));
+                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, mhc));
                 view.getResultTable().removeRow(line);
                 for (Procedure foundCategory : foundMedicalHelpCategories) {
                     if (foundCategory.getId().equals(id)) {

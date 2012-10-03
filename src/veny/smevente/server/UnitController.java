@@ -78,17 +78,14 @@ public class UnitController {
     // ---------------------------------------------------------- Patient Stuff
 
     /**
-     * Creates a new patient.
-     * @param request HTTP request
-     * @param response HTTP response
+     * Stores (creates or updates) a patient.
+     *
      * @param patient patient
      * @param unitId unit ID
      * @return model & view
      */
     @RequestMapping(value = "/patient/", method = RequestMethod.POST)
     public ModelAndView createPatient(
-        final HttpServletRequest request,
-        final HttpServletResponse response,
         final Patient patient, @RequestParam("unitId") final String unitId) {
 
         final Patient created = unitService.createPatient(patient, unitId);
@@ -97,23 +94,19 @@ public class UnitController {
         return modelAndView;
     }
 
-//    /**
-//     * Updates given patient.
-//     * @param response HTTP response
-//     * @param patient patient
-//     * @param unitId unit ID
-//     */
-//    @RequestMapping(value = "/patient/", method = RequestMethod.PUT)
-//    public void updatePatient(
-//        final HttpServletResponse response,
-//        final PatientDto patient,
-//        @RequestParam("unitId") final Long unitId) {
-//
+    /**
+     * Updates given patient.
+     *
+     * @param patient patient
+     * @param unitId unit ID
+     */
+    @RequestMapping(value = "/patients/", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void updatePatient(final Patient patient/*, @RequestParam("unitId") final String unitId*/) {
 //        patient.setUnitId(unitId);
-//        unitService.updatePatient(patient);
-//        response.setStatus(200);
-//    }
-//
+        unitService.updatePatient(patient);
+    }
+
 //    /**
 //     * Get patients by ID.
 //     *
@@ -157,12 +150,12 @@ public class UnitController {
 
     /**
      * Deletes a patient.
-     * @param response HTTP response
+     *
      * @param patientId patient ID
      */
     @RequestMapping(value = "/patient/{id}/", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deletePatient(final HttpServletResponse response, @PathVariable("id") final String patientId) {
+    public void deletePatient(@PathVariable("id") final String patientId) {
         unitService.deletePatient(patientId);
     }
 

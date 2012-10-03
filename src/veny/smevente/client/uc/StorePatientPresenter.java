@@ -10,12 +10,11 @@ import veny.smevente.client.mvp.View;
 import veny.smevente.client.rest.AbstractRestCallbackWithValidation;
 import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
-import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.EmptyValidator;
+import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.model.Patient;
-import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -293,7 +292,7 @@ public class StorePatientPresenter
         if (null == view.getPatientId().getValue() || view.getPatientId().getValue().trim().isEmpty()) {
             p.setId(null);
         } else {
-            p.setId(Long.parseLong(view.getPatientId().getValue()));
+            p.setId(view.getPatientId().getValue());
         }
         p.setUnit(App.get().getSelectedUnit());
         p.setFirstname(view.getFirstname().getText());
@@ -321,17 +320,17 @@ public class StorePatientPresenter
         params.put("careers", p.getCareers());
         if (null != p.getId()) { params.put("id", p.getId().toString()); }
 
-        final RestHandler rest = new RestHandler("/rest/unit/patient/");
+        final RestHandler rest = new RestHandler("/rest/unit/patients/");
         rest.setCallback(new AbstractRestCallbackWithValidation() {
             @Override
             public void onSuccess(final String jsonText) {
                 if (null == p.getId()) {
                     final Patient patient = App.get().getJsonDeserializer().deserialize(
                             Patient.class, "patient", jsonText);
-                    eventBus.fireEvent(new CrudEvent(EntityTypeEnum.PATIENT, OperationType.CREATE, patient));
+                    eventBus.fireEvent(new CrudEvent(OperationType.CREATE, patient));
                     Window.alert(CONSTANTS.patientAdded()[App.get().getSelectedUnitTextVariant()]);
                 } else {
-                    eventBus.fireEvent(new CrudEvent(EntityTypeEnum.PATIENT, OperationType.UPDATE, p));
+                    eventBus.fireEvent(new CrudEvent(OperationType.UPDATE, p));
                     Window.alert(CONSTANTS.patientUpdated()[App.get().getSelectedUnitTextVariant()]);
                 }
             }
@@ -344,7 +343,7 @@ public class StorePatientPresenter
         if (null == p.getId()) {
             rest.post(params);
         } else {
-            rest.put(params);
+            rest.post(params);
         }
     }
 

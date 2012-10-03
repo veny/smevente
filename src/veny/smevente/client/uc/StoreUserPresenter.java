@@ -11,13 +11,12 @@ import veny.smevente.client.mvp.View;
 import veny.smevente.client.rest.AbstractRestCallbackWithValidation;
 import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
-import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.EmptyValidator;
+import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.model.Membership;
 import veny.smevente.model.User;
-import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -379,10 +378,10 @@ public class StoreUserPresenter
                 if (null == u.getId()) {
                     final User user = App.get().getJsonDeserializer().deserialize(
                             User.class, "user", jsonText);
-                    eventBus.fireEvent(new CrudEvent(EntityTypeEnum.USER, OperationType.CREATE, user));
+                    eventBus.fireEvent(new CrudEvent(OperationType.CREATE, user));
                     Window.alert(CONSTANTS.userAdded());
                 } else {
-                    eventBus.fireEvent(new CrudEvent(EntityTypeEnum.USER, OperationType.UPDATE, u));
+                    eventBus.fireEvent(new CrudEvent(OperationType.UPDATE, u));
                     Window.alert(CONSTANTS.userUpdated());
                 }
             }

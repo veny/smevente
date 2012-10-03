@@ -11,13 +11,12 @@ import veny.smevente.client.mvp.View;
 import veny.smevente.client.rest.AbstractRestCallbackWithValidation;
 import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
-import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.EmptyValidator;
+import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
-import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -444,12 +443,12 @@ public class StoreMedicalHelpCategoryPresenter
         if (null == mhc.getId()) {
             final Procedure medicalHelpCategory = App.get().getJsonDeserializer().deserialize(
                     Procedure.class, "medicalHelpCategory", jsonText);
-            eventBus.fireEvent(new CrudEvent(EntityTypeEnum.MHC, OperationType.CREATE, medicalHelpCategory));
+            eventBus.fireEvent(new CrudEvent(OperationType.CREATE, medicalHelpCategory));
             Window.alert(type == Event.Type.IN_CALENDAR
                     ? CONSTANTS.medicalHelpAdded()[textType]
                     : CONSTANTS.specialSmsAdded());
         } else {
-            eventBus.fireEvent(new CrudEvent(EntityTypeEnum.MHC, OperationType.UPDATE, mhc));
+            eventBus.fireEvent(new CrudEvent(OperationType.UPDATE, mhc));
             Window.alert(type == Event.Type.IN_CALENDAR
                     ? CONSTANTS.medicalHelpUpdated()[textType]
                     : CONSTANTS.specialSmsUpdated());

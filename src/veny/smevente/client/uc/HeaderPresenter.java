@@ -17,12 +17,11 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.CrudEventHandler;
 import veny.smevente.client.utils.HeaderEvent;
-import veny.smevente.model.Procedure;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
-import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -229,7 +228,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
     /** {@inheritDoc} */
     @Override
     public void create(final CrudEvent event) {
-        if (EntityTypeEnum.USER == event.getEntityType()) {
+        if (event.getData() instanceof User) {
             reloadCurrentUnitInfo();
         }
     }
@@ -243,7 +242,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
     /** {@inheritDoc} */
     @Override
     public void update(final CrudEvent event) {
-        if (EntityTypeEnum.USER == event.getEntityType()) {
+        if (event.getData() instanceof User) {
             reloadCurrentUnitInfo();
         }
     }
@@ -251,7 +250,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
     /** {@inheritDoc} */
     @Override
     public void delete(final CrudEvent event) {
-        if (EntityTypeEnum.USER == event.getEntityType()) {
+        if (event.getData() instanceof User) {
             reloadCurrentUnitInfo();
         }
     }

@@ -447,6 +447,8 @@ public class UserServiceImpl implements UserService {
             if (null != user.getId()) {
                 throw new IllegalArgumentException("expected object with empty ID");
             }
+        } else {
+            if (null == user.getId()) { throw new NullPointerException("object ID cannot be null"); }
         }
     }
 

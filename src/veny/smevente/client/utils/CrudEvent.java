@@ -1,6 +1,6 @@
 package veny.smevente.client.utils;
 
-import veny.smevente.shared.EntityTypeEnum;
+import veny.smevente.model.AbstractEntity;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -62,26 +62,21 @@ public class CrudEvent extends GwtEvent<CrudEvent.CrudEventHandler> {
     public static final Type<CrudEventHandler> TYPE = new Type<CrudEventHandler>();
 
 
-    /** Type of entity which are the data relevant to. */
-    private final EntityTypeEnum entityType;
     /** Type of operation. */
     private final OperationType operationType;
     /** Data of the operation. */
-    private final Object data;
+    private final AbstractEntity data;
 
 
     /**
      * Constructor.
-     * @param entityType type of entity
      * @param operationType type of operation
      * @param data data of the operation
      */
-    public CrudEvent(final EntityTypeEnum entityType, final OperationType operationType, final Object data) {
-        if (null == entityType) { throw new NullPointerException("entity type cannot be null"); }
+    public CrudEvent(final OperationType operationType, final AbstractEntity data) {
         if (null == operationType) { throw new NullPointerException("operation type cannot be null"); }
         if (null == data) { throw new NullPointerException("data cannot be null"); }
 
-        this.entityType = entityType;
         this.operationType = operationType;
         this.data = data;
     }
@@ -117,16 +112,8 @@ public class CrudEvent extends GwtEvent<CrudEvent.CrudEventHandler> {
      * Gets data of the operation.
      * @return data of the operation
      */
-    public Object getData() {
+    public AbstractEntity getData() {
         return data;
-    }
-
-    /**
-     * Gets type of the entity.
-     * @return type of the entity
-     */
-    public EntityTypeEnum getEntityType() {
-        return entityType;
     }
 
 }

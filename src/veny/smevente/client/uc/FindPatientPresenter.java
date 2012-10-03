@@ -14,14 +14,13 @@ import veny.smevente.client.rest.RestCallback;
 import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
-import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.HeaderEvent;
+import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.client.utils.UiUtils;
 import veny.smevente.model.Event;
-import veny.smevente.model.Procedure;
 import veny.smevente.model.Patient;
-import veny.smevente.shared.EntityTypeEnum;
+import veny.smevente.model.Procedure;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -256,7 +255,7 @@ public class FindPatientPresenter
             public void onSuccess(final String jsonText) {
                 final Patient patient = new Patient();
                 patient.setId(id);
-                eventBus.fireEvent(new CrudEvent(EntityTypeEnum.PATIENT, OperationType.DELETE, patient));
+                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, patient));
                 view.getResultTable().removeRow(line);
                 for (Patient foundPatient : foundPatients) {
                     if (foundPatient.equals(id)) {

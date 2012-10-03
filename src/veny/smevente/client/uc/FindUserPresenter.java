@@ -9,13 +9,12 @@ import veny.smevente.client.mvp.View;
 import veny.smevente.client.rest.AbstractRestCallbackWithErrorHandling;
 import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
-import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.CrudEvent.OperationType;
+import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.UiUtils;
 import veny.smevente.model.Membership;
 import veny.smevente.model.User;
-import veny.smevente.shared.EntityTypeEnum;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -237,7 +236,7 @@ public class FindUserPresenter
             public void onSuccess(final String jsonText) {
                 final User user = new User();
                 user.setId(id);
-                eventBus.fireEvent(new CrudEvent(EntityTypeEnum.USER, OperationType.DELETE, user));
+                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, user));
                 view.getResultTable().removeRow(line);
                 for (User foundUser : foundUsers) {
                     if (foundUser.getId().equals(id)) {
@@ -301,6 +300,7 @@ public class FindUserPresenter
      * @return true if specified user is an administrator of selected unit
      */
     private boolean isAdmin(final User user) {
+        if (true) throw new IllegalStateException("has to be refactored");
         List<Membership> unitMembers=null;//XXX = App.get().getSelectedUnit().getMembers();
 
         // just to be sure
