@@ -95,16 +95,19 @@ public class UnitServiceImpl implements UnitService {
     @Transactional
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public Patient createPatient(final Patient client, final Object unitId) {
-        final Unit unit = unitDao.getById(unitId);
-
+    public Patient storePatient(final Patient client) {
+        if (null == client.getUnit() || null == client.getUnit().getId()) {
+            throw new NullPointerException("unknown unit");
+        }
+        final Unit unit = unitDao.getById(client.getUnit().getId());
         client.setUnit(unit);
-        validatePatient(client, true);
+
+        validatePatient(client);
 
         // unique birth number
         if (!Strings.isNullOrEmpty(client.getBirthNumber())) {
             final Patient bn = patientDao.findByBirthNumber(client.getUnit().getId(), client.getBirthNumber());
-            if (null == bn) {
+            if (null == bn || (null != client.getId() && bn.getId().toString().equals(client.getId().toString()))) {
                 // expected state <- birth number not found
                 if (LOG.isLoggable(Level.FINER)) {
                     LOG.finer("duplicate birth number check OK, bn=" + client.getBirthNumber());
@@ -114,8 +117,8 @@ public class UnitServiceImpl implements UnitService {
             }
         }
 
-        Patient rslt = patientDao.persist(client);
-        LOG.info("created new client, " + rslt);
+        final Patient rslt = patientDao.persist(client);
+        LOG.info((null == client.getId() ? "created new client, " : "client updated, ") + rslt);
         return rslt;
     }
 
@@ -138,37 +141,6 @@ public class UnitServiceImpl implements UnitService {
         final List<Patient> rslt = patientDao.findBy("unit", unitId, null);
         LOG.info("found " + rslt.size() + " patients(s) by unit");
         return rslt;
-    }
-
-    /** {@inheritDoc} */
-    @Transactional
-    @Override
-    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public void updatePatient(final Patient patient) {
-        // load unit
-        if (null == patient.getUnit() || null == patient.getUnit().getId()) {
-            throw new NullPointerException("unknown unit");
-        }
-        final Unit unit = getUnit(patient.getUnit().getId());
-        patient.setUnit(unit);
-
-        validatePatient(patient, false);
-
-        // unique birth number
-        if (!Strings.isNullOrEmpty(patient.getBirthNumber())) {
-            final Patient bn = patientDao.findByBirthNumber(patient.getUnit().getId(), patient.getBirthNumber());
-            if (null == bn || bn.getId().equals(patient.getId())) {
-                if (LOG.isLoggable(Level.FINER)) {
-                    LOG.finer("duplicite birth number check OK, bn=" + patient.getBirthNumber());
-                }
-            } else {
-                ServerValidation.exception("duplicateValue", "birthNumber", (Object[]) null);
-            }
-        }
-
-        patientDao.persist(patient);
-        LOG.info("patient updated, id=" + patient.getId()
-                + ", fisrtname=" + patient.getFirstname() + ", surname=" + patient.getSurname());
     }
 
     /** {@inheritDoc} */
@@ -365,9 +337,8 @@ public class UnitServiceImpl implements UnitService {
     /**
      * Validation of a patient before persistence.
      * @param patient patient to be validated
-     * @param forCreate whether the object has to be created as new entry in DB
      */
-    private void validatePatient(final Patient patient, final boolean forCreate) {
+    private void validatePatient(final Patient patient) {
         if (null == patient) { throw new NullPointerException("patient cannot be null"); }
         if (null == patient.getUnit()) { throw new NullPointerException("unit cannot be null"); }
         if (null == patient.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
@@ -376,13 +347,6 @@ public class UnitServiceImpl implements UnitService {
         }
         if (Strings.isNullOrEmpty(patient.getSurname())) {
             throw new IllegalArgumentException("surname cannot be blank");
-        }
-        if (forCreate) {
-            if (null != patient.getId()) {
-                throw new IllegalArgumentException("expected object with empty ID");
-            }
-        } else {
-            if (null == patient.getId()) { throw new NullPointerException("object ID cannot be null"); }
         }
 
         // birth number

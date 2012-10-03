@@ -320,7 +320,7 @@ public class StorePatientPresenter
         params.put("careers", p.getCareers());
         if (null != p.getId()) { params.put("id", p.getId().toString()); }
 
-        final RestHandler rest = new RestHandler("/rest/unit/patients/");
+        final RestHandler rest = new RestHandler("/rest/unit/patient/");
         rest.setCallback(new AbstractRestCallbackWithValidation() {
             @Override
             public void onSuccess(final String jsonText) {

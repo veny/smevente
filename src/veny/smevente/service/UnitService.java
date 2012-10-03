@@ -46,13 +46,14 @@ public interface UnitService {
     // ---------------------------------------------------------- Patient Stuff
 
     /**
-     * Creates a new client in DB.
-     *
+     * Stores (creates or updates) a patient.<p/>
+     * The criterion to decide if create or update is patient's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
+     *     *
      * @param client client to be created
-     * @param unitId unit where the client belongs to
      * @return created client
      */
-    Patient createPatient(Patient client, Object unitId);
+    Patient storePatient(Patient client);
 
     /**
      * Gets patient by ID.
@@ -69,13 +70,6 @@ public interface UnitService {
      * @return list of patients in given unit
      */
     List<Patient> getPatientsByUnit(Object unitId);
-
-    /**
-     * Updates the given patient.
-     *
-     * @param patient patient to update
-     */
-    void updatePatient(Patient patient);
 
     /**
      * Finds patients according to given name and/or phone number and/or birth number.

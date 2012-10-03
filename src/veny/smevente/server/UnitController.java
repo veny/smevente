@@ -3,7 +3,6 @@ package veny.smevente.server;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -78,33 +77,22 @@ public class UnitController {
     // ---------------------------------------------------------- Patient Stuff
 
     /**
-     * Stores (creates or updates) a patient.
+     * Stores (creates or updates) a patient.<p/>
+     * The criterion to decide if create or update is patient's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
+     *
+     * There is used trick with @see {@link Patient#setUnitId(Object)}.
      *
      * @param patient patient
-     * @param unitId unit ID
      * @return model & view
      */
     @RequestMapping(value = "/patient/", method = RequestMethod.POST)
-    public ModelAndView createPatient(
-        final Patient patient, @RequestParam("unitId") final String unitId) {
+    public ModelAndView storePatient(final Patient patient/*, @RequestParam("unitId") final String unitId*/) {
 
-        final Patient created = unitService.createPatient(patient, unitId);
+        final Patient created = unitService.storePatient(patient);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("patient", created);
         return modelAndView;
-    }
-
-    /**
-     * Updates given patient.
-     *
-     * @param patient patient
-     * @param unitId unit ID
-     */
-    @RequestMapping(value = "/patients/", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
-    public void updatePatient(final Patient patient/*, @RequestParam("unitId") final String unitId*/) {
-//        patient.setUnitId(unitId);
-        unitService.updatePatient(patient);
     }
 
 //    /**
