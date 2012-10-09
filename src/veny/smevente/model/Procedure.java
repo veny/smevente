@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import veny.smevente.misc.SoftDelete;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 8.11.2010
  */
+@SoftDelete
 public class Procedure extends AbstractEntity {
 
     /** Unit which is master of this. */

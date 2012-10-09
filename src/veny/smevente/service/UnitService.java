@@ -98,7 +98,7 @@ public interface UnitService {
      * @param procedure procedure to be created
      * @return created instance
      */
-    Procedure createProcedure(Procedure procedure);
+    Procedure storeProcedure(Procedure procedure);
 
 //    /**
 //     * Gets category by ID.
@@ -124,10 +124,11 @@ public interface UnitService {
      */
     List<Procedure> getProceduresByUnit(Object unitId, Event.Type type);
 
-//    /**
-//     * Deletes category.
-//     * @param id category ID
-//     */
-//    void deleteMedicalHelpCategory(Long id);
+    /**
+     * Deletes given procedure by ID.
+     *
+     * @param id procedure ID
+     */
+    void deleteProcedure(Object id);
 
 }

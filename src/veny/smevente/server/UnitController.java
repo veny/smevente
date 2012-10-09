@@ -175,7 +175,7 @@ public class UnitController {
 //     * @param unitId unit ID
 //     * @return model & view
 //     */
-//    @RequestMapping(value = "/mhc/", method = RequestMethod.POST)
+//    @RequestMapping(value = "/procedure/", method = RequestMethod.POST)
 //    public ModelAndView createMedicalHelpCategory(
 //        final HttpServletRequest request,
 //        final HttpServletResponse response,
@@ -221,7 +221,7 @@ public class UnitController {
             @PathVariable("id") final String unitId,
             @PathVariable("type") final String procedureType) {
 
-        if (Strings.isNullOrEmpty(procedureType)) { throw new IllegalArgumentException("type caonnot be blank"); }
+        if (Strings.isNullOrEmpty(procedureType)) { throw new IllegalArgumentException("type cannot be blank"); }
         final Event.Type type = Event.Type.valueOf(procedureType.trim());
 
         final List<Procedure> procedures = unitService.getProceduresByUnit(unitId, type);
@@ -230,18 +230,16 @@ public class UnitController {
         return modelAndView;
     }
 
-//    /**
-//     * Deletes a category.
-//     * @param response HTTP response
-//     * @param mhcId category ID
-//     */
-//    @RequestMapping(value = "/mhc/{id}/", method = RequestMethod.DELETE)
-//    public void deleteMedicalHelpCategory(
-//            final HttpServletResponse response,
-//            @PathVariable("id") final Long mhcId) {
-//        unitService.deleteMedicalHelpCategory(mhcId);
-//        response.setStatus(200);
-//    }
+    /**
+     * Deletes given procedure.
+     *
+     * @param procedureId procedure ID
+     */
+    @RequestMapping(value = "/procedure/{id}/", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteProcedure(@PathVariable("id") final String procedureId) {
+        unitService.deleteProcedure(procedureId);
+    }
 
     // ----------------------------------------------------------- Helper Stuff
 

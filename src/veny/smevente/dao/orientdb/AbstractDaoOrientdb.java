@@ -160,7 +160,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             public List< T > doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName())
                         .append(" WHERE ").append(paramName1).append(" = :").append(paramName1)
-                        .append(" AND ").append(paramName2).append(" = :").append(paramName2);
+                        .append(" AND ").append(paramName2).append(" = '").append(value2).append("'");
 
                 if (null != orderBy) { sql.append(" ORDER BY ").append(orderBy); }
 
@@ -340,16 +340,26 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             final OObjectDatabaseTx db, final String origSql,
             final Map<String, Object> origParams, final boolean apply) {
 
-        StringBuffer sql = new StringBuffer(origSql);
+        final StringBuffer sql = new StringBuffer(origSql);
         Map<String, Object> params = origParams;
 
         if (null != softDeleteAnnotation && apply) {
+            final StringBuffer add = new StringBuffer();
             if (sql.indexOf(" WHERE ") > 0 || sql.indexOf(" where ") > 0) {
-                sql.append(" AND ");
+                add.append(" AND ");
             } else {
-                sql.append(" WHERE "); // TODO [veny,A] ORDER BY problem
+                add.append(" WHERE ");
             }
-            sql.append(softDeleteAnnotation.attribute()).append(" = :softDelete");
+            add.append(softDeleteAnnotation.attribute()).append(" = :softDelete");
+            int big = sql.indexOf(" ORDER BY ");
+            int small = sql.indexOf(" order by ");
+
+            if (big > 0 || small > 0) {
+                sql.insert(big > 0 ? big : small, add);
+            } else {
+                sql.append(add);
+            }
+
             if (null == params) { params = new HashMap<String, Object>(); }
             params.put("softDelete", Boolean.FALSE);
         }

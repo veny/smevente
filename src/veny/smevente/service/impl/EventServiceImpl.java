@@ -66,8 +66,8 @@ public class EventServiceImpl implements EventService {
     private EventDao eventDao;
 
     /** Dependency. */
-    @Autowired
-    private SmsGatewayService smsGatewayService;
+//    @Autowired
+//    private SmsGatewayService smsGatewayService;
 
     /** Date formatter. */
     private final DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yy");

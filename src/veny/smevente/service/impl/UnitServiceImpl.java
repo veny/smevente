@@ -214,7 +214,7 @@ public class UnitServiceImpl implements UnitService {
     @Transactional
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public Procedure createProcedure(final Procedure proc) {
+    public Procedure storeProcedure(final Procedure proc) {
         if (null == proc.getUnit() || null == proc.getUnit().getId()) {
             throw new NullPointerException("unknown unit");
         }
@@ -236,13 +236,9 @@ public class UnitServiceImpl implements UnitService {
         if (!uniqueOk) {
             ServerValidation.exception("duplicateValue", "name", (Object[]) null);
         }
-        final MedicalHelpCategory mhcGae = MedicalHelpCategory.mapFromDto(mhc);
-        mhcGae.setUnitId(mhc.getUnit().getId());
-        mhcDao.persist(mhcGae);
 
-        final MedicalHelpCategoryDto rslt = mhcGae.mapToDto();
-        rslt.setUnit(unit);
-        LOG.info("created new category, " + rslt);
+        final Procedure rslt = procedureDao.persist(proc);
+        LOG.info((null == proc.getId() ? "created new procedure, " : "procedure updated, ") + rslt);
         return rslt;
     }
 
@@ -308,16 +304,17 @@ public class UnitServiceImpl implements UnitService {
 //        rslt.setUnit(unitGae.mapToDto());
 //        return rslt;
 //    }
-//
-//    /** {@inheritDoc} */
-//    @Transactional
-//    @Override
-//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-//    public void deleteMedicalHelpCategory(final Long id) {
-//        mhcDao.remove(id);
-//        LOG.info("category deleted, id=" + id);
-//    }
-//
+
+    /** {@inheritDoc} */
+    @Transactional
+    @Override
+    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+    public void deleteProcedure(final Object id) {
+        procedureDao.remove(id);
+        LOG.info("procedure deleted, id=" + id);
+    }
+
+
     // -------------------------------------------------------- Assistant Stuff
 
     /**

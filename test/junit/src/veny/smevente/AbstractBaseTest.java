@@ -85,6 +85,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         // delete data from DB
         final OObjectDatabaseTx db = dbw.get();
         db.command(new OCommandSQL("DELETE FROM Event")).execute();
+        db.command(new OCommandSQL("DELETE FROM Procedure")).execute();
         db.command(new OCommandSQL("DELETE FROM Patient")).execute();
         db.command(new OCommandSQL("DELETE FROM Membership")).execute();
         db.command(new OCommandSQL("DELETE FROM Unit")).execute();
@@ -251,27 +252,27 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         return createProcedure(PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME, PROCEDURE_MSGTEXT, type, unit);
     }
     /**
-     * Creates a new MHC with given attributes.
+     * Creates a new procedure with given attributes.
      * @param name name
      * @param color color
      * @param time length of the transaction
-     * @param msgText SMS test
-     * @param unit unit where the MHC will be put into
-     * @return a new created MHC
+     * @param msgText message test
+     * @param unit unit where the procedure will be put into
+     * @return a new created procedure
      */
     protected Procedure createProcedure(
             final String name, final String color, final long time, final String msgText, final Unit unit) {
         return createProcedure(name, color, time, msgText, null, unit);
     }
     /**
-     * Creates a new MHC with given attributes.
+     * Creates a new procedure with given attributes.
      * @param name name
      * @param color color
      * @param time length of the transaction
-     * @param msgText SMS test
+     * @param msgText message test
      * @param type the type - for special types not all properties are set
-     * @param unit unit where the MHC will be put into
-     * @return a new created MHC
+     * @param unit unit where the procedure will be put into
+     * @return a new created procedure
      */
     protected Procedure createProcedure(
             final String name, final String color, final long time,
@@ -280,33 +281,33 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         toCreate.setUnit(unit);
         toCreate.setName(name);
         toCreate.setMessageText(msgText);
-        toCreate.setType(type.);
+        toCreate.setType(type.toString());
         if (type == null || type == Event.Type.IN_CALENDAR) {
             toCreate.setColor(color);
             toCreate.setTime(time);
         }
-        return unitService.createProcedure(toCreate);
+        return unitService.storeProcedure(toCreate);
     }
     /**
-//     * Asserts a default MHC.
-//     * @param mhc MHC to be checked
-//     * @param categoryType the type - for special types not all properties are set
-//     * @param aggregated whether to assert the aggregated objects too
-//     */
-//    protected void assertDefaultMedicalHelpCategory(final MedicalHelpCategoryDto mhc, final Short categoryType,
-//            final boolean aggregated) {
-//        assertNotNull(mhc);
-//        assertNotNull(mhc.getId());
-//        if (aggregated) { assertDefaultUnit(mhc.getUnit()); }
-//        assertEquals(MHC_NAME, mhc.getName());
-//        assertEquals(MHC_MSGTEXT, mhc.getSmsText());
-//        assertEquals(categoryType, mhc.getType());
-//        if (categoryType == null || categoryType.shortValue() == MedicalHelpCategoryDto.TYPE_STANDARD) {
-//            assertEquals(MHC_COLOR, mhc.getColor());
-//            assertEquals(MHC_TIME, mhc.getTime());
-//        }
-//    }
-//
+     * Asserts a default procedure.
+     * @param proc procedure to be checked
+     * @param type type - for special types not all properties are set
+     * @param aggregated whether to assert the aggregated objects too
+     */
+    protected void assertDefaultProcedure(final Procedure proc, final Event.Type type,
+            final boolean aggregated) {
+        assertNotNull(proc);
+        assertNotNull(proc.getId());
+        if (aggregated) { assertDefaultUnit(proc.getUnit()); }
+        assertEquals(PROCEDURE_NAME, proc.getName());
+        assertEquals(PROCEDURE_MSGTEXT, proc.getMessageText());
+        assertEquals(type, proc.enumType());
+        if (Event.Type.IN_CALENDAR == proc.enumType()) {
+            assertEquals(PROCEDURE_COLOR, proc.getColor());
+            assertEquals(PROCEDURE_TIME, proc.getTime());
+        }
+    }
+
 
 
     // -------------------------------------------------- Event Assistant Stuff
@@ -324,7 +325,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         final User author = createDefaultUser();
         final Patient patient = createDefaultPatient();
         final Procedure procedure = createProcedure(
-                MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, null, patient.getUnit());
+                PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME, PROCEDURE_MSGTEXT, null, patient.getUnit());
         return createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, author, patient, procedure);
     }
     /**
@@ -361,7 +362,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         if (aggregated) {
             assertDefaultUser(event.getAuthor());
             assertDefaultPatient(event.getPatient(), false);
-//XXX            assertDefaultProcedure(event.getProcedure(), null, false);
+            assertDefaultProcedure(event.getProcedure(), null, false);
         }
         assertEquals(EVENT_TEXT, event.getText());
         assertEquals(EVENT_START, event.getStartTime());

@@ -1,5 +1,6 @@
 package veny.smevente.server;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -270,7 +271,8 @@ public class UserController {
             @PathVariable("from") final Date from,
             @PathVariable("to") final Date to) {
 
-        final List<Event> rslt = eventService.findEvents(userId, from, to);
+//        final List<Event> rslt = eventService.findEvents(userId, from, to);
+final List<Event> rslt = new ArrayList<Event>();
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("events", rslt);
