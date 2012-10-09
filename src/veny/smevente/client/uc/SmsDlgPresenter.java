@@ -183,7 +183,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
         // MHC
         int idx = 0;
         for (Procedure mhc : mhcs) {
-            if (mhc.getId().equals(sms.getMedicalHelpCategory().getId())) {
+            if (mhc.getId().equals(sms.getProcedure().getId())) {
                 view.getMedicalHelp().setSelectedIndex(idx);
                 break;
             }

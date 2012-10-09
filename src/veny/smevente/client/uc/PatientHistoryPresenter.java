@@ -165,7 +165,7 @@ public class PatientHistoryPresenter
                 DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT).format(startTime) + " - "
                 + DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT).format(endTime)));
         UiUtils.addCell(table, line, 2, new Label(sms.getAuthor().getFullname()));
-        UiUtils.addCell(table, line, 3, new Label(sms.getMedicalHelpCategory().getName()));
+        UiUtils.addCell(table, line, 3, new Label(sms.getProcedure().getName()));
         UiUtils.addCell(table, line, 4, new Label(sms.getNotice()));
     }
 

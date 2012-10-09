@@ -17,8 +17,8 @@ import veny.smevente.client.uc.FindUserPresenter;
 import veny.smevente.client.uc.FindUserViewImpl;
 import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.HeaderViewImpl;
-import veny.smevente.client.uc.MedicalHelpCategoryTypesPresenter;
-import veny.smevente.client.uc.MedicalHelpCategoryTypesViewImpl;
+import veny.smevente.client.uc.ProcedureListPresenter;
+import veny.smevente.client.uc.ProcedureListViewImpl;
 import veny.smevente.client.uc.PatientHistoryPresenter;
 import veny.smevente.client.uc.PatientHistoryViewImpl;
 import veny.smevente.client.uc.SmsDetailDlgPresenter;
@@ -228,10 +228,10 @@ public class PresenterCollection {
                 presenter = createMedicalHelpCategoryPresenter;
                 break;
             case MEDICAL_HELP_CATEGORY_TYPES:
-                MedicalHelpCategoryTypesPresenter medicalHelpCategoryTypesPresenter =
-                    new MedicalHelpCategoryTypesPresenter(Event.Type.IN_CALENDAR);
+                ProcedureListPresenter medicalHelpCategoryTypesPresenter =
+                    new ProcedureListPresenter(Event.Type.IN_CALENDAR);
                 medicalHelpCategoryTypesPresenter.bind(
-                        new MedicalHelpCategoryTypesViewImpl(Event.Type.IN_CALENDAR));
+                        new ProcedureListViewImpl(Event.Type.IN_CALENDAR));
                 presenter = medicalHelpCategoryTypesPresenter;
                 break;
             case STORE_SPECIAL_MEDICAL_HELP_CATEGORY:
@@ -241,10 +241,10 @@ public class PresenterCollection {
                 presenter = createSpecialMedicalHelpCategoryPresenter;
                 break;
             case SPECIAL_MESSAGES:
-                MedicalHelpCategoryTypesPresenter specialMedicalHelpCategoryTypesPresenter =
-                    new MedicalHelpCategoryTypesPresenter(Event.Type.IMMEDIATE_MESSAGE);
+                ProcedureListPresenter specialMedicalHelpCategoryTypesPresenter =
+                    new ProcedureListPresenter(Event.Type.IMMEDIATE_MESSAGE);
                 specialMedicalHelpCategoryTypesPresenter.bind(
-                        new MedicalHelpCategoryTypesViewImpl(Event.Type.IMMEDIATE_MESSAGE));
+                        new ProcedureListViewImpl(Event.Type.IMMEDIATE_MESSAGE));
                 presenter = specialMedicalHelpCategoryTypesPresenter;
                 break;
             case SMS_STATISTIC:

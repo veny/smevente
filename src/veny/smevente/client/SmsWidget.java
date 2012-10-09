@@ -37,8 +37,8 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
         if (null == sms) { throw new NullPointerException("SMS cannot be null"); }
         if (null == sms.getAuthor()) { throw new NullPointerException("SMS author cannot be null"); }
         if (null == sms.getPatient()) { throw new NullPointerException("patient cannot be null"); }
-        if (null == sms.getMedicalHelpCategory()) {
-            throw new NullPointerException("medical help category cannot be null");
+        if (null == sms.getProcedure()) {
+            throw new NullPointerException("procedure cannot be null");
         }
 
         final Label header = new Label();
@@ -50,7 +50,7 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
 
         this.sms = sms;
         final Patient patient = sms.getPatient();
-        final Procedure mhc = sms.getMedicalHelpCategory();
+        final Procedure procedure = sms.getProcedure();
 
         if (null == sms.getSent()) {
             if (sms.getSendAttemptCount() >= Event.MAX_SEND_ATTEMPTS) {
@@ -61,7 +61,7 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
         } else {
             addStyleName("sms-widget-sent");
         }
-        DOM.setStyleAttribute(getElement(), "backgroundColor", "#" + mhc.getColor());
+        DOM.setStyleAttribute(getElement(), "backgroundColor", "#" + procedure.getColor());
 
         // header text
         final Date startTime = sms.getStartTime();

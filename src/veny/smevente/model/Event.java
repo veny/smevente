@@ -33,7 +33,7 @@ public class Event extends AbstractEntity {
         IMMEDIATE_MESSAGE
     }
 
-    /** Maximal number of attempts to send a SMS. */
+    /** Maximal number of attempts to send an event. */
     public static final int MAX_SEND_ATTEMPTS = 3;
 
     /** Statistics - sum. */
@@ -56,7 +56,7 @@ public class Event extends AbstractEntity {
     private Patient patient;
     /** Medical Help Category. */
     @ManyToOne
-    private Procedure medicalHelpCategory;
+    private Procedure procedure;
     /** Start time. */
     @Column
     private Date startTime;
@@ -69,7 +69,7 @@ public class Event extends AbstractEntity {
     /** Date when the event was sent. */
     @Column
     private Date sent;
-    /** Count of attempts to send the SMS. */
+    /** Count of attempts to send the event. */
     @Column
     private int sendAttemptCount;
     /** Event type. */
@@ -95,11 +95,11 @@ public class Event extends AbstractEntity {
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
-    public Procedure getMedicalHelpCategory() {
-        return medicalHelpCategory;
+    public Procedure getProcedure() {
+        return procedure;
     }
-    public void setMedicalHelpCategory(Procedure medicalHelpCategory) {
-        this.medicalHelpCategory = medicalHelpCategory;
+    public void setProcedure(Procedure procedure) {
+        this.procedure = procedure;
     }
     public Date getStartTime() {
         return startTime;
@@ -160,14 +160,14 @@ public class Event extends AbstractEntity {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return new StringBuilder("Sms(id=")
+        return new StringBuilder("Event(id=")
             .append(getId())
             .append(", author=")
             .append(author.getUsername())
             .append(", patientId='")
             .append(patient.fullname())
-            .append("', mhc=")
-            .append(medicalHelpCategory.getName())
+            .append("', procedure=")
+            .append(procedure.getName())
             .append(", startTime=")
             .append(startTime)
             .append(", length=")

@@ -210,39 +210,42 @@ public class UnitServiceImpl implements UnitService {
 
     // -------------------------------------------------------- Procedure Stuff
 
-//    /** {@inheritDoc} */
-//    @Transactional
-//    @Override
-//    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-//    public MedicalHelpCategoryDto createMedicalHelpCategory(final MedicalHelpCategoryDto mhc) {
-//        // load the unit (validation at the same time that the unit exist)
-//        final Unit unit = getById(mhc.getUnit().getId());
-//
-//        validateMedicalHelpCategory(mhc);
-//
-//        // unique name and type
-//        boolean uniqueOk = false;
-//        try {
-//            final MedicalHelpCategory found =
-//                mhcDao.findByNameAndType(mhc.getUnit().getId(), mhc.getName(), mhc.getType());
-//            uniqueOk = found == null;
-//        } catch (IllegalStateException e) {
-//            // expected state <- combination of name and type not found
-//            uniqueOk = true;
-//        }
-//        if (!uniqueOk) {
-//            ServerValidation.exception("duplicateValue", "name", (Object[]) null);
-//        }
-//        final MedicalHelpCategory mhcGae = MedicalHelpCategory.mapFromDto(mhc);
-//        mhcGae.setUnitId(mhc.getUnit().getId());
-//        mhcDao.persist(mhcGae);
-//
-//        final MedicalHelpCategoryDto rslt = mhcGae.mapToDto();
-//        rslt.setUnit(unit);
-//        LOG.info("created new category, " + rslt);
-//        return rslt;
-//    }
-//
+    /** {@inheritDoc} */
+    @Transactional
+    @Override
+    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
+    public Procedure createProcedure(final Procedure proc) {
+        if (null == proc.getUnit() || null == proc.getUnit().getId()) {
+            throw new NullPointerException("unknown unit");
+        }
+        final Unit unit = unitDao.getById(proc.getUnit().getId());
+        proc.setUnit(unit);
+
+        validateProcedure(proc);
+
+        // unique name and type
+        boolean uniqueOk = false;
+        try {
+            final Procedure found =
+                procedureDao.findByNameAndType(proc.getUnit().getId(), proc.getName(), proc.enumType());
+            uniqueOk = found == null;
+        } catch (IllegalStateException e) {
+            // expected state <- combination of name and type not found
+            uniqueOk = true;
+        }
+        if (!uniqueOk) {
+            ServerValidation.exception("duplicateValue", "name", (Object[]) null);
+        }
+        final MedicalHelpCategory mhcGae = MedicalHelpCategory.mapFromDto(mhc);
+        mhcGae.setUnitId(mhc.getUnit().getId());
+        mhcDao.persist(mhcGae);
+
+        final MedicalHelpCategoryDto rslt = mhcGae.mapToDto();
+        rslt.setUnit(unit);
+        LOG.info("created new category, " + rslt);
+        return rslt;
+    }
+
 //    /** {@inheritDoc} */
 //    @Transactional
 //    @Override
@@ -365,21 +368,23 @@ public class UnitServiceImpl implements UnitService {
         }
     }
 
-//    /**
-//     * Validation of a category before persistence.
-//     * @param mhc category to be validated
-//     */
-//    private void validateMedicalHelpCategory(final MedicalHelpCategoryDto mhc) {
-//        if (null == mhc.getUnit()) { throw new NullPointerException("unit cannot be null"); }
-//        if (null == mhc.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
-//        if (mhc.getUnit().getId() <= 0) { throw new IllegalArgumentException("unit ID must be more than 0"); }
-//        if (null == mhc.getName()) { throw new NullPointerException("name cannot be null"); }
-//        if (null == mhc.getSmsText()) { throw new NullPointerException("SMS text cannot be null"); }
-//        if (null == mhc.getType() || mhc.getType() == MedicalHelpCategoryDto.TYPE_STANDARD) {
-//            if (null == mhc.getColor()) { throw new NullPointerException("color cannot be null"); }
-//            if (6 != mhc.getColor().length()) { throw new IllegalArgumentException("bad color format"); }
-//            if (mhc.getTime() <= 0) { throw new IllegalArgumentException("bad time"); }
-//        }
-//    }
+    /**
+     * Validation of a procedure before persistence.
+     * @param proc procedure to be validated
+     */
+    private void validateProcedure(final Procedure proc) {
+        if (null == proc) { throw new NullPointerException("procedure cannot be null"); }
+        if (null == proc.getUnit()) { throw new NullPointerException("unit cannot be null"); }
+        if (null == proc.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
+        if (Strings.isNullOrEmpty(proc.getName())) { throw new IllegalArgumentException("name cannot be blank"); }
+        if (Strings.isNullOrEmpty(proc.getMessageText())) {
+            throw new IllegalArgumentException("message text cannot be blank");
+        }
+        if (proc.enumType() == Event.Type.IN_CALENDAR) {
+            if (Strings.isNullOrEmpty(proc.getColor())) { throw new NullPointerException("color cannot be blank"); }
+            if (6 != proc.getColor().length()) { throw new IllegalArgumentException("bad color format"); }
+            if (proc.getTime() <= 0) { throw new IllegalArgumentException("bad time"); }
+        }
+    }
 
 }

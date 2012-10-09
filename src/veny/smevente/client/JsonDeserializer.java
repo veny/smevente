@@ -388,9 +388,9 @@ public class JsonDeserializer {
         if (null != jsPatientObj) {
             rslt.setPatient(patientFromJson(jsPatientObj));
         }
-        final JSONObject jsStObj = jsObj.get("medicalHelpCategory").isObject();
+        final JSONObject jsStObj = jsObj.get("procedure").isObject();
         if (null != jsStObj) {
-            rslt.setMedicalHelpCategory(procedureFromJson(jsStObj));
+            rslt.setProcedure(procedureFromJson(jsStObj));
         }
         rslt.setStartTime(new Date((long) jsObj.get("medicalHelpStartTime").isNumber().doubleValue()));
         rslt.setLength((int) jsObj.get("medicalHelpLength").isNumber().doubleValue());

@@ -109,7 +109,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     public void unitMemberChanged(final HeaderEvent event) {
-        loadSmsForWeek(event.getUnitMember(), null); // weekDate=null -> take date from App
+        loadEventsForWeek(event.getUnitMember(), null); // weekDate=null -> take date from App
     }
 
     /** {@inheritDoc} */
@@ -123,7 +123,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         view.getTermCount().setText("-");
         view.getTermCount().setTitle("");
 
-        loadSmsForWeek(App.get().getSelectedUnitMember(), date);
+        loadEventsForWeek(App.get().getSelectedUnitMember(), date);
     }
 
     // ------------------------------------------------- SmsWidgetHandler Stuff
@@ -318,7 +318,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         params.put("medicalHelpLength", "" + mhLen);
 
         // send data to server
-        RestHandler rest = createClientRestHandler("/rest/user/sms/");
+        final RestHandler rest = createClientRestHandler("/rest/user/sms/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
@@ -327,7 +327,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
                     final DayColumn col = (DayColumn) smsWidget.getParent();
                     col.remove(smsWidget);
                 }
-                addSmsWidget(sms);
+                addEventWidget(sms);
             }
         });
         if (update) {
@@ -339,32 +339,33 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     }
 
     /**
-     * Loads SMSs for given user and calendar week.
-     * @param user author of SMSs
+     * Loads events for given user and calendar week.
+     * @param user author of events
      * @param weekDate a date in currently displayed week in calendar
      */
-    private void loadSmsForWeek(final User user, final Date weekDate) {
+    private void loadEventsForWeek(final User user, final Date weekDate) {
+        if (null == user || null == user.getId()) { throw new NullPointerException("user identification is null"); }
         clean();
 
         final Date from = DateUtils.getWeekFrom(null == weekDate ? App.get().getWeekDate() : weekDate);
         final Date to = DateUtils.getWeekTo(null == weekDate ? App.get().getWeekDate() : weekDate);
         final RestHandler rest = createExclusiveClientRestHandler(
                 "/rest/user/" + URL.encodePathSegment((String) user.getId())
-                + "/sms/from/" + from.getTime() + "/to/" + to.getTime() + "/");
+                + "/event/from/" + from.getTime() + "/to/" + to.getTime() + "/");
 
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final List<Event> smss = App.get().getJsonDeserializer().deserializeList(
-                        Event.class, "smss", jsonText);
+                final List<Event> events = App.get().getJsonDeserializer().deserializeList(
+                        Event.class, "events", jsonText);
                 int sentCnt = 0;
-                for (Event sms : smss) {
-                    addSmsWidget(sms);
-                    if (null != sms.getSent()) { sentCnt++; }
+                for (Event e : events) {
+                    addEventWidget(e);
+                    if (null != e.getSent()) { sentCnt++; }
                 }
                 // set SMS counter on position 0/0 in calendar table header
-                view.getTermCount().setText(sentCnt + "/" + smss.size());
-                view.getTermCount().setTitle(MESSAGES.termsInWeek(sentCnt, smss.size()));
+                view.getTermCount().setText(sentCnt + "/" + events.size());
+                view.getTermCount().setTitle(MESSAGES.termsInWeek(sentCnt, events.size()));
             }
         });
         rest.get();
@@ -569,17 +570,17 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     }
 
     /**
-     * Adds SMS widget to corresponding place in week calendar.
-     * @param sms SMS to be represented with the widget
+     * Adds event widget to corresponding place in week calendar.
+     * @param event event to be represented with the widget
      */
-    private void addSmsWidget(final Event sms) {
+    private void addEventWidget(final Event event) {
         // coordinates
-        final int dayIdx = DateUtils.getWeekIndex(sms.getStartTime());
+        final int dayIdx = DateUtils.getWeekIndex(event.getStartTime());
         final DayColumn col = (DayColumn) view.getCalendarBody().getWidget(0, dayIdx);
-        final int y = DateUtils.calculateYFromDate(sms.getStartTime());
-        final int height = DateUtils.calculateWidgetHeight(sms.getLength());
+        final int y = DateUtils.calculateYFromDate(event.getStartTime());
+        final int height = DateUtils.calculateWidgetHeight(event.getLength());
 
-        final SmsWidget smsWidget = new SmsWidget(sms);
+        final SmsWidget smsWidget = new SmsWidget(event);
         if (height > 25) {
             smsWidget.setHeight("" +  height + "px");
         }

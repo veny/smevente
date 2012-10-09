@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
@@ -33,27 +34,27 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * Find Patient presenter.
+ * List of Procedures presenter.
  *
  * @author Tomas Zajic [tomas.zajic75@gmail.com]
  * @since 28.7.2010
  */
-public class MedicalHelpCategoryTypesPresenter
-    extends AbstractPresenter<MedicalHelpCategoryTypesPresenter.MedicalHelpCategoryTypesView>
+public class ProcedureListPresenter
+    extends AbstractPresenter<ProcedureListPresenter.ProcedureListView>
     implements HeaderHandler {
 
     /**
-     * View interface for the medical help category form.
+     * View interface for the procedure list.
      *
      * @author Tomas Zajic
      * @since 28.7.2010
      */
-    public interface MedicalHelpCategoryTypesView extends View {
+    public interface ProcedureListView extends View {
         /**
-         * Getter for the button to create new category.
-         * @return the create new category element
+         * Getter for the button to create new procedure.
+         * @return button to create new procedure
          */
-        Button getAddMhc();
+        Button getAddProcedure();
         /**
          * Table with result set.
          * @return table with result set
@@ -64,20 +65,20 @@ public class MedicalHelpCategoryTypesPresenter
     /** Popup panel with context menu. */
     private final PopupPanel menuPopupPanel = new PopupPanel(true, true);
 
-    /** List of found medical help categories. */
-    private List<Procedure> foundMedicalHelpCategories;
+    /** List of found procedures. */
+    private List<Procedure> procedures;
 
-    /** ID of medical help category where the context menu is raised. */
+    /** ID of procedure where the context menu is raised. */
     private String clickedId = null;
 
-    /** Click handler to medical help category delete. */
+    /** Click handler to procedure delete. */
     private ClickHandler menuClickHandler;
 
     /** The index of row in table on which the click event occured. Used to
-     *  identify the category for which the update action will be started. */
+     *  identify the procedure for which the update action will be started. */
     private int clickedRowIndex;
 
-    /** Type of category to be used by presenter. */
+    /** Type of procedure to be used by presenter. */
     private Event.Type type = Event.Type.IN_CALENDAR;
 
     /** Handler registration for user CRUD in the Event Bus. */
@@ -85,9 +86,9 @@ public class MedicalHelpCategoryTypesPresenter
 
     /**
      * Constructor.
-     * @param type the type of category
+     * @param type the type of procedure
      */
-    public MedicalHelpCategoryTypesPresenter(final Event.Type type) {
+    public ProcedureListPresenter(final Event.Type type) {
         this.type = type;
     }
 
@@ -126,7 +127,7 @@ public class MedicalHelpCategoryTypesPresenter
             }
         };
 
-        view.getAddMhc().addClickHandler(new ClickHandler() {
+        view.getAddProcedure().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
                 App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
@@ -147,12 +148,12 @@ public class MedicalHelpCategoryTypesPresenter
         view.getResultTable().addDoubleClickHandler(new DoubleClickHandler() {
             @Override
             public void onDoubleClick(final DoubleClickEvent event) {
-                if (clickedRowIndex >= 0 && clickedRowIndex < foundMedicalHelpCategories.size()) {
-                    final Procedure mhc = foundMedicalHelpCategories.get(clickedRowIndex);
+                if (clickedRowIndex >= 0 && clickedRowIndex < procedures.size()) {
+                    final Procedure proc = procedures.get(clickedRowIndex);
                     App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
                             ? PresenterEnum.STORE_MEDICAL_HELP_CATEGORY
                             : PresenterEnum.STORE_SPECIAL_MEDICAL_HELP_CATEGORY,
-                            mhc);
+                            proc);
                 }
             }
         });
@@ -160,24 +161,24 @@ public class MedicalHelpCategoryTypesPresenter
         // context menu
         final Command updateCommand = new Command() {
             public void execute() {
-                final Procedure mhc = hideMenuAndGetSelectedMedicalHelpCategory();
+                final Procedure proc = hideMenuAndGetSelectedProcedure();
                 App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
                         ? PresenterEnum.STORE_MEDICAL_HELP_CATEGORY
                         : PresenterEnum.STORE_SPECIAL_MEDICAL_HELP_CATEGORY,
-                        mhc);
+                        proc);
             }
         };
         final Command deleteCommand = new Command() {
             public void execute() {
                 menuPopupPanel.hide();
                 final int idx = getIndexById(clickedId);
-                final Procedure mhc = foundMedicalHelpCategories.get(idx);
-                final String name = mhc.getName();
+                final Procedure proc = procedures.get(idx);
+                final String name = proc.getName();
                 final String confirmMsg = (type == Event.Type.IN_CALENDAR
                         ? CONSTANTS.deleteMedicalHelpQuestion()[App.get().getSelectedUnitTextVariant()] + "\n" + name
                         : MESSAGES.deleteSpecialSmsQuestion(name));
                 if (Window.confirm(confirmMsg)) {
-                    deleteMedicalHelpCategory(clickedId, idx + 1);
+                    deleteProcedure(clickedId, idx + 1);
                 }
                 clickedId = null;
             }
@@ -206,17 +207,17 @@ public class MedicalHelpCategoryTypesPresenter
     @Override
     public void onShow(final Object parameter) {
         // set unit specific text
-        view.getAddMhc().setText(
+        view.getAddProcedure().setText(
                 type == Event.Type.IN_CALENDAR
                 ? CONSTANTS.addMedicalHelp()[App.get().getSelectedUnitTextVariant()]
                 : CONSTANTS.addSpecialSms());
 
         // unit info is loaded by HeaderEvent.unitChanged
         // but if the initial presenter is other one according to history token (e.g. FindPatient)
-        // -> medical help category presenter not created -> not registered on Bus -> info is not loaded
+        // -> procedure presenter not created -> not registered on Bus -> info is not loaded
         // [if App.get().getUnits() is null <- post login process in progress -> wait for HeaderEvent]
         if (null != App.get().getMemberships()) {
-            findMedicalHelpCategories();
+            loadProcedures();
         } else {
             App.get().switchToPresenterByType(PresenterEnum.CALENDER, null);
         }
@@ -227,31 +228,31 @@ public class MedicalHelpCategoryTypesPresenter
     public void clean() {
         cleanResultTable();
         clickedId = null;
-        if (null != foundMedicalHelpCategories) {
-            foundMedicalHelpCategories.clear();
-            foundMedicalHelpCategories = null;
+        if (null != procedures) {
+            procedures.clear();
+            procedures = null;
         }
     }
 
     // -------------------------------------------------------- Assistant Stuff
 
     /**
-     * Deletes the selected medical help category.
-     * @param id medical help category ID
+     * Deletes the selected procedure.
+     * @param id procedure ID
      * @param line line in the table to be removed
      */
-    private void deleteMedicalHelpCategory(final String id, final int line) {
-        final RestHandler rest = new RestHandler("/rest/unit/mhc/" + id + "/");
+    private void deleteProcedure(final String id, final int line) {
+        final RestHandler rest = new RestHandler("/rest/unit/procedure/" + URL.encodePathSegment(id) + "/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final Procedure mhc = new Procedure();
-                mhc.setId(id);
-                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, mhc));
+                final Procedure toDel = new Procedure();
+                toDel.setId(id);
+                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, toDel));
                 view.getResultTable().removeRow(line);
-                for (Procedure foundCategory : foundMedicalHelpCategories) {
-                    if (foundCategory.getId().equals(id)) {
-                        foundMedicalHelpCategories.remove(foundCategory);
+                for (Procedure proc : procedures) {
+                    if (proc.getId().equals(id)) {
+                        procedures.remove(proc);
                         break;
                     }
                 }
@@ -261,21 +262,21 @@ public class MedicalHelpCategoryTypesPresenter
     }
 
     /**
-     * Finds medical help categories and show the result set.
+     * Loads procedures for currently selected unit and show the result set.
      */
-    private void findMedicalHelpCategories() {
+    private void loadProcedures() {
         cleanResultTable();
 
-        final RestHandler rest = new RestHandler("/rest/unit/" + App.get().getSelectedUnit().getId()
-                + "/mhc/" + type);
+        final RestHandler rest = new RestHandler("/rest/unit/"
+                + URL.encodePathSegment(App.get().getSelectedUnit().getId().toString())
+                + "/procedure/" + type);
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                foundMedicalHelpCategories = App.get().getJsonDeserializer().deserializeList(
-                        Procedure.class, "medicalHelpCategories", jsonText);
+                procedures = App.get().getJsonDeserializer().deserializeList(Procedure.class, "procedures", jsonText);
                 int line = 1;
-                for (Procedure mhc : foundMedicalHelpCategories) {
-                    addMedicalHelpCategory(mhc, line);
+                for (Procedure proc : procedures) {
+                    addProcedure(proc, line);
                     line++;
                 }
             }
@@ -284,26 +285,26 @@ public class MedicalHelpCategoryTypesPresenter
     }
 
     /**
-     * Adds one medical help category into result set table.
-     * @param mhc the medical help category
-     * @param line line where the medical help category will be inserted on
+     * Adds one procedure into result set table.
+     * @param proc the procedure to add
+     * @param line line where the procedure will be inserted on
      */
-    private void addMedicalHelpCategory(final Procedure mhc, final int line) {
+    private void addProcedure(final Procedure proc, final int line) {
         addCell(line, 0, new Label("" + line));
-        addCell(line, 1, new Label(mhc.getName()));
+        addCell(line, 1, new Label(proc.getName()));
         if (type == Event.Type.IN_CALENDAR) {
-            addCell(line, 3, new Label(mhc.getColor()));
-            addCell(line, 4, new Label("" + mhc.getTime()));
-            addCell(line, 5, new Label(mhc.getMessageText()));
+            addCell(line, 3, new Label(proc.getColor()));
+            addCell(line, 4, new Label("" + proc.getTime()));
+            addCell(line, 5, new Label(proc.getMessageText()));
             // color
             DOM.setStyleAttribute(view.getResultTable().getWidget(line, 3).getElement(),
-                    "backgroundColor", "#" + mhc.getColor());
+                    "backgroundColor", "#" + proc.getColor());
         } else {
-            addCell(line, 3, new Label(mhc.getMessageText()));
+            addCell(line, 3, new Label(proc.getMessageText()));
         }
         final Image menuImg = new Image("images/menu_button.png");
-        // medical help category ID is stored as element ID
-        menuImg.getElement().setId(mhc.getId().toString());
+        // procedure ID is stored as element ID
+        menuImg.getElement().setId(proc.getId().toString());
         menuImg.addClickHandler(menuClickHandler);
         addCell(line, 2, menuImg);
     }
@@ -321,13 +322,13 @@ public class MedicalHelpCategoryTypesPresenter
     }
 
     /**
-     * Hides the popup menu and gets the medical help category where the action has been selected on.
-     * @return selected medical help category
+     * Hides the popup menu and gets the procedure where the action has been selected on.
+     * @return selected procedure
      */
-    public Procedure hideMenuAndGetSelectedMedicalHelpCategory() {
+    public Procedure hideMenuAndGetSelectedProcedure() {
         menuPopupPanel.hide();
         final int idx = getIndexById(clickedId);
-        return foundMedicalHelpCategories.get(idx);
+        return procedures.get(idx);
     }
 
     /**
@@ -341,19 +342,20 @@ public class MedicalHelpCategoryTypesPresenter
     }
 
     /**
-     * Gets index of medical help category with given ID in collection of found medical help categories.
-     * @param idAsText textually medical help category ID
-     * @return index in found medical help categories (starting at 0)
+     * Gets index of procedure with given ID in collection of found procedures.
+     * @param idAsText textually procedure ID
+     * @return index in found procedures (starting at 0)
      */
     private int getIndexById(final String idAsText) {
-        if (null == foundMedicalHelpCategories) { throw new NullPointerException("patients collection is null"); }
+        if (null == procedures) { throw new NullPointerException("procedures collection is null"); }
 
         int i = 0;
-        for (Procedure mhc : foundMedicalHelpCategories) {
-            if (idAsText.equals(mhc.getId())) { return i; }
+        for (Procedure proc : procedures) {
+            if (idAsText.equals(proc.getId())) { return i; }
             i++;
         }
-        throw new IllegalStateException("medical help category not found, id=" + idAsText
-                + ", collection.size=" + foundMedicalHelpCategories.size());
+        throw new IllegalStateException("procedure not found, id=" + idAsText
+                + ", collection.size=" + procedures.size());
     }
+
 }

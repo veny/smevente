@@ -84,9 +84,9 @@ public class UnitServiceTest extends AbstractBaseTest {
 
     // ---------------------------------------------------------- Patient Stuff
 
-    /** UnitService.createPatient. */
+    /** UnitService.storePatient (create). */
     @Test // unit/patient/
-    public void testCreatePatient() {
+    public void testStoreCreatePatient() {
         final Unit unit = createDefaultUnit();
 
         // first patient in the first unit
@@ -101,8 +101,9 @@ public class UnitServiceTest extends AbstractBaseTest {
         toCreate.setZipCode("zip code");
         toCreate.setEmployer("employer");
         toCreate.setCareers("careers");
+        toCreate.setUnitId(unit.getId());
 
-        final Patient firstCreated = unitService.createPatient(toCreate, unit.getId());
+        final Patient firstCreated = unitService.storePatient(toCreate);
         assertDefaultPatient(firstCreated, true);
         assertEquals(unit.getId(), firstCreated.getUnit().getId());
         assertEquals("degree", firstCreated.getDegree());
@@ -111,7 +112,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals("zip code", firstCreated.getZipCode());
         assertEquals("employer", firstCreated.getEmployer());
         assertEquals("careers", firstCreated.getCareers());
-//XXX        assertEquals(1, unitService.getPatientsByUnit(unit.getId()).size());
+        assertEquals(1, unitService.getPatientsByUnit(unit.getId()).size());
 
         // second patient in the first unit
         final Patient secondCreated = createPatient("a", "b", null, null, unit);
@@ -124,20 +125,22 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals("b", secondCreated.getSurname());
         assertNull(secondCreated.getPhoneNumber());
         assertNull(secondCreated.getBirthNumber());
-//XXX        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
+        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
 
         final Patient badPatient = new Patient();
         badPatient.setFirstname("aa");
         badPatient.setSurname("bb");
         badPatient.setBirthNumber(BIRTH_NUMBER);
+        badPatient.setUnitId(unit.getId());
         try { // existing birth number
-            unitService.createPatient(badPatient, unit.getId());
+            unitService.storePatient(badPatient);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
 
         // second unit (I can create user with Birth Number in other unit)
         final Unit secondUnit = createUnit("A", "desc", Unit.TextVariant.PATIENT, 10L, null);
-        final Patient thirdCreated = unitService.createPatient(badPatient, secondUnit.getId());
+        badPatient.setUnitId(secondUnit.getId());
+        final Patient thirdCreated = unitService.storePatient(badPatient);
         assertEquals(secondUnit.getId(), thirdCreated.getUnit().getId());
         assertEquals(BIRTH_NUMBER, thirdCreated.getBirthNumber());
         assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
@@ -148,52 +151,53 @@ public class UnitServiceTest extends AbstractBaseTest {
         validation.setFirstname("a");
         validation.setSurname("a");
         validation.setBirthNumber("12345678");
+        validation.setUnitId(unit.getId());
         try { // short birth number
-            unitService.createPatient(validation, unit.getId());
+            unitService.storePatient(validation);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
         validation.setBirthNumber("12345678901");
         try { // long birth number
-            unitService.createPatient(validation, unit.getId());
+            unitService.storePatient(validation);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
         // OK
         validation.setBirthNumber("1234567890");
-        unitService.createPatient(validation, unit.getId());
+        unitService.storePatient(validation);
 
         // validation - phone number
         validation.setBirthNumber(null);
         validation.setPhoneNumber("12345678");
         try { // short phone number
-            unitService.createPatient(validation, unit.getId());
+            unitService.storePatient(validation);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
         validation.setPhoneNumber("12345678901x");
         try { // phone number not a number
-            unitService.createPatient(validation, unit.getId());
+            unitService.storePatient(validation);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
         // OK
         validation.setPhoneNumber("123456789");
-        unitService.createPatient(validation, unit.getId());
+        unitService.storePatient(validation);
     }
 
-    /** UnitService.updatePatient. */
-    @Test
-    public void testUpdatePatient() {
+    /** UnitService.storePatient (update). */
+    @Test // unit/patient/
+    public void testStoreUpdatePatient() {
         final Patient created = createDefaultPatient();
         assertNull(created.getCity());
         assertNull(created.getDegree());
 
         created.setCity("city");
-        unitService.updatePatient(created);
+        unitService.storePatient(created);
         Patient found = unitService.getPatientById(created.getId());
         assertDefaultPatient(found, true);
         assertEquals("city", found.getCity());
         assertNull(created.getDegree());
 
         created.setDegree("degree");
-        unitService.updatePatient(created);
+        unitService.storePatient(created);
         found = unitService.getPatientById(created.getId());
         assertDefaultPatient(found, true);
         assertEquals("city", found.getCity());
@@ -202,7 +206,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         // phone + birth number
         created.setPhoneNumber("987987987");
         created.setBirthNumber("789789789");
-        unitService.updatePatient(created);
+        unitService.storePatient(created);
         found = unitService.getPatientById(created.getId());
         assertEquals("987987987", created.getPhoneNumber());
         assertEquals("789789789", found.getBirthNumber());
@@ -302,7 +306,7 @@ public class UnitServiceTest extends AbstractBaseTest {
     }
 
     /** UnitService.deletePatient. */
-    @Test
+    @Test // unit/patient/{id}/
     public void testDeletePatient() {
         final Patient firstCreated = createDefaultPatient();
         final Unit unit = firstCreated.getUnit();

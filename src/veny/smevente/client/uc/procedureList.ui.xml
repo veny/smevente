@@ -6,7 +6,7 @@
 
   <g:HTMLPanel addStyleNames="uc-standard" >
 
-      <g:Button ui:field="addMhc" />
+      <g:Button ui:field="addProcedure" />
       <g:FlexTable ui:field="resultTable" addStyleNames="resultTable" />
 
   </g:HTMLPanel>

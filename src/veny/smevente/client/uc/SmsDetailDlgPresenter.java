@@ -90,7 +90,7 @@ public class SmsDetailDlgPresenter extends AbstractPresenter<SmsDetailDlgPresent
         getView().getPhoneNumber().setText(patient.getPhoneNumber());
         getView().getMedicalHelpLabel().setText(
                 CONSTANTS.medicalHelp()[App.get().getSelectedUnitTextVariant()]);
-        getView().getMedicalHelp().setText(sms.getMedicalHelpCategory().getName());
+        getView().getMedicalHelp().setText(sms.getProcedure().getName());
     }
     // -------------------------------------------------------- Presenter Stuff
 

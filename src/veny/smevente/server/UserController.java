@@ -1,6 +1,5 @@
 package veny.smevente.server;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
 import veny.smevente.model.User;
+import veny.smevente.service.EventService;
 import veny.smevente.service.UserService;
 
 /**
@@ -38,8 +38,8 @@ public class UserController {
     @Autowired
     private UserService userService;
     /** Dependency. */
-//    @Autowired
-//    private SmsService smsService;
+    @Autowired
+    private EventService eventService;
 
     /**
      * This is an overridden version of initBinder method of Spring baseCommandController.
@@ -196,8 +196,10 @@ public class UserController {
 //        userService.deleteUser(userId);
 //        response.setStatus(200);
 //    }
-//    // -------------------------------------------------------------- SMS Stuff
-//
+
+
+    // ------------------------------------------------------------ Event Stuff
+
 //    /**
 //     * Creates a new SMS.
 //     *
@@ -252,27 +254,26 @@ public class UserController {
 //    }
 
     /**
-     * Gets list of SMSs for given period.
+     * Gets list of events for given period.
      * This methods does not distinguish between units to see all terms of a given author.
      *
      * @param request HTTP request
      * @param userId author ID
      * @param from date from
      * @param to date to
-     * @return list of <code>Sms</code> as JSON
+     * @return list of <code>Event</code> as JSON
      */
-    @RequestMapping(value = "/{userId}/sms/from/{from}/to/{to}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userId}/event/from/{from}/to/{to}/", method = RequestMethod.GET)
     public ModelAndView findSms(
             final HttpServletRequest request,
             @PathVariable("userId") final String userId,
             @PathVariable("from") final Date from,
             @PathVariable("to") final Date to) {
 
-//        final List<Event> rslt = smsService.findSms(userId, from, to);
-        final List<Event> rslt = new ArrayList<Event>();
+        final List<Event> rslt = eventService.findEvents(userId, from, to);
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("smss", rslt);
+        modelAndView.addObject("events", rslt);
 
         return modelAndView;
     }

@@ -47,9 +47,9 @@ public interface UnitService {
 
     /**
      * Stores (creates or updates) a patient.<p/>
-     * The criterion to decide if create or update is patient's ID value:
+     * The criterion to decide if create or update is entity's ID value:
      * 'create' if ID is <i>null</i>, otherwise 'update'.
-     *     *
+     *
      * @param client client to be created
      * @return created client
      */
@@ -90,13 +90,16 @@ public interface UnitService {
 
     // -------------------------------------------------------- Procedure Stuff
 
-//    /**
-//     * Stores a given category into DB.
-//     * @param mhc category to be created
-//     * @return created instance
-//     */
-//    MedicalHelpCategoryDto createMedicalHelpCategory(MedicalHelpCategoryDto mhc);
-//
+    /**
+     * Stores (creates or updates) a procedure.<p/>
+     * The criterion to decide if create or update is entity's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
+     *
+     * @param procedure procedure to be created
+     * @return created instance
+     */
+    Procedure createProcedure(Procedure procedure);
+
 //    /**
 //     * Gets category by ID.
 //     *

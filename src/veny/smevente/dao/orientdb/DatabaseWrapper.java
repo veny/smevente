@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.DisposableBean;
 
 import veny.smevente.model.AbstractEntity;
+import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Procedure;
@@ -15,7 +16,6 @@ import veny.smevente.model.User;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
-import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
@@ -163,6 +163,18 @@ public final class DatabaseWrapper implements DisposableBean {
                 procedure.createProperty("type", OType.STRING).setMandatory(true).setNotNull(true);
                 procedure.createProperty("color", OType.STRING);
                 procedure.createProperty("time", OType.LONG);
+                // Event
+                OClass event = db.getMetadata().getSchema().createClass(Event.class.getSimpleName(), entity);
+                event.createProperty("author", OType.LINK, user).setMandatory(true);
+                event.createProperty("patient", OType.LINK, patient).setMandatory(true);
+                event.createProperty("procedure", OType.LINK, procedure).setMandatory(true);
+                event.createProperty("text", OType.STRING).setMandatory(true).setNotNull(true);
+                event.createProperty("notice", OType.STRING);
+                event.createProperty("startTime", OType.DATE).setMandatory(true).setNotNull(true);
+                event.createProperty("length", OType.INTEGER).setMandatory(true).setNotNull(true);
+                event.createProperty("sent", OType.DATE);
+                event.createProperty("color", OType.STRING);
+                event.createProperty("sendAttemptCount", OType.INTEGER);
             }
         }
 
@@ -186,9 +198,9 @@ public final class DatabaseWrapper implements DisposableBean {
 //        return ODatabaseDocumentPool.global().acquire(databaseUrl, username, password);
 //    }
     public OObjectDatabaseTx get() {
-        return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
-//        OObjectDatabaseTx db = new OObjectDatabaseTx(databaseUrl).open(username, password);
-//        return db;
+//        return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
+        OObjectDatabaseTx db = new OObjectDatabaseTx(databaseUrl).open(username, password);
+        return db;
     }
 
     /**

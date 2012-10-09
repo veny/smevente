@@ -14,17 +14,17 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * View implementation for the medical help category form.
+ * View implementation for the procedure list.
  *
  * @author Tomas Zajic [tomas.zajic75@gmail.com]
  * @since 28.7.2010
  */
-public class MedicalHelpCategoryTypesViewImpl extends Composite
-    implements MedicalHelpCategoryTypesPresenter.MedicalHelpCategoryTypesView {
+public class ProcedureListViewImpl extends Composite
+    implements ProcedureListPresenter.ProcedureListView {
 
     /** UI Binder interface. */
-    @UiTemplate("medicalHelpCategoryTypes.ui.xml")
-    interface Binder extends UiBinder<Widget, MedicalHelpCategoryTypesViewImpl> { }
+    @UiTemplate("procedureList.ui.xml")
+    interface Binder extends UiBinder<Widget, ProcedureListViewImpl> { }
     /** UI Binder. */
     private static final Binder BINDER = GWT.create(Binder.class);
 
@@ -32,7 +32,7 @@ public class MedicalHelpCategoryTypesViewImpl extends Composite
     private static final SmeventeConstants CONSTANTS = GWT.create(SmeventeConstants.class);
 
     // CHECKSTYLE:OFF
-    @UiField Button addMhc;
+    @UiField Button addProcedure;
     @UiField FlexTable resultTable;
     // CHECKSTYLE:ON
 
@@ -40,7 +40,7 @@ public class MedicalHelpCategoryTypesViewImpl extends Composite
      * Constructor.
      * @param type the type of category
      */
-    public MedicalHelpCategoryTypesViewImpl(final Event.Type type) {
+    public ProcedureListViewImpl(final Event.Type type) {
         initWidget(BINDER.createAndBindUi(this));
 
         getResultTable().setWidget(0, 0, new Label(""));
@@ -64,8 +64,8 @@ public class MedicalHelpCategoryTypesViewImpl extends Composite
 
     /** {@inheritDoc} */
     @Override
-    public Button getAddMhc() {
-        return addMhc;
+    public Button getAddProcedure() {
+        return addProcedure;
     }
 
     /** {@inheritDoc} */

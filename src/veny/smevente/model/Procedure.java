@@ -74,6 +74,8 @@ public class Procedure extends AbstractEntity {
     }
     // CHECKSTYLE:ON
 
+    // ---------------------------------------------------- Convenience Methods
+
     /**
      * Virtual attribute providing an enumeration entry to identify procedure type.
      *
@@ -88,6 +90,16 @@ public class Procedure extends AbstractEntity {
         } else {
             return Event.Type.valueOf(t.trim());
         }
+    }
+
+    /**
+     * Sets unit ID to a new unit object.
+     * @param unitId unit ID
+     */
+    public void setUnitId(final Object unitId) {
+        if (null == unitId) { throw new NullPointerException("unit ID is null"); }
+        setUnit(new Unit());
+        getUnit().setId(unitId);
     }
 
     // ----------------------------------------------------------- Object Stuff

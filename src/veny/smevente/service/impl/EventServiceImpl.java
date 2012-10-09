@@ -76,10 +76,6 @@ public class EventServiceImpl implements EventService {
 
     /** Constructor. */
     public EventServiceImpl() {
-//        final TimeZone tz = TimeZone.getTimeZone("GMT+2:00");
-//        dateFormatter.setTimeZone(tz);
-//        timeFormatter.setTimeZone(tz);
-
         // inspired by http://groups.google.com/group/google-appengine-java/browse_thread/thread/d6800e75ad2ce28b
 
         // TODO [veny,B] should be configured in Unit
@@ -101,7 +97,7 @@ public class EventServiceImpl implements EventService {
         // part of validation (the aggregated entities have to exist and cannot be deleted)
         userDao.getById(event.getAuthor().getId());
         patientDao.getById(event.getPatient().getId());
-        mhcDao.getById(event.getMedicalHelpCategory().getId());
+        mhcDao.getById(event.getProcedure().getId());
 
         final Event rslt = eventDao.persist(event);
 
@@ -146,7 +142,7 @@ public class EventServiceImpl implements EventService {
         // part of validation (the aggregated entities have to exist and cannot be deleted)
         userDao.getById(event.getAuthor().getId());
         patientDao.getById(event.getPatient().getId());
-        mhcDao.getById(event.getMedicalHelpCategory().getId());
+        mhcDao.getById(event.getProcedure().getId());
 
         eventDao.persist(event);
         LOG.info("updated event, " + event);
@@ -396,11 +392,11 @@ public class EventServiceImpl implements EventService {
         if (null == event.getAuthor().getId()) { throw new NullPointerException("author ID cannot be null"); }
         if (null == event.getPatient()) { throw new NullPointerException("patient cannot be null"); }
         if (null == event.getPatient().getId()) { throw new NullPointerException("patient ID cannot be null"); }
-        if (null == event.getMedicalHelpCategory()) {
-            throw new NullPointerException("service type cannot be null");
+        if (null == event.getProcedure()) {
+            throw new NullPointerException("procedure cannot be null");
         }
-        if (null == event.getMedicalHelpCategory().getId()) {
-            throw new NullPointerException("service type ID category cannot be null");
+        if (null == event.getProcedure().getId()) {
+            throw new NullPointerException("procedure ID cannot be null");
         }
         if (Strings.isNullOrEmpty(event.getText())) { throw new IllegalArgumentException("text cannot be blank"); }
         if (Event.Type.IN_CALENDAR == event.enumType()) {

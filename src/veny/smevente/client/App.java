@@ -13,10 +13,11 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.LoginPresenter;
 import veny.smevente.client.uc.LoginViewImpl;
+import veny.smevente.model.AbstractEntity;
 import veny.smevente.model.Event;
-import veny.smevente.model.Procedure;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
@@ -267,7 +268,8 @@ public final class App implements ValueChangeHandler<String> {
         // add tokens to the history stack in the hidden history frame
         String historyToken = pe.getId();
         if (null != parameter) {
-            final String param = parameter.toString();
+            final String param = (parameter instanceof AbstractEntity
+                    ? ((AbstractEntity) parameter).getId().toString() : parameter.toString());
             if (!param.trim().isEmpty()) {
                 historyToken += ("_" + param);
             }

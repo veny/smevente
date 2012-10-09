@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
@@ -96,13 +97,13 @@ public class UnitController {
     }
 
 //    /**
-//     * Get patients by ID.
+//     * Get patient by ID.
 //     *
 //     * @param patientId patient ID
 //     * @return model & view
 //     */
 //    @RequestMapping(value = "/patient/{id}/", method = RequestMethod.GET)
-//    public ModelAndView getPatients(@PathVariable("id") final Long patientId) {
+//    public ModelAndView getPatient(@PathVariable("id") final Long patientId) {
 //        ModelAndView modelAndView = new ModelAndView("jsonView");
 //        modelAndView.addObject("patient", unitService.getPatientById(patientId));
 //        return modelAndView;
@@ -163,9 +164,9 @@ public class UnitController {
 //
 //        return modelAndView;
 //    }
-//
-//    // ---------------------------------------------- MedicalHelpCategory Stuff
-//
+
+    // -------------------------------------------------------- Procedure Stuff
+
 //    /**
 //     * Creates a new category.
 //     * @param request HTTP request
@@ -205,26 +206,30 @@ public class UnitController {
 //        unitService.updateMedicalHelpCategory(mhc);
 //        response.setStatus(200);
 //    }
-//
-//    /**
-//     * Gets all Medical Help Categories.
-//     * @param request HTTP request
-//     * @param unitId unit ID
-//     * @param categoryType the type of category
-//     * @return model & view
-//     */
-//    @RequestMapping(value = "/{id}/mhc/{type}", method = RequestMethod.GET)
-//    public ModelAndView getMedicalHelpCategory(
-//            final HttpServletRequest request,
-//            @PathVariable("id") final Long unitId,
-//            @PathVariable("type") final Short categoryType) {
-//
-//        Collection<MedicalHelpCategoryDto> mhcs = unitService.getMedicalHelpCategoriesByUnit(unitId, categoryType);
-//        ModelAndView modelAndView = new ModelAndView("jsonView");
-//        modelAndView.addObject("medicalHelpCategories", mhcs);
-//        return modelAndView;
-//    }
-//
+
+    /**
+     * Gets all procedures of given type in given unit.
+     *
+     * @param request HTTP request
+     * @param unitId unit ID
+     * @param procedureType the type of procedure
+     * @return model & view
+     */
+    @RequestMapping(value = "/{id}/procedure/{type}", method = RequestMethod.GET)
+    public ModelAndView getMedicalHelpCategory(
+            final HttpServletRequest request,
+            @PathVariable("id") final String unitId,
+            @PathVariable("type") final String procedureType) {
+
+        if (Strings.isNullOrEmpty(procedureType)) { throw new IllegalArgumentException("type caonnot be blank"); }
+        final Event.Type type = Event.Type.valueOf(procedureType.trim());
+
+        final List<Procedure> procedures = unitService.getProceduresByUnit(unitId, type);
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("procedures", procedures);
+        return modelAndView;
+    }
+
 //    /**
 //     * Deletes a category.
 //     * @param response HTTP response

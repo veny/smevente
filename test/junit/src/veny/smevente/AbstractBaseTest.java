@@ -2,8 +2,10 @@ package veny.smevente;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -15,9 +17,12 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import veny.smevente.dao.orientdb.DatabaseWrapper;
+import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
+import veny.smevente.service.EventService;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
 
@@ -41,8 +46,8 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     protected UserService userService;
     @Autowired
     protected UnitService unitService;
-//    @Autowired
-//    protected SmsService smsService;
+    @Autowired
+    protected EventService eventService;
     // CHECKSTYLE:ON
 
 
@@ -79,6 +84,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
 
         // delete data from DB
         final OObjectDatabaseTx db = dbw.get();
+        db.command(new OCommandSQL("DELETE FROM Event")).execute();
         db.command(new OCommandSQL("DELETE FROM Patient")).execute();
         db.command(new OCommandSQL("DELETE FROM Membership")).execute();
         db.command(new OCommandSQL("DELETE FROM Unit")).execute();
@@ -204,7 +210,8 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         toCreate.setSurname(surname);
         toCreate.setPhoneNumber(phoneNumber);
         toCreate.setBirthNumber(birthNumber);
-        return unitService.createPatient(toCreate, unit.getId());
+        toCreate.setUnitId(unit.getId());
+        return unitService.storePatient(toCreate);
     }
     /**
      * Asserts default patient.
@@ -221,63 +228,66 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         assertEquals(BIRTH_NUMBER, patient.getBirthNumber());
     }
 
-//    // CHECKSTYLE:OFF
-//    public static final String MHC_NAME = "MedicalHelpCategory XY";
-//    public static final String MHC_COLOR = "AABBCC";
-//    public static final long MHC_TIME = 60;
-//    public static final String MHC_MSGTEXT = "some message with replace #{time}";
-//    // CHECKSTYLE:ON
-//
-//    /** @return a new default MHC */
-//    protected MedicalHelpCategoryDto createDefaultMedicalHelpCategory() {
-//        return createDefaultMedicalHelpCategory(null);
-//    }
-//    /**
-//     * @param categoryType the type of category
-//     * @return a new default MHC with specified category type
-//     */
-//    protected MedicalHelpCategoryDto createDefaultMedicalHelpCategory(final Short categoryType) {
-//        final UnitDto unit = createDefaultUnit();
-//        return createMedicalHelpCategory(MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, categoryType, unit);
-//    }
-//    /**
-//     * Creates a new MHC with given attributes.
-//     * @param name name
-//     * @param color color
-//     * @param time length of the transaction
-//     * @param msgText SMS test
-//     * @param unit unit where the MHC will be put into
-//     * @return a new created MHC
-//     */
-//    protected MedicalHelpCategoryDto createMedicalHelpCategory(
-//            final String name, final String color, final long time, final String msgText, final UnitDto unit) {
-//        return createMedicalHelpCategory(name, color, time, msgText, null, unit);
-//    }
-//    /**
-//     * Creates a new MHC with given attributes.
-//     * @param name name
-//     * @param color color
-//     * @param time length of the transaction
-//     * @param msgText SMS test
-//     * @param categoryType the type - for special types not all properties are set
-//     * @param unit unit where the MHC will be put into
-//     * @return a new created MHC
-//     */
-//    protected MedicalHelpCategoryDto createMedicalHelpCategory(
-//            final String name, final String color, final long time,
-//            final String msgText, final Short categoryType, final UnitDto unit) {
-//        final MedicalHelpCategoryDto toCreate = new MedicalHelpCategoryDto();
-//        toCreate.setUnit(unit);
-//        toCreate.setName(name);
-//        toCreate.setSmsText(msgText);
-//        toCreate.setType(categoryType);
-//        if (categoryType == null || categoryType.shortValue() == MedicalHelpCategoryDto.TYPE_STANDARD) {
-//            toCreate.setColor(color);
-//            toCreate.setTime(time);
-//        }
-//        return unitService.createMedicalHelpCategory(toCreate);
-//    }
-//    /**
+
+    // ---------------------------------------------- Procedure Assistant Stuff
+
+    // CHECKSTYLE:OFF
+    public static final String PROCEDURE_NAME = "Procedure XY";
+    public static final String PROCEDURE_COLOR = "AABBCC";
+    public static final long PROCEDURE_TIME = 60;
+    public static final String PROCEDURE_MSGTEXT = "some message with replace #{time}";
+    // CHECKSTYLE:ON
+
+    /** @return a new default procedure */
+    protected Procedure createProcedure() {
+        return createDefaultProcedure(null);
+    }
+    /**
+     * @param type type of procedure
+     * @return a new default procedure with specified type
+     */
+    protected Procedure createDefaultProcedure(final Event.Type type) {
+        final Unit unit = createDefaultUnit();
+        return createProcedure(PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME, PROCEDURE_MSGTEXT, type, unit);
+    }
+    /**
+     * Creates a new MHC with given attributes.
+     * @param name name
+     * @param color color
+     * @param time length of the transaction
+     * @param msgText SMS test
+     * @param unit unit where the MHC will be put into
+     * @return a new created MHC
+     */
+    protected Procedure createProcedure(
+            final String name, final String color, final long time, final String msgText, final Unit unit) {
+        return createProcedure(name, color, time, msgText, null, unit);
+    }
+    /**
+     * Creates a new MHC with given attributes.
+     * @param name name
+     * @param color color
+     * @param time length of the transaction
+     * @param msgText SMS test
+     * @param type the type - for special types not all properties are set
+     * @param unit unit where the MHC will be put into
+     * @return a new created MHC
+     */
+    protected Procedure createProcedure(
+            final String name, final String color, final long time,
+            final String msgText, final Event.Type type, final Unit unit) {
+        final Procedure toCreate = new Procedure();
+        toCreate.setUnit(unit);
+        toCreate.setName(name);
+        toCreate.setMessageText(msgText);
+        toCreate.setType(type.);
+        if (type == null || type == Event.Type.IN_CALENDAR) {
+            toCreate.setColor(color);
+            toCreate.setTime(time);
+        }
+        return unitService.createProcedure(toCreate);
+    }
+    /**
 //     * Asserts a default MHC.
 //     * @param mhc MHC to be checked
 //     * @param categoryType the type - for special types not all properties are set
@@ -297,64 +307,67 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
 //        }
 //    }
 //
-//    // CHECKSTYLE:OFF
-//    public static final String SMS_TEXT = "SMS text AB";
-//    @SuppressWarnings("deprecation")
-//    public static final Date SMS_MH_START = new Date(110 /* the year minus 1900 */, 10, 24);
-//    public static final int SMS_MH_LEN = 20;
-//    public static final String SMS_NOTICE = "notice to SMS";
-//    // CHECKSTYLE:ON
-//
-//    /** @return a new created default SMS */
-//    protected SmsDto createDefaultSms() {
-//        final User author = createDefaultUser();
-//        final PatientDto patient = createDefaultPatient();
-//        final MedicalHelpCategoryDto mhc = createMedicalHelpCategory(
-//                MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, null, patient.getUnit());
-//        return createSms(SMS_TEXT, SMS_MH_START, SMS_MH_LEN, SMS_NOTICE, author, patient, mhc);
-//    }
-//    /**
-//     * Creates a new SMS with given attributes.
-//     * @param text text
-//     * @param startTime start time
-//     * @param len length of the transaction
-//     * @param notice notice
-//     * @param author author
-//     * @param patient patient (recipient)
-//     * @param mhc MHC
-//     * @return a new created SMS
-//     */
-//    protected SmsDto createSms(final String text, final Date startTime, final int len, final String notice,
-//            final User author, final PatientDto patient, final MedicalHelpCategoryDto mhc) {
-//        final SmsDto sms = new SmsDto();
-//        sms.setAuthor(author);
-//        sms.setPatient(patient);
-//        sms.setMedicalHelpCategory(mhc);
-//        sms.setText(text);
-//        sms.setMedicalHelpStartTime(startTime);
-//        sms.setMedicalHelpLength(len);
-//        sms.setNotice(notice);
-//        return smsService.createSms(sms);
-//    }
-//    /**
-//     * Asserts default SMS.
-//     * @param sms SMS to be checked
-//     * @param aggregated whether to assert the aggregated objects too
-//     */
-//    protected void assertDefaultSms(final SmsDto sms, final boolean aggregated) {
-//        assertNotNull(sms);
-//        assertNotNull(sms.getId());
-//        if (aggregated) {
-//            assertDefaultUser(sms.getAuthor());
-//            assertDefaultPatient(sms.getPatient(), false);
-//            assertDefaultMedicalHelpCategory(sms.getMedicalHelpCategory(), null, false);
-//        }
-//        assertEquals(SMS_TEXT, sms.getText());
-//        assertEquals(SMS_MH_START, sms.getMedicalHelpStartTime());
-//        assertEquals(SMS_MH_LEN, sms.getMedicalHelpLength());
-//        assertEquals(SMS_NOTICE, sms.getNotice());
-//        assertEquals(new Integer(0), sms.getStatus());
-//        assertNull(sms.getSent());
-//    }
+
+
+    // -------------------------------------------------- Event Assistant Stuff
+
+    // CHECKSTYLE:OFF
+    public static final String EVENT_TEXT = "event text AB";
+    @SuppressWarnings("deprecation")
+    public static final Date EVENT_START = new Date(110 /* the year minus 1900 */, 10, 24);
+    public static final int EVENT_LEN = 20;
+    public static final String EVENT_NOTICE = "notice to SMS";
+    // CHECKSTYLE:ON
+
+    /** @return a new created default event */
+    protected Event createDefaultEvent() {
+        final User author = createDefaultUser();
+        final Patient patient = createDefaultPatient();
+        final Procedure procedure = createProcedure(
+                MHC_NAME, MHC_COLOR, MHC_TIME, MHC_MSGTEXT, null, patient.getUnit());
+        return createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, author, patient, procedure);
+    }
+    /**
+     * Creates a new event with given attributes.
+     * @param text text
+     * @param startTime start time
+     * @param len length of the event
+     * @param notice notice
+     * @param author author
+     * @param patient patient (recipient)
+     * @param procedure procedure
+     * @return a new created event
+     */
+    protected Event createEvent(final String text, final Date startTime, final int len, final String notice,
+            final User author, final Patient patient, final Procedure procedure) {
+        final Event event = new Event();
+        event.setAuthor(author);
+        event.setPatient(patient);
+        event.setProcedure(procedure);
+        event.setText(text);
+        event.setStartTime(startTime);
+        event.setLength(len);
+        event.setNotice(notice);
+        return eventService.createEvent(event);
+    }
+    /**
+     * Asserts default event.
+     * @param event event to be checked
+     * @param aggregated whether to assert the aggregated objects too
+     */
+    protected void assertDefaultEvent(final Event event, final boolean aggregated) {
+        assertNotNull(event);
+        assertNotNull(event.getId());
+        if (aggregated) {
+            assertDefaultUser(event.getAuthor());
+            assertDefaultPatient(event.getPatient(), false);
+//XXX            assertDefaultProcedure(event.getProcedure(), null, false);
+        }
+        assertEquals(EVENT_TEXT, event.getText());
+        assertEquals(EVENT_START, event.getStartTime());
+        assertEquals(EVENT_LEN, event.getLength());
+        assertEquals(EVENT_NOTICE, event.getNotice());
+        assertNull(event.getSent());
+    }
 
 }
