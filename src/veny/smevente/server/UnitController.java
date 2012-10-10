@@ -88,7 +88,7 @@ public class UnitController {
      * @return model & view
      */
     @RequestMapping(value = "/patient/", method = RequestMethod.POST)
-    public ModelAndView storePatient(final Patient patient/*, @RequestParam("unitId") final String unitId*/) {
+    public ModelAndView storePatient(final Patient patient) {
 
         final Patient created = unitService.storePatient(patient);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
@@ -167,29 +167,25 @@ public class UnitController {
 
     // -------------------------------------------------------- Procedure Stuff
 
-//    /**
-//     * Creates a new category.
-//     * @param request HTTP request
-//     * @param response HTTP response
-//     * @param mhc category
-//     * @param unitId unit ID
-//     * @return model & view
-//     */
-//    @RequestMapping(value = "/procedure/", method = RequestMethod.POST)
-//    public ModelAndView createMedicalHelpCategory(
-//        final HttpServletRequest request,
-//        final HttpServletResponse response,
-//        final MedicalHelpCategoryDto mhc,
-//        @RequestParam("unitId") final Long unitId) {
-//
-//        mhc.setUnitId(unitId);
-//        final MedicalHelpCategoryDto created = unitService.createMedicalHelpCategory(mhc);
-//        final ModelAndView modelAndView = new ModelAndView("jsonView");
-//        modelAndView.addObject("medicalHelpCategory", created);
-//
-//        return modelAndView;
-//    }
-//
+    /**
+     * Stores (creates or updates) a procedure.<p/>
+     * The criterion to decide if create or update is procedure's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
+     *
+     * There is used trick with @see {@link Procedure#setUnitId(Object)}.
+     *
+     * @param procedure procedure to store
+     * @return model & view
+     */
+    @RequestMapping(value = "/procedure/", method = RequestMethod.POST)
+    public ModelAndView storeProcedure(final Procedure procedure) {
+
+        final Procedure created = unitService.storeProcedure(procedure);
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("procedure", created);
+        return modelAndView;
+    }
+
 //    /**
 //     * Updates given Medical Help Category.
 //     * @param response HTTP response
@@ -216,7 +212,7 @@ public class UnitController {
      * @return model & view
      */
     @RequestMapping(value = "/{id}/procedure/{type}", method = RequestMethod.GET)
-    public ModelAndView getMedicalHelpCategory(
+    public ModelAndView getProcedure(
             final HttpServletRequest request,
             @PathVariable("id") final String unitId,
             @PathVariable("type") final String procedureType) {

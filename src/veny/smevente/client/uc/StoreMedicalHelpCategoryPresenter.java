@@ -251,7 +251,7 @@ public class StoreMedicalHelpCategoryPresenter
                     // already invoked by the ...validate() call.
                     return;
                 }
-                storeMedicalHelpCategory();
+                storeProcedure();
             }
         });
 
@@ -381,40 +381,40 @@ public class StoreMedicalHelpCategoryPresenter
     /**
      * Creates a new patient.
      */
-    private void storeMedicalHelpCategory() {
-        final Procedure mhc = new Procedure();
+    private void storeProcedure() {
+        final Procedure proc = new Procedure();
         if (null == view.getMedicalHelpCategoryId().getValue()
             || view.getMedicalHelpCategoryId().getValue().trim().isEmpty()) {
-            mhc.setId(null);
+            proc.setId(null);
         } else {
-            mhc.setId(Long.parseLong(view.getMedicalHelpCategoryId().getValue()));
+            proc.setId(view.getMedicalHelpCategoryId().getValue());
         }
 
-        mhc.setUnit(App.get().getSelectedUnit());
-        mhc.setName(view.getName().getText());
-        mhc.setMessageText(view.getSmsText().getText());
-        mhc.setType(type.toString());
+        proc.setUnit(App.get().getSelectedUnit());
+        proc.setName(view.getName().getText());
+        proc.setMessageText(view.getSmsText().getText());
+        proc.setType(type.toString());
         if (type == Event.Type.IN_CALENDAR) {
-            mhc.setTime(Long.parseLong(view.getTime().getText()));
-            mhc.setColor(view.getColor().getText());
+            proc.setTime(Long.parseLong(view.getTime().getText()));
+            proc.setColor(view.getColor().getText());
         }
 
         final Map<String, String> params = new HashMap<String, String>();
-        params.put("unitId", mhc.getUnit().getId().toString());
-        params.put("name", mhc.getName());
-        params.put("smsText", mhc.getMessageText());
-        params.put("type", "" + mhc.getType());
+        params.put("unitId", proc.getUnit().getId().toString());
+        params.put("name", proc.getName());
+        params.put("messageText", proc.getMessageText());
+        params.put("type", "" + proc.getType());
         if (type == Event.Type.IN_CALENDAR) {
-            params.put("time", "" + mhc.getTime());
-            params.put("color", mhc.getColor());
+            params.put("time", "" + proc.getTime());
+            params.put("color", proc.getColor());
         }
-        if (null != mhc.getId()) { params.put("id", mhc.getId().toString()); }
+        if (null != proc.getId()) { params.put("id", proc.getId().toString()); }
 
-        final RestHandler rest = new RestHandler("/rest/unit/mhc/");
+        final RestHandler rest = new RestHandler("/rest/unit/procedure/");
         rest.setCallback(new AbstractRestCallbackWithValidation() {
             @Override
             public void onSuccess(final String jsonText) {
-                fireEvents(mhc, jsonText);
+                fireEvents(proc, jsonText);
 
                 App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
                         ? PresenterEnum.MEDICAL_HELP_CATEGORY_TYPES
@@ -426,11 +426,7 @@ public class StoreMedicalHelpCategoryPresenter
             }
         });
 
-        if (null == mhc.getId()) {
-            rest.post(params);
-        } else {
-            rest.put(params);
-        }
+        rest.post(params);
     }
 
     /**
@@ -441,9 +437,8 @@ public class StoreMedicalHelpCategoryPresenter
     private void fireEvents(final Procedure mhc, final String jsonText) {
         final int textType = App.get().getSelectedUnitTextVariant();
         if (null == mhc.getId()) {
-            final Procedure medicalHelpCategory = App.get().getJsonDeserializer().deserialize(
-                    Procedure.class, "medicalHelpCategory", jsonText);
-            eventBus.fireEvent(new CrudEvent(OperationType.CREATE, medicalHelpCategory));
+            final Procedure proc = App.get().getJsonDeserializer().deserialize(Procedure.class, "procedure", jsonText);
+            eventBus.fireEvent(new CrudEvent(OperationType.CREATE, proc));
             Window.alert(type == Event.Type.IN_CALENDAR
                     ? CONSTANTS.medicalHelpAdded()[textType]
                     : CONSTANTS.specialSmsAdded());
