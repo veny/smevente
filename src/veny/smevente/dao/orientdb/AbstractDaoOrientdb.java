@@ -160,7 +160,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             public List< T > doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName())
                         .append(" WHERE ").append(paramName1).append(" = :").append(paramName1)
-                        .append(" AND ").append(paramName2).append(" = '").append(value2).append("'");
+                        .append(" AND ").append(paramName2).append(" = :").append(paramName2);
 
                 if (null != orderBy) { sql.append(" ORDER BY ").append(orderBy); }
 
@@ -350,7 +350,8 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             } else {
                 add.append(" WHERE ");
             }
-            add.append(softDeleteAnnotation.attribute()).append(" = :softDelete");
+            add.append('(').append(softDeleteAnnotation.attribute()).append(" = :softDelete")
+                .append(" OR ").append(softDeleteAnnotation.attribute()).append(" IS NULL)");
             int big = sql.indexOf(" ORDER BY ");
             int small = sql.indexOf(" order by ");
 
