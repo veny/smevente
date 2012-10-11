@@ -98,12 +98,6 @@ public final class DatabaseWrapper implements DisposableBean {
 
         if (init) {
 
-            // Object class workaround
-            // https://groups.google.com/forum/?fromgroups=#!topic/orient-database/LmvtY-rQsbg
-//            if (!db.getMetadata().getSchema().existsClass("Object")) {
-//                db.getMetadata().getSchema().createClass("Object");
-//            }
-
             // delete classes
 //            if (db.getMetadata().getSchema().existsClass(Patient.class.getSimpleName())) {
 //                db.command(new OCommandSQL("DELETE FROM " + Patient.class.getSimpleName())).execute();
@@ -175,6 +169,7 @@ public final class DatabaseWrapper implements DisposableBean {
                 event.createProperty("sent", OType.DATE);
                 event.createProperty("color", OType.STRING);
                 event.createProperty("sendAttemptCount", OType.INTEGER);
+                event.createProperty("type", OType.STRING);
             }
         }
 
@@ -184,6 +179,7 @@ public final class DatabaseWrapper implements DisposableBean {
         db.getEntityManager().registerEntityClass(Membership.class);
         db.getEntityManager().registerEntityClass(Patient.class);
         db.getEntityManager().registerEntityClass(Procedure.class);
+        db.getEntityManager().registerEntityClass(Event.class);
 
         db.close();
     }
