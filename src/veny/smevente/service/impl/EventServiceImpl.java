@@ -18,9 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.EventDao;
-import veny.smevente.dao.ProcedureDao;
-import veny.smevente.dao.MembershipDao;
 import veny.smevente.dao.PatientDao;
+import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
 import veny.smevente.model.Event;
@@ -28,7 +27,6 @@ import veny.smevente.model.Patient;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.EventService;
-import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.TextUtils;
 
@@ -49,9 +47,9 @@ public class EventServiceImpl implements EventService {
     /** Dependency. */
     @Autowired
     private UserDao userDao;
-    /** Dependency. */
-    @Autowired
-    private MembershipDao membershipDao;
+//    /** Dependency. */
+//    @Autowired
+//    private MembershipDao membershipDao;
     /** Dependency. */
     @Autowired
     private UnitDao unitDao;
@@ -183,6 +181,16 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<Event> findEvents(final Object authorId, final Date from, final Date to) {
         final List<Event> rslt = eventDao.findByAuthorAndPeriod(authorId, from, to, false);
+
+        // delete 3-level associations because of:
+        //  com.fasterxml.jackson.databind.JsonMappingException: Database 'remote:/smevente' is closed
+        //  (through reference chain: java.util.HashMap["events"]->
+        //    java.util.ArrayList[0]->veny.smevente.model.Event_$$_javassist_5["patient"]->
+        //    veny.smevente.model.Patient_$$_javassist_3["unit"]->veny.smevente.model.Unit_$$_javassist_2["deleted"])
+        for (Event e : rslt) {
+            e.getPatient().setUnit(null);
+            e.getProcedure().setUnit(null);
+        }
         LOG.info("found events, authorId=" + authorId + ", from=" + from + ", to=" + to + ", size=" + rslt.size());
         return rslt;
     }

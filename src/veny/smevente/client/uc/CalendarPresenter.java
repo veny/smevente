@@ -145,43 +145,44 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     public void create(final CrudEvent event) {
-        if (event.getData() instanceof Patient && null != App.get().getPatients()) {
+        if (event.getData() instanceof Patient) {
             App.get().getPatients().add((Patient) event.getData());
-        } else if (event.getData() instanceof Procedure && null != App.get().getAllProcedures()) {
+        } else if (event.getData() instanceof Procedure) {
             App.get().getAllProcedures().add((Procedure) event.getData());
         }
     }
     /** {@inheritDoc} */
     @Override
-    public void read(final CrudEvent event) {
-    }
+    public void read(final CrudEvent event) { /* I don't care */ }
     /** {@inheritDoc} */
     @Override
     public void update(final CrudEvent event) {
-        throw new IllegalStateException("has to be finished after refactoring");
-//XXX        if (EntityTypeEnum.PATIENT == event.getEntityType()) {
-//            final int idx = getPatientIndex(((Patient) event.getData()).getId());
-//            if (-1 != idx) {
-//                patients.set(idx, (Patient) event.getData());
-//            }
-//        } else if (EntityTypeEnum.MHC == event.getEntityType()) {
-//            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategory) event.getData()).getId());
-//            if (-1 != idx) {
-//                medicalHelpCategories.set(idx, (MedicalHelpCategory) event.getData());
-//            }
-//        }
+        if (event.getData() instanceof Patient) {
+            final int idx = getPatientIndex(((Patient) event.getData()).getId());
+            if (-1 != idx) {
+                App.get().getPatients().set(idx, (Patient) event.getData());
+            }
+        } else if (event.getData() instanceof Procedure) {
+            final int idx = getProcedureIndex(((Procedure) event.getData()).getId());
+            if (-1 != idx) {
+                App.get().getAllProcedures().set(idx, (Procedure) event.getData());
+            }
+        }
     }
     /** {@inheritDoc} */
     @Override
     public void delete(final CrudEvent event) {
-        throw new IllegalStateException("has to be finished after refactoring");
-//XXX        if (EntityTypeEnum.PATIENT == event.getEntityType()) {
-//            final int idx = getPatientIndex(((Patient) event.getData()).getId());
-//            patients.remove(idx);
-//        } else if (EntityTypeEnum.MHC == event.getEntityType()) {
-//            final int idx = getMedicalHelpCategoryIndex(((MedicalHelpCategory) event.getData()).getId());
-//            medicalHelpCategories.remove(idx);
-//        }
+        if (event.getData() instanceof Patient) {
+            final int idx = getPatientIndex(((Patient) event.getData()).getId());
+            if (-1 != idx) {
+                App.get().getPatients().remove(idx);
+            }
+        } else if (event.getData() instanceof Procedure) {
+            final int idx = getProcedureIndex(((Procedure) event.getData()).getId());
+            if (-1 != idx) {
+                App.get().getAllProcedures().remove(idx);
+            }
+        }
     }
 
     // -------------------------------------------------------- Presenter Stuff
@@ -261,14 +262,6 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     protected void onShow(final Object parameter) {
-//XXX        // unit info is loaded by HeaderEvent.unitChanget
-//        // but if the initial presenter is other one according to history token (e.g. FindPatient)
-//        // -> calendar presenter not created -> not registered on Bus -> info is not loaded
-//        // [if App.get().getUnits() is null <- post login process in progress -> wait for HeaderEvent]
-//        if (null == patients && null != App.get().getMemberships()) {
-//            loadUnitInfo(App.get().getSelectedUnit().getId());
-//        }
-
         setScrollByTime();
     }
 
@@ -354,8 +347,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final List<Event> events = App.get().getJsonDeserializer().deserializeList(
-                        Event.class, "events", jsonText);
+                final List<Event> events =
+                        App.get().getJsonDeserializer().deserializeList(Event.class, "events", jsonText);
                 int sentCnt = 0;
                 for (Event e : events) {
                     addEventWidget(e);
@@ -626,36 +619,35 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
                 new Pair<String, String>(smsText, notice), mhDateTime, mhLen, smsWidget);
     }
 
-//    /**
-//     * Finds a patient in presenter's patient cache according to given patient ID.
-//     * @param patientId ID to search
-//     * @return <i>-1</i> if not found, otherwise the patient index
-//     */
-//    private int getPatientIndex(final Object patientId) {
-//        if (null == patientId) { throw new NullPointerException("patient ID cannot be null"); }
-//        if (null != App.get().getPatients()) {
-//            for (int i = 0; i < App.get().getPatients().size(); i++) {
-//                if (App.get().getPatients().get(i).getId().equals(patientId)) { return i; }
-//            }
-//        }
-//        return -1;
-//    }
-//
-//    /**
-//     * Finds a procedureId in App model according to given category ID.
-//     * @param procedureId ID to search
-//     * @return <i>-1</i> if not found, otherwise the category index
-//     */
-//    private int getProcedureIndex(final Object procedureId) {
-//        if (null == procedureId) { throw new NullPointerException("category ID cannot be null"); }
-//        Event.Type.IN_CALENDAR
-//        if (null != App.get().getProcedures()) {
-//            for (int i = 0; i < App.get().getProcedures().size(); i++) {
-//                if (App.get().getProcedures().get(i).getId().equals(categoryId)) { return i; }
-//            }
-//        }
-//        return -1;
-//    }
+    /**
+     * Finds a patient in App's patient cache according to given patient ID.
+     * @param patientId ID to search
+     * @return <i>-1</i> if not found, otherwise the patient index
+     */
+    private int getPatientIndex(final Object patientId) {
+        if (null == patientId) { throw new NullPointerException("patient ID cannot be null"); }
+        if (null != App.get().getPatients()) {
+            for (int i = 0; i < App.get().getPatients().size(); i++) {
+                if (App.get().getPatients().get(i).getId().equals(patientId)) { return i; }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Finds a procedure in App's procedure cache according to given procedure ID.
+     * @param procedureId ID to search
+     * @return <i>-1</i> if not found, otherwise the procedure index
+     */
+    private int getProcedureIndex(final Object procedureId) {
+        if (null == procedureId) { throw new NullPointerException("procedure ID cannot be null"); }
+        if (null != App.get().getAllProcedures()) {
+            for (int i = 0; i < App.get().getAllProcedures().size(); i++) {
+                if (App.get().getAllProcedures().get(i).getId().equals(procedureId)) { return i; }
+            }
+        }
+        return -1;
+    }
 
     /**
      * Switches the current week according to given offset in weeks.

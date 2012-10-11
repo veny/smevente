@@ -36,7 +36,9 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                 params.put("from", from);
                 params.put("to", to);
 
-                return executeWithSoftDelete(db, sql.toString(), params, true);
+                final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+                detachWithFirstLevelAssociations(rslt, db);
+                return rslt;
             }
         });
     }

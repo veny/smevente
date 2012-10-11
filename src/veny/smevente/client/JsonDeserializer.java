@@ -77,7 +77,7 @@ public class JsonDeserializer {
         } else if (Procedure.class == classToCreate) {
             result = (T) procedureFromJson(jsObj);
         } else if (Event.class == classToCreate) {
-            result = (T) smsFromJson(jsObj);
+            result = (T) eventFromJson(jsObj);
         } else {
             throw new IllegalArgumentException("no deserialization, class=" + classToCreate);
         }
@@ -123,7 +123,7 @@ public class JsonDeserializer {
         } else if (Procedure.class == classToCreate) {
             rslt = (List<T>) procedureListFromJson(jsArr);
         } else if (Event.class == classToCreate) {
-            rslt = (List<T>) smsListFromJson(jsArr);
+            rslt = (List<T>) eventListFromJson(jsArr);
         } else {
             throw new IllegalArgumentException("no list deserialization, class=" + classToCreate);
         }
@@ -377,7 +377,7 @@ public class JsonDeserializer {
      * @param jsObj JSON object
      * @return instance of <code>Event</code>
      */
-    private Event smsFromJson(final JSONObject jsObj) {
+    private Event eventFromJson(final JSONObject jsObj) {
         final Event rslt = new Event();
         rslt.setId(jsObj.get("id").isString().stringValue());
         final JSONObject jsUserObj = jsObj.get("author").isObject();
@@ -392,8 +392,8 @@ public class JsonDeserializer {
         if (null != jsStObj) {
             rslt.setProcedure(procedureFromJson(jsStObj));
         }
-        rslt.setStartTime(new Date((long) jsObj.get("medicalHelpStartTime").isNumber().doubleValue()));
-        rslt.setLength((int) jsObj.get("medicalHelpLength").isNumber().doubleValue());
+        rslt.setStartTime(new Date((long) jsObj.get("startTime").isNumber().doubleValue()));
+        rslt.setLength((int) jsObj.get("length").isNumber().doubleValue());
         rslt.setSent(getDate(jsObj.get("sent")));
         rslt.setText(jsObj.get("text").isString().stringValue());
         rslt.setNotice(getString(jsObj.get("notice")));
@@ -406,7 +406,7 @@ public class JsonDeserializer {
      * @param jsArr JSON array
      * @return list of <code>Sms</code>
      */
-    private List<Event> smsListFromJson(final JSONArray jsArr) {
+    private List<Event> eventListFromJson(final JSONArray jsArr) {
         final List<Event> rslt = new ArrayList<Event>();
 
         for (int i = 0; i < jsArr.size(); i++) {
@@ -415,7 +415,7 @@ public class JsonDeserializer {
             if (jsObj == null) {
                 throw new IllegalStateException("not an JSON object: " + jsonValue);
             }
-            rslt.add(smsFromJson(jsObj));
+            rslt.add(eventFromJson(jsObj));
         }
         return rslt;
     }
@@ -470,7 +470,7 @@ public class JsonDeserializer {
         if (null == jsonSmss) { throw new IllegalArgumentException("not JSON array: history/b"); }
 
         final Patient patient = patientFromJson(jsonPatient);
-        final List<Event> smss = smsListFromJson(jsonSmss);
+        final List<Event> smss = eventListFromJson(jsonSmss);
         return new Pair<Patient, List<Event>>(patient, smss);
     }
 
