@@ -25,6 +25,8 @@ import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.client.utils.SmsWidgetEvent;
 import veny.smevente.client.utils.SmsWidgetEvent.SmsWidgetHandler;
 import veny.smevente.model.Event;
+import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
@@ -143,15 +145,11 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     public void create(final CrudEvent event) {
-        throw new IllegalStateException("has to be finished after refactoring");
-//XXX        if (EntityTypeEnum.PATIENT == event.getEntityType() && null != patients) {
-//            patients.add((Patient) event.getData());
-//        } else if (EntityTypeEnum.MHC == event.getEntityType() && null != medicalHelpCategories) {
-//            MedicalHelpCategory newMhc = (MedicalHelpCategory) event.getData();
-//            if (MedicalHelpCategory.TYPE_STANDARD == newMhc.getType()) {
-//                medicalHelpCategories.add(newMhc);
-//            }
-//        }
+        if (event.getData() instanceof Patient && null != App.get().getPatients()) {
+            App.get().getPatients().add((Patient) event.getData());
+        } else if (event.getData() instanceof Procedure && null != App.get().getAllProcedures()) {
+            App.get().getAllProcedures().add((Procedure) event.getData());
+        }
     }
     /** {@inheritDoc} */
     @Override

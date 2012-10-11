@@ -29,8 +29,8 @@ import veny.smevente.client.uc.SmsStatisticPresenter;
 import veny.smevente.client.uc.SmsStatisticViewImpl;
 import veny.smevente.client.uc.SpecialSmsDlgPresenter;
 import veny.smevente.client.uc.SpecialSmsDlgViewImpl;
-import veny.smevente.client.uc.StoreMedicalHelpCategoryPresenter;
-import veny.smevente.client.uc.StoreMedicalHelpCategoryViewImpl;
+import veny.smevente.client.uc.StoreProcedurePresenter;
+import veny.smevente.client.uc.StoreProcedureViewImpl;
 import veny.smevente.client.uc.StorePatientPresenter;
 import veny.smevente.client.uc.StorePatientViewImpl;
 import veny.smevente.client.uc.StoreUserPresenter;
@@ -222,9 +222,9 @@ public class PresenterCollection {
                 presenter = patientHistoryPresenter;
                 break;
             case STORE_MEDICAL_HELP_CATEGORY:
-                StoreMedicalHelpCategoryPresenter createMedicalHelpCategoryPresenter =
-                    new StoreMedicalHelpCategoryPresenter(Event.Type.IN_CALENDAR);
-                createMedicalHelpCategoryPresenter.bind(new StoreMedicalHelpCategoryViewImpl());
+                StoreProcedurePresenter createMedicalHelpCategoryPresenter =
+                    new StoreProcedurePresenter(Event.Type.IN_CALENDAR);
+                createMedicalHelpCategoryPresenter.bind(new StoreProcedureViewImpl());
                 presenter = createMedicalHelpCategoryPresenter;
                 break;
             case MEDICAL_HELP_CATEGORY_TYPES:
@@ -235,9 +235,9 @@ public class PresenterCollection {
                 presenter = medicalHelpCategoryTypesPresenter;
                 break;
             case STORE_SPECIAL_MEDICAL_HELP_CATEGORY:
-                StoreMedicalHelpCategoryPresenter createSpecialMedicalHelpCategoryPresenter =
-                    new StoreMedicalHelpCategoryPresenter(Event.Type.IMMEDIATE_MESSAGE);
-                createSpecialMedicalHelpCategoryPresenter.bind(new StoreMedicalHelpCategoryViewImpl());
+                StoreProcedurePresenter createSpecialMedicalHelpCategoryPresenter =
+                    new StoreProcedurePresenter(Event.Type.IMMEDIATE_MESSAGE);
+                createSpecialMedicalHelpCategoryPresenter.bind(new StoreProcedureViewImpl());
                 presenter = createSpecialMedicalHelpCategoryPresenter;
                 break;
             case SPECIAL_MESSAGES:

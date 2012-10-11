@@ -15,23 +15,23 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * View implementation for the login form.
+ * View implementation for storing a procedure.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
- * @since 0.1
+ * @since 22.8.2010
  */
-public class StoreMedicalHelpCategoryViewImpl extends Composite
-    implements StoreMedicalHelpCategoryPresenter.StoreMedicalHelpCategoryView {
+public class StoreProcedureViewImpl extends Composite
+    implements StoreProcedurePresenter.StoreProcedureView {
 
     /** UI Binder interface. */
-    @UiTemplate("storeMedicalHelpCategory.ui.xml")
-    interface Binder extends UiBinder<Widget, StoreMedicalHelpCategoryViewImpl> { }
+    @UiTemplate("storeProcedure.ui.xml")
+    interface Binder extends UiBinder<Widget, StoreProcedureViewImpl> { }
     /** UI Binder. */
     private static final Binder BINDER = GWT.create(Binder.class);
 
     // CHECKSTYLE:OFF
     @UiField TextBox name;
-    @UiField TextArea smsText;
+    @UiField TextArea messageText;
     @UiField TextBox time;
     @UiField Label timeLabel;
     @UiField TextBox color;
@@ -40,13 +40,13 @@ public class StoreMedicalHelpCategoryViewImpl extends Composite
     @UiField Button submit;
     @UiField Button cancel;
     @UiField DisclosurePanel validationErrors;
-    @UiField Hidden medicalHelpCategoryId;
+    @UiField Hidden procedureId;
     // CHECKSTYLE:ON
 
     /**
      * Constructor.
      */
-    public StoreMedicalHelpCategoryViewImpl() {
+    public StoreProcedureViewImpl() {
         initWidget(BINDER.createAndBindUi(this));
     }
 
@@ -58,8 +58,8 @@ public class StoreMedicalHelpCategoryViewImpl extends Composite
 
     /** {@inheritDoc} */
     @Override
-    public TextArea getSmsText() {
-        return smsText;
+    public TextArea getMessageText() {
+        return messageText;
     }
 
     /** {@inheritDoc} */
@@ -112,8 +112,8 @@ public class StoreMedicalHelpCategoryViewImpl extends Composite
 
     /** {@inheritDoc} */
     @Override
-    public Hidden getMedicalHelpCategoryId() {
-        return medicalHelpCategoryId;
+    public Hidden getProcedureId() {
+        return procedureId;
     }
 
     /** {@inheritDoc} */

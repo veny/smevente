@@ -186,23 +186,6 @@ public class UnitController {
         return modelAndView;
     }
 
-//    /**
-//     * Updates given Medical Help Category.
-//     * @param response HTTP response
-//     * @param mhc medical help category
-//     * @param unitId unit ID
-//     */
-//    @RequestMapping(value = "/mhc/", method = RequestMethod.PUT)
-//    public void updateMedicalHelpCategory(
-//        final HttpServletResponse response,
-//        final MedicalHelpCategoryDto mhc,
-//        @RequestParam("unitId") final Long unitId) {
-//
-//        mhc.setUnitId(unitId);
-//        unitService.updateMedicalHelpCategory(mhc);
-//        response.setStatus(200);
-//    }
-
     /**
      * Gets all procedures of given type in given unit.
      *

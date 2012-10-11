@@ -6,29 +6,29 @@
   <ui:style>
       .buttonPanel {  }
   </ui:style>
-  
+
   <g:HTMLPanel addStyleNames="uc-standard" >
 
     <g:VerticalPanel horizontalAlignment="ALIGN_LEFT" >
         <g:Label text="{consts.name}" />
         <g:TextBox ui:field="name" styleName="storeMedicalHelpElementHolder" />
         <g:Label text="{consts.smsText}" />
-        <g:TextArea ui:field="smsText" styleName="storeMedicalHelpElementHolder" />
+        <g:TextArea ui:field="messageText" styleName="storeMedicalHelpElementHolder" />
         <g:Label text="{consts.time}" ui:field="timeLabel" />
         <g:TextBox ui:field="time" styleName="storeMedicalHelpElementHolder" />
         <g:Label text="{consts.color}" ui:field="colorLabel" />
         <g:HorizontalPanel>
-	      <g:TextBox ui:field="color" styleName="storeMedicalHelpElementHolder" />
-	      <g:Button text="{consts.selectColor}" ui:field="selectColor" />
-	    </g:HorizontalPanel>
-	    <g:Cell horizontalAlignment="ALIGN_RIGHT">
-		  <g:HorizontalPanel>
-	        <g:Button text="{consts.save}" ui:field="submit" />
-	        <g:Button text="{consts.cancel}" ui:field="cancel" />
-	      </g:HorizontalPanel>
+        <g:TextBox ui:field="color" styleName="storeMedicalHelpElementHolder" />
+        <g:Button text="{consts.selectColor}" ui:field="selectColor" />
+      </g:HorizontalPanel>
+      <g:Cell horizontalAlignment="ALIGN_RIGHT">
+      <g:HorizontalPanel>
+          <g:Button text="{consts.save}" ui:field="submit" />
+          <g:Button text="{consts.cancel}" ui:field="cancel" />
+        </g:HorizontalPanel>
         </g:Cell>
         <g:DisclosurePanel ui:field="validationErrors" />
-        <g:Hidden ui:field="medicalHelpCategoryId" />
+        <g:Hidden ui:field="procedureId" />
       </g:VerticalPanel>
 
   </g:HTMLPanel>

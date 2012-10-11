@@ -45,32 +45,32 @@ import eu.maydu.gwt.validation.client.i18n.ValidationMessages;
 import eu.maydu.gwt.validation.client.validators.numeric.LongValidator;
 
 /**
- * Add Patient presenter.
+ * Presenter for Store (Create or Update) a procedure.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 22.8.2010
  */
-public class StoreMedicalHelpCategoryPresenter
-    extends AbstractPresenter<StoreMedicalHelpCategoryPresenter.StoreMedicalHelpCategoryView>
+public class StoreProcedurePresenter
+    extends AbstractPresenter<StoreProcedurePresenter.StoreProcedureView>
     implements HeaderHandler {
 
     /**
-     * View interface for the Add Medical help category.
+     * View interface for storing a procedure.
      *
      * @author Vaclav Sykora
      * @since 22.8.2010
      */
-    public interface StoreMedicalHelpCategoryView extends View {
+    public interface StoreProcedureView extends View {
         /**
          * Getter for the name text field.
          * @return the input field for the name
          */
         TextBox getName();
         /**
-         * Getter for the Sms text field.
-         * @return the input field for the Sms text
+         * Getter for the message text field.
+         * @return the input field for the message text
          */
-        TextArea getSmsText();
+        TextArea getMessageText();
         /**
          * Getter for the time text field.
          * @return the input field for the time
@@ -111,21 +111,21 @@ public class StoreMedicalHelpCategoryPresenter
          */
         DisclosurePanel getValidationErrors();
         /**
-         * @return the hidden field wit category ID
+         * @return the hidden field wit procedure ID
          */
-        Hidden getMedicalHelpCategoryId();
+        Hidden getProcedureId();
     }
 
     /** Handler registration for user CRUD in the Event Bus. */
     private HandlerRegistration ebusUnitSelection;
 
     /**
-     * Type of category to be created or updated.
+     * Type of procedure to be created or updated.
      */
     private Event.Type type = Event.Type.IN_CALENDAR;
 
     /**
-     *
+     * Dialog of color picker.
      */
     private ColorPickerDialog pickerDialog = null;
 
@@ -189,9 +189,9 @@ public class StoreMedicalHelpCategoryPresenter
 
     /**
      * Constructor.
-     * @param type the type of category
+     * @param type the type of procedure
      */
-    public StoreMedicalHelpCategoryPresenter(final Event.Type type) {
+    public StoreProcedurePresenter(final Event.Type type) {
         this.type = type;
     }
 
@@ -227,7 +227,7 @@ public class StoreMedicalHelpCategoryPresenter
                         pickerDialog.picker.setHex(view.getColor().getText());
                     } catch (Exception e) {
                         // Do nothing if color format is bad - probably
-                        // new category is being created, so the color
+                        // new procedure is being created, so the color
                         // code is empty.
                         e.equals(null); // Checkstyle - workaround line
                     }
@@ -286,20 +286,20 @@ public class StoreMedicalHelpCategoryPresenter
         view.getName().setFocus(true);
 
         if (null != parameter && parameter instanceof Procedure) {
-            final Procedure mhc = (Procedure) parameter;
-            view.getMedicalHelpCategoryId().setValue(mhc.getId().toString());
-            view.getName().setText(mhc.getName());
-            view.getSmsText().setText(mhc.getMessageText());
+            final Procedure proc = (Procedure) parameter;
+            view.getProcedureId().setValue(proc.getId().toString());
+            view.getName().setText(proc.getName());
+            view.getMessageText().setText(proc.getMessageText());
             if (type == Event.Type.IN_CALENDAR) {
-                view.getTime().setText("" + mhc.getTime());
-                view.getColor().setText(mhc.getColor());
+                view.getTime().setText("" + proc.getTime());
+                view.getColor().setText(proc.getColor());
                 // color
-                DOM.setStyleAttribute(view.getColor().getElement(), "backgroundColor", "#" + mhc.getColor());
+                DOM.setStyleAttribute(view.getColor().getElement(), "backgroundColor", "#" + proc.getColor());
             }
         } else {
             // Using a null as argument on IE7 will lead to the setting of
             // string "null" as value, therefore the empty string is used instead.
-            view.getMedicalHelpCategoryId().setValue("");
+            view.getProcedureId().setValue("");
             if (type == Event.Type.IN_CALENDAR) {
                 // color
                 DOM.setStyleAttribute(view.getColor().getElement(), "backgroundColor", "#FFFFFF");
@@ -312,9 +312,9 @@ public class StoreMedicalHelpCategoryPresenter
     public void clean() {
         // Using a null as argument on IE7 will lead to the setting of
         // string "null" as value, therefore the empty string is used instead.
-        view.getMedicalHelpCategoryId().setValue("");
+        view.getProcedureId().setValue("");
         view.getName().setText("");
-        view.getSmsText().setText("");
+        view.getMessageText().setText("");
         if (type == Event.Type.IN_CALENDAR) {
             view.getTime().setText("");
             view.getTime().removeStyleName("validationFailedBorder");
@@ -363,7 +363,7 @@ public class StoreMedicalHelpCategoryPresenter
                     .addActionForFailure(focusAction)
                     .addActionForFailure(new StyleAction("validationFailedBorder")));
         validator.addValidators("smtText",
-                new EmptyValidator(view.getSmsText())
+                new EmptyValidator(view.getMessageText())
                     .addActionForFailure(focusAction)
                     .addActionForFailure(new StyleAction("validationFailedBorder")));
         if (type == Event.Type.IN_CALENDAR) {
@@ -383,16 +383,16 @@ public class StoreMedicalHelpCategoryPresenter
      */
     private void storeProcedure() {
         final Procedure proc = new Procedure();
-        if (null == view.getMedicalHelpCategoryId().getValue()
-            || view.getMedicalHelpCategoryId().getValue().trim().isEmpty()) {
+        if (null == view.getProcedureId().getValue()
+            || view.getProcedureId().getValue().trim().isEmpty()) {
             proc.setId(null);
         } else {
-            proc.setId(view.getMedicalHelpCategoryId().getValue());
+            proc.setId(view.getProcedureId().getValue());
         }
 
         proc.setUnit(App.get().getSelectedUnit());
         proc.setName(view.getName().getText());
-        proc.setMessageText(view.getSmsText().getText());
+        proc.setMessageText(view.getMessageText().getText());
         proc.setType(type.toString());
         if (type == Event.Type.IN_CALENDAR) {
             proc.setTime(Long.parseLong(view.getTime().getText()));
@@ -431,19 +431,20 @@ public class StoreMedicalHelpCategoryPresenter
 
     /**
      *
-     * @param mhc the created/updated category
+     * @param updated updated procedure
      * @param jsonText server response
      */
-    private void fireEvents(final Procedure mhc, final String jsonText) {
+    private void fireEvents(final Procedure updated, final String jsonText) {
         final int textType = App.get().getSelectedUnitTextVariant();
-        if (null == mhc.getId()) {
-            final Procedure proc = App.get().getJsonDeserializer().deserialize(Procedure.class, "procedure", jsonText);
-            eventBus.fireEvent(new CrudEvent(OperationType.CREATE, proc));
+        if (null == updated.getId()) {
+            final Procedure created =
+                    App.get().getJsonDeserializer().deserialize(Procedure.class, "procedure", jsonText);
+            eventBus.fireEvent(new CrudEvent(OperationType.CREATE, created));
             Window.alert(type == Event.Type.IN_CALENDAR
                     ? CONSTANTS.medicalHelpAdded()[textType]
                     : CONSTANTS.specialSmsAdded());
         } else {
-            eventBus.fireEvent(new CrudEvent(OperationType.UPDATE, mhc));
+            eventBus.fireEvent(new CrudEvent(OperationType.UPDATE, updated));
             Window.alert(type == Event.Type.IN_CALENDAR
                     ? CONSTANTS.medicalHelpUpdated()[textType]
                     : CONSTANTS.specialSmsUpdated());
