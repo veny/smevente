@@ -24,6 +24,7 @@ import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
 import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.EventService;
@@ -58,7 +59,7 @@ public class EventServiceImpl implements EventService {
     private PatientDao patientDao;
     /** Dependency. */
     @Autowired
-    private ProcedureDao mhcDao;
+    private ProcedureDao procedureDao;
     /** Dependency. */
     @Autowired
     private EventDao eventDao;
@@ -88,18 +89,34 @@ public class EventServiceImpl implements EventService {
     /** {@inheritDoc} */
     @Transactional
     @Override
-    public Event createEvent(final Event event) {
+    public Event storeEvent(final Event event) {
         // TODO [veny,B] here must be a strong authorization
-        validateEvent(event, true);
 
         // part of validation (the aggregated entities have to exist and cannot be deleted)
-        userDao.getById(event.getAuthor().getId());
-        patientDao.getById(event.getPatient().getId());
-        mhcDao.getById(event.getProcedure().getId());
+
+        // author
+        if (null == event.getAuthor() || null == event.getAuthor().getId()) {
+            throw new NullPointerException("unknown author");
+        }
+        final User author = userDao.getById(event.getAuthor().getId());
+        event.setAuthor(author);
+        // patient
+        if (null == event.getPatient() || null == event.getPatient().getId()) {
+            throw new NullPointerException("unknown patient");
+        }
+        final Patient patient = patientDao.getById(event.getPatient().getId());
+        event.setPatient(patient);
+        // procedure
+        if (null == event.getProcedure() || null == event.getProcedure().getId()) {
+            throw new NullPointerException("unknown procedure");
+        }
+        final Procedure proc = procedureDao.getById(event.getProcedure().getId());
+        event.setProcedure(proc);
+
+        validateEvent(event);
 
         final Event rslt = eventDao.persist(event);
-
-        LOG.info("created event, " + rslt);
+        LOG.info((null == event.getId() ? "created new event, " : "event updated, ") + rslt);
         return rslt;
     }
 
@@ -107,7 +124,7 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public Event createAndSendSpecialEvent(final Event event) {
-        final Event rslt = createEvent(event);
+        final Event rslt = storeEvent(event);
 
         final String text2send = format(rslt);
 
@@ -131,21 +148,21 @@ public class EventServiceImpl implements EventService {
         return rslt;
     }
 
-    /** {@inheritDoc} */
-    @Transactional
-    @Override
-    public Event updateEvent(final Event event) {
-        validateEvent(event, false);
-
-        // part of validation (the aggregated entities have to exist and cannot be deleted)
-        userDao.getById(event.getAuthor().getId());
-        patientDao.getById(event.getPatient().getId());
-        mhcDao.getById(event.getProcedure().getId());
-
-        eventDao.persist(event);
-        LOG.info("updated event, " + event);
-        return event;
-    }
+//    /** {@inheritDoc} */
+//    @Transactional
+//    @Override
+//    public Event updateEvent(final Event event) {
+//        validateEvent(event, false);
+//
+//        // part of validation (the aggregated entities have to exist and cannot be deleted)
+//        userDao.getById(event.getAuthor().getId());
+//        patientDao.getById(event.getPatient().getId());
+//        mhcDao.getById(event.getProcedure().getId());
+//
+//        eventDao.persist(event);
+//        LOG.info("updated event, " + event);
+//        return event;
+//    }
 
     /** {@inheritDoc} */
     @Transactional
@@ -394,9 +411,8 @@ public class EventServiceImpl implements EventService {
     /**
      * Validation of event before persistence.
      * @param event event to validate
-     * @param forCreate whether the object has to be created as new entry in DB
      */
-    private void validateEvent(final Event event, final boolean forCreate) {
+    private void validateEvent(final Event event) {
         if (null == event) { throw new NullPointerException("event cannot be null"); }
         if (null == event.getAuthor()) { throw new NullPointerException("author cannot be null"); }
         if (null == event.getAuthor().getId()) { throw new NullPointerException("author ID cannot be null"); }
@@ -412,16 +428,6 @@ public class EventServiceImpl implements EventService {
         if (Event.Type.IN_CALENDAR == event.enumType()) {
             if (null == event.getStartTime()) { throw new NullPointerException("start time cannot be null"); }
             if (event.getLength() <= 0) { throw new IllegalArgumentException("length lesser then 0"); }
-        }
-        if (forCreate) {
-            if (null != event.getId()) {
-                throw new IllegalArgumentException("expected object with empty ID");
-            }
-        } else {
-            if (null == event.getId()) { throw new NullPointerException("ID cannot be null"); }
-            if (Strings.isNullOrEmpty(event.getId().toString())) {
-                throw new IllegalArgumentException("ID cannot be blank");
-            }
         }
     }
 

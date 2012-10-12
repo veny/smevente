@@ -155,6 +155,34 @@ public class Event extends AbstractEntity {
         }
     }
 
+    /**
+     * Sets author ID to a new user object.
+     * @param authorId user ID
+     */
+    public void setAuthorId(final Object authorId) {
+        if (null == authorId) { throw new NullPointerException("author ID is null"); }
+        setAuthor(new User());
+        getAuthor().setId(authorId);
+    }
+    /**
+     * Sets patient ID to a new patient object.
+     * @param patientId patient ID
+     */
+    public void setPatientId(final Object patientId) {
+        if (null == patientId) { throw new NullPointerException("patient ID is null"); }
+        setPatient(new Patient());
+        getPatient().setId(patientId);
+    }
+    /**
+     * Sets procedure ID to a new procedure object.
+     * @param procedureId procedure ID
+     */
+    public void setProcedureId(final Object procedureId) {
+        if (null == procedureId) { throw new NullPointerException("procedure ID is null"); }
+        setProcedure(new Procedure());
+        getProcedure().setId(procedureId);
+    }
+
     // ----------------------------------------------------------- Object Stuff
 
     /** {@inheritDoc} */

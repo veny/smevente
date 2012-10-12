@@ -19,12 +19,14 @@ import veny.smevente.service.SmsGatewayService.SmsException;
 public interface EventService {
 
     /**
-     * Creates new Event.
+     * Stores (creates or updates) an event.<p/>
+     * The criterion to decide if create or update is entity's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
      *
      * @param event event to be created
      * @return created event
      */
-    Event createEvent(Event event);
+    Event storeEvent(Event event);
 
     /**
      * Creates and sends a new special event.
@@ -34,13 +36,13 @@ public interface EventService {
      */
     Event createAndSendSpecialEvent(Event event);
 
-    /**
-     * Updates given event.
-     *
-     * @param event event to be updated
-     * @return updated event
-     */
-    Event updateEvent(Event event);
+//    /**
+//     * Updates given event.
+//     *
+//     * @param event event to be updated
+//     * @return updated event
+//     */
+//    Event updateEvent(Event event);
 
     /**
      * Removes given event.

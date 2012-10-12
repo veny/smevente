@@ -200,25 +200,27 @@ public class UserController {
 
     // ------------------------------------------------------------ Event Stuff
 
-//    /**
-//     * Creates a new SMS.
-//     *
-//     * @param sms SMS to be created
-//     * @param authorId author ID
-//     * @return SMS triple as JSON
-//     */
-//    @RequestMapping(value = "/sms/", method = RequestMethod.POST)
-//    public ModelAndView createSms(final Event sms, @RequestParam("authorId") final Long authorId) {
-//
-//        sms.setAuthorId(authorId);
-//        final Event created = smsService.createSms(sms);
-//
-//        final ModelAndView modelAndView = new ModelAndView("jsonView");
-//        modelAndView.addObject("sms", created);
-//
-//        return modelAndView;
-//    }
-//
+    /**
+     * Stores (creates or updates) an event.<p/>
+     * The criterion to decide if create or update is patient's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
+     *
+     * There is used trick with @see {@link Event#setAuthorId(Object)}.
+     *
+     * @param event event to be created/updated
+     * @return SMS triple as JSON
+     */
+    @RequestMapping(value = "/event/", method = RequestMethod.POST)
+    public ModelAndView storeEvent(final Event event) {
+
+        final Event created = eventService.storeEvent(event);
+
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("event", created);
+
+        return modelAndView;
+    }
+
 //    /**
 //     * Creates a new special SMS.
 //     *
