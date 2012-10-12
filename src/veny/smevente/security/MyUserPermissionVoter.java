@@ -19,8 +19,8 @@ public class MyUserPermissionVoter extends AbstractPermissionVoter {
             final Authentication authentication, final Object object,
             final Collection<ConfigAttribute> attributes) {
 
-        final Long callerId = getCallerId(authentication);
-        final Long userId = (Long) object;
+        final Object callerId = getCallerId(authentication);
+        final Object userId = object;
         if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
 
         final int rslt = (callerId.equals(userId) ? ACCESS_GRANTED : ACCESS_DENIED);

@@ -96,7 +96,7 @@ public class UserController {
      * @param oldPassword old password
      * @param newPassword new password
      */
-    @RequestMapping(value = "/password/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/password/", method = RequestMethod.POST)
     public void changePassword(final HttpServletRequest request, final HttpServletResponse response,
             @RequestParam("old") final String oldPassword,
             @RequestParam("new") final String newPassword) {

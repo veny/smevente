@@ -12,13 +12,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.dao.MembershipDao;
 import veny.smevente.model.Membership;
-import veny.smevente.model.User;
 import veny.smevente.model.Membership.Role;
+import veny.smevente.model.User;
 import veny.smevente.service.UserService;
 
 /**
@@ -75,11 +75,11 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
         final Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         if (user.isRoot()) {
-            authorities.add(new GrantedAuthorityImpl(SmeventeRole.ROLE_ROOT.name()));
+            authorities.add(new SimpleGrantedAuthority(SmeventeRole.ROLE_ROOT.name()));
         }
 
         // all authenticated users get ROLE_AUTHENTICATED
-        authorities.add(new GrantedAuthorityImpl(SmeventeRole.ROLE_AUTHENTICATED.name()));
+        authorities.add(new SimpleGrantedAuthority(SmeventeRole.ROLE_AUTHENTICATED.name()));
 
         // get all admin memberships
         final List<Object> adminUnits = new ArrayList<Object>();

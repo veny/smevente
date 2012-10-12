@@ -187,6 +187,8 @@ public class EventServiceImpl implements EventService {
         //  (through reference chain: java.util.HashMap["events"]->
         //    java.util.ArrayList[0]->veny.smevente.model.Event_$$_javassist_5["patient"]->
         //    veny.smevente.model.Patient_$$_javassist_3["unit"]->veny.smevente.model.Unit_$$_javassist_2["deleted"])
+        //
+        // and of course, we don't need them
         for (Event e : rslt) {
             e.getPatient().setUnit(null);
             e.getProcedure().setUnit(null);

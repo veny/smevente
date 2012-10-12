@@ -128,7 +128,7 @@ public class ChangePasswordPresenter
         params.put("old", old);
         params.put("new", newP);
 
-        RestHandler rest = new RestHandler("/rest/user/password/");
+        final RestHandler rest = new RestHandler("/rest/user/password/");
         rest.setCallback(new AbstractRestCallbackWithValidation() {
             @Override
             public void onSuccess(final String jsonText) {
@@ -139,7 +139,7 @@ public class ChangePasswordPresenter
                 validator.processServerErrors(ve);
             }
         });
-        rest.put(params);
+        rest.post(params);
     }
 
     /**

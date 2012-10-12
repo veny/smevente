@@ -164,7 +164,7 @@ public final class DatabaseWrapper implements DisposableBean {
                 event.createProperty("procedure", OType.LINK, procedure).setMandatory(true);
                 event.createProperty("text", OType.STRING).setMandatory(true).setNotNull(true);
                 event.createProperty("notice", OType.STRING);
-                event.createProperty("startTime", OType.DATE).setMandatory(true).setNotNull(true);
+                event.createProperty("startTime", OType.DATETIME).setMandatory(true).setNotNull(true);
                 event.createProperty("length", OType.INTEGER).setMandatory(true).setNotNull(true);
                 event.createProperty("sent", OType.DATE);
                 event.createProperty("sendAttemptCount", OType.INTEGER);

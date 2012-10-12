@@ -54,11 +54,11 @@ public abstract class AbstractPermissionVoter implements AccessDecisionVoter<Obj
      * @param authentication the caller invoking the method
      * @return logged in user ID
      */
-    protected Long getCallerId(final Authentication authentication) {
+    protected Object getCallerId(final Authentication authentication) {
         @SuppressWarnings("unchecked")
-        final Pair<Long, List<Long>> userDetail = (Pair<Long, List<Long>>) authentication.getDetails();
+        final Pair<Object, List<Object>> userDetail = (Pair<Object, List<Object>>) authentication.getDetails();
         if (null == userDetail) { throw new NullPointerException("user detail of the caller cannot be null"); }
-        final Long userId = userDetail.getA();
+        final Object userId = userDetail.getA();
         if (null == userId) { throw new NullPointerException("user ID in user detail cannot be null"); }
         return userId;
     }
@@ -68,11 +68,11 @@ public abstract class AbstractPermissionVoter implements AccessDecisionVoter<Obj
      * @param authentication the caller invoking the method
      * @return list of unit IDs
      */
-    protected List<Long> getAdminUnits(final Authentication authentication) {
+    protected List<Object> getAdminUnits(final Authentication authentication) {
         @SuppressWarnings("unchecked")
-        final Pair<Long, List<Long>> userDetail = (Pair<Long, List<Long>>) authentication.getDetails();
+        final Pair<Object, List<Object>> userDetail = (Pair<Object, List<Object>>) authentication.getDetails();
         if (null == userDetail) { throw new NullPointerException("user detail of the caller cannot be null"); }
-        final List<Long> adminUnits = userDetail.getB();
+        final List<Object> adminUnits = userDetail.getB();
         if (null == adminUnits) { throw new NullPointerException("unit list in user detail cannot be null"); }
         return adminUnits;
     }
@@ -83,7 +83,7 @@ public abstract class AbstractPermissionVoter implements AccessDecisionVoter<Obj
      * @param callerId caller ID
      * @param object object to check
      */
-    protected void debugLog(final int permission, final Long callerId, final Object object) {
+    protected void debugLog(final int permission, final Object callerId, final Object object) {
         if (LOG.isLoggable(Level.FINER)) {
             final StringBuilder msg = new StringBuilder("permission checked, callerId=")
                 .append(callerId)

@@ -22,14 +22,14 @@ public class UnitAdminPermissionVoter extends AbstractPermissionVoter {
 
         int rslt = ACCESS_DENIED;
 
-        final Long callerId = getCallerId(authentication);
-        final List<Long> adminUnits = getAdminUnits(authentication);
+        final Object callerId = getCallerId(authentication);
+        final List<Object> adminUnits = getAdminUnits(authentication);
 
         // get ID of the unit
-        final Long unitId = (Long) object;
+        final Object unitId = object;
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
 
-        for (Long adminUnitId : adminUnits) {
+        for (Object adminUnitId : adminUnits) {
             if (unitId.equals(adminUnitId)) {
                 rslt = ACCESS_GRANTED;
                 break;
