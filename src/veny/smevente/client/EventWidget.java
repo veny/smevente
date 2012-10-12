@@ -3,7 +3,7 @@ package veny.smevente.client;
 import java.util.Date;
 
 import veny.smevente.client.mvp.SingletonEventBus;
-import veny.smevente.client.utils.SmsWidgetEvent;
+import veny.smevente.client.utils.EventWidgetEvent;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Event;
@@ -18,26 +18,26 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 /**
- * This class represents a UI widget used to display a SMS.
+ * This class represents a UI widget used to display an event.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 1.7.2010
  */
-public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDoubleClickHandlers*/ {
+public class EventWidget extends FlowPanel implements HasClickHandlers /*HasDoubleClickHandlers*/ {
 
-    /** Wrapped SMS. */
-    private final Event sms;
+    /** Wrapped event. */
+    private final Event event;
 
     /**
      * Constructor.
-     * @param sms SMS to be wrapped
+     * @param event event to be wrapped
      */
-    public SmsWidget(final Event sms) {
+    public EventWidget(final Event event) {
         // PRE-CONDITIONS
-        if (null == sms) { throw new NullPointerException("SMS cannot be null"); }
-        if (null == sms.getAuthor()) { throw new NullPointerException("SMS author cannot be null"); }
-        if (null == sms.getPatient()) { throw new NullPointerException("patient cannot be null"); }
-        if (null == sms.getProcedure()) {
+        if (null == event) { throw new NullPointerException("event cannot be null"); }
+        if (null == event.getAuthor()) { throw new NullPointerException("author cannot be null"); }
+        if (null == event.getPatient()) { throw new NullPointerException("patient cannot be null"); }
+        if (null == event.getProcedure()) {
             throw new NullPointerException("procedure cannot be null");
         }
 
@@ -48,12 +48,12 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
         notice.addStyleName("sms-widget-notice");
         this.add(notice);
 
-        this.sms = sms;
-        final Patient patient = sms.getPatient();
-        final Procedure procedure = sms.getProcedure();
+        this.event = event;
+        final Patient patient = event.getPatient();
+        final Procedure procedure = event.getProcedure();
 
-        if (null == sms.getSent()) {
-            if (sms.getSendAttemptCount() >= Event.MAX_SEND_ATTEMPTS) {
+        if (null == event.getSent()) {
+            if (event.getSendAttemptCount() >= Event.MAX_SEND_ATTEMPTS) {
                 addStyleName("sms-widget-failed");
             } else {
                 addStyleName("sms-widget");
@@ -64,8 +64,8 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
         DOM.setStyleAttribute(getElement(), "backgroundColor", "#" + procedure.getColor());
 
         // header text
-        final Date startTime = sms.getStartTime();
-        final Date endTime = new Date(startTime.getTime() + (sms.getLength() * 60 * 1000));
+        final Date startTime = event.getStartTime();
+        final Date endTime = new Date(startTime.getTime() + (event.getLength() * 60 * 1000));
 
         @SuppressWarnings("deprecation")
         final StringBuilder text = new StringBuilder(patient.getFirstname())
@@ -78,16 +78,16 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
             .append(']');
         header.setText(text.toString());
 
-        // notice text
-        notice.setText(sms.getNotice());
+        // event text
+        notice.setText(event.getNotice());
 
         // click -> popup menu
         addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
                 event.stopPropagation();
-                final SmsWidgetEvent smsWidgetEvent = new SmsWidgetEvent(SmsWidget.this);
-                SingletonEventBus.get().fireEvent(smsWidgetEvent);
+                final EventWidgetEvent eventWidgetEvent = new EventWidgetEvent(EventWidget.this);
+                SingletonEventBus.get().fireEvent(eventWidgetEvent);
             }
         });
 
@@ -102,11 +102,11 @@ public class SmsWidget extends FlowPanel implements HasClickHandlers /*HasDouble
     }
 
     /**
-     * Gets wrapped SMS triple.
-     * @return wrapped SMS triple
+     * Gets wrapped event.
+     * @return wrapped event
      */
-    public Event getSms() {
-        return sms;
+    public Event getEvent() {
+        return event;
     }
 
     // ------------------------------------------------- HasClickHandlers Stuff

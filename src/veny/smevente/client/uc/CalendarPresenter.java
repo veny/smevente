@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import veny.smevente.client.App;
+import veny.smevente.client.EventWidget;
 import veny.smevente.client.PresenterCollection.PresenterEnum;
 import veny.smevente.client.SmeventeDialog;
-import veny.smevente.client.SmsWidget;
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.SingletonEventBus;
 import veny.smevente.client.mvp.View;
@@ -18,12 +18,12 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.CrudEventHandler;
 import veny.smevente.client.utils.DateUtils;
+import veny.smevente.client.utils.EventWidgetEvent;
+import veny.smevente.client.utils.EventWidgetEvent.EventWidgetHandler;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
-import veny.smevente.client.utils.SmsWidgetEvent;
-import veny.smevente.client.utils.SmsWidgetEvent.SmsWidgetHandler;
 import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Procedure;
@@ -58,7 +58,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * @since 10.8.2010
  */
 public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.CalendarView>
-        implements HeaderHandler, SmsWidgetHandler, CrudEventHandler {
+        implements HeaderHandler, EventWidgetHandler, CrudEventHandler {
 
     /**
      * Calendar View interface.
@@ -132,10 +132,10 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
     /** {@inheritDoc} */
     @Override
-    public void showMenu(final SmsWidgetEvent event) {
-        final SmsWidget clickedSmsWidget = event.getSmsWidget();
-        final PopupPanel popupPanel = createPopupMenu(clickedSmsWidget);
-        popupPanel.setPopupPosition(clickedSmsWidget.getAbsoluteLeft(), clickedSmsWidget.getAbsoluteTop());
+    public void showMenu(final EventWidgetEvent event) {
+        final EventWidget clickedEventWidget = event.getEventWidget();
+        final PopupPanel popupPanel = createPopupMenu(clickedEventWidget);
+        popupPanel.setPopupPosition(clickedEventWidget.getAbsoluteLeft(), clickedEventWidget.getAbsoluteTop());
         popupPanel.setVisible(true);
         popupPanel.show();
     }
@@ -191,7 +191,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     @Override
     protected void onBind() {
         eventBus.addHandler(HeaderEvent.TYPE, this);
-        eventBus.addHandler(SmsWidgetEvent.TYPE, this);
+        eventBus.addHandler(EventWidgetEvent.TYPE, this);
         eventBus.addHandler(CrudEvent.TYPE, this);
 
         // week calendar header
@@ -285,48 +285,46 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     // --------------------------------------------------------------- SMS CRUD
 
     /**
-     * Creates a new SMS and adds a SMS widget into calendar.
-     * @param smsId SMS ID for update or <i>null</i> for create
-     * @param patientIdAndMhcId ID of the selected patient & ID of the medical help category
-     * @param smsTextAndNotice text of SMS & notice
-     * @param mhStartTime date and time of the medical help
-     * @param mhLen medical help length
-     * @param smsWidget SMS widget in calendar
+     * Creates a new event and adds a event widget into calendar.
+     * @param eventId event ID for update or <i>null</i> for create
+     * @param patientIdAndProcedureId ID of the selected patient & ID of the medical help category
+     * @param textAndNotice text of event & notice
+     * @param startTime date and time of event
+     * @param length length
+     * @param eventWidget event widget in calendar
      */
-    private void storeSms(
-            final String smsId,
-            final Pair<Object, Object> patientIdAndMhcId, final Pair<String, String> smsTextAndNotice,
-            final Date mhStartTime, final int mhLen, final SmsWidget smsWidget) {
+    private void storeEvent(
+            final String eventId,
+            final Pair<Object, Object> patientIdAndProcedureId, final Pair<String, String> textAndNotice,
+            final Date startTime, final int length, final EventWidget eventWidget) {
 
-        final boolean update = (null != smsId);
         final Map<String, String> params = new HashMap<String, String>();
+        if (null != eventId) {
+            params.put("id", eventId);
+        }
         params.put("authorId", App.get().getSelectedUnitMember().getId().toString());
-        params.put("patientId", patientIdAndMhcId.getA().toString());
-        params.put("medicalHelpCategoryId", patientIdAndMhcId.getB().toString());
-        params.put("text", smsTextAndNotice.getA());
-        params.put("notice", smsTextAndNotice.getB());
-        params.put("medicalHelpStartTime", "" + mhStartTime.getTime());
-        params.put("medicalHelpLength", "" + mhLen);
+        params.put("patientId", patientIdAndProcedureId.getA().toString());
+        params.put("procedureId", patientIdAndProcedureId.getB().toString());
+        params.put("text", textAndNotice.getA());
+        params.put("notice", textAndNotice.getB());
+        params.put("startTime", "" + startTime.getTime());
+        params.put("length", "" + length);
 
         // send data to server
-        final RestHandler rest = createClientRestHandler("/rest/user/sms/");
+        final RestHandler rest = createClientRestHandler("/rest/user/event/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final Event sms = App.get().getJsonDeserializer().deserialize(Event.class, "sms", jsonText);
-                if (update) {
-                    final DayColumn col = (DayColumn) smsWidget.getParent();
-                    col.remove(smsWidget);
+                final Event event = App.get().getJsonDeserializer().deserialize(Event.class, "event", jsonText);
+                if (null != eventId) { // by update remove old widget
+                    final DayColumn col = (DayColumn) eventWidget.getParent();
+                    col.remove(eventWidget);
                 }
-                addEventWidget(sms);
+                addEventWidget(event);
             }
         });
-        if (update) {
-            params.put("id", smsId);
-            rest.put(params);
-        } else {
-            rest.post(params);
-        }
+
+        rest.post(params);
     }
 
     /**
@@ -366,8 +364,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * Sends request to delete a SMS.
      * @param smsWidget SMS widget wrapping the SMS
      */
-    private void deleteSms(final SmsWidget smsWidget) {
-        RestHandler rest = new RestHandler("/rest/user/sms/" + smsWidget.getSms().getId() + "/");
+    private void deleteSms(final EventWidget smsWidget) {
+        RestHandler rest = new RestHandler("/rest/user/sms/" + smsWidget.getEvent().getId() + "/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
@@ -382,8 +380,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * Sends request to send SMS.
      * @param smsWidget SMS widget
      */
-    private void sendSms(final SmsWidget smsWidget) {
-        final Event sms2send = smsWidget.getSms();
+    private void sendSms(final EventWidget smsWidget) {
+        final Event sms2send = smsWidget.getEvent();
         final RestHandler rest = new RestHandler("/rest/user/sms/" + sms2send.getId() + "/");
         rest.setCallback(new RestCallback() {
             @Override
@@ -412,10 +410,10 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * Display a SMS detail dialog.
      * @param smsWidget SMS widget wrapping the SMS
      */
-    private void detailDlg(final SmsWidget smsWidget) {
+    private void detailDlg(final EventWidget smsWidget) {
         final SmsDetailDlgPresenter p =
             (SmsDetailDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DETAIL_DLG);
-        p.init(smsWidget.getSms());
+        p.init(smsWidget.getEvent());
         final SmeventeDialog dlg = new SmeventeDialog("SMS", p, false);
         dlg.center();
     }
@@ -424,16 +422,16 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * Display a SMS update dialog.
      * @param smsWidget SMS widget wrapping the SMS
      */
-    private void updateDlg(final SmsWidget smsWidget) {
+    private void updateDlg(final EventWidget smsWidget) {
         final SmsDlgPresenter p =
             (SmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
-        p.init(smsWidget.getSms(), App.get().getPatients(), App.get().getProcedures(Event.Type.IN_CALENDAR));
+        p.init(smsWidget.getEvent(), App.get().getPatients(), App.get().getProcedures(Event.Type.IN_CALENDAR));
         final SmeventeDialog dlg = new SmeventeDialog("SMS", p);
 
         dlg.getOkButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
-                processOkOnSmsDialog(p, dlg, smsWidget);
+                processOkOnEventDialog(p, dlg, smsWidget);
             }
         });
         dlg.center();
@@ -441,12 +439,12 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
     /**
      * Creates a context menu with operations for a SMS wrapped by given SMS widget.
-     * @param smsWidget SMS widget wrapping the SMS
+     * @param eventWidget event widget wrapping the event
      * @return popup panel with the context menu
      */
-    private PopupPanel createPopupMenu(final SmsWidget smsWidget) {
+    private PopupPanel createPopupMenu(final EventWidget eventWidget) {
         final PopupPanel popupPanel = new PopupPanel(true, true);
-        final boolean notSent = (null == smsWidget.getSms().getSent());
+        final boolean notSent = (null == eventWidget.getEvent().getSent());
         final MenuBar popupMenuBar = new MenuBar(true);
         popupPanel.add(popupMenuBar);
 
@@ -455,7 +453,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             final Command updateCommand = new Command() {
                 public void execute() {
                     popupPanel.hide();
-                    updateDlg(smsWidget);
+                    updateDlg(eventWidget);
                 }
             };
             final MenuItem updateItem = new MenuItem(CONSTANTS.update(), true, updateCommand);
@@ -464,7 +462,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             final Command showCommand = new Command() {
                 public void execute() {
                     popupPanel.hide();
-                    detailDlg(smsWidget);
+                    detailDlg(eventWidget);
                 }
             };
             final MenuItem detailItem = new MenuItem(CONSTANTS.show(), true, showCommand);
@@ -474,8 +472,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         final Command deleteCommand = new Command() {
             public void execute() {
                 popupPanel.hide();
-                if (Window.confirm(MESSAGES.deleteSmsQuestion(smsWidget.getSms().getPatient().fullname()))) {
-                    deleteSms(smsWidget);
+                if (Window.confirm(MESSAGES.deleteSmsQuestion(eventWidget.getEvent().getPatient().fullname()))) {
+                    deleteSms(eventWidget);
                 }
             }
         };
@@ -486,8 +484,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             final Command sendCommand = new Command() {
                 public void execute() {
                     popupPanel.hide();
-                    if (Window.confirm(MESSAGES.sendNowQuestion(smsWidget.getSms().getPatient().fullname()))) {
-                        sendSms(smsWidget);
+                    if (Window.confirm(MESSAGES.sendNowQuestion(eventWidget.getEvent().getPatient().fullname()))) {
+                        sendSms(eventWidget);
                     }
                 }
             };
@@ -523,13 +521,13 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     }
 
     /**
-     * Displays the SMS dialog.
+     * Displays the event dialog.
      * @param eventX X coordinate of click event
      * @param eventY Y coordinate of click event
      * @param col corresponding <code>DayColumn</code>
      */
     @SuppressWarnings("deprecation")
-    private void displaySmsDialog(final int eventX, final int eventY, final DayColumn col) {
+    private void displayEventDialog(final int eventX, final int eventY, final DayColumn col) {
         if (App.get().getPatients().isEmpty()) {
             Window.alert(CONSTANTS.noPatientInUnit()[App.get().getSelectedUnitTextVariant()]);
         } else if (App.get().getProcedures(Event.Type.IN_CALENDAR).isEmpty()) {
@@ -552,7 +550,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             dlg.getOkButton().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(final ClickEvent event) {
-                    processOkOnSmsDialog(smsDlgPresenter, dlg, null);
+                    processOkOnEventDialog(smsDlgPresenter, dlg, null);
                 }
             });
 
@@ -571,7 +569,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         final int y = DateUtils.calculateYFromDate(event.getStartTime());
         final int height = DateUtils.calculateWidgetHeight(event.getLength());
 
-        final SmsWidget smsWidget = new SmsWidget(event);
+        final EventWidget smsWidget = new EventWidget(event);
         if (height > 25) {
             smsWidget.setHeight("" +  height + "px");
         }
@@ -590,13 +588,13 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     }
 
     /**
-     * Creates a click handler that is registered on OK button in SMS dialog.
+     * Creates a click handler that is registered on OK button in Event dialog.
      * @param smsDlgPresenter the presenter
      * @param dlg the dialog window
-     * @param smsWidget SMS widget
+     * @param eventWidget event widget
      */
-    private void processOkOnSmsDialog(
-            final SmsDlgPresenter smsDlgPresenter, final SmeventeDialog dlg, final SmsWidget smsWidget) {
+    private void processOkOnEventDialog(
+            final SmsDlgPresenter smsDlgPresenter, final SmeventeDialog dlg, final EventWidget eventWidget) {
 
         // validation
         if (!smsDlgPresenter.getValidator().validate()) { return; }
@@ -615,8 +613,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             return;
         }
         dlg.hide(); // invokes clean and deletes upper collected data
-        storeSms(smsId, new Pair<Object, Object>(patientId, mhcId),
-                new Pair<String, String>(smsText, notice), mhDateTime, mhLen, smsWidget);
+        storeEvent(smsId, new Pair<Object, Object>(patientId, mhcId),
+                new Pair<String, String>(smsText, notice), mhDateTime, mhLen, eventWidget);
     }
 
     /**
@@ -745,7 +743,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             if (null == dayColumn) { throw new NullPointerException("day column cannot be null"); }
             if (eventX <= 0) { throw new NullPointerException("X coordinate lesser than 0"); }
             if (eventY <= 0) { throw new NullPointerException("Y coordinate lesser than 0"); }
-            displaySmsDialog(eventX, eventY, dayColumn);
+            displayEventDialog(eventX, eventY, dayColumn);
         }
 
     }

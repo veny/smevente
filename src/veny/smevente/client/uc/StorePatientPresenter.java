@@ -340,11 +340,7 @@ public class StorePatientPresenter
             }
         });
 
-        if (null == p.getId()) {
-            rest.post(params);
-        } else {
-            rest.post(params);
-        }
+        rest.post(params);
     }
 
 }
