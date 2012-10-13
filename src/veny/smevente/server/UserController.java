@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.WebDataBinder;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.model.Event;
@@ -271,7 +273,6 @@ public class UserController {
             @PathVariable("to") final Date to) {
 
         final List<Event> rslt = eventService.findEvents(userId, from, to);
-//final List<Event> rslt = new ArrayList<Event>();
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("events", rslt);
@@ -297,23 +298,19 @@ public class UserController {
 //        modelAndView.addObject("sms", info);
 //        return modelAndView;
 //    }
-//
-//    /**
-//     * Deletes SMS.
-//     *
-//     * @param request HTTP request
-//     * @param response HTTP response
-//     * @param smsId SMS ID
-//     */
-//    @RequestMapping(value = "/sms/{id}/", method = RequestMethod.DELETE)
-//    public void deleteSms(
-//            final HttpServletRequest request, final HttpServletResponse response,
-//            @PathVariable("id") final Long smsId) {
-//
-//        smsService.deleteSms(smsId);
-//        response.setStatus(HttpServletResponse.SC_OK);
-//    }
-//
+
+    /**
+     * Deletes given event.
+     *
+     * @param eventId event ID
+     */
+    @RequestMapping(value = "/event/{id}/", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteEvent(@PathVariable("id") final String eventId) {
+
+        eventService.deleteEvent(eventId);
+    }
+
 //    /**
 //     * Gets SMS detail (it means triplet of Sms, its patient and MHC).
 //     *

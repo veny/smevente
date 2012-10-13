@@ -361,16 +361,17 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     }
 
     /**
-     * Sends request to delete a SMS.
-     * @param smsWidget SMS widget wrapping the SMS
+     * Sends request to delete event.
+     * @param eventWidget event widget wrapping the event
      */
-    private void deleteSms(final EventWidget smsWidget) {
-        RestHandler rest = new RestHandler("/rest/user/sms/" + smsWidget.getEvent().getId() + "/");
+    private void deleteEvent(final EventWidget eventWidget) {
+        final RestHandler rest = new RestHandler("/rest/user/event/"
+                + URL.encodePathSegment((String) eventWidget.getEvent().getId()) + "/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final DayColumn col = (DayColumn) smsWidget.getParent();
-                col.remove(smsWidget);
+                final DayColumn col = (DayColumn) eventWidget.getParent();
+                col.remove(eventWidget);
             }
         });
         rest.delete();
@@ -473,7 +474,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             public void execute() {
                 popupPanel.hide();
                 if (Window.confirm(MESSAGES.deleteSmsQuestion(eventWidget.getEvent().getPatient().fullname()))) {
-                    deleteSms(eventWidget);
+                    deleteEvent(eventWidget);
                 }
             }
         };
