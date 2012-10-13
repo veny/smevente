@@ -23,11 +23,11 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 0.1
  */
-public class SmsDlgViewImpl extends Composite implements SmsDlgPresenter.SmsDlgView {
+public class EventDlgViewImpl extends Composite implements EventDlgPresenter.EventDlgView {
 
     /** UI Binder interface. */
-    @UiTemplate("smsDlg.ui.xml")
-    interface Binder extends UiBinder<Widget, SmsDlgViewImpl> { }
+    @UiTemplate("eventDlg.ui.xml")
+    interface Binder extends UiBinder<Widget, EventDlgViewImpl> { }
     /** UI Binder. */
     private static final Binder BINDER = GWT.create(Binder.class);
 
@@ -35,21 +35,21 @@ public class SmsDlgViewImpl extends Composite implements SmsDlgPresenter.SmsDlgV
     @UiField InlineLabel date;
     @UiField ListBox startHour;
     @UiField ListBox startMinute;
-    @UiField Label medicalHelpHeader;
-    @UiField ListBox medicalHelp;
-    @UiField ListBox medicalHelpLength;
+    @UiField Label procedureHeader;
+    @UiField ListBox procedure;
+    @UiField ListBox length;
     @UiField(provided = true) SuggestBox nameSuggestBox;
     @UiField TextBox phoneNumber;
-    @UiField TextArea smsText;
+    @UiField TextArea messageText;
     @UiField TextArea notice;
     @UiField DisclosurePanel validationErrors;
-    @UiField Hidden smsId;
+    @UiField Hidden eventId;
     // CHECKSTYLE:ON
 
     /**
      * Constructor.
      */
-    public SmsDlgViewImpl() {
+    public EventDlgViewImpl() {
         PatientNameSuggestOracle oracle = new PatientNameSuggestOracle();
         nameSuggestBox = new SuggestBox(oracle);
 
@@ -76,20 +76,20 @@ public class SmsDlgViewImpl extends Composite implements SmsDlgPresenter.SmsDlgV
 
     /** {@inheritDoc} */
     @Override
-    public Label getMedicalHelpHeader() {
-        return medicalHelpHeader;
+    public Label getProcedureHeader() {
+        return procedureHeader;
     }
 
     /** {@inheritDoc} */
     @Override
-    public ListBox getMedicalHelp() {
-        return medicalHelp;
+    public ListBox getProcedure() {
+        return procedure;
     }
 
     /** {@inheritDoc} */
     @Override
-    public ListBox getMedicalHelpLength() {
-        return medicalHelpLength;
+    public ListBox getLength() {
+        return length;
     }
 
     /** {@inheritDoc} */
@@ -106,8 +106,8 @@ public class SmsDlgViewImpl extends Composite implements SmsDlgPresenter.SmsDlgV
 
     /** {@inheritDoc} */
     @Override
-    public TextArea getSmsText() {
-        return smsText;
+    public TextArea getMessageText() {
+        return messageText;
     }
 
     /** {@inheritDoc} */
@@ -124,8 +124,8 @@ public class SmsDlgViewImpl extends Composite implements SmsDlgPresenter.SmsDlgV
 
     /** {@inheritDoc} */
     @Override
-    public Hidden getSmsId() {
-        return smsId;
+    public Hidden getEventId() {
+        return eventId;
     }
 
     /** {@inheritDoc} */

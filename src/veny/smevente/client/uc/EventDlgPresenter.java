@@ -38,20 +38,20 @@ import eu.maydu.gwt.validation.client.actions.StyleAction;
 import eu.maydu.gwt.validation.client.i18n.ValidationMessages;
 
 /**
- * SMS Dialog Presenter.
+ * Event Dialog Presenter.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 0.1
  */
-public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgView> {
+public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.EventDlgView> {
 
     /**
-     * SMS Dialog View interface.
+     * Event Dialog View interface.
      *
      * @author Vaclav Sykora [vaclav.sykora@gmail.com]
      * @since 0.1
      */
-    public interface SmsDlgView extends View {
+    public interface EventDlgView extends View {
         /**
          * @return the date
          */
@@ -65,17 +65,17 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
          */
         ListBox getStartMinute();
         /**
-         * @return the medical help color
+         * @return the procedure color
          */
-        Label getMedicalHelpHeader();
+        Label getProcedureHeader();
         /**
-         * @return the medical help
+         * @return the procedure
          */
-        ListBox getMedicalHelp();
+        ListBox getProcedure();
         /**
-         * @return the medical help length
+         * @return the event length
          */
-        ListBox getMedicalHelpLength();
+        ListBox getLength();
         /**
          * @return the name suggest box
          */
@@ -85,9 +85,9 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
          */
         TextBox getPhoneNumber();
         /**
-         * @return the SMS text
+         * @return the message text
          */
-        TextArea getSmsText();
+        TextArea getMessageText();
         /**
          * @return the notice
          */
@@ -97,13 +97,13 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
          */
         DisclosurePanel getValidationErrors();
         /**
-         * @return the hidden field wit SMS ID
+         * @return the hidden field wit event ID
          */
-        Hidden getSmsId();
+        Hidden getEventId();
     }
 
-    /** Possible medical help lengths [min]. */
-    private static final String[] MH_LENGTHS = new String[] {
+    /** Possible procedure lengths [min]. */
+    private static final String[] PROCEDURE_LENGTHS = new String[] {
         // first hour : 5 minutes period
         "5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60",
         // hour 1-4 : 20 minutes period
@@ -144,12 +144,12 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
         // Medical Help Category
         medicalHelpCategories = mhcs;
         for (Procedure mhc : medicalHelpCategories) {
-            view.getMedicalHelp().addItem(mhc.getName());
+            view.getProcedure().addItem(mhc.getName());
         }
-        view.getMedicalHelp().addChangeHandler(new ChangeHandler() {
+        view.getProcedure().addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(final ChangeEvent event) {
-                changedMedicalHelpCategory(view.getMedicalHelp().getSelectedIndex(), true);
+                changedMedicalHelpCategory(view.getProcedure().getSelectedIndex(), true);
             }
         });
         changedMedicalHelpCategory(0, true);
@@ -168,15 +168,15 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
 
         // set all form elements
         selectedPatient = sms.getPatient();
-        view.getSmsId().setValue(sms.getId().toString());
+        view.getEventId().setValue(sms.getId().toString());
         view.getNameSuggestBox().getTextBox().setText(selectedPatient.fullname());
         view.getPhoneNumber().setText(selectedPatient.getPhoneNumber());
-        view.getSmsText().setText(sms.getText());
+        view.getMessageText().setText(sms.getText());
         view.getNotice().setText(sms.getNotice());
         // MHC length
-        for (int i = 0; i < MH_LENGTHS.length; i++) {
-            if (sms.getLength() <= Long.parseLong(MH_LENGTHS[i])) {
-                view.getMedicalHelpLength().setSelectedIndex(i);
+        for (int i = 0; i < PROCEDURE_LENGTHS.length; i++) {
+            if (sms.getLength() <= Long.parseLong(PROCEDURE_LENGTHS[i])) {
+                view.getLength().setSelectedIndex(i);
                 break;
             }
         }
@@ -184,7 +184,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
         int idx = 0;
         for (Procedure mhc : mhcs) {
             if (mhc.getId().equals(sms.getProcedure().getId())) {
-                view.getMedicalHelp().setSelectedIndex(idx);
+                view.getProcedure().setSelectedIndex(idx);
                 break;
             }
             idx++;
@@ -197,8 +197,8 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * @return <i>true</i> if it's Update operation
      */
     public boolean isUpdate() {
-        return (null != view.getSmsId().getValue() && !"null".equals(view.getSmsId().getValue())
-                && view.getSmsId().getValue().trim().length() > 0);
+        return (null != view.getEventId().getValue() && !"null".equals(view.getEventId().getValue())
+                && view.getEventId().getValue().trim().length() > 0);
     }
 
     /**
@@ -214,7 +214,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * @return selected Medical Help Category
      */
     public Procedure getSelectedMedicalHelpCategory() {
-        return medicalHelpCategories.get(view.getMedicalHelp().getSelectedIndex());
+        return medicalHelpCategories.get(view.getProcedure().getSelectedIndex());
     }
 
     /**
@@ -234,7 +234,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
      * @return length of medical help
      */
     public int getMedicalHelpLength() {
-        String strLen = view.getMedicalHelpLength().getValue(view.getMedicalHelpLength().getSelectedIndex());
+        String strLen = view.getLength().getValue(view.getLength().getSelectedIndex());
         return Integer.parseInt(strLen);
     }
 
@@ -253,8 +253,8 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
         }
 
         // set values of 'medical help length' drop down
-        for (String len : MH_LENGTHS) {
-            view.getMedicalHelpLength().addItem(len);
+        for (String len : PROCEDURE_LENGTHS) {
+            view.getLength().addItem(len);
         }
 
         // suggest box selection listener
@@ -281,7 +281,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
     @Override
     protected void onShow(final Object parameter) {
         // set texts
-        view.getMedicalHelpHeader().setText(CONSTANTS.medicalHelp()[App.get().getSelectedUnitTextVariant()]);
+        view.getProcedureHeader().setText(CONSTANTS.medicalHelp()[App.get().getSelectedUnitTextVariant()]);
 
         view.getNameSuggestBox().getTextBox().setFocus(true);
     }
@@ -295,20 +295,20 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
     /** {@inheritDoc} */
     @Override
     public void clean() {
-        view.getSmsId().setValue(null);
+        view.getEventId().setValue(null);
         view.getDate().setText("");
         view.getStartHour().setItemSelected(0, true);
         view.getStartMinute().setItemSelected(0, true);
-        view.getMedicalHelp().clear();
+        view.getProcedure().clear();
         view.getNameSuggestBox().getTextBox().setText("");
         view.getPhoneNumber().setText("");
-        view.getSmsText().setText("");
+        view.getMessageText().setText("");
         view.getNotice().setText("");
 
         // validation
         validator.reset((String[]) null);
         getView().getNameSuggestBox().getTextBox().removeStyleName("validationFailedBorder");
-        getView().getSmsText().removeStyleName("validationFailedBorder");
+        getView().getMessageText().removeStyleName("validationFailedBorder");
 
         selectedPatient = null;
     }
@@ -324,22 +324,22 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
         final Procedure mhc = medicalHelpCategories.get(index);
 
         // color
-        DOM.setStyleAttribute(view.getMedicalHelpHeader().getElement(), "backgroundColor", "#" + mhc.getColor());
+        DOM.setStyleAttribute(view.getProcedureHeader().getElement(), "backgroundColor", "#" + mhc.getColor());
 
         if (!switchTimeAndText) { return; }
 
         // time
         int idx = -1;
-        for (int i = 0; i < MH_LENGTHS.length; i++) {
-            if (mhc.getTime() <= Long.parseLong(MH_LENGTHS[i])) {
+        for (int i = 0; i < PROCEDURE_LENGTHS.length; i++) {
+            if (mhc.getTime() <= Long.parseLong(PROCEDURE_LENGTHS[i])) {
                 idx = i;
                 break;
             }
         }
-        view.getMedicalHelpLength().setSelectedIndex(idx);
+        view.getLength().setSelectedIndex(idx);
 
         // SMS text
-        view.getSmsText().setText(mhc.getMessageText());
+        view.getMessageText().setText(mhc.getMessageText());
     }
 
     /**
@@ -392,7 +392,7 @@ public class SmsDlgPresenter extends AbstractPresenter<SmsDlgPresenter.SmsDlgVie
         });
         // entered SMS text?
         validator.addValidators("smsText",
-                new EmptyValidator(view.getSmsText())
+                new EmptyValidator(view.getMessageText())
                     .addActionForFailure(focusAction)
                     .addActionForFailure(new StyleAction("validationFailedBorder")));
     }

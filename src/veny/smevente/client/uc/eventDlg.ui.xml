@@ -14,12 +14,12 @@
           <g:ListBox ui:field="startMinute" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
-            <g:Label ui:field="medicalHelpHeader" />
-            <g:ListBox ui:field="medicalHelp" />
+            <g:Label ui:field="procedureHeader" />
+            <g:ListBox ui:field="procedure" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
             <g:Label text="{consts.medicalHelpLength}" />
-            <g:ListBox ui:field="medicalHelpLength" />
+            <g:ListBox ui:field="length" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
             <g:Label text="{consts.name}" />
@@ -31,14 +31,14 @@
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
             <g:Label text="{consts.smsText}" />
-            <g:TextArea ui:field="smsText" />
+            <g:TextArea ui:field="messageText" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
             <g:Label text="{consts.notice}" />
             <g:TextArea ui:field="notice" />
         </g:FlowPanel>
         <g:DisclosurePanel ui:field="validationErrors" />
-        <g:Hidden ui:field="smsId" />
+        <g:Hidden ui:field="eventId" />
     </g:VerticalPanel>
 
   </g:HTMLPanel>

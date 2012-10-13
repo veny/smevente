@@ -424,8 +424,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * @param smsWidget SMS widget wrapping the SMS
      */
     private void updateDlg(final EventWidget smsWidget) {
-        final SmsDlgPresenter p =
-            (SmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
+        final EventDlgPresenter p =
+            (EventDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
         p.init(smsWidget.getEvent(), App.get().getPatients(), App.get().getProcedures(Event.Type.IN_CALENDAR));
         final SmeventeDialog dlg = new SmeventeDialog("SMS", p);
 
@@ -541,8 +541,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             dateTime.setHours(time.getHours());
             dateTime.setMinutes(time.getMinutes());
 
-            final SmsDlgPresenter smsDlgPresenter =
-                (SmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
+            final EventDlgPresenter smsDlgPresenter =
+                (EventDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
             smsDlgPresenter.init(dateTime, App.get().getPatients(), App.get().getProcedures(Event.Type.IN_CALENDAR));
             final SmeventeDialog dlg = new SmeventeDialog("SMS", smsDlgPresenter);
 //            dlg.setPopupPosition(eventX, eventY);
@@ -595,18 +595,18 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      * @param eventWidget event widget
      */
     private void processOkOnEventDialog(
-            final SmsDlgPresenter smsDlgPresenter, final SmeventeDialog dlg, final EventWidget eventWidget) {
+            final EventDlgPresenter smsDlgPresenter, final SmeventeDialog dlg, final EventWidget eventWidget) {
 
         // validation
         if (!smsDlgPresenter.getValidator().validate()) { return; }
         final Object patientId = smsDlgPresenter.getSelectedPatient().getId();
         final Object mhcId = smsDlgPresenter.getSelectedMedicalHelpCategory().getId();
-        final String smsText = smsDlgPresenter.getView().getSmsText().getText();
+        final String smsText = smsDlgPresenter.getView().getMessageText().getText();
         final String notice = smsDlgPresenter.getView().getNotice().getText();
         final Date mhDateTime = smsDlgPresenter.getStartTime();
         final int mhLen = smsDlgPresenter.getMedicalHelpLength();
         final String smsId =
-            smsDlgPresenter.isUpdate() ? smsDlgPresenter.getView().getSmsId().getValue() : null;
+            smsDlgPresenter.isUpdate() ? smsDlgPresenter.getView().getEventId().getValue() : null;
         // mobile phone number validation
         final String pn = smsDlgPresenter.getView().getPhoneNumber().getText().trim();
         if ((null == smsId) && (0 == pn.length() || !SmsUtils.isValidGsmPhoneNumber(pn, SmsUtils.LOCALE_CS))
