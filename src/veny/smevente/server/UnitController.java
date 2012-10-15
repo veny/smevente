@@ -132,7 +132,7 @@ public class UnitController {
         final String bn = (Strings.isNullOrEmpty(birthNumber) ? null : birthNumber.trim());
         final List<Patient> patients = unitService.findPatients(unitId, n, pn, bn);
 
-        ModelAndView modelAndView = new ModelAndView("jsonView");
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("patients", patients);
         return modelAndView;
     }

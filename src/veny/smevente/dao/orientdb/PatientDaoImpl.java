@@ -35,7 +35,9 @@ public class PatientDaoImpl extends AbstractDaoOrientdb<Patient> implements Pati
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("unitId", unitId);
 
-                return executeWithSoftDelete(db, sql.toString(), params, true);
+                final List<Patient> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+                detachWithFirstLevelAssociations(rslt, db);
+                return rslt;
             }
         });
     }
