@@ -11,6 +11,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.UiUtils;
+import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
 import veny.smevente.model.User;
 
@@ -22,6 +23,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
@@ -31,22 +33,27 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
- * Find User presenter.
+ * 'Users in Unit' presenter.
  *
  * @author Tomas Zajic [tomas.zajic75@gmail.com]
  * @since 28.7.2010
  */
-public class FindUserPresenter
-    extends AbstractPresenter<FindUserPresenter.FindUserView>
+public class UserListPresenter
+    extends AbstractPresenter<UserListPresenter.UserListView>
     implements HeaderHandler {
 
     /**
-     * View interface for Find User UC.
+     * View interface for Users in Unit UC.
      *
      * @author Vaclav Sykora
      * @since 28.7.2010
      */
-    public interface FindUserView extends View {
+    public interface UserListView extends View {
+        /**
+         * Getter for the button to create new user.
+         * @return button to create new user
+         */
+        Button getAddUser();
         /**
          * Table with result set.
          * @return table with result set
@@ -104,6 +111,13 @@ public class FindUserPresenter
                 menuPopupPanel.show();
             }
         };
+
+        view.getAddUser().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(final ClickEvent event) {
+                App.get().switchToPresenterByType(PresenterEnum.STORE_USER, null);
+            }
+        });
 
         // this is workaround because method 'getCellForEvent' is not callable with 'DoubleClickEvent'
         view.getResultTable().addClickHandler(new ClickHandler() {

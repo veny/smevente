@@ -13,8 +13,8 @@ import veny.smevente.client.uc.ChangePasswordPresenter;
 import veny.smevente.client.uc.ChangePasswordViewImpl;
 import veny.smevente.client.uc.FindPatientPresenter;
 import veny.smevente.client.uc.FindPatientViewImpl;
-import veny.smevente.client.uc.FindUserPresenter;
-import veny.smevente.client.uc.FindUserViewImpl;
+import veny.smevente.client.uc.UserListPresenter;
+import veny.smevente.client.uc.UserListViewImpl;
 import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.HeaderViewImpl;
 import veny.smevente.client.uc.ProcedureListPresenter;
@@ -197,8 +197,8 @@ public class PresenterCollection {
                 presenter = specialSmsDlgPresenter;
                 break;
             case FIND_USER:
-                FindUserPresenter findUserPresenter = new FindUserPresenter();
-                findUserPresenter.bind(new FindUserViewImpl());
+                UserListPresenter findUserPresenter = new UserListPresenter();
+                findUserPresenter.bind(new UserListViewImpl());
                 presenter = findUserPresenter;
                 break;
             case STORE_USER:

@@ -6,6 +6,7 @@
 
   <g:HTMLPanel addStyleNames="uc-standard" >
 
+      <g:Button ui:field="addUser" />
       <g:FlexTable ui:field="resultTable" addStyleNames="resultTable" />
 
   </g:HTMLPanel>
