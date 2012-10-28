@@ -1,5 +1,7 @@
 package veny.smevente.dao;
 
+import java.util.List;
+
 import veny.smevente.model.User;
 
 /**
@@ -10,15 +12,6 @@ import veny.smevente.model.User;
  */
 public interface UserDao extends GenericDao<User> {
 
-//    /**
-//     * Checks whether given username and password represents a user.
-//     *
-//     * @param username user name
-//     * @param password password
-//     * @return <i>true</i> if the combination is valid
-//     */
-//    boolean login(String username, String password);
-
     /**
      * Finds user by given user name and password.
      *
@@ -27,6 +20,14 @@ public interface UserDao extends GenericDao<User> {
      * @return found user or <i>null</i> if not found
      */
     User findByUsernameAndPassword(String username, String password);
+
+    /**
+     * Gets all users in given unit.
+     *
+     * @param unitId ID of unit the users must belong into
+     * @return list of users
+     */
+    List<User> getUsersInUnit(Object unitId);
 
 }
 

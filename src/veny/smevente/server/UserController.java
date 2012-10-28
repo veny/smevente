@@ -109,32 +109,24 @@ public class UserController {
     }
 
     /**
-     * Gets all users.
+     * Gets all users in given unit.
      *
-     * @param request HTTP request
-     * @param unitId the ID of unit the searched users must belong into
-     * @param userName user name to search
-     * @param fullName full name to search
+     * @param unitId the ID of unit the users belong into
      * @return model & view
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView findUsers(
-            final HttpServletRequest request,
-            @RequestParam("unitId") final String unitId,
-            @RequestParam("username") final String userName,
-            @RequestParam("fullname") final String fullName) {
+    public ModelAndView getUsersInUnit(@RequestParam("unitId") final String unitId) {
 
-        String un = (null == userName || 0 == userName.trim().length() ? null : userName.trim());
-        String fn = (null == fullName || 0 == fullName.trim().length() ? null : fullName.trim());
-        List<User> users = userService.findUsers(unitId, un, fn);
+        final List<Membership> membs = userService.getUsersInUnit(unitId);
 
-        ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("users", users);
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("memberships", membs);
         return modelAndView;
     }
 
     /**
      * Creates a new user.
+     *
      * @param request HTTP request
      * @param response HTTP response
      * @param user the user to be created

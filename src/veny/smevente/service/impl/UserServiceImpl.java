@@ -212,53 +212,18 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
-    public List<User> findUsers(final Object unitId, final String userName, final String fullName) {
+    public List<Membership> getUsersInUnit(final Object unitId) {
         if (null == unitId) { throw new IllegalArgumentException("unit id cannot be null"); }
 
-        LOG.info("findUsers, unitId=" + unitId + ", user name=" + userName + ", full name=" + fullName);
-        throw new IllegalStateException("not implemented yet");
-//
-//        final List<User> users = null;
-//        if (null == userName && null == fullName) {
-//            users = getAllUsers();
-//        } else {
-//            List<User> collectedRslt = null;
-//
-//            // user name
-//            if (null != userName) {
-//                collectedRslt = userDao.findBy("username", userName, null);
-//                if (LOG.isLoggable(Level.FINER)) {
-//                    LOG.finer("user(s) found by user name, size=" + collectedRslt.size());
-//                }
-//            }
-//
-//            // full name
-//            if (null != fullName) {
-//                List<User> found = userDao.findBy("fullname", fullName, null);
-//                if (LOG.isLoggable(Level.FINER)) {
-//                    LOG.finer("user(s) found by fullname, size=" + found.size());
-//                }
-//                if (null == collectedRslt) {
-//                    collectedRslt = found;
-//                } else {
-//                    collectedRslt = (List<User>) CollectionUtils.intersection(collectedRslt, found);
-//                }
-//            }
-//        }
-//
-//        // exist the found users in specified unit?
-//        final List<User> rslt = new ArrayList<User>();
-//        if (!users.isEmpty()) {
-//            for (User user: users) {
-//                final List<Membership> memberships = membershipDao.findBy("userId", user.getId(),
-//                        "unitId", unitId, null);
-//                if (!memberships.isEmpty()) {
-//                    rslt.add(user);
-//                }
-//            }
-//        }
-//        LOG.info("returned users, size=" + rslt.size());
-//        return rslt;
+        LOG.info("getUsersInUnit, unitId=" + unitId);
+
+        final List<Membership> rslt = membershipDao.findBy("unit", unitId, null);
+        for (Membership memb : rslt) {
+            memb.setUnit(null);
+        }
+
+        LOG.info("returned users, size=" + rslt.size());
+        return rslt;
     }
 
     /** {@inheritDoc} */

@@ -8,8 +8,6 @@ import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
 import veny.smevente.client.rest.AbstractRestCallbackWithErrorHandling;
 import veny.smevente.client.rest.RestHandler;
-import veny.smevente.client.utils.CrudEvent;
-import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.UiUtils;
@@ -20,7 +18,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
@@ -32,7 +29,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 /**
  * Find User presenter.
@@ -45,37 +41,12 @@ public class FindUserPresenter
     implements HeaderHandler {
 
     /**
-     * View interface for the login form.
+     * View interface for Find User UC.
      *
      * @author Vaclav Sykora
-     * @since 0.1
+     * @since 28.7.2010
      */
     public interface FindUserView extends View {
-        /**
-         * Getter for the user name text field.
-         * @return the input field for the user name
-         */
-        TextBox getUserName();
-        /**
-         * Getter for the full name text field.
-         * @return the input field for the full name
-         */
-        TextBox getFullName();
-        /**
-         * Getter for the flag is user is an unit administrator.
-         * @return the check box for the unit administrator flag
-         */
-        CheckBox getUnitAdmin();
-        /**
-         * Getter for the unit administrator label field.
-         * @return the label for the unit administrator
-         */
-        Label getUnitAdminLabel();
-        /**
-         * Getter for the button to submit.
-         * @return the submit element
-         */
-        HasClickHandlers getSubmit();
         /**
          * Table with result set.
          * @return table with result set
@@ -86,18 +57,16 @@ public class FindUserPresenter
     /** Popup panel with context menu. */
     private final PopupPanel menuPopupPanel = new PopupPanel(true, true);
 
-    /** List of found users. */
-    private List<User> foundUsers;
+    /** List of found memberships with associated users. */
+    private List<Membership> membershipsWithUser;
 
     /** ID of user where the context menu is raised. */
     private String clickedId = null;
 
+    private int clickedRowIndex = -1;
+
     /** Click handler to user delete. */
     private ClickHandler menuClickHandler;
-
-    /** The index of row in table on which the click event occured. Used to
-     *  identify the user for which the update action will be started. */
-    private int clickedRowIndex;
 
     /** Handler registration for user CRUD in the Event Bus. */
     private HandlerRegistration ebusUnitSelection;
@@ -124,15 +93,6 @@ public class FindUserPresenter
         // register this to display/hide the loading progress bar
         ebusUnitSelection = eventBus.addHandler(HeaderEvent.TYPE, this);
 
-        view.getUnitAdmin().setVisible(false);
-        view.getUnitAdminLabel().setVisible(false);
-        view.getSubmit().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(final ClickEvent event) {
-                findUsers();
-            }
-        });
-
         menuClickHandler = new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
@@ -145,6 +105,7 @@ public class FindUserPresenter
             }
         };
 
+        // this is workaround because method 'getCellForEvent' is not callable with 'DoubleClickEvent'
         view.getResultTable().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
@@ -156,8 +117,8 @@ public class FindUserPresenter
         view.getResultTable().addDoubleClickHandler(new DoubleClickHandler() {
             @Override
             public void onDoubleClick(final DoubleClickEvent event) {
-                if (clickedRowIndex >= 0 && clickedRowIndex < foundUsers.size()) {
-                    final User p = foundUsers.get(clickedRowIndex);
+                if (clickedRowIndex >= 0 && clickedRowIndex < membershipsWithUser.size()) {
+                    final User p = membershipsWithUser.get(clickedRowIndex).getUser();
                     App.get().switchToPresenterByType(PresenterEnum.STORE_USER, p);
                 }
             }
@@ -166,7 +127,9 @@ public class FindUserPresenter
         // context menu
         final Command updateCommand = new Command() {
             public void execute() {
-                final User u = hideMenuAndGetSelectedUser();
+                menuPopupPanel.hide();
+                final int idx = getIndexById(clickedId);
+                final User u = membershipsWithUser.get(idx).getUser();
                 App.get().switchToPresenterByType(PresenterEnum.STORE_USER, u);
             }
         };
@@ -174,10 +137,10 @@ public class FindUserPresenter
             public void execute() {
                 menuPopupPanel.hide();
                 final int idx = getIndexById(clickedId);
-                final User u = foundUsers.get(idx);
-                final String name = u.getUsername();
+                final Membership memb = membershipsWithUser.get(idx);
+                final String name = memb.getUser().getUsername();
                 if (Window.confirm(MESSAGES.deleteUserQuestion(name))) {
-                    deleteUser(clickedId, idx + 1);
+                    deleteUser(memb, idx + 1);
                 }
                 clickedId = null;
             }
@@ -205,20 +168,17 @@ public class FindUserPresenter
     /** {@inheritDoc} */
     @Override
     public void onShow(final Object parameter) {
-        view.getUserName().setFocus(true);
+        loadUsers();
     }
 
     /** {@inheritDoc} */
     @Override
     public void clean() {
-        view.getUserName().setText("");
-        view.getFullName().setText("");
-        view.getUnitAdmin().setValue(false);
         cleanResultTable();
         clickedId = null;
-        if (null != foundUsers) {
-            foundUsers.clear();
-            foundUsers = null;
+        if (null != membershipsWithUser) {
+            membershipsWithUser.clear();
+            membershipsWithUser = null;
         }
     }
 
@@ -226,46 +186,44 @@ public class FindUserPresenter
 
     /**
      * Finds users and show the result set.
-     * @param id user ID
+     * @param memb membership with associated user to delete
      * @param line line in the table to be removed
      */
-    private void deleteUser(final String id, final int line) {
-        final RestHandler rest = new RestHandler("/rest/user/" + id + "/");
-        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
-            @Override
-            public void onSuccess(final String jsonText) {
-                final User user = new User();
-                user.setId(id);
-                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, user));
-                view.getResultTable().removeRow(line);
-                for (User foundUser : foundUsers) {
-                    if (foundUser.getId().equals(id)) {
-                        foundUsers.remove(foundUser);
-                        break;
-                    }
-                }
-            }
-        });
-        rest.delete();
+    private void deleteUser(final Membership memb, final int line) {
+        throw new IllegalStateException("not implemented yet");
+//        final RestHandler rest = new RestHandler("/rest/user/" + memb.getUser().getId() + "/");
+//        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
+//            @Override
+//            public void onSuccess(final String jsonText) {
+//                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, memb.getUser()));
+//                view.getResultTable().removeRow(line);
+//                for (Membership foundMemb : membershipsWithUser) {
+//                    if (foundMemb.getId().equals(memb.getId())) {
+//                        membershipsWithUser.remove(foundUser);
+//                        break;
+//                    }
+//                }
+//            }
+//        });
+//        rest.delete();
     }
 
     /**
-     * Finds users and show the result set.
+     * Load users of selected unit and show the result set.
      */
-    private void findUsers() {
+    private void loadUsers() {
         cleanResultTable();
         final RestHandler rest = new RestHandler("/rest/user"
-                + "/?unitId=" + App.get().getSelectedUnit().getId().toString().trim()
-                + "&username=" + URL.encodeQueryString(view.getUserName().getText().trim())
-                + "&fullname=" + URL.encodeQueryString(view.getFullName().getText().trim())
+                + "/?unitId=" + URL.encodeQueryString(App.get().getSelectedUnit().getId().toString().trim())
         );
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                foundUsers = App.get().getJsonDeserializer().deserializeList(User.class, "users", jsonText);
+                membershipsWithUser =
+                        App.get().getJsonDeserializer().deserializeList(Membership.class, "memberships", jsonText);
                 int line = 1;
-                for (User u : foundUsers) {
-                    addUser(u, line);
+                for (Membership memb : membershipsWithUser) {
+                    addUser(memb, line);
                     line++;
                 }
             }
@@ -275,54 +233,23 @@ public class FindUserPresenter
 
     /**
      * Adds one user into result set table.
-     * @param u the user
+     * @param memb the membership with associated user
      * @param line line where the user will be inserted on
      */
-    private void addUser(final User u, final int line) {
+    private void addUser(final Membership memb, final int line) {
         final FlexTable table = view.getResultTable();
         UiUtils.addCell(table, line, 0, new Label("" + line));
-        UiUtils.addCell(table, line, 1, new Label(u.getUsername()));
-        UiUtils.addCell(table, line, 3, new Label(u.getFullname()));
-        CheckBox isUnitAdmin = new CheckBox();
-        isUnitAdmin.setValue(isAdmin(u));
+        UiUtils.addCell(table, line, 1, new Label(memb.getUser().getUsername()));
+        UiUtils.addCell(table, line, 3, new Label(memb.getUser().getFullname()));
+        final CheckBox isUnitAdmin = new CheckBox();
+        isUnitAdmin.setValue(memb.enumRole().equals(Membership.Role.ADMIN)); // TODO [veny,C] should be text
         isUnitAdmin.setEnabled(false);
         UiUtils.addCell(table, line, 4, isUnitAdmin);
         final Image menuImg = new Image("images/menu_button.png");
         // user ID is stored as element ID
-        menuImg.getElement().setId(u.getId().toString());
+        menuImg.getElement().setId(memb.getUser().getId().toString());
         menuImg.addClickHandler(menuClickHandler);
         UiUtils.addCell(table, line, 2, menuImg);
-    }
-
-    /**
-     * checks if specified user is an administrator of selected unit.
-     * @param user the user to be checked if administrator of selected unit
-     * @return true if specified user is an administrator of selected unit
-     */
-    private boolean isAdmin(final User user) {
-        if (true) throw new IllegalStateException("has to be refactored");
-        List<Membership> unitMembers=null;//XXX = App.get().getSelectedUnit().getMembers();
-
-        // just to be sure
-        if (null == unitMembers) { throw new IllegalStateException("selected unit members cannot be null"); }
-
-        for (Membership unitMember: unitMembers) {
-            if (unitMember.getUser().getId() == user.getId()) {
-                return Membership.Role.ADMIN == unitMember.enumRole();
-            }
-        }
-
-        throw new IllegalStateException("user with ID=" + user.getId() + " is not member of any unit");
-    }
-
-    /**
-     * Hides the popup menu and gets the user where the action has been selected on.
-     * @return selected user
-     */
-    public User hideMenuAndGetSelectedUser() {
-        menuPopupPanel.hide();
-        final int idx = getIndexById(clickedId);
-        return foundUsers.get(idx);
     }
 
     /**
@@ -341,15 +268,15 @@ public class FindUserPresenter
      * @return index in found users (starting at 0)
      */
     private int getIndexById(final String idAsText) {
-        if (null == foundUsers) { throw new NullPointerException("users collection is null"); }
+        if (null == membershipsWithUser) { throw new NullPointerException("users collection is null"); }
 
         int i = 0;
-        for (User u : foundUsers) {
-            if (idAsText.equals(u.getId())) { return i; }
+        for (Membership m : membershipsWithUser) {
+            if (idAsText.equals(m.getUser().getId())) { return i; }
             i++;
         }
         throw new IllegalStateException("user not found, id=" + idAsText
-                + ", collection.size=" + foundUsers.size());
+                + ", collection.size=" + membershipsWithUser.size());
     }
 
 }

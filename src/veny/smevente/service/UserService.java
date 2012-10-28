@@ -75,25 +75,27 @@ public interface UserService {
 
     /**
      * Deletes user.
+     *
      * @param id user ID to be deleted
      */
     void deleteUser(Object id);
 
     /**
      * Finds user by given user name.
+     * (used in authentication)
+     *
      * @param username unique user name to find
      * @return found user
      */
     User findUserByUsername(String username);
 
     /**
-     * Finds users according to given user name and/or full name for given unit.
-     * @param unitId the ID of unit the searched users must belong into
-     * @param userName the user name
-     * @param fullName full name
-     * @return list of found users
+     * Gets all memberships/users in given unit.
+     *
+     * @param unitId ID of unit the users must belong into
+     * @return list of memberships with associated user (unit is <i>null</i>).
      */
-    List<User> findUsers(Object unitId, String userName, String fullName);
+    List<Membership> getUsersInUnit(Object unitId);
 
     /**
      * Changes password of given user.
@@ -156,7 +158,9 @@ public interface UserService {
     // ------------------------------------------------------- Membership Stuff
 
     /**
-     * Creates a new one membership or update an existing.
+     * Stores (creates or updates) a membership.<p/>
+     * The criterion to decide if create or update is entity's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
      *
      * @param unitId ID of unit
      * @param userId ID of user

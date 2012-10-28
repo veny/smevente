@@ -19,30 +19,8 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  */
 public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
 
-//    /** {@inheritDoc} */
-//    public boolean login(final String username, final String password) {
-//        final ODatabaseCallback<Integer> callback = new ODatabaseCallback<Integer>() {
-//            @Override
-//            public Integer doWithDatabase(final OObjectDatabaseTx db) {
-//                final StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM ")
-//                        .append(getPersistentClass().getName())
-//                        .append(" WHERE username = :username AND password = :password");
-//
-//                final Map<String, Object> params = new HashMap<String, Object>();
-//                params.put("username", username);
-//                params.put("password", password);
-//
-//                //setSoftDeleteFilter(query);
-//                final List<AbstractEntity> result = executeWithSoftDelete(db, sql.toString(), params);
-////                return (Integer) result.get(0).field("count");
-//                return 0;
-//            }
-//        };
-//
-//        return getDatabaseWrapper().execute(callback).intValue() > 0;
-//    }
-
     /** {@inheritDoc} */
+    @Override
     public User findByUsernameAndPassword(final String username, final String password) {
         return getDatabaseWrapper().execute(new ODatabaseCallback<User>() {
             @Override
@@ -64,6 +42,14 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
                 // user has to be detached because he will be stored in HttpSession
             }
         });
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public List<User> getUsersInUnit(final Object unitId) {
+        // TODO [veny,C] should be implemented with TRAVERSE
+        throw new IllegalStateException("not implemented yet");
     }
 
     // ---------------------------------------------------------- Special Stuff

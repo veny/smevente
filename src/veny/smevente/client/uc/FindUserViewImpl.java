@@ -3,16 +3,12 @@ package veny.smevente.client.uc;
 import veny.smevente.client.l10n.SmeventeConstants;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -33,11 +29,6 @@ public class FindUserViewImpl extends Composite implements FindUserPresenter.Fin
     private static final SmeventeConstants CONSTANTS = GWT.create(SmeventeConstants.class);
 
     // CHECKSTYLE:OFF
-    @UiField TextBox userName;
-    @UiField TextBox fullName;
-    @UiField CheckBox unitAdmin;
-    @UiField Label unitAdminLabel;
-    @UiField Button submit;
     @UiField FlexTable resultTable;
     // CHECKSTYLE:ON
 
@@ -59,35 +50,6 @@ public class FindUserViewImpl extends Composite implements FindUserPresenter.Fin
         getResultTable().getFlexCellFormatter().addStyleName(0, 4, "resultTable-header-cell");
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public TextBox getUserName() {
-        return userName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public CheckBox getUnitAdmin() {
-        return unitAdmin;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Label getUnitAdminLabel() {
-        return unitAdminLabel;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TextBox getFullName() {
-        return fullName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public HasClickHandlers getSubmit() {
-        return submit;
-    }
 
     /** {@inheritDoc} */
     @Override
