@@ -144,8 +144,8 @@ public class UserListPresenter
             public void execute() {
                 menuPopupPanel.hide();
                 final int idx = getIndexById(clickedId);
-                final User u = membershipsWithUser.get(idx).getUser();
-                App.get().switchToPresenterByType(PresenterEnum.STORE_USER, u);
+                final Membership memb = membershipsWithUser.get(idx);
+                App.get().switchToPresenterByType(PresenterEnum.STORE_USER, memb);
             }
         };
         final Command deleteCommand = new Command() {

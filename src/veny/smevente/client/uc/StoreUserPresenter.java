@@ -1,7 +1,6 @@
 package veny.smevente.client.uc;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import veny.smevente.client.App;
@@ -195,9 +194,9 @@ public class StoreUserPresenter
     public void onShow(final Object parameter) {
         view.getUsername().setFocus(true);
 
-        if (null != parameter && parameter instanceof User) {
-            final User u = (User) parameter;
-            Membership m = getMembership(u);
+        if (null != parameter && parameter instanceof Membership) {
+            final Membership m = (Membership) parameter;
+            final User u = m.getUser();
             view.getUserId().setValue(u.getId().toString());
             view.getUsername().setText(u.getUsername());
             view.getFullname().setText(u.getFullname());
@@ -398,22 +397,4 @@ public class StoreUserPresenter
         }
     }
 
-    /**
-     *
-     * @param user the user for which the membership will be searched
-     * @return the membership for given user and current unit
-     */
-    private Membership getMembership(final User user) {
-        List<Membership> memberships = null;//XXX App.get().getSelectedUnit().getMembers();
-
-        if (memberships != null) {
-            for (Membership membership: memberships) {
-                if (membership.getUser().getId() == user.getId()) {
-                    return membership;
-                }
-            }
-        }
-
-        throw new IllegalStateException("no membership found for user id=" + user.getId());
-    }
 }
