@@ -11,7 +11,6 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.UiUtils;
-import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
 import veny.smevente.model.User;
 
@@ -70,7 +69,9 @@ public class UserListPresenter
     /** ID of user where the context menu is raised. */
     private String clickedId = null;
 
-    private int clickedRowIndex = -1;
+    /** The index of row in table on which the click event occured. Used to
+     *  identify the user for which the update action will be started. */
+    private int clickedRowIndex;
 
     /** Click handler to user delete. */
     private ClickHandler menuClickHandler;
@@ -83,7 +84,7 @@ public class UserListPresenter
     /** {@inheritDoc} */
     @Override
     public void unitChanged(final HeaderEvent event) {
-        clean();
+        onShow(null);
     }
     /** {@inheritDoc} */
     @Override
