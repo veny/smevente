@@ -11,8 +11,8 @@
         <g:TextBox ui:field="username" />
         <g:Label text="{consts.fullname}" />
         <g:TextBox ui:field="fullname" />
-        <g:Label text="{consts.unitAdmin}" />
-        <g:CheckBox ui:field="unitAdmin" />
+        <g:Label text="{consts.unitRole}" />
+        <g:ListBox ui:field='roles' />
         <g:Label text="{consts.unitOrder}" />
         <g:TextBox ui:field="unitOrder" />
         <g:Label text="{consts.updatePassword}" />

@@ -48,7 +48,7 @@ public class UserListViewImpl extends Composite implements UserListPresenter.Use
         getResultTable().getFlexCellFormatter().addStyleName(0, 2, "resultTable-header-cell");
         getResultTable().setWidget(0, 3, new Label(CONSTANTS.fullname()));
         getResultTable().getFlexCellFormatter().addStyleName(0, 3, "resultTable-header-cell");
-        getResultTable().setWidget(0, 4, new Label(CONSTANTS.unitAdmin()));
+        getResultTable().setWidget(0, 4, new Label(CONSTANTS.unitRole()));
         getResultTable().getFlexCellFormatter().addStyleName(0, 4, "resultTable-header-cell");
     }
 

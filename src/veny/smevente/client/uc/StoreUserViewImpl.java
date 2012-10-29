@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,7 +35,7 @@ public class StoreUserViewImpl extends Composite implements StoreUserPresenter.S
     @UiField CheckBox updatePassword;
     @UiField PasswordTextBox password;
     @UiField PasswordTextBox passwordAgain;
-    @UiField CheckBox unitAdmin;
+    @UiField ListBox roles;
     @UiField TextBox unitOrder;
     @UiField Button submit;
     @UiField Button cancel;
@@ -81,8 +82,8 @@ public class StoreUserViewImpl extends Composite implements StoreUserPresenter.S
 
     /** {@inheritDoc} */
     @Override
-    public CheckBox getUnitAdmin() {
-        return unitAdmin;
+    public ListBox getRoles() {
+        return roles;
     }
 
     /** {@inheritDoc} */

@@ -58,7 +58,7 @@ public interface SmeventeConstants extends Constants {
     String username();
     String fullname();
     String root();
-    String unitAdmin();
+    String unitRole();
     String unitOrder();
     String updatePassword();
     String password();

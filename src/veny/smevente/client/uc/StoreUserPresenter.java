@@ -25,6 +25,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 
@@ -87,12 +88,10 @@ public class StoreUserPresenter
          */
         TextBox getUnitOrder();
         /**
-         * Getter for the flag is user is an
-         * unit administrator.
-         * @return the check box for the unit
-         * administrator flag
+         * Getter for the combo with roles.
+         * @return the combo with roles
          */
-        CheckBox getUnitAdmin();
+        ListBox getRoles();
         /**
          * Getter for the button to submit.
          * @return the submit element
@@ -137,6 +136,11 @@ public class StoreUserPresenter
     protected void onBind() {
         // register this to display/hide the loading progress bar
         ebusUnitSelection = eventBus.addHandler(HeaderEvent.TYPE, this);
+
+        // fill combo with all roles
+        for (Membership.Role r : Membership.Role.values()) {
+            view.getRoles().addItem(getRoleName(r));
+        }
 
         view.getUpdatePassword().addClickHandler(new ClickHandler() {
             @Override
@@ -200,7 +204,7 @@ public class StoreUserPresenter
             view.getUserId().setValue(u.getId().toString());
             view.getUsername().setText(u.getUsername());
             view.getFullname().setText(u.getFullname());
-            view.getUnitAdmin().setValue(m.enumRole() == Membership.Role.ADMIN);
+//XXX            view.getUnitAdmin().setValue(m.enumRole() == Membership.Role.ADMIN);
             view.getUnitOrder().setValue("" + (m.getSignificance() + 1));
             view.getUpdatePassword().setValue(null);
             view.getUpdatePassword().setEnabled(true);
@@ -235,7 +239,6 @@ public class StoreUserPresenter
         view.getFullname().setText("");
         view.getPassword().setText("");
         view.getPasswordAgain().setText("");
-        view.getUnitAdmin().setValue(null);
         view.getUnitOrder().setText("");
         view.getUpdatePassword().setValue(true);
         view.getUpdatePassword().setEnabled(false);
@@ -362,8 +365,8 @@ public class StoreUserPresenter
 
         final Map<String, String> params = new HashMap<String, String>();
         params.put("unitId", App.get().getSelectedUnit().getId().toString());
-        params.put("type", "" + (view.getUnitAdmin().getValue()
-                ? Membership.Role.ADMIN.ordinal() : Membership.Role.MEMBER.ordinal()));
+//XXX        params.put("type", "" + (view.getUnitAdmin().getValue()
+//                ? Membership.Role.ADMIN.ordinal() : Membership.Role.MEMBER.ordinal()));
         params.put("significance", "" + (Integer.parseInt(view.getUnitOrder().getValue()) - 1));
         params.put("username", u.getUsername());
         params.put("fullname", u.getFullname());
