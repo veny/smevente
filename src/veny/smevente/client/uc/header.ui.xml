@@ -14,28 +14,33 @@
 
     <div class="header-dashboard-holder">
       <div class="header-dashboard-left">
+          <!-- User -->
+          <g:InlineLabel text="{consts.user}" />
+          <!-- username -->
+          <g:InlineLabel ui:field="username" addStyleNames="header-bold" />
+          <!-- Is -->
+          <g:InlineLabel text="{consts.is}" />
+          <!-- role -->
+          <g:InlineLabel ui:field="role" addStyleNames="header-bold" />
+          <!-- In unit -->
+          <g:InlineLabel text="{consts.inUnit}" />
           <!-- units -->
-          <g:InlineLabel text="{consts.unit}" />
           <g:ListBox ui:field='units' />
-          <!-- unit members -->
-          <g:InlineLabel text="{consts.unitMember}" />
-          <g:ListBox ui:field="unitMembers" />
           <!-- limited version -->
           <g:InlineLabel ui:field='limitedVersion' visible='false'
               text="{consts.limitedVersion}" styleName="header-limitedVersion" />
       </div>
       <div class='header-dashboard-right'>
-          <!-- username -->
-          <g:InlineLabel text="{consts.username}" />
-          :
-          <g:InlineLabel ui:field="username" addStyleNames="header-bold" />
-          |
           <!-- logout -->
           <g:Anchor ui:field='logout' addStyleNames="hyperlink" text="{consts.logout}" />
           |
           <!-- languages -->
           <g:InlineLabel text='{consts.headerLanguage}' />
           <g:ListBox ui:field='languages' />
+          |
+          <!-- unit members -->
+          <g:InlineLabel text="{consts.unitMember}" />
+          <g:ListBox ui:field="unitMembers" />
       </div>
     </div>
 

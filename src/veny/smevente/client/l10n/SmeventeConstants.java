@@ -48,10 +48,13 @@ public interface SmeventeConstants extends Constants {
     String to();
     String or();
     String and();
+    String is();
+    String in();
     String date();
     String time();
     String settings();
     String version();
+    String user();
     String username();
     String fullname();
     String root();
@@ -84,6 +87,7 @@ public interface SmeventeConstants extends Constants {
     String participantId();
     String unit();
     String unitMember();
+    String inUnit();
     String[] patient();
     String[] medicalHelp();
     String[] medicalHelps();
@@ -140,6 +144,8 @@ public interface SmeventeConstants extends Constants {
     String prevWeek();
     String createEvent();
     String limitedVersion();
+    String roleAdmin();
+    String roleMember();
 
     // ------------------------------------------------------------- Validation
     String validationRequired();

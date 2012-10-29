@@ -452,18 +452,28 @@ public final class App implements ValueChangeHandler<String> {
      * @param selectedUnitIndex index of currently selected unit
      */
     public void setSelectedUnitIndex(final int selectedUnitIndex) {
+        if (selectedUnitIndex < 0 || (null != memberships && selectedUnitIndex >= memberships.size())) {
+            throw new IllegalArgumentException("invalid index: " + selectedUnitIndex);
+        }
         this.selectedUnitIndex = selectedUnitIndex;
+    }
+    /**
+     * Gets the current selected membership.
+     * @return the current selected membership
+     */
+    public Membership getSelectedMembership() {
+        if (null == memberships) { throw new NullPointerException("memberships is null"); }
+        final Membership memb = memberships.get(selectedUnitIndex);
+        if (null == memb) { throw new NullPointerException("selected membership is null"); }
+        if (null == memb.getUnit()) { throw new NullPointerException("unit of selected membership is null"); }
+        return memb;
     }
     /**
      * Gets the current selected unit.
      * @return the current selected unit
      */
     public Unit getSelectedUnit() {
-        if (null == memberships) { throw new NullPointerException("memberships is null"); }
-        final Membership memb = memberships.get(selectedUnitIndex);
-        if (null == memb) { throw new NullPointerException("selected membership is null"); }
-        if (null == memb.getUnit()) { throw new NullPointerException("unit of selected membership is null"); }
-        return memb.getUnit();
+        return getSelectedMembership().getUnit();
     }
     /**
      * Gets the text variant of the current selected unit.

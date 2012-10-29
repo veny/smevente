@@ -67,6 +67,10 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
          */
         Label getUsername();
         /**
+         * @return the role
+         */
+        Label getRole();
+        /**
          * @return the units list box
          */
         ListBox getUnits();
@@ -273,6 +277,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
                 // username
                 final String username = App.get().getJsonDeserializer().createString("username", jsonText);
                 view.getUsername().setText(username);
+                // text of 'role' is set in 'unitSelected'
 
                 // memberships with units (users are 'null')
                 final List<Membership> membs =
@@ -365,9 +370,24 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
      */
     private void unitSelected(final int idx) {
         App.get().setSelectedUnitIndex(idx);
-        final Unit newUnit = App.get().getSelectedUnit();
-        // just to be sure
-        if (null == newUnit) { throw new IllegalStateException("selected unit cannot be null"); }
+
+        final Membership memb = App.get().getSelectedMembership();
+        // set 'role' label
+        final String role;
+        switch (memb.enumRole()) {
+            case ADMIN:
+                role = CONSTANTS.roleAdmin();
+                break;
+            case MEMBER:
+                role = CONSTANTS.roleMember();
+                break;
+            default:
+                throw new IllegalStateException("unknown role: " + memb.enumRole());
+        }
+        view.getRole().setText(role);
+
+
+        final Unit newUnit = memb.getUnit();
 
         // show/hide 'Limited version' text
         view.getLimitedVersion().setVisible(null != newUnit.getLimitedSmss());

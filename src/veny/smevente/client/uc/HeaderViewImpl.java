@@ -33,6 +33,7 @@ public class HeaderViewImpl extends Composite implements HeaderView {
     @UiField Anchor logout;
     @UiField ListBox languages;
     @UiField InlineLabel username;
+    @UiField InlineLabel role;
     @UiField ListBox units;
     @UiField ListBox unitMembers;
     @UiField Label limitedVersion;
@@ -74,6 +75,11 @@ public class HeaderViewImpl extends Composite implements HeaderView {
     @Override
     public Label getUsername() {
         return username;
+    }
+    /** {@inheritDoc} */
+    @Override
+    public Label getRole() {
+        return role;
     }
     /** {@inheritDoc} */
     @Override
