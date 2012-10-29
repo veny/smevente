@@ -97,7 +97,7 @@ public interface SmeventeConstants extends Constants {
     String street();
     String city();
     String zipCode();
-    String findUser();
+    String userList();
     String addUser();
     String userAdded();
     String userUpdated();

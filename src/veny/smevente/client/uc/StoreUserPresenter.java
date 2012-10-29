@@ -172,7 +172,7 @@ public class StoreUserPresenter
         view.getCancel().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
-                App.get().switchToPresenterByType(PresenterEnum.FIND_USER, null);
+                App.get().switchToPresenterByType(PresenterEnum.USER_LIST, null);
             }
         });
     }

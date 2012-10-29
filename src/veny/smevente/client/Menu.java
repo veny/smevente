@@ -35,12 +35,12 @@ public class Menu extends MenuBar implements HeaderHandler {
     private final MenuItem findPatient;
     /** Variable text - add patient. */
     private final MenuItem addPatient;
-    /** Variable text - medical helps. */
-    private final MenuItem medicalHelps;
-    /** Variable text - add medical help. */
-    private final MenuItem addMedicalHelp;
-    /** Variable text - find user. */
-    private final MenuItem findUser;
+    /** Variable text - procedures. */
+    private final MenuItem procedures;
+    /** Variable text - add procedure. */
+    private final MenuItem addProcedure;
+    /** Variable text - user list. */
+    private final MenuItem userList;
     /** Variable text - add user. */
     private final MenuItem addUser;
     /** Variable text - user management separator. */
@@ -94,12 +94,12 @@ public class Menu extends MenuBar implements HeaderHandler {
         bar.addItem(CONSTANTS.management() + " >", managementBar);
 
         // Main / Management / Medical Helps
-        medicalHelps = createSwitchUcMenuItem(CONSTANTS.medicalHelps()[0], PresenterEnum.MEDICAL_HELP_CATEGORY_TYPES);
-        managementBar.addItem(medicalHelps);
+        procedures = createSwitchUcMenuItem(CONSTANTS.medicalHelps()[0], PresenterEnum.MEDICAL_HELP_CATEGORY_TYPES);
+        managementBar.addItem(procedures);
         // Main / Management / Add Medical Help
-        addMedicalHelp = createSwitchUcMenuItem(
-                CONSTANTS.addMedicalHelp()[0], PresenterEnum.STORE_MEDICAL_HELP_CATEGORY);
-        managementBar.addItem(addMedicalHelp);
+        addProcedure = createSwitchUcMenuItem(
+                CONSTANTS.addMedicalHelp()[0], PresenterEnum.STORE_PROCEDURE);
+        managementBar.addItem(addProcedure);
         // separator
         managementBar.addSeparator();
         // Main / Management / Special SMSs
@@ -114,7 +114,7 @@ public class Menu extends MenuBar implements HeaderHandler {
         // the related components are here only created to be prepared for
         // adding/removing in runtime.
         // Main / Management / Find user
-        findUser = createSwitchUcMenuItem(CONSTANTS.findUser(), PresenterEnum.FIND_USER);
+        userList = createSwitchUcMenuItem(CONSTANTS.userList(), PresenterEnum.USER_LIST);
         // Main / Management / Add User
         addUser = createSwitchUcMenuItem(CONSTANTS.addUser(), PresenterEnum.STORE_USER);
 
@@ -182,18 +182,18 @@ public class Menu extends MenuBar implements HeaderHandler {
         // Add/remove user management items if the current
         // member is/is not an administrator of current unit.
         if (App.get().isSelectedUnitMemberAdmin()) {
-            if (managementBar.getItemIndex(findUser) == -1) {
+            if (managementBar.getItemIndex(userList) == -1) {
                 if (userManagementSeparator == null) {
                     userManagementSeparator = managementBar.addSeparator();
                 } else {
                     managementBar.addSeparator(userManagementSeparator);
                 }
-                managementBar.addItem(findUser);
+                managementBar.addItem(userList);
                 managementBar.addItem(addUser);
             }
         } else {
             managementBar.removeSeparator(userManagementSeparator);
-            managementBar.removeItem(findUser);
+            managementBar.removeItem(userList);
             managementBar.removeItem(addUser);
         }
     }
@@ -206,8 +206,8 @@ public class Menu extends MenuBar implements HeaderHandler {
         final TextVariant variant = event.getUnit().enumTextVariant();
         findPatient.setText(CONSTANTS.findPatient()[variant.ordinal()]);
         addPatient.setText(CONSTANTS.addPatient()[variant.ordinal()]);
-        medicalHelps.setText(CONSTANTS.medicalHelps()[variant.ordinal()]);
-        addMedicalHelp.setText(CONSTANTS.addMedicalHelp()[variant.ordinal()]);
+        procedures.setText(CONSTANTS.medicalHelps()[variant.ordinal()]);
+        addProcedure.setText(CONSTANTS.addMedicalHelp()[variant.ordinal()]);
     }
     /** {@inheritDoc} */
     @Override

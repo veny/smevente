@@ -65,8 +65,8 @@ public class PresenterCollection {
         SMS_DETAIL_DLG,
         /** Special SMS dialog. */
         SPECIAL_SMS_DLG,
-        /** Find user. */
-        FIND_USER,
+        /** User list. */
+        USER_LIST,
         /** Add user. */
         STORE_USER,
         /** Find patient. */
@@ -74,7 +74,7 @@ public class PresenterCollection {
         /** Add patient. */
         STORE_PATIENT,
         /** Add medical help category. */
-        STORE_MEDICAL_HELP_CATEGORY,
+        STORE_PROCEDURE,
         /** Medical help category types. */
         MEDICAL_HELP_CATEGORY_TYPES,
         /** Add special medical help category. */
@@ -196,7 +196,7 @@ public class PresenterCollection {
                 specialSmsDlgPresenter.bind(new SpecialSmsDlgViewImpl());
                 presenter = specialSmsDlgPresenter;
                 break;
-            case FIND_USER:
+            case USER_LIST:
                 UserListPresenter findUserPresenter = new UserListPresenter();
                 findUserPresenter.bind(new UserListViewImpl());
                 presenter = findUserPresenter;
@@ -221,7 +221,7 @@ public class PresenterCollection {
                 patientHistoryPresenter.bind(new PatientHistoryViewImpl());
                 presenter = patientHistoryPresenter;
                 break;
-            case STORE_MEDICAL_HELP_CATEGORY:
+            case STORE_PROCEDURE:
                 StoreProcedurePresenter createMedicalHelpCategoryPresenter =
                     new StoreProcedurePresenter(Event.Type.IN_CALENDAR);
                 createMedicalHelpCategoryPresenter.bind(new StoreProcedureViewImpl());

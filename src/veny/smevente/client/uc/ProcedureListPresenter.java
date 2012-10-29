@@ -131,7 +131,7 @@ public class ProcedureListPresenter
             @Override
             public void onClick(final ClickEvent event) {
                 App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
-                        ? PresenterEnum.STORE_MEDICAL_HELP_CATEGORY
+                        ? PresenterEnum.STORE_PROCEDURE
                         : PresenterEnum.STORE_SPECIAL_MEDICAL_HELP_CATEGORY,
                         null);
             }
@@ -151,7 +151,7 @@ public class ProcedureListPresenter
                 if (clickedRowIndex >= 0 && clickedRowIndex < procedures.size()) {
                     final Procedure proc = procedures.get(clickedRowIndex);
                     App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
-                            ? PresenterEnum.STORE_MEDICAL_HELP_CATEGORY
+                            ? PresenterEnum.STORE_PROCEDURE
                             : PresenterEnum.STORE_SPECIAL_MEDICAL_HELP_CATEGORY,
                             proc);
                 }
@@ -163,7 +163,7 @@ public class ProcedureListPresenter
             public void execute() {
                 final Procedure proc = hideMenuAndGetSelectedProcedure();
                 App.get().switchToPresenterByType(type == Event.Type.IN_CALENDAR
-                        ? PresenterEnum.STORE_MEDICAL_HELP_CATEGORY
+                        ? PresenterEnum.STORE_PROCEDURE
                         : PresenterEnum.STORE_SPECIAL_MEDICAL_HELP_CATEGORY,
                         proc);
             }
