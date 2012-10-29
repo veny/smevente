@@ -22,10 +22,10 @@
         <g:Anchor text="{consts.aboutSmevente}" addStyleNames="buildNumber" href="http://smevente.com"/>
     </g:VerticalPanel>
 
-    <g:HTML styleName="gae-logo">
+    <!-- g:HTML styleName="gae-logo">
         <img src="http://code.google.com/appengine/images/appengine-noborder-120x30.gif"
              alt="Powered by Google App Engine" />
-    </g:HTML>
+    </g:HTML -->
   </g:HTMLPanel>
 
 </ui:UiBinder>
