@@ -4,6 +4,7 @@ import veny.smevente.client.PresenterCollection.PresenterEnum;
 import veny.smevente.client.l10n.SmeventeConstants;
 import veny.smevente.client.l10n.SmeventeMessages;
 import veny.smevente.client.rest.RestHandler;
+import veny.smevente.model.Membership;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -207,5 +208,24 @@ public abstract class AbstractPresenter<D extends View> implements Presenter<D> 
         return result;
     }
 
+    /**
+     * Gets textual and localized representation of given role.
+     * @param role enumeration item of a role
+     * @return textual representation of role
+     */
+    protected String getRoleName(final Membership.Role role) {
+        final String rslt;
+        switch (role) {
+            case ADMIN:
+                rslt = CONSTANTS.roleAdmin();
+                break;
+            case MEMBER:
+                rslt = CONSTANTS.roleMember();
+                break;
+            default:
+                throw new IllegalStateException("unknown role: " + role);
+        }
+        return rslt;
+    }
 
 }

@@ -373,19 +373,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
 
         final Membership memb = App.get().getSelectedMembership();
         // set 'role' label
-        final String role;
-        switch (memb.enumRole()) {
-            case ADMIN:
-                role = CONSTANTS.roleAdmin();
-                break;
-            case MEMBER:
-                role = CONSTANTS.roleMember();
-                break;
-            default:
-                throw new IllegalStateException("unknown role: " + memb.enumRole());
-        }
-        view.getRole().setText(role);
-
+        view.getRole().setText(getRoleName(memb.enumRole()));
 
         final Unit newUnit = memb.getUnit();
 
