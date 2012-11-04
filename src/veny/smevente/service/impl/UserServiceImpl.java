@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
             final String fullname, final boolean root) {
         final User user = new User();
         user.setUsername(username);
-        user.setPassword(encodePassword(password));
+        user.setPassword(password);
         user.setFullname(fullname);
         user.setRoot(root);
         return createUser(user);
@@ -86,6 +86,7 @@ public class UserServiceImpl implements UserService {
         if (!check.isEmpty()) {
             ServerValidation.exception("duplicateValue", "username", (Object[]) null);
         }
+        user.setPassword(encodePassword(user.getPassword()));
 
         final User rslt = userDao.persist(user);
 
@@ -107,16 +108,16 @@ public class UserServiceImpl implements UserService {
         // find unit
         final Unit unit = unitDao.getById(unitId);
 
-        // create user
-        final User rslt = createUser(user);
+        // store (create/update) user
+        final User rslt;
+        if (null == user.getId()) {
+            rslt = createUser(user);
+        } else {
+            rslt = updateUser(user);
+        }
 
-        // create membership
-        final Membership memb = new Membership();
-        memb.setRole(role.toString());
-        memb.setSignificance(significance);
-        memb.setUser(rslt);
-        memb.setUnit(unit);
-        membershipDao.persist(memb);
+        // store membership
+        this.storeMembership(unit, user, role, significance);
 
         return rslt;
     }
@@ -135,12 +136,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     // TODO [veny,B] think of authorization
     @Override
-    public void updateUser(final User user) {
+    public User updateUser(final User user) {
         validateUser(user, false);
 
         // unique user name
         final List<User> check = userDao.findBy("username", user.getUsername(), null);
-        if (null != check && !check.isEmpty() && !check.get(0).getId().equals(user.getId())) {
+        if (null != check && !check.isEmpty() && !check.get(0).getId().toString().equals(user.getId())) {
             ServerValidation.exception("duplicateValue", "username", (Object[]) null);
         } else {
             if (LOG.isLoggable(Level.FINER)) {
@@ -148,9 +149,18 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        userDao.persist(user);
-        LOG.info("user updated, id=" + user.getId()
-                + ", username=" + user.getUsername() + ", fullname=" + user.getFullname());
+        // password
+        if (User.DO_NOT_CHANGE_PASSWORD.equals(user.getPassword())) {
+            final User pwdUser = userDao.getById(user.getId());
+            user.setPassword(pwdUser.getPassword());
+        } else {
+            user.setPassword(this.encodePassword(user.getPassword()));
+        }
+
+        final User rslt = userDao.persist(user);
+        LOG.info("user updated, id=" + rslt.getId()
+                + ", username=" + rslt.getUsername() + ", fullname=" + rslt.getFullname());
+        return rslt;
     }
 
 //    /** {@inheritDoc} */
@@ -351,16 +361,16 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Membership storeMembership(
-            final Object unitId, final Object userId,
-            final Membership.Role role, final int significance) {
+            final Unit unit, final User user, final Membership.Role role, final int significance) {
 
-        if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
-        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
+        if (null == user) { throw new NullPointerException("user cannot be null"); }
+        if (null == unit) { throw new NullPointerException("unit cannot be null"); }
         if (LOG.isLoggable(Level.FINER)) {
-            LOG.finer("trying to store membership, userId=" + userId + ", unitId=" + unitId + ", role=" + role);
+            LOG.finer("trying to store membership, userId="
+                    + user.getId() + ", unitId=" + unit.getId() + ", role=" + role);
         }
 
-        Membership toStore = membershipDao.findByUserAndUnit(userId, unitId);
+        Membership toStore = membershipDao.findByUserAndUnit(user.getId(), unit.getId());
 
         if (null != toStore) {
             // update existing
@@ -368,16 +378,15 @@ public class UserServiceImpl implements UserService {
             toStore.setSignificance(significance);
         } else {
             // create new one
-            final Unit unit = unitDao.getById(unitId);
             toStore = new Membership();
-            toStore.setUser(userDao.getById(userId));
+            toStore.setUser(user);
             toStore.setUnit(unit);
             toStore.setRole(role.toString());
             toStore.setSignificance(significance);
         }
         final Membership rslt = membershipDao.persist(toStore);
 
-        LOG.info("stored membership, userId=" + userId + ", unitId=" + unitId + ", role=" + role);
+        LOG.info("stored membership, userId=" + user.getId() + ", unitId=" + unit.getId() + ", role=" + role);
         return rslt;
     }
 

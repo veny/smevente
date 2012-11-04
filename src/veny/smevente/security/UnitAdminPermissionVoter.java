@@ -30,7 +30,7 @@ public class UnitAdminPermissionVoter extends AbstractPermissionVoter {
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
 
         for (Object adminUnitId : adminUnits) {
-            if (unitId.equals(adminUnitId)) {
+            if (unitId.equals(adminUnitId.toString())) {
                 rslt = ACCESS_GRANTED;
                 break;
             }

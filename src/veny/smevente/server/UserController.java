@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.service.EventService;
 import veny.smevente.service.UserService;
@@ -132,7 +131,7 @@ public class UserController {
      *
      * @param user the user to be created
      * @param unitId unit ID
-     * @param type the membership type
+     * @param role the membership role
      * @param significance the membership significance
      * @return model & view corresponding to newly created user
      */
@@ -140,12 +139,10 @@ public class UserController {
     public ModelAndView storeUser(
         final User user,
         @RequestParam("unitId") final String unitId,
-        @RequestParam("role") final Integer type,
+        @RequestParam("role") final String role,
         @RequestParam("significance") final Integer significance) {
 
-        // as first encode the password
-        user.setPassword(userService.encodePassword(user.getPassword()));
-        Membership.Role etype = Membership.Role.values()[type.intValue()];
+        final Membership.Role etype = Membership.Role.valueOf(role);
         final User created = userService.storeUser(user, unitId, etype, significance);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("user", created);

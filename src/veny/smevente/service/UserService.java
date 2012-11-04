@@ -4,6 +4,7 @@ import java.util.List;
 
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.Membership;
+import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import eu.maydu.gwt.validation.client.ValidationException;
 
@@ -61,8 +62,9 @@ public interface UserService {
      * Updates given user into DB.
      *
      * @param user user to be updated
+     * @return updated user
      */
-    void updateUser(User user);
+    User updateUser(User user);
 
 //    /**
 //     * Updates a given user into DB.
@@ -162,16 +164,14 @@ public interface UserService {
 
     /**
      * Stores (creates or updates) a membership.<p/>
-     * The criterion to decide if create or update is entity's ID value:
-     * 'create' if ID is <i>null</i>, otherwise 'update'.
      *
-     * @param unitId ID of unit
-     * @param userId ID of user
+     * @param unit the unit
+     * @param user the user
      * @param role membership role
      * @param significance significance of the membership to other memberships of a user
      * @return found or created membership object
      */
-    Membership storeMembership(Object unitId, Object userId, Membership.Role role, int significance);
+    Membership storeMembership(Unit unit, User user, Membership.Role role, int significance);
 
     /**
      * Gets memberships for given user.
