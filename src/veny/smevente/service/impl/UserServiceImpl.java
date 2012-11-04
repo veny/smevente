@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @PreAuthorize("hasPermission(#unitId, 'V_UNIT_ADMIN')")
     @Override
-    public User createUser(
+    public User storeUser(
             final User user, final Object unitId, final Membership.Role role, final Integer significance) {
 
         if (significance < 0) {

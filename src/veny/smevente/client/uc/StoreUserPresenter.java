@@ -40,7 +40,7 @@ import eu.maydu.gwt.validation.client.i18n.ValidationMessages;
 import eu.maydu.gwt.validation.client.validators.numeric.LongValidator;
 
 /**
- * Add Patient presenter.
+ * Store User presenter.
  *
  * @author Tomas Zajic [tomas.zajic75@gmail.com]
  * @since 26.11.2011
@@ -50,7 +50,7 @@ public class StoreUserPresenter
     implements HeaderHandler {
 
     /**
-     * View interface for the Add Patient.
+     * View interface for the Store User.
      *
      * @author Vaclav Sykora
      * @since 22.8.2010
@@ -204,7 +204,7 @@ public class StoreUserPresenter
             view.getUserId().setValue(u.getId().toString());
             view.getUsername().setText(u.getUsername());
             view.getFullname().setText(u.getFullname());
-//XXX            view.getUnitAdmin().setValue(m.enumRole() == Membership.Role.ADMIN);
+            view.getRoles().setSelectedIndex(m.enumRole().ordinal());
             view.getUnitOrder().setValue("" + (m.getSignificance() + 1));
             view.getUpdatePassword().setValue(null);
             view.getUpdatePassword().setEnabled(true);
@@ -348,14 +348,14 @@ public class StoreUserPresenter
     }
 
     /**
-     * Creates a new patient.
+     * Creates a new user.
      */
     private void storeUser() {
         final User u = new User();
         if (null == view.getUserId().getValue() || view.getUserId().getValue().trim().isEmpty()) {
             u.setId(null);
         } else {
-            u.setId(Long.parseLong(view.getUserId().getValue()));
+            u.setId(view.getUserId().getValue());
         }
         u.setUsername(view.getUsername().getText());
         u.setFullname(view.getFullname().getText());
@@ -365,8 +365,7 @@ public class StoreUserPresenter
 
         final Map<String, String> params = new HashMap<String, String>();
         params.put("unitId", App.get().getSelectedUnit().getId().toString());
-//XXX        params.put("type", "" + (view.getUnitAdmin().getValue()
-//                ? Membership.Role.ADMIN.ordinal() : Membership.Role.MEMBER.ordinal()));
+        params.put("role", Membership.Role.values()[view.getRoles().getSelectedIndex()].name());
         params.put("significance", "" + (Integer.parseInt(view.getUnitOrder().getValue()) - 1));
         params.put("username", u.getUsername());
         params.put("fullname", u.getFullname());
@@ -393,11 +392,7 @@ public class StoreUserPresenter
             }
         });
 
-        if (null == u.getId()) {
-            rest.post(params);
-        } else {
-            rest.put(params);
-        }
+        rest.post(params);
     }
 
 }

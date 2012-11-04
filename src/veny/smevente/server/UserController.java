@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.service.EventService;
 import veny.smevente.service.UserService;
@@ -125,10 +126,10 @@ public class UserController {
     }
 
     /**
-     * Creates a new user.
+     * Stores (creates or updates) a user.<p/>
+     * The criterion to decide if create or update is users's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
      *
-     * @param request HTTP request
-     * @param response HTTP response
      * @param user the user to be created
      * @param unitId unit ID
      * @param type the membership type
@@ -136,50 +137,22 @@ public class UserController {
      * @return model & view corresponding to newly created user
      */
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ModelAndView createUser(
-        final HttpServletRequest request,
-        final HttpServletResponse response,
+    public ModelAndView storeUser(
         final User user,
         @RequestParam("unitId") final String unitId,
-        @RequestParam("type") final Integer type,
+        @RequestParam("role") final Integer type,
         @RequestParam("significance") final Integer significance) {
 
         // as first encode the password
         user.setPassword(userService.encodePassword(user.getPassword()));
         Membership.Role etype = Membership.Role.values()[type.intValue()];
-        final User created = userService.createUser(user, unitId, etype, significance);
+        final User created = userService.storeUser(user, unitId, etype, significance);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("user", created);
         return modelAndView;
     }
 
-//    /**
-//     * Updates an existing user.
-//     * @param request HTTP request
-//     * @param response HTTP response
-//     * @param user the user to be updated
-//     * @param unitId unit ID
-//     * @param type the membership type
-//     * @param significance the membership significance
-//     */
-//    @RequestMapping(value = "/", method = RequestMethod.PUT)
-//    public void updateUser(
-//        final HttpServletRequest request,
-//        final HttpServletResponse response,
-//        final User user,
-//        @RequestParam("unitId") final Long unitId,
-//        @RequestParam("type") final Integer type,
-//        @RequestParam("significance") final Integer significance) {
-//
-//        // as first encode the password if it should be also updated
-//        if (!User.DO_NOT_CHANGE_PASSWORD.equals(user.getPassword())) {
-//            user.setPassword(userService.encodePassword(user.getPassword()));
-//        }
-//        Membership.Role etype = Membership.Role.values()[type.intValue()];
-//        userService.updateUser(user, unitId, etype, significance);
-//        response.setStatus(200);
-//    }
-//
+
 //    /**
 //     * Deletes a user.
 //     * @param response HTTP response

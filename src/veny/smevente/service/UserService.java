@@ -23,6 +23,7 @@ public interface UserService {
      * @param fullname full name
      * @param root flag of root user
      * @return created user
+     * @deprecated
      */
     User createUser(String username, String password, String fullname, boolean root);
 
@@ -35,7 +36,9 @@ public interface UserService {
     User createUser(User user);
 
     /**
-     * Stores a given user and also the related membership into DB.
+     * Stores (creates or updates) a given user and also the related membership into DB.<p/>
+     * The criterion to decide if create or update is entity's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
      *
      * @param user user to be created
      * @param unitId ID of unit the user belongs to
@@ -43,7 +46,7 @@ public interface UserService {
      * @param significance significance of membership
      * @return created user
      */
-    User createUser(User user, Object unitId, final Membership.Role role, final Integer significance);
+    User storeUser(User user, Object unitId, final Membership.Role role, final Integer significance);
 
     /**
      * Gets user by given ID.

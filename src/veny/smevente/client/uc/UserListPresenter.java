@@ -12,7 +12,6 @@ import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.UiUtils;
 import veny.smevente.model.Membership;
-import veny.smevente.model.User;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -133,8 +132,8 @@ public class UserListPresenter
             @Override
             public void onDoubleClick(final DoubleClickEvent event) {
                 if (clickedRowIndex >= 0 && clickedRowIndex < membershipsWithUser.size()) {
-                    final User p = membershipsWithUser.get(clickedRowIndex).getUser();
-                    App.get().switchToPresenterByType(PresenterEnum.STORE_USER, p);
+                    final Membership memb = membershipsWithUser.get(clickedRowIndex);
+                    App.get().switchToPresenterByType(PresenterEnum.STORE_USER, memb);
                 }
             }
         });
