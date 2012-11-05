@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // store membership
-        this.storeMembership(unit, user, role, significance);
+        this.storeMembership(unit, rslt, role, significance);
 
         return rslt;
     }

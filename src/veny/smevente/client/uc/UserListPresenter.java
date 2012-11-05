@@ -22,7 +22,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -255,10 +254,7 @@ public class UserListPresenter
         UiUtils.addCell(table, line, 0, new Label("" + line));
         UiUtils.addCell(table, line, 1, new Label(memb.getUser().getUsername()));
         UiUtils.addCell(table, line, 3, new Label(memb.getUser().getFullname()));
-        final CheckBox isUnitAdmin = new CheckBox();
-        isUnitAdmin.setValue(memb.enumRole().equals(Membership.Role.ADMIN)); // TODO [veny,C] should be text
-        isUnitAdmin.setEnabled(false);
-        UiUtils.addCell(table, line, 4, isUnitAdmin);
+        UiUtils.addCell(table, line, 4, new Label(getRoleName(memb.enumRole())));
         final Image menuImg = new Image("images/menu_button.png");
         // user ID is stored as element ID
         menuImg.getElement().setId(memb.getUser().getId().toString());

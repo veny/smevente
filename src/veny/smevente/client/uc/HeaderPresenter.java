@@ -232,8 +232,10 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
     /** {@inheritDoc} */
     @Override
     public void create(final CrudEvent event) {
-        if (event.getData() instanceof User) {
-            reloadCurrentUnitInfo();
+        if (event.getData() instanceof User
+                && ((User) event.getData()).getId().equals(App.get().getSelectedUnitMember().getId())) {
+            // load user info again if myself (logged in user) has been changed
+            loadUserInfo();
         }
     }
 
@@ -248,6 +250,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
     public void update(final CrudEvent event) {
         if (event.getData() instanceof User
                 && ((User) event.getData()).getId().equals(App.get().getSelectedUnitMember().getId())) {
+            // load user info again if myself (logged in user) has been changed
             loadUserInfo();
         }
     }
@@ -255,8 +258,10 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
     /** {@inheritDoc} */
     @Override
     public void delete(final CrudEvent event) {
-        if (event.getData() instanceof User) {
-            reloadCurrentUnitInfo();
+        if (event.getData() instanceof User
+                && ((User) event.getData()).getId().equals(App.get().getSelectedUnitMember().getId())) {
+            // load user info again if myself (logged in user) has been changed
+            loadUserInfo();
         }
     }
 
@@ -321,36 +326,6 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
             }
         });
         rest.get();
-    }
-
-    /**
-     * Reload the current unit info, used when some user CRUD occurred.
-     */
-    private void reloadCurrentUnitInfo() {
-        throw new IllegalStateException("not implemented yet");
-//        // get unit info
-//        RestHandler rest = new RestHandler("/rest/user/info/");
-//        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
-//            @Override
-//            public void onSuccess(final String jsonText) {
-//                final List<Unit> usedUnits = App.get().getUnits();
-//                int selectedUnitIndex = view.getUnits().getSelectedIndex();
-//                List<Unit> units = App.get().getJsonDeserializer().deserializeList(Unit.class, "units", jsonText);
-//                for (Unit newUnit : units) {
-//                    if (newUnit.getId().equals(usedUnits.get(selectedUnitIndex).getId())) {
-//                        usedUnits.remove(selectedUnitIndex);
-//                        usedUnits.add(selectedUnitIndex, newUnit);
-//                        // change content of members drop down
-//                        view.getUnitMembers().clear();
-//                        for (Membership m : newUnit.getMembers()) {
-//                            view.getUnitMembers().addItem(m.getUser().getFullname());
-//                        }
-//                        break;
-//                    }
-//                }
-//            }
-//        });
-//        rest.get();
     }
 
     /**
