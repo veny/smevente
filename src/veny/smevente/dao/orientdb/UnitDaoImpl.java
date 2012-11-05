@@ -20,6 +20,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 public class UnitDaoImpl extends AbstractDaoOrientdb<Unit> implements UnitDao {
 
     /** {@inheritDoc} */
+    @Override
     public List<Unit> getUnitsByUser(final Object userId) {
         if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
 
@@ -28,7 +29,7 @@ public class UnitDaoImpl extends AbstractDaoOrientdb<Unit> implements UnitDao {
             public List<Unit> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM (TRAVERSE unit FROM (")
                         .append("SELECT FROM Membership WHERE user = ")
-                        .append(userId.toString()) //!!!
+                        .append(userId.toString()) //!!! TODO[veny,A] SQL injection!
                         .append(")) WHERE @class = :clazz");
 
                 final Map<String, Object> params = new HashMap<String, Object>();

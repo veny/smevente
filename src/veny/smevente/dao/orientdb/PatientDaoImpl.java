@@ -20,6 +20,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 public class PatientDaoImpl extends AbstractDaoOrientdb<Patient> implements PatientDao {
 
     /** {@inheritDoc} */
+    @Override
     public List<Patient> findLikeBy(final Object unitId, final String paramName, final Object value) {
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
         if (Strings.isNullOrEmpty(paramName)) { throw new IllegalArgumentException("parameter name cannot be blank"); }
@@ -43,6 +44,7 @@ public class PatientDaoImpl extends AbstractDaoOrientdb<Patient> implements Pati
     }
 
     /** {@inheritDoc} */
+    @Override
     public Patient findByBirthNumber(final Object unitId, final String birthNumber) {
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
         if (Strings.isNullOrEmpty(birthNumber)) {

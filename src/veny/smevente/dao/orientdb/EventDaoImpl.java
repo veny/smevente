@@ -20,6 +20,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao {
 
     /** {@inheritDoc} */
+    @Override
     public List<Event> findByAuthorAndPeriod(
             final Object authorId, final Date from, final Date to, final boolean includeDeleted) {
 
@@ -44,6 +45,7 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
     }
 
     /** {@inheritDoc} */
+    @Override
     public List<Event> findByPatient(final Object patientId) {
 
         return getDatabaseWrapper().execute(new ODatabaseCallback<List<Event>>() {
@@ -62,6 +64,7 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
     }
 
 //    /** {@inheritDoc} */
+//    @Override
 //    public List<Event> findSms2BulkSend(final Date olderThan) {
 //        return JpaGaeUtils.execute(new JpaCallback<List<Event>>() {
 //            @Override
