@@ -370,7 +370,10 @@ public class UserServiceImpl implements UserService {
                     + user.getId() + ", unitId=" + unit.getId() + ", role=" + role);
         }
 
-        Membership toStore = membershipDao.findByUserAndUnit(user.getId(), unit.getId());
+        Membership toStore = null;
+        if (null != user.getId()) { // there should be existing membership for existing user
+            toStore = membershipDao.findByUserAndUnit(user.getId(), unit.getId());
+        }
 
         if (null != toStore) {
             // update existing

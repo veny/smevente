@@ -246,8 +246,9 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
     /** {@inheritDoc} */
     @Override
     public void update(final CrudEvent event) {
-        if (event.getData() instanceof User) {
-            reloadCurrentUnitInfo();
+        if (event.getData() instanceof User
+                && ((User) event.getData()).getId().equals(App.get().getSelectedUnitMember().getId())) {
+            loadUserInfo();
         }
     }
 

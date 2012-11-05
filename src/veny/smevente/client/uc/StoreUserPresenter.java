@@ -385,6 +385,7 @@ public class StoreUserPresenter
                     eventBus.fireEvent(new CrudEvent(OperationType.UPDATE, u));
                     Window.alert(CONSTANTS.userUpdated());
                 }
+                App.get().switchToPresenterByType(PresenterEnum.USER_LIST, null);
             }
             @Override
             public void onValidationFailure(final ValidationException ve) {
