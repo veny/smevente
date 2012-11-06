@@ -18,7 +18,7 @@
             <g:ListBox ui:field="procedure" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
-            <g:Label text="{consts.medicalHelpLength}" />
+            <g:Label text="{consts.procedureLength}" />
             <g:ListBox ui:field="length" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">

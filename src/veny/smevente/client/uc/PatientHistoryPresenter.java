@@ -64,8 +64,7 @@ public class PatientHistoryPresenter
         clean();
 
         // set unit specific text
-        view.getResultTable().setWidget(
-                0, 3, new Label(CONSTANTS.medicalHelp()[App.get().getSelectedUnitTextVariant()]));
+        view.getResultTable().setWidget(0, 3, new Label(CONSTANTS.procedure()));
 
         getPatientHistory(Long.parseLong(patientId.toString()));
     }

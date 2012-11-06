@@ -2,11 +2,10 @@ package veny.smevente.client.uc;
 
 import java.util.Date;
 
-import veny.smevente.client.App;
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
-import veny.smevente.model.Patient;
 import veny.smevente.model.Event;
+import veny.smevente.model.Patient;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -88,8 +87,7 @@ public class SmsDetailDlgPresenter extends AbstractPresenter<SmsDetailDlgPresent
                 + " [id=" + sms.getId() + "]");
         getView().getName().setText(patient.fullname() + " [" + patient.formattedBirthNumber() + "]");
         getView().getPhoneNumber().setText(patient.getPhoneNumber());
-        getView().getMedicalHelpLabel().setText(
-                CONSTANTS.medicalHelp()[App.get().getSelectedUnitTextVariant()]);
+        getView().getMedicalHelpLabel().setText(CONSTANTS.procedure());
         getView().getMedicalHelp().setText(sms.getProcedure().getName());
     }
     // -------------------------------------------------------- Presenter Stuff

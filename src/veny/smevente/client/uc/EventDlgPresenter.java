@@ -3,15 +3,14 @@ package veny.smevente.client.uc;
 import java.util.Date;
 import java.util.List;
 
-import veny.smevente.client.App;
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.PatientNameSuggestOracle;
 import veny.smevente.client.utils.PatientSuggestion;
-import veny.smevente.model.Procedure;
-import veny.smevente.model.Patient;
 import veny.smevente.model.Event;
+import veny.smevente.model.Patient;
+import veny.smevente.model.Procedure;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -281,7 +280,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
     @Override
     protected void onShow(final Object parameter) {
         // set texts
-        view.getProcedureHeader().setText(CONSTANTS.medicalHelp()[App.get().getSelectedUnitTextVariant()]);
+        view.getProcedureHeader().setText(CONSTANTS.procedure());
 
         view.getNameSuggestBox().getTextBox().setFocus(true);
     }

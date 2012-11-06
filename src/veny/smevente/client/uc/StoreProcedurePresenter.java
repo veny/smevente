@@ -435,18 +435,17 @@ public class StoreProcedurePresenter
      * @param jsonText server response
      */
     private void fireEvents(final Procedure updated, final String jsonText) {
-        final int textType = App.get().getSelectedUnitTextVariant();
         if (null == updated.getId()) {
             final Procedure created =
                     App.get().getJsonDeserializer().deserialize(Procedure.class, "procedure", jsonText);
             eventBus.fireEvent(new CrudEvent(OperationType.CREATE, created));
             Window.alert(type == Event.Type.IN_CALENDAR
-                    ? CONSTANTS.medicalHelpAdded()[textType]
+                    ? CONSTANTS.procedureAdded()
                     : CONSTANTS.specialSmsAdded());
         } else {
             eventBus.fireEvent(new CrudEvent(OperationType.UPDATE, updated));
             Window.alert(type == Event.Type.IN_CALENDAR
-                    ? CONSTANTS.medicalHelpUpdated()[textType]
+                    ? CONSTANTS.procedureUpdated()
                     : CONSTANTS.specialSmsUpdated());
         }
     }

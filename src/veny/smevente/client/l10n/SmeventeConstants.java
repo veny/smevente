@@ -55,6 +55,7 @@ public interface SmeventeConstants extends Constants {
     String settings();
     String version();
     String user();
+    String users();
     String username();
     String fullname();
     String root();
@@ -89,10 +90,10 @@ public interface SmeventeConstants extends Constants {
     String unitMember();
     String inUnit();
     String[] patient();
-    String[] medicalHelp();
-    String[] medicalHelps();
-    String medicalHelpLength();
-    String[] addMedicalHelp();
+    String procedure();
+    String procedures();
+    String procedureLength();
+    String addProcedure();
     String menu();
     String view();
     String calendar();
@@ -101,7 +102,6 @@ public interface SmeventeConstants extends Constants {
     String street();
     String city();
     String zipCode();
-    String userList();
     String addUser();
     String userAdded();
     String userUpdated();
@@ -132,9 +132,9 @@ public interface SmeventeConstants extends Constants {
     String future();
     String noItems();
     String color();
-    String[] medicalHelpAdded();
-    String[] medicalHelpUpdated();
-    String[] deleteMedicalHelpQuestion();
+    String procedureAdded();
+    String procedureUpdated();
+    String[] deleteProcedureQuestion();
     String specialSms();
     String specialSmss();
     String addSpecialSms();

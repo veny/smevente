@@ -175,7 +175,7 @@ public class ProcedureListPresenter
                 final Procedure proc = procedures.get(idx);
                 final String name = proc.getName();
                 final String confirmMsg = (type == Event.Type.IN_CALENDAR
-                        ? CONSTANTS.deleteMedicalHelpQuestion()[App.get().getSelectedUnitTextVariant()] + "\n" + name
+                        ? CONSTANTS.deleteProcedureQuestion() + "\n" + name
                         : MESSAGES.deleteSpecialSmsQuestion(name));
                 if (Window.confirm(confirmMsg)) {
                     deleteProcedure(clickedId, idx + 1);
@@ -208,9 +208,7 @@ public class ProcedureListPresenter
     public void onShow(final Object parameter) {
         // set unit specific text
         view.getAddProcedure().setText(
-                type == Event.Type.IN_CALENDAR
-                ? CONSTANTS.addMedicalHelp()[App.get().getSelectedUnitTextVariant()]
-                : CONSTANTS.addSpecialSms());
+                type == Event.Type.IN_CALENDAR ? CONSTANTS.addProcedure() : CONSTANTS.addSpecialSms());
 
         // unit info is loaded by HeaderEvent.unitChanged
         // but if the initial presenter is other one according to history token (e.g. FindPatient)
