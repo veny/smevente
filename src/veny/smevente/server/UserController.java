@@ -150,16 +150,16 @@ public class UserController {
     }
 
 
-//    /**
-//     * Deletes a user.
-//     * @param response HTTP response
-//     * @param userId user ID
-//     */
-//    @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
-//    public void deleteUser(final HttpServletResponse response, @PathVariable("id") final Long userId) {
-//        userService.deleteUser(userId);
-//        response.setStatus(200);
-//    }
+    /**
+     * Deletes a user.
+     *
+     * @param userId user ID
+     */
+    @RequestMapping(value = "/{id}/", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser(@PathVariable("id") final String userId) {
+        userService.deleteUser(userId);
+    }
 
 
     // ------------------------------------------------------------ Event Stuff

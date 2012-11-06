@@ -184,11 +184,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(final Object id) {
         final List<Membership> memberships = getMembershipsByUser(id);
-        if (memberships != null) {
-            for (Membership membership: memberships) {
-                membershipDao.remove(membership.getId());
-                LOG.info("membership (for user with id=" + id + ") deleted, id=" + membership.getId());
-            }
+        for (Membership membership: memberships) {
+            membershipDao.remove(membership.getId());
+            LOG.info("membership (for user with id=" + id + ") deleted, id=" + membership.getId());
         }
 
         userDao.remove(id);

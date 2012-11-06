@@ -8,6 +8,8 @@ import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
 import veny.smevente.client.rest.AbstractRestCallbackWithErrorHandling;
 import veny.smevente.client.rest.RestHandler;
+import veny.smevente.client.utils.CrudEvent;
+import veny.smevente.client.utils.CrudEvent.OperationType;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.UiUtils;
@@ -203,22 +205,22 @@ public class UserListPresenter
      * @param line line in the table to be removed
      */
     private void deleteUser(final Membership memb, final int line) {
-        throw new IllegalStateException("not implemented yet");
-//        final RestHandler rest = new RestHandler("/rest/user/" + memb.getUser().getId() + "/");
-//        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
-//            @Override
-//            public void onSuccess(final String jsonText) {
-//                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, memb.getUser()));
-//                view.getResultTable().removeRow(line);
-//                for (Membership foundMemb : membershipsWithUser) {
-//                    if (foundMemb.getId().equals(memb.getId())) {
-//                        membershipsWithUser.remove(foundUser);
-//                        break;
-//                    }
-//                }
-//            }
-//        });
-//        rest.delete();
+        final RestHandler rest = new RestHandler(
+                "/rest/user/" + URL.encodePathSegment((String) memb.getUser().getId()) + "/");
+        rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
+            @Override
+            public void onSuccess(final String jsonText) {
+                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, memb.getUser()));
+                view.getResultTable().removeRow(line);
+                for (Membership foundMemb : membershipsWithUser) {
+                    if (foundMemb.getId().equals(memb.getId())) {
+                        membershipsWithUser.remove(memb.getUser().getId());
+                        break;
+                    }
+                }
+            }
+        });
+        rest.delete();
     }
 
     /**
