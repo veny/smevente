@@ -146,6 +146,8 @@ public interface SmeventeConstants extends Constants {
     String limitedVersion();
     String roleAdmin();
     String roleMember();
+    String message();
+    String event();
 
     // ------------------------------------------------------------- Validation
     String validationRequired();
@@ -173,7 +175,7 @@ public interface SmeventeConstants extends Constants {
     String authenticationHeaderLogin();
     String authenticationValidationBadUsernamePassword();
 
-    // -------------------------------------------------------------------- SMS
+    // ------------------------------------------------------------------ Event
     String smsText();
     String smsSent();
     // CHECKSTYLE:ON

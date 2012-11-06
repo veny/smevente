@@ -30,7 +30,7 @@
             <g:TextBox ui:field="phoneNumber" enabled="false" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
-            <g:Label text="{consts.smsText}" />
+            <g:Label text="{consts.message}" />
             <g:TextArea ui:field="messageText" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">

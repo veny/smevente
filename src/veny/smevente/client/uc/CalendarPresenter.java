@@ -544,7 +544,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             final EventDlgPresenter smsDlgPresenter =
                 (EventDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
             smsDlgPresenter.init(dateTime, App.get().getPatients(), App.get().getProcedures(Event.Type.IN_CALENDAR));
-            final SmeventeDialog dlg = new SmeventeDialog("SMS", smsDlgPresenter);
+            final SmeventeDialog dlg = new SmeventeDialog(CONSTANTS.event(), smsDlgPresenter);
 //            dlg.setPopupPosition(eventX, eventY);
             dlg.center();
 
