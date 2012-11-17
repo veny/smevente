@@ -8,8 +8,8 @@ GWT_HOME='/opt/eclipse-jee-indigo-SR1-linux-gtk-x86_64/plugins/com.google.gwt.ec
 
 srcDir = 'src'
 buildDir = 'rbuild'
-distDir = "#{buildDir}/dist"
-classesDir = "#{buildDir}/classes"
+distDir = "#{buildDir}" # TODO delete?
+classesDir = "#{distDir}/war/WEB-INF/classes"
 
 buildtimeLibs = FileList['war/WEB-INF/lib/**/*.jar', "#{GWT_HOME}/gwt-user.jar", "#{GWT_HOME}/gwt-dev.jar", "#{ORIENTDB_HOME}/*jar"]
 RUNTIME_LIB_DIR = 'lib/runtime'
@@ -32,23 +32,31 @@ task :compile => [classesDir] do
 
   # see the javac command line docs regarding @ syntax for javac
   File.open("#{buildDir}/sources.txt", 'w+') do |f|
-    sources.each {|t| f.puts "#{t}" }
+    sources.each { |t| f.puts "#{t}" }
   end
 
   cp = buildtimeLibs.join(":")
   command =<<EOF
 #{JAVA_HOME}/bin/javac -cp #{cp} -deprecation -d #{classesDir} -sourcepath #{srcDir} @#{buildDir}/sources.txt
 EOF
-  puts `#{command}`
+  sh command
 end
 
 
 desc 'Create a war file to be deployed.'
 task :war => [:compile, distDir] do
-  command =<<EOF
-#{JAVA_HOME}/bin/jar -cf #{buildDir}/dist/#{PROJECT}.war
-EOF
+  inp = FileList['war/**/*.*', ""]
+  inp.exclude('war/WEB-INF/classes/**/*.*', 'war/WEB-INF/deploy/**/*.*')
+  cp_rr(inp, "#{buildDir}")
 
+  #cp('war/*', "#{distDir}/war", :verbose => true)
+  #FileUtils.cp_r  Dir.glob('war/**/*.*'), "#{buildDir}/war"
+  #FileUtils.cp_r  Dir['war/'], "#{buildDir}"
+
+  command =<<EOF
+#{JAVA_HOME}/bin/jar -cf #{buildDir}/#{PROJECT_NAME}.war -C #{buildDir}/war/ .
+EOF
+  sh command
 end
 
 
@@ -60,6 +68,10 @@ end
 
 # ---------------------------------------------------------------- Helper Stuff
 
-def copyToDir(fileArray, outputDir)
-  fileArray.each { |file| cp file, outputDir }
+def cp_rr(fileList, targetBaseDir)
+  fileList.each do |file|
+    into = "#{targetBaseDir}/#{File.dirname(file)}"
+    mkdir_p into unless File.exist? into
+    cp(file, into, :verbose => true) if File.file? file
+  end
 end
