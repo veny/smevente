@@ -1,7 +1,6 @@
 package veny.smevente.server;
 
-import java.util.logging.Logger;
-
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.WebApplicationContext;

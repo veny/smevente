@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -178,8 +177,8 @@ public class EventServiceImpl implements EventService {
     public String getEventText(final Object eventId) {
         final Event event = eventDao.getById(eventId);
         final String text2send = format(event);
-        if (LOG.isLoggable(Level.FINER)) {
-            LOG.finer("constructed event text, eventId=" + eventId + ", text=" + text2send);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("constructed event text, eventId=" + eventId + ", text=" + text2send);
         }
         return text2send;
     }

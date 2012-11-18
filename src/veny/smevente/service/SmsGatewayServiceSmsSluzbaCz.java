@@ -12,8 +12,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -108,7 +108,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
 
 
             if (returnCode != HttpURLConnection.HTTP_OK) {
-                LOG.severe("failed to send SMS, number=" + number
+                LOG.error("failed to send SMS, number=" + number
                         + ", returnCode=" + returnCode + ", data=" + data);
                 throw new SmsException(FailureType.SERVICE_ERROR, "HTTP request return code: " + returnCode);
             }
@@ -129,7 +129,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
                 if (null == failure) {
                     LOG.info("SMS sent, number=" + number + ", msg=" + msg + ", data=" + data);
                 } else {
-                    LOG.severe("failed to sent SMS, number=" + number
+                    LOG.error("failed to sent SMS, number=" + number
                             + ", data=" + data + ", failure=" + failure.getMessage());
                     throw failure;
                 }
@@ -138,13 +138,13 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
                     try {
                         reader.close();
                     } catch (IOException ioe) {
-                        LOG.log(Level.WARNING, "failed to close the read buffer", ioe);
+                        LOG.warn("failed to close the read buffer", ioe);
                     }
                 }
             }
 
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "failed to send SMS, number=" + number + ", data=" + data, e);
+            LOG.error("failed to send SMS, number=" + number + ", data=" + data, e);
             throw new SmsException(FailureType.CLIENT_ERROR, e.getMessage());
         }
     }
@@ -219,7 +219,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e1) {
-            LOG.severe("failed to URL encode data" + ", failure=" + e1.getMessage());
+            LOG.error("failed to URL encode data" + ", failure=" + e1.getMessage());
             throw new IllegalStateException("failed to URL encode data", e1);
         }
     }

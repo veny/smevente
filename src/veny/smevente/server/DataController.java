@@ -1,9 +1,8 @@
 package veny.smevente.server;
 
-import java.util.logging.Logger;
-
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -235,7 +234,7 @@ public class DataController {
     public static void assertRoot(final HttpServletRequest request) {
         final User user = getLoggedInUser(request);
         if (!user.isRoot()) {
-            LOG.severe("unauthorized data change (NOT root), username=" + user.getUsername());
+            LOG.error("unauthorized data change (NOT root), username=" + user.getUsername());
             throw new IllegalStateException("non-privileged access (NOT root)");
         }
     }

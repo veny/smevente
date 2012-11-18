@@ -1,8 +1,6 @@
 package veny.smevente.dao.orientdb;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 
 import veny.smevente.model.AbstractEntity;
@@ -229,11 +227,11 @@ public final class DatabaseWrapper implements DisposableBean {
             if (tx) { db.commit(); }
 
         } catch (final RuntimeException e) {
-            LOG.log(Level.SEVERE, "failed to execute callback: " + e.getMessage(), e);
+            LOG.error("failed to execute callback: " + e.getMessage(), e);
             if (tx) { db.rollback(); }
             throw e;
         } catch (final Exception e) {
-            LOG.log(Level.SEVERE, "failed to execute callback: " + e.getMessage(), e);
+            LOG.error("failed to execute callback: " + e.getMessage(), e);
             if (tx) { db.rollback(); }
             throw new IllegalStateException("failed to execute callback: " + e.getMessage(), e);
         } finally {

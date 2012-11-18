@@ -2,14 +2,13 @@ package veny.smevente.security;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -78,7 +77,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
             response.setStatus(HttpServletResponse.SC_OK);
             response.getOutputStream().println("LOGED IN");
         } catch (Throwable t) {
-            LOG.log(Level.SEVERE, "failed to process onAuthenticationSuccess", t);
+            LOG.error("failed to process onAuthenticationSuccess", t);
             request.getSession().invalidate();
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden

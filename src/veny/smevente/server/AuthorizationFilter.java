@@ -1,8 +1,6 @@
 package veny.smevente.server;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,6 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 
 /**
  * Filter to check if the current session does have a logged in user.
@@ -47,8 +47,8 @@ public class AuthorizationFilter implements Filter {
 
         // no authorization for Cron Tasks
         if (httpRequest.getRequestURI().startsWith("/rest/cron/task/")) {
-            if (LOG.isLoggable(Level.FINER)) {
-                LOG.finer("detected cron task, uri=" + httpRequest.getRequestURI());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("detected cron task, uri=" + httpRequest.getRequestURI());
             }
             chain.doFilter(request, response);
             return;

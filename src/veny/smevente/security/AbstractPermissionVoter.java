@@ -1,9 +1,8 @@
 package veny.smevente.security;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
@@ -84,7 +83,7 @@ public abstract class AbstractPermissionVoter implements AccessDecisionVoter<Obj
      * @param object object to check
      */
     protected void debugLog(final int permission, final Object callerId, final Object object) {
-        if (LOG.isLoggable(Level.FINER)) {
+        if (LOG.isDebugEnabled()) {
             final StringBuilder msg = new StringBuilder("permission checked, callerId=")
                 .append(callerId)
                 .append(", voterName=")
@@ -92,7 +91,7 @@ public abstract class AbstractPermissionVoter implements AccessDecisionVoter<Obj
                 .append(", object=")
                 .append(object)
                 .append(", permission=" + (ACCESS_GRANTED == permission ? "GRANTED" : "DENIED"));
-            LOG.finer(msg.toString());
+            LOG.debug(msg.toString());
         }
     }
 

@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.PermissionEvaluator;
@@ -62,8 +61,8 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
             throw new IllegalStateException("voter not found, targetPermission=" + permission.toString());
         }
 
-        if (LOG.isLoggable(Level.FINER)) {
-            LOG.finer("checking permission, targetPermission=" + permission.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("checking permission, targetPermission=" + permission.toString());
         }
         return (voter.vote(authentication, targetDomainObject, null) == AccessDecisionVoter.ACCESS_GRANTED);
     }

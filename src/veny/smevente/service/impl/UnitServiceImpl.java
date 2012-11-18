@@ -1,10 +1,9 @@
 package veny.smevente.service.impl;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,8 +108,8 @@ public class UnitServiceImpl implements UnitService {
             final Patient bn = patientDao.findByBirthNumber(client.getUnit().getId(), client.getBirthNumber());
             if (null == bn || (null != client.getId() && bn.getId().toString().equals(client.getId().toString()))) {
                 // expected state <- birth number not found
-                if (LOG.isLoggable(Level.FINER)) {
-                    LOG.finer("duplicate birth number check OK, bn=" + client.getBirthNumber());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("duplicate birth number check OK, bn=" + client.getBirthNumber());
                 }
             } else {
                 ServerValidation.exception("duplicateValue", "birthNumber", (Object[]) null);
@@ -164,16 +163,16 @@ public class UnitServiceImpl implements UnitService {
         // name
         if (null != name) {
             collectedRslt = patientDao.findLikeBy(unitId, "asciiFullname", name.toUpperCase());
-            if (LOG.isLoggable(Level.FINER)) {
-                LOG.finer("patient(s) found by name, size=" + collectedRslt.size());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("patient(s) found by name, size=" + collectedRslt.size());
             }
         }
 
         // phone number
         if (null != phoneNumber) {
             final List<Patient> found = patientDao.findLikeBy(unitId, "phoneNumber", phoneNumber);
-            if (LOG.isLoggable(Level.FINER)) {
-                LOG.finer("patient(s) found by phone number, size=" + found.size());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("patient(s) found by phone number, size=" + found.size());
             }
             if (null == collectedRslt) {
                 collectedRslt = found;
@@ -185,8 +184,8 @@ public class UnitServiceImpl implements UnitService {
         // birth number
         if (null != birthNumber) {
             final List<Patient> found = patientDao.findLikeBy(unitId, "birthNumber", birthNumber);
-            if (LOG.isLoggable(Level.FINER)) {
-                LOG.finer("patient(s) found by birth number, size=" + found.size());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("patient(s) found by birth number, size=" + found.size());
             }
             if (null == collectedRslt) {
                 collectedRslt = found;
@@ -351,14 +350,14 @@ public class UnitServiceImpl implements UnitService {
 
         // birth number
         if (Strings.isNullOrEmpty(patient.getBirthNumber())) {
-            LOG.warning("birth number is empty, fisrtname=" + patient.getFirstname()
+            LOG.warn("birth number is empty, fisrtname=" + patient.getFirstname()
                     + ", surname=" + patient.getSurname());
         } else {
             validationContainer.validate("birthNumber", "birthNumber", patient.getBirthNumber());
         }
         // phone number
         if (Strings.isNullOrEmpty(patient.getPhoneNumber())) {
-            LOG.warning("phone number is empty, fisrtname=" + patient.getFirstname()
+            LOG.warn("phone number is empty, fisrtname=" + patient.getFirstname()
                     + ", surname=" + patient.getSurname());
         } else {
             validationContainer.validate("phoneNumber", "phoneNumber", patient.getPhoneNumber());

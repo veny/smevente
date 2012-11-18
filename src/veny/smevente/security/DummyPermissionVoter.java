@@ -1,8 +1,8 @@
 package veny.smevente.security;
 
 import java.util.Collection;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 
@@ -22,7 +22,7 @@ public class DummyPermissionVoter extends AbstractPermissionVoter {
     public int vote(final Authentication authentication, final Object object,
             final Collection<ConfigAttribute> attributes) {
 
-        LOG.warning("DUMMY permission should not be used.");
+        LOG.warn("DUMMY permission should not be used.");
         return ACCESS_GRANTED;
     }
 
