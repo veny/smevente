@@ -51,6 +51,7 @@ task :war => [:compile, distDir] do
   cp_rr(inp, "#{buildDir}")
 
   cp_rr(FileList["#{srcDir}/appctx-*.xml"], "#{distDir}/war/WEB-INF/classes", true)
+  cp("#{srcDir}/log4j-rte.properties", "#{distDir}/war/WEB-INF/classes/log4j.properties", :verbose => true)
 
   cp("#{ORIENTDB_HOME}/orient-commons-1.3.0-SNAPSHOT.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
   cp("#{ORIENTDB_HOME}/orientdb-core-1.3.0-SNAPSHOT.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
