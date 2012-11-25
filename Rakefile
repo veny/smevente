@@ -5,6 +5,7 @@ PROJECT_NAME = 'smevente'
 JAVA_HOME=ENV['JAVA_HOME']
 ORIENTDB_HOME='/opt/orientdb-svn/releases/orientdb-1.3.0-SNAPSHOT/lib'
 GWT_HOME='/opt/eclipse-jee-indigo-SR1-linux-gtk-x86_64/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201206290132-rel-r37/gwt-2.4.0'
+TOMCAT_HOME='/opt/tomcat'
 
 srcDir = 'src'
 buildDir = 'rbuild'
@@ -68,8 +69,9 @@ end
 
 
 desc "Deploy source to server"
-task :Deploy => :classes do
-  puts "Deploying!!!"
+task :deploy => :war do
+  cp("#{buildDir}/#{PROJECT_NAME}.war", "#{TOMCAT_HOME}/webapps/")
+  rm_r "#{TOMCAT_HOME}/webapps/#{PROJECT_NAME}/"
 end
 
 

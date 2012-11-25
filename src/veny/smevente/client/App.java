@@ -3,6 +3,8 @@ package veny.smevente.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import veny.smevente.client.PresenterCollection.PresenterEnum;
 import veny.smevente.client.mvp.Presenter;
@@ -42,6 +44,9 @@ import com.google.gwt.user.client.ui.RootPanel;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  */
 public final class App implements ValueChangeHandler<String> {
+
+    /** Logger. */
+    public static final Logger LOG = Logger.getLogger("App");
 
     /** Minimal page width in pixel - if browser window is smaller, scrollbars will appear. */
     public static final int MIN_PAGE_WIDTH = 1000;
@@ -113,6 +118,8 @@ public final class App implements ValueChangeHandler<String> {
 
         // attach this singleton with history
         History.addValueChangeHandler(this);
+
+        LOG.log(Level.INFO, "initialize OK, baseUrl=" + this.getBaseUrl());
     }
 
     /**
@@ -172,24 +179,33 @@ public final class App implements ValueChangeHandler<String> {
 
     /**
      * Checks validity of a presented session with the <i>ping</i> request.
+     * Invoked from application bootstrap in 'onModuleLoad' method.
      */
     public void checkWithServerIfSessionIdIsStillLegal() {
-        String sessionID = Cookies.getCookie("JSESSIONID");
+        final String sessionID = Cookies.getCookie("JSESSIONID");
         if (null == sessionID || 0 == sessionID.trim().length()) {
             // no session
+            LOG.info("no cookie found");
             showLoginScreen();
             return;
         }
+
+        LOG.info("cookie found: " + sessionID);
 
         // check validity of the found session
         final RestHandler rest = new RestHandler("/rest/ping/");
         rest.setCallback(new RestCallback() {
             @Override
             public void onSuccess(final String jsonText) {
+                LOG.info("cookie in valid: " + sessionID);
                 switchToPresenterByHistory();
             }
             @Override
             public void onFailure(final ExceptionJsonWrapper wrapper) {
+                // this variant is covered by UnauthorizedEvent precessed in LoginPresenter,
+                // so next section never should be invoked.
+                // (is here just likek a historical relict)
+                LOG.info("cookie is invalid: " + sessionID);
                 showLoginScreen();
             }
         });
@@ -208,6 +224,7 @@ public final class App implements ValueChangeHandler<String> {
             activeMainPresenter.hide();
         }
 
+        LOG.info("Login dialog activated");
         RootPanel.get("main").add(loginPresenter.getView().asWidget());
         loginPresenter.onShow(null);
 
@@ -222,6 +239,8 @@ public final class App implements ValueChangeHandler<String> {
      * @param parameter parameter to pass to the presenter
      */
     public void switchToPresenterByType(final PresenterEnum pe, final Object parameter) {
+        LOG.info("switching to presenter, type=" + pe);
+
         // find the new presenter
         final Presenter< ? extends View > presenter = getPresenterCollection().getPresenter(pe);
 
@@ -359,7 +378,7 @@ public final class App implements ValueChangeHandler<String> {
      * default if no entry in the history stack.
      */
     public void switchToPresenterByHistory() {
-        String historyToken = History.getToken();
+        final String historyToken = History.getToken();
         if (null == historyToken || 0 == historyToken.trim().length()) {
             // the default presenter
             App.get().onHistoryChange(PresenterEnum.CALENDER.getId());

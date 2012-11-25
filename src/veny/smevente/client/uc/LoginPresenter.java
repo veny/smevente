@@ -2,6 +2,7 @@ package veny.smevente.client.uc;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import veny.smevente.client.AbstractEnterKeyHandler;
 import veny.smevente.client.App;
@@ -68,6 +69,9 @@ public class LoginPresenter extends AbstractPresenter<LoginPresenter.LoginView>
         DisclosurePanel getValidationErrors();
     }
 
+
+    /** Logger. */
+    public static final Logger LOG = Logger.getLogger("LoginPresenter");
 
     // -------------------------------------------------------- Presenter Stuff
 
@@ -137,6 +141,7 @@ public class LoginPresenter extends AbstractPresenter<LoginPresenter.LoginView>
     /** {@inheritDoc} */
     @Override
     public void unauthorized(final UnauthorizedEvent event) {
+        LOG.info("received Unauthorized Event -> App.get().showLoginScreen()");
         App.get().showLoginScreen();
     }
 
@@ -154,7 +159,7 @@ public class LoginPresenter extends AbstractPresenter<LoginPresenter.LoginView>
         }
 
         // send GWT POST request for login
-        final RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/rest/login/");
+        final RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, App.get().getBaseUrl() + "/rest/login/");
 
         String postData = "j_username=" + view.getUsername().getValue()
             + "&j_password=" + view.getPassword().getValue();

@@ -17,6 +17,11 @@
   <inherits name='eu.maydu.gwt.validation.ValidationLibrary'/>
   <inherits name='net.auroris.ColorPicker.client'/>
 
+  <inherits name="com.google.gwt.logging.Logging"/>
+  <set-property name="gwt.logging.logLevel" value="FINE"/>
+  <set-property name="gwt.logging.enabled" value="TRUE"/>
+  <!-- set-property name="gwt.logging.consoleHandler" value="DISABLED"/ -->
+
   <!-- Specify the app entry point class.                         -->
   <entry-point class='veny.smevente.client.Smevente'/>
 
