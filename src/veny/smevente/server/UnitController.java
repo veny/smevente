@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.common.base.Strings;
+
 import veny.smevente.model.Event;
 import veny.smevente.model.Patient;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
-
-import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 /**
  * Controller of Unit REST interface.

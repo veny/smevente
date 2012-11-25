@@ -8,7 +8,7 @@ import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.model.Patient;
 
-import com.google.gwt.thirdparty.guava.common.base.Strings;
+import com.google.common.base.Strings;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**

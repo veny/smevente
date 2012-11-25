@@ -70,8 +70,8 @@ end
 
 desc "Deploy source to server"
 task :deploy => :war do
+  rm_r "#{TOMCAT_HOME}/webapps/#{PROJECT_NAME}/" if File.directory? "#{TOMCAT_HOME}/webapps/#{PROJECT_NAME}/"
   cp("#{buildDir}/#{PROJECT_NAME}.war", "#{TOMCAT_HOME}/webapps/")
-  rm_r "#{TOMCAT_HOME}/webapps/#{PROJECT_NAME}/"
 end
 
 

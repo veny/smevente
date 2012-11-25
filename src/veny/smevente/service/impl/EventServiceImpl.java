@@ -14,6 +14,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Strings;
+
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.EventDao;
@@ -29,8 +31,6 @@ import veny.smevente.model.User;
 import veny.smevente.service.EventService;
 import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.TextUtils;
-
-import com.google.gwt.thirdparty.guava.common.base.Strings;
 
 
 /**
