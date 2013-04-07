@@ -104,3 +104,70 @@ end
 #     <arg value="veny.smevente.Smevente"/>
 #   </java>
 # </target>
+
+# -------------------------------------------------------------------------- DB
+
+namespace :db do
+
+  HOST = 'localhost'
+  DB = 'temp'
+  USER = 'admin'
+  PASSWD = 'admin'
+
+  require 'orientdb4r'
+  require './db/schema.rb'
+  client = Orientdb4r.client :host => HOST
+  client.connect :database => DB, :user => USER, :password => PASSWD
+
+  task :create do
+    SCHEMA.each do |clazz|
+      clazz_name = clazz[0]
+      clazz_opts = clazz[1]
+      next if client.class_exists? clazz_name
+
+      properties = clazz_opts.delete :properties
+      client.create_class(clazz_name, clazz_opts) do |c|
+        properties.each do |prop_name,prop_opts|
+          prop_type = prop_opts.delete :type
+          if prop_type == :link
+            linked_class = prop_opts.delete :linked_class
+            c.link prop_name, prop_type, linked_class, prop_opts
+          else
+            c.property prop_name, prop_type, prop_opts
+          end
+        end
+        puts "  created clazz '#{clazz[0]}' with #{properties.size} prop(s)"
+      end
+    end
+  end
+
+  task :drop do
+    SCHEMA.reverse.each do |clazz|
+      client.drop_class clazz[0]
+      puts "  deleted clazz '#{clazz[0]}'"
+    end
+  end
+
+  task :init => :create do
+    require './db/init-data.rb'
+    DATA.each do |doc|
+      clazz = SCHEMA.select { |entry| entry[0] == doc['@class']}[0]
+#puts "CLAZZ #{clazz}"
+      links = clazz[1][:properties].select { |name,opts| opts[:type] == :link }
+#puts "LINKS #{links}"
+      unless links.empty?
+        links.each do |link_name, opts|
+          linked_key = doc[link_name]
+          linked_class = opts[:linked_class]
+          linked_entry = DATA.select { |entry| entry['@class'] == linked_class and entry[:key] == linked_key }
+          doc[link_name] = linked_entry[0][:rid].to_s
+        end
+      end
+#puts "DOC #{doc}"
+      rid = client.create_document(doc.select { |k,v| k != :key })
+      doc[:rid] = rid
+      puts "  created clazz '#{doc['@class']}', rid=#{rid}"
+    end
+  end
+
+end

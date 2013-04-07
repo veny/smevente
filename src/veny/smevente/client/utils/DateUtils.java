@@ -169,11 +169,11 @@ public final class DateUtils {
         d.setDate(1);
         d.setMonth(8);
         d = getStartOfDay(d);
-        System.out.println(d + " | " + d.getTime()); // CSOFF
+        System.out.println(d + " | " + d.getTime()); //CSOFF
         d.setDate(30);
         d.setMonth(8);
         d = getEndOfDay(d);
-        System.out.println(d + " | " + d.getTime()); // CSOFF
+        System.out.println(d + " | " + d.getTime()); //CSOFF
 
 //        Charset charset = Charset.forName("ASCII");
 //        CharsetDecoder decoder = charset.newDecoder();
@@ -181,7 +181,7 @@ public final class DateUtils {
 //
 //        ByteBuffer bbuf = encoder.encode(CharBuffer.wrap("Sýkora Chládková"));
 //        CharBuffer cbuf = decoder.decode(bbuf);
-//        System.out.println(cbuf.toString());
+//        System.out.println(cbuf.toString()); //CSOFF
     }
 
 }
