@@ -12,8 +12,6 @@ import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
-import com.orientechnologies.orient.core.metadata.schema.OClass;
-import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
@@ -87,14 +85,26 @@ public final class DatabaseWrapper implements DisposableBean {
         this.password = password;
     }
 
-    /**
-     * Sets a flag if schema initialization should be applied.
-     * @param init <i>true</i> for schema initialization
-     */
-    public void setInit(final boolean init) {
-        final OObjectDatabaseTx db = get();
 
-        if (init) {
+    /**
+     * Initializes the Entity Manager.
+     */
+    public void init() {
+        final OObjectDatabaseTx db = get();
+        db.getEntityManager().registerEntityClass(AbstractEntity.class);
+        db.getEntityManager().registerEntityClass(User.class);
+        db.getEntityManager().registerEntityClass(Unit.class);
+        db.getEntityManager().registerEntityClass(Membership.class);
+        db.getEntityManager().registerEntityClass(Patient.class);
+        db.getEntityManager().registerEntityClass(Procedure.class);
+        db.getEntityManager().registerEntityClass(Event.class);
+    }
+
+    /**
+     * Creates/deletes DB schema.
+     */
+    public void schema() {
+//        final OObjectDatabaseTx db = get();
 
             // delete classes
 //            if (db.getMetadata().getSchema().existsClass(Patient.class.getSimpleName())) {
@@ -114,71 +124,62 @@ public final class DatabaseWrapper implements DisposableBean {
 //                db.getMetadata().getSchema().dropClass("AbstractEntity");
 //            }
 
-            if (!db.getMetadata().getSchema().existsClass(AbstractEntity.class.getSimpleName())) {
-                // AbstractEntity
-                OClass entity = db.getMetadata().getSchema().createAbstractClass(AbstractEntity.class.getSimpleName());
-                entity.createProperty("deleted", OType.BOOLEAN); //.setMandatory(true);
-                entity.createProperty("revision", OType.STRING);
-                // User
-                OClass user = db.getMetadata().getSchema().createClass(User.class.getSimpleName(), entity);
-                user.createProperty("username", OType.STRING).setMandatory(true).setNotNull(true);
-                user.createProperty("password", OType.STRING).setMandatory(true).setNotNull(true);
-                user.createProperty("fullname", OType.STRING).setMandatory(true).setNotNull(true);
-                // Unit
-                OClass unit = db.getMetadata().getSchema().createClass(Unit.class.getSimpleName(), entity);
-                unit.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
-                // Membership
-                OClass membership = db.getMetadata().getSchema().createClass(Membership.class.getSimpleName(), entity);
-                membership.createProperty("user", OType.LINK, user).setMandatory(true);
-                membership.createProperty("unit", OType.LINK, unit).setMandatory(true);
-                membership.createProperty("role", OType.STRING).setMandatory(true).setNotNull(true);
-                membership.createProperty("significance", OType.INTEGER);
-                // Patient
-                OClass patient = db.getMetadata().getSchema().createClass(Patient.class.getSimpleName(), entity);
-                patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
-                patient.createProperty("firstname", OType.STRING).setMandatory(true).setNotNull(true);
-                patient.createProperty("surname", OType.STRING).setMandatory(true).setNotNull(true);
-                patient.createProperty("asciiFullname", OType.STRING).setMandatory(true).setNotNull(true);
-                patient.createProperty("phoneNumber", OType.STRING);
-                patient.createProperty("birthNumber", OType.STRING);
-                patient.createProperty("degree", OType.STRING);
-                patient.createProperty("street", OType.STRING);
-                patient.createProperty("city", OType.STRING);
-                patient.createProperty("zipCode", OType.STRING);
-                patient.createProperty("employer", OType.STRING);
-                patient.createProperty("careers", OType.STRING);
-                // Procedure
-                OClass procedure = db.getMetadata().getSchema().createClass(Procedure.class.getSimpleName(), entity);
-                procedure.createProperty("unit", OType.LINK, unit).setMandatory(true);
-                procedure.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
-                procedure.createProperty("messageText", OType.STRING).setMandatory(true).setNotNull(true);
-                procedure.createProperty("type", OType.STRING).setMandatory(true).setNotNull(true);
-                procedure.createProperty("color", OType.STRING);
-                procedure.createProperty("time", OType.LONG);
-                // Event
-                OClass event = db.getMetadata().getSchema().createClass(Event.class.getSimpleName(), entity);
-                event.createProperty("author", OType.LINK, user).setMandatory(true);
-                event.createProperty("patient", OType.LINK, patient).setMandatory(true);
-                event.createProperty("procedure", OType.LINK, procedure).setMandatory(true);
-                event.createProperty("text", OType.STRING).setMandatory(true).setNotNull(true);
-                event.createProperty("notice", OType.STRING);
-                event.createProperty("startTime", OType.DATETIME).setMandatory(true).setNotNull(true);
-                event.createProperty("length", OType.INTEGER).setMandatory(true).setNotNull(true);
-                event.createProperty("sent", OType.DATE);
-                event.createProperty("sendAttemptCount", OType.INTEGER);
-                event.createProperty("type", OType.STRING);
-            }
-        }
-
-        db.getEntityManager().registerEntityClass(AbstractEntity.class);
-        db.getEntityManager().registerEntityClass(User.class);
-        db.getEntityManager().registerEntityClass(Unit.class);
-        db.getEntityManager().registerEntityClass(Membership.class);
-        db.getEntityManager().registerEntityClass(Patient.class);
-        db.getEntityManager().registerEntityClass(Procedure.class);
-        db.getEntityManager().registerEntityClass(Event.class);
-
-        db.close();
+//            if (!db.getMetadata().getSchema().existsClass(AbstractEntity.class.getSimpleName())) {
+//                // AbstractEntity
+//                OClass entity = db.getMetadata().getSchema().createAbstractClass(
+        //AbstractEntity.class.getSimpleName());
+//                entity.createProperty("deleted", OType.BOOLEAN); //.setMandatory(true);
+//                entity.createProperty("revision", OType.STRING);
+//                // User
+//                OClass user = db.getMetadata().getSchema().createClass(User.class.getSimpleName(), entity);
+//                user.createProperty("username", OType.STRING).setMandatory(true).setNotNull(true);
+//                user.createProperty("password", OType.STRING).setMandatory(true).setNotNull(true);
+//                user.createProperty("fullname", OType.STRING).setMandatory(true).setNotNull(true);
+//                // Unit
+//                OClass unit = db.getMetadata().getSchema().createClass(Unit.class.getSimpleName(), entity);
+//                unit.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
+//                // Membership
+//                OClass membership = db.getMetadata().getSchema().createClass(Membership.class.getSimpleName(),
+        //entity);
+//                membership.createProperty("user", OType.LINK, user).setMandatory(true);
+//                membership.createProperty("unit", OType.LINK, unit).setMandatory(true);
+//                membership.createProperty("role", OType.STRING).setMandatory(true).setNotNull(true);
+//                membership.createProperty("significance", OType.INTEGER);
+//                // Patient
+//                OClass patient = db.getMetadata().getSchema().createClass(Patient.class.getSimpleName(), entity);
+//                patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
+//                patient.createProperty("firstname", OType.STRING).setMandatory(true).setNotNull(true);
+//                patient.createProperty("surname", OType.STRING).setMandatory(true).setNotNull(true);
+//                patient.createProperty("asciiFullname", OType.STRING).setMandatory(true).setNotNull(true);
+//                patient.createProperty("phoneNumber", OType.STRING);
+//                patient.createProperty("birthNumber", OType.STRING);
+//                patient.createProperty("degree", OType.STRING);
+//                patient.createProperty("street", OType.STRING);
+//                patient.createProperty("city", OType.STRING);
+//                patient.createProperty("zipCode", OType.STRING);
+//                patient.createProperty("employer", OType.STRING);
+//                patient.createProperty("careers", OType.STRING);
+//                // Procedure
+//                OClass procedure = db.getMetadata().getSchema().createClass(Procedure.class.getSimpleName(), entity);
+//                procedure.createProperty("unit", OType.LINK, unit).setMandatory(true);
+//                procedure.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
+//                procedure.createProperty("messageText", OType.STRING).setMandatory(true).setNotNull(true);
+//                procedure.createProperty("type", OType.STRING).setMandatory(true).setNotNull(true);
+//                procedure.createProperty("color", OType.STRING);
+//                procedure.createProperty("time", OType.LONG);
+//                // Event
+//                OClass event = db.getMetadata().getSchema().createClass(Event.class.getSimpleName(), entity);
+//                event.createProperty("author", OType.LINK, user).setMandatory(true);
+//                event.createProperty("patient", OType.LINK, patient).setMandatory(true);
+//                event.createProperty("procedure", OType.LINK, procedure).setMandatory(true);
+//                event.createProperty("text", OType.STRING).setMandatory(true).setNotNull(true);
+//                event.createProperty("notice", OType.STRING);
+//                event.createProperty("startTime", OType.DATETIME).setMandatory(true).setNotNull(true);
+//                event.createProperty("length", OType.INTEGER).setMandatory(true).setNotNull(true);
+//                event.createProperty("sent", OType.DATE);
+//                event.createProperty("sendAttemptCount", OType.INTEGER);
+//                event.createProperty("type", OType.STRING);
+//            }
     }
 
 

@@ -110,7 +110,7 @@ end
 namespace :db do
 
   HOST = 'localhost'
-  DB = 'temp'
+  DB = 'smevente'
   USER = 'admin'
   PASSWD = 'admin'
 

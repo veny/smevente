@@ -1,5 +1,3 @@
-require 'orientdb4r'
-
 SCHEMA = [
   ['AbstractEntity', { :abstract => true, :properties => {
       'deleted'  => { :type => :boolean },
