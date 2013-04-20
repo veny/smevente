@@ -395,7 +395,7 @@ public class StoreProcedurePresenter
         proc.setMessageText(view.getMessageText().getText());
         proc.setType(type.toString());
         if (type == Event.Type.IN_CALENDAR) {
-            proc.setTime(Long.parseLong(view.getTime().getText()));
+            proc.setTime(Integer.parseInt(view.getTime().getText()));
             proc.setColor(view.getColor().getText());
         }
 

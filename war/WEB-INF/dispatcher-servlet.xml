@@ -3,6 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/tx
@@ -14,7 +15,12 @@
 
   <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
 
-  <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+  <!-- bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" p:failOnEmptyBeans="false" / -->
+  <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+  <property name="objectMapper">
+      <bean class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean" p:failOnEmptyBeans="false" />
+    </property>
+  </bean>
   <bean id="simpleView" class="veny.smevente.server.SimpleView" />
 
   <bean id="exceptionResolver" class="veny.smevente.server.JsonExceptionResolver">

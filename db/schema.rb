@@ -44,7 +44,7 @@ SCHEMA = [
       'messageText' => { :type => :string, :mandatory => true, :notnull => true },
       'type' => { :type => :string },
       'color' => { :type => :string },
-      'time' => { :type => :long }
+      'time' => { :type => :integer }
     }}
   ],
   ['Event', { :extends => 'AbstractEntity', :properties => {

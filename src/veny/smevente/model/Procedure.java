@@ -33,7 +33,7 @@ public class Procedure extends AbstractEntity {
     private String color;
     /** Typical time [minutes]. */
     @Column
-    private long time;
+    private int time;
     /** Type of procedure. */
     @Column
     private String type;
@@ -63,10 +63,10 @@ public class Procedure extends AbstractEntity {
     public void setColor(String color) {
         this.color = color;
     }
-    public long getTime() {
+    public int getTime() {
         return time;
     }
-    public void setTime(long time) {
+    public void setTime(int time) {
         this.time = time;
     }
     public String getType() {

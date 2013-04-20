@@ -348,7 +348,7 @@ public class JsonDeserializer {
         rslt.setType(jsObj.get("type").isString().stringValue());
         if (rslt.enumType() == Event.Type.IN_CALENDAR) {
             rslt.setColor(jsObj.get("color").isString().stringValue());
-            rslt.setTime((long) jsObj.get("time").isNumber().doubleValue());
+            rslt.setTime((int) jsObj.get("time").isNumber().doubleValue());
         }
         return rslt;
     }

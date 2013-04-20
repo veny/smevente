@@ -52,7 +52,7 @@ public final class App implements ValueChangeHandler<String> {
     public static final int MIN_PAGE_WIDTH = 1000;
 
     /** Base URL used to creating absolute URL. Should be more advanced in next versions (dynamically resolved). */
-    private static final String BASE_URL = "/smevente";
+    private static final String BASE_URL = "";
 
     /** Singleton instance. */
     private static App singleton;

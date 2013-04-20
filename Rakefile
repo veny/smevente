@@ -1,9 +1,11 @@
 require 'rake/clean'
 
 PROJECT_NAME = 'smevente'
+WAR_NAME = 'ROOT'
 
 JAVA_HOME=ENV['JAVA_HOME']
-ORIENTDB_HOME='/opt/orientdb-svn/releases/orientdb-1.3.0-SNAPSHOT/lib'
+ORIENTDB_VERSION='1.4.0-SNAPSHOT'
+ORIENTDB_HOME="/opt/orientdb-github/releases/orientdb-#{ORIENTDB_VERSION}/lib"
 GWT_HOME='/opt/eclipse-jee-indigo-SR1-linux-gtk-x86_64/plugins/com.google.gwt.eclipse.sdkbundle_2.4.0.v201206290132-rel-r37/gwt-2.4.0'
 TOMCAT_HOME='/opt/tomcat'
 
@@ -49,20 +51,22 @@ task :war => [:compile, distDir] do
   inp = FileList['war/**/*.*', ""]
   inp.exclude('war/WEB-INF/classes/**/*.*', 'war/WEB-INF/deploy/**/*.*')
   inp.exclude('war/WEB-INF/lib/gwt-servlet-deps.jar')
+inp.exclude('war/WEB-INF/lib/org.springframework*.jar')
+inp.exclude('war/WEB-INF/lib/jackson*2.0.6*.jar')
   cp_rr(inp, "#{buildDir}")
 
   cp_rr(FileList["#{srcDir}/appctx-*.xml"], "#{distDir}/war/WEB-INF/classes", true)
   cp("#{srcDir}/log4j-rte.properties", "#{distDir}/war/WEB-INF/classes/log4j.properties", :verbose => true)
 
-  cp("#{ORIENTDB_HOME}/orient-commons-1.3.0-SNAPSHOT.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
-  cp("#{ORIENTDB_HOME}/orientdb-core-1.3.0-SNAPSHOT.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
-  cp("#{ORIENTDB_HOME}/orientdb-object-1.3.0-SNAPSHOT.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
-  cp("#{ORIENTDB_HOME}/orientdb-client-1.3.0-SNAPSHOT.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
-  cp("#{ORIENTDB_HOME}/orientdb-enterprise-1.3.0-SNAPSHOT.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
+  cp("#{ORIENTDB_HOME}/orient-commons-#{ORIENTDB_VERSION}.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
+  cp("#{ORIENTDB_HOME}/orientdb-core-#{ORIENTDB_VERSION}.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
+  cp("#{ORIENTDB_HOME}/orientdb-object-#{ORIENTDB_VERSION}.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
+  cp("#{ORIENTDB_HOME}/orientdb-client-#{ORIENTDB_VERSION}.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
+  cp("#{ORIENTDB_HOME}/orientdb-enterprise-#{ORIENTDB_VERSION}.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
   cp("#{ORIENTDB_HOME}/javassist.jar", "#{distDir}/war/WEB-INF/lib", :verbose => true)
 
   command =<<EOF
-#{JAVA_HOME}/bin/jar -cf #{buildDir}/#{PROJECT_NAME}.war -C #{buildDir}/war/ .
+#{JAVA_HOME}/bin/jar -cf #{buildDir}/#{WAR_NAME}.war -C #{buildDir}/war/ .
 EOF
   sh command
 end
@@ -70,8 +74,8 @@ end
 
 desc "Deploy source to server"
 task :deploy => :war do
-  rm_r "#{TOMCAT_HOME}/webapps/#{PROJECT_NAME}/" if File.directory? "#{TOMCAT_HOME}/webapps/#{PROJECT_NAME}/"
-  cp("#{buildDir}/#{PROJECT_NAME}.war", "#{TOMCAT_HOME}/webapps/")
+  rm_r "#{TOMCAT_HOME}/webapps/#{WAR_NAME}/" if File.directory? "#{TOMCAT_HOME}/webapps/#{WAR_NAME}/"
+  cp("#{buildDir}/#{WAR_NAME}.war", "#{TOMCAT_HOME}/webapps/")
 end
 
 
@@ -117,9 +121,9 @@ namespace :db do
   require 'orientdb4r'
   require './db/schema.rb'
   client = Orientdb4r.client :host => HOST
-  client.connect :database => DB, :user => USER, :password => PASSWD
 
   task :create do
+    client.connect :database => DB, :user => USER, :password => PASSWD
     SCHEMA.each do |clazz|
       clazz_name = clazz[0]
       clazz_opts = clazz[1]
@@ -142,6 +146,7 @@ namespace :db do
   end
 
   task :drop do
+    client.connect :database => DB, :user => USER, :password => PASSWD
     SCHEMA.reverse.each do |clazz|
       client.drop_class clazz[0]
       puts "  deleted clazz '#{clazz[0]}'"
@@ -149,6 +154,7 @@ namespace :db do
   end
 
   task :init => :create do
+    client.connect :database => DB, :user => USER, :password => PASSWD
     require './db/init-data.rb'
     DATA.each do |doc|
       clazz = SCHEMA.select { |entry| entry[0] == doc['@class']}[0]
