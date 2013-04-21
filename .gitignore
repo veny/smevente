@@ -13,3 +13,4 @@ war/smevente/
 gwt-unitCache/
 rbuild/
 war/smevente.log
+db/gae-snapshot-*

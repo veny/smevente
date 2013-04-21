@@ -5,9 +5,11 @@ SCHEMA = [
     }}
   ],
   ['User', { :extends => 'AbstractEntity', :properties => {
-      'username' => { :type => :string, :mandatory => true, :notnull => true },
-      'password' => { :type => :string, :mandatory => true, :notnull => true },
-      'fullname' => { :type => :string, :mandatory => true, :notnull => true }
+      'username'     => { :type => :string, :mandatory => true, :notnull => true },
+      'password'     => { :type => :string, :mandatory => true, :notnull => true },
+      'fullname'     => { :type => :string, :mandatory => true, :notnull => true },
+      'lastLoggedIn' => { :type => :datetime },
+      'root'         => { :type => :boolean }
     }}
   ],
   ['Unit', { :extends => 'AbstractEntity', :properties => {
@@ -25,7 +27,7 @@ SCHEMA = [
   ],
   ['Patient', { :extends => 'AbstractEntity', :properties => {
       'unit' => { :type => :link, :linked_class => 'Unit', :mandatory => true },
-      'firstname' => { :type => :string, :mandatory => true, :notnull => true },
+      'firstname' => { :type => :string },
       'surname' => { :type => :string, :mandatory => true, :notnull => true },
       'asciiFullname' => { :type => :string, :mandatory => true, :notnull => true },
       'phoneNumber' => { :type => :string },

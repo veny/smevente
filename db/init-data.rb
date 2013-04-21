@@ -1,5 +1,5 @@
 DATA = [
-  { '@class' => 'User', :key => 'veny', 'username' => 'veny', 'password' => 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', 'fullname' => 'Vaclav Novy' },
+  { '@class' => 'User', :key => 'veny', 'username' => 'veny', 'password' => 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', 'fullname' => 'Vaclav Novy', 'root' => true },
   { '@class' => 'User', :key => 'max', 'username' => 'max', 'password' => 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', 'fullname' => 'Max Mustermann' },
 
   { '@class' => 'Unit', :key => 'foo', 'name' => 'Foo', 'description' => 'Desc of Foo', 'type' => 'PATIENT' },
@@ -18,5 +18,6 @@ DATA = [
   { '@class' => 'Procedure', 'unit' => 'foo', 'name' => 'Extrakce', 'messageText' => 'Prijdte na trhani', 'type' => 'IN_CALENDAR', 'color' => '00FF00', 'time' => 60 },
   { '@class' => 'Procedure', 'unit' => 'foo', 'name' => 'Dovolená', 'messageText' => 'Mame dovolenou', 'type' => 'IMMEDIATE_MESSAGE' },
 
-  { '@class' => 'Event', 'author' => 'veny', 'patient' => 'JanNovak', 'procedure' => 'beleni', 'text' => 'Message text', 'startTime' => '2012-10-10 10:10:00:000', 'length' => 30 },
+  { '@class' => 'Event', 'author' => 'veny', 'patient' => 'JanNovak', 'procedure' => 'beleni', 'text' => 'Message text', 'startTime' => '2012-10-30 10:10:00:000', 'length' => 30 },
+#  { '@class' => 'Event', 'author' => 'veny', 'patient' => 'JanNovak', 'procedure' => 'beleni', 'text' => 'Message text', 'startTime' => '2010-24-08 23:00:00.000', 'length' => 30 },
 ]
