@@ -32,12 +32,12 @@ public interface EventDao extends GenericDao<Event> {
      */
     List<Event> findByPatient(Object patientId);
 
-//    /**
-//     * Gets list of events that are older than given timestamp.
-//     *
-//     * @param olderThan time that all older SMSs should be found
-//     * @return list of SMSs
-//     */
-//    List<Event> findSms2BulkSend(Date olderThan);
+    /**
+     * Gets list of events that are older than given timestamp.
+     *
+     * @param olderThan time that all older SMSs should be found
+     * @return list of SMSs
+     */
+    List<Event> findEvents2BulkSend(Date olderThan);
 
 }

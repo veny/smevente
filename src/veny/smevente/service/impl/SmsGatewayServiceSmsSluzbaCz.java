@@ -1,4 +1,4 @@
-package veny.smevente.service;
+package veny.smevente.service.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,13 +15,14 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import veny.smevente.service.SmsGatewayService;
+
 
 /**
  * Implementation of SMS service.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 0.1
- * {@link http://code.google.com/appengine/docs/java/urlfetch/usingjavanet.html}
  * {@link http://stackoverflow.com/questions/2793150/how-to-use-java-net-urlconnection-to-fire-and-handle-http-requests}
  */
 public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
@@ -172,7 +173,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
         if (text.length() > 31) {
             text31 = text.substring(0, 31);
         }
-        String s = md5(password) + login + "send" + text31;
+        final String s = md5(password) + login + "send" + text31;
         return md5(s);
     }
 
@@ -184,7 +185,6 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
     private String md5(final String s) {
         md5.reset();
         md5.update(s.getBytes(), 0, s.length());
-//        return new BigInteger(1, md5.digest()).toString(16);
         return convertToHex(md5.digest());
     }
 
@@ -194,7 +194,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
      * @return converted hex string
      */
     private static String convertToHex(final byte[] data) {
-        StringBuffer buf = new StringBuffer();
+        final StringBuffer buf = new StringBuffer();
         for (int i = 0; i < data.length; i++) {
             int halfbyte = (data[i] >>> 4) & 0x0F;
             int twoHalfs = 0;
@@ -264,16 +264,15 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
      * @throws Exception if some problem occurs
      */
     public static void main(final String[] args) throws Exception {
-        System.setProperty("javax.net.ssl.trustStore", "war/WEB-INF/sms-services.keystore");
-        System.setProperty("javax.net.ssl.trustStorePassword", "smevente73");
+//        System.setProperty("javax.net.ssl.trustStore", "war/WEB-INF/sms-services.keystore"); // only for GAE
+//        System.setProperty("javax.net.ssl.trustStorePassword", "smevente73");
 
         SmsGatewayServiceSmsSluzbaCz service = new SmsGatewayServiceSmsSluzbaCz();
         final Map<String, String> metadata = new HashMap<String, String>();
-        metadata.put(METADATA_USERNAME, "veny");
-        metadata.put(METADATA_PASSWORD, args[0]);
+        metadata.put(METADATA_USERNAME, args[0]);
+        metadata.put(METADATA_PASSWORD, args[1]);
 
-        service.send("606 146 177", "ahoj, toto je z aplikace. http:", metadata);
-//        service.send("606 146 177", "0hoj, toto je z aplikace. http:");
+        service.send("606 146 177", "ahoj, toto je z aplikace.", metadata);
 
 //        System.out.println(//CSOFF
 //                service.assertResponse(

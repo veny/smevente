@@ -246,64 +246,64 @@ public class EventServiceImpl implements EventService {
         return event2send;
     }
 
-//    /** {@inheritDoc} */
-//    @Override
-//    public int bulkSend() {
-//        // TODO [veny,B] time should be defined in configuration
-//        final Date border = new Date(System.currentTimeMillis() + (3L * 24L * 3600L * 1000L));
-//        LOG.info("trying to found SMSs to bulk send, border=" + border);
-//
-//        final List<Event> foundSmsGae = smsDao.findSms2BulkSend(border);
-//        LOG.info("found SMSs to bulk send, size=" + foundSmsGae.size());
-//
-//        // cache of Units due to metadata & SMS limit
-//        final Map<Long, Unit> unitCache = new HashMap<Long, Unit>();
-//
-//        int sentCount = 0;
-//        for (Event smsGae : foundSmsGae) {
-//            try {
-//                final Patient patientGae = patientDao.getById(smsGae.getPatientId());
-//
-//                // unit cache
-//                Unit unitGae = unitCache.get(patientGae.getUnitId());
-//                if (null == unitGae) {
-//                    unitGae = unitDao.getById(patientGae.getUnitId());
-//                    unitCache.put(patientGae.getUnitId(), unitGae);
-//                }
-//                assertLimitedUnit(unitGae);
-//
-//                final Event sms = smsGae.mapToDto();
-//                sms.setAuthor(userDao.getById(smsGae.getUserId()).mapToDto());
-//
-//                final String text2send = format(sms);
-//                smsGatewayService.send(
-//                        patientGae.getPhoneNumber(), text2send, TextUtils.stringToMap(unitGae.getMetadata()));
-//
-//                // store the 'sent' timestamp
-//                smsGae.setSent(new Date());
-//                smsDao.persist(smsGae);
-//                // decrease the SMS limit if the unit is limited
-//                if (null != unitGae.getLimitedSmss()) {
-//                    unitGae.setLimitedSmss(unitGae.getLimitedSmss() - 1L);
-//                }
-//
-//                sentCount++;
-//            } catch (Throwable t) {
-//                LOG.log(Level.WARNING, "failed to send SMS, id=" + smsGae.getId(), t);
-//                smsGae.setSendAttemptCount(smsGae.getSendAttemptCount() + 1);
-//                smsDao.persist(smsGae);
-//            }
-//        }
-//        // store all units with limited SMSs
-//        for (Unit unit : unitCache.values()) {
-//            if (null != unit.getLimitedSmss()) {
-//                unitDao.persist(unit);
-//            }
-//        }
-//
-//        LOG.info("sent " + sentCount + " SMSs");
-//        return sentCount;
-//    }
+    /** {@inheritDoc} */
+    @Override
+    public int bulkSend() {
+        // TODO [veny,B] time should be defined in configuration
+        final Date border = new Date(System.currentTimeMillis() + (3L * 24L * 3600L * 1000L));
+        LOG.info("trying to found SMSs to bulk send, border=" + border);
+
+        final List<Event> foundEvents = eventDao.findEvents2BulkSend(border);
+        LOG.info("found events to bulk send, size=" + foundEvents.size());
+
+        // cache of Units due to metadata & SMS limit
+        final Map<Long, Unit> unitCache = new HashMap<Long, Unit>();
+
+        int sentCount = 0;
+        for (Event event : foundEvents) {
+            try {
+                final Patient patientGae = patientDao.getById(smsGae.getPatientId());
+
+                // unit cache
+                Unit unitGae = unitCache.get(patientGae.getUnitId());
+                if (null == unitGae) {
+                    unitGae = unitDao.getById(patientGae.getUnitId());
+                    unitCache.put(patientGae.getUnitId(), unitGae);
+                }
+                assertLimitedUnit(unitGae);
+
+                final Event sms = smsGae.mapToDto();
+                sms.setAuthor(userDao.getById(smsGae.getUserId()).mapToDto());
+
+                final String text2send = format(sms);
+                smsGatewayService.send(
+                        patientGae.getPhoneNumber(), text2send, TextUtils.stringToMap(unitGae.getMetadata()));
+
+                // store the 'sent' timestamp
+                smsGae.setSent(new Date());
+                smsDao.persist(smsGae);
+                // decrease the SMS limit if the unit is limited
+                if (null != unitGae.getLimitedSmss()) {
+                    unitGae.setLimitedSmss(unitGae.getLimitedSmss() - 1L);
+                }
+
+                sentCount++;
+            } catch (Throwable t) {
+                LOG.log(Level.WARNING, "failed to send SMS, id=" + smsGae.getId(), t);
+                smsGae.setSendAttemptCount(smsGae.getSendAttemptCount() + 1);
+                smsDao.persist(smsGae);
+            }
+        }
+        // store all units with limited SMSs
+        for (Unit unit : unitCache.values()) {
+            if (null != unit.getLimitedSmss()) {
+                unitDao.persist(unit);
+            }
+        }
+
+        LOG.info("sent " + sentCount + " SMSs");
+        return sentCount;
+    }
 
     /** {@inheritDoc} */
     @Transactional(readOnly = true)

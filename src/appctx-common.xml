@@ -19,7 +19,7 @@
   <bean id="userService" class="veny.smevente.service.impl.UserServiceImpl" />
   <bean id="unitService" class="veny.smevente.service.impl.UnitServiceImpl" />
   <bean id="eventService" class="veny.smevente.service.impl.EventServiceImpl" />
-  <!--bean id="smsGatewayService" class="veny.smevente.service.SmsGatewayServiceSmsSluzbaCz" /-->
+  <bean id="smsGatewayService" class="veny.smevente.service.impl.SmsGatewayServiceSmsSluzbaCz" />
 
   <bean id="userDao" class="veny.smevente.dao.orientdb.UserDaoImpl" />
   <bean id="unitDao" class="veny.smevente.dao.orientdb.UnitDaoImpl" />

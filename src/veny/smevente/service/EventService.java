@@ -95,12 +95,12 @@ public interface EventService {
      */
     Event sendSms(Object eventId) throws SmsException;
 
-//    /**
-//     * Invoked by cron task to send events.
-//     *
-//     * @return count of successfully sent events
-//     */
-//    int bulkSend();
+    /**
+     * Invoked by cron task to send events.
+     *
+     * @return count of successfully sent events
+     */
+    int bulkSend();
 
     /**
      * Gets events statistics for given user and unit.

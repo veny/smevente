@@ -63,29 +63,25 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
         });
     }
 
-//    /** {@inheritDoc} */
-//    @Override
-//    public List<Event> findSms2BulkSend(final Date olderThan) {
-//        return JpaGaeUtils.execute(new JpaCallback<List<Event>>() {
-//            @Override
-//            public List<Event> doWithEntityManager(final EntityManager em) {
-//                final Query query = em.createQuery("SELECT s FROM " + getPersistentClass().getName()
-//                    + " s WHERE s.medicalHelpStartTime < :olderThan AND s.sent IS NULL");
-//                query.setParameter("olderThan", olderThan);
-//                final List<Event> found = (List<Event>) query.getResultList();
-//
-//                // filter according to 'sendAttemptCount' cannot be done with SQL because of:
-//                // "Only one inequality filter per query is supported.
-//                // Encountered both sendAttemptCount and medicalHelpStartTime"
-//                final List<Event> rslt = new ArrayList<Event>();
-//                for (Event sms : found) {
-//                    if ((sms.getSendAttemptCount() < Event.MAX_SEND_ATTEMPTS)
-//                        && (0 == (sms.getStatus() & Event.STATUS_DELETED))) { rslt.add(sms); }
-//                }
-//
-//                return rslt;
-//            }
-//        });
-//    }
+    /** {@inheritDoc} */
+    @Override
+    public List<Event> findEvents2BulkSend(final Date olderThan) {
+
+        return getDatabaseWrapper().execute(new ODatabaseCallback<List<Event>>() {
+            @Override
+            public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
+                final StringBuilder sql = new StringBuilder("SELECT FROM ")
+                        .append(getPersistentClass().getName())
+                        .append(" WHERE startTime < :olderThan AND sent IS NULL");
+
+                final Map<String, Object> params = new HashMap<String, Object>();
+                params.put("olderThan", olderThan);
+
+                final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+                detachWithFirstLevelAssociations(rslt, db);
+                return rslt;
+            }
+        });
+    }
 
 }
