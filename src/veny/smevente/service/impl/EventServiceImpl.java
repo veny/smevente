@@ -5,11 +5,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,7 @@ import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.EventService;
+import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.TextUtils;
 
@@ -64,8 +68,8 @@ public class EventServiceImpl implements EventService {
     private EventDao eventDao;
 
     /** Dependency. */
-//    @Autowired
-//    private SmsGatewayService smsGatewayService;
+    @Autowired
+    private SmsGatewayService smsGatewayService;
 
     /** Date formatter. */
     private final DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yy");
@@ -256,49 +260,38 @@ public class EventServiceImpl implements EventService {
         final List<Event> foundEvents = eventDao.findEvents2BulkSend(border);
         LOG.info("found events to bulk send, size=" + foundEvents.size());
 
-        // cache of Units due to metadata & SMS limit
-        final Map<Long, Unit> unitCache = new HashMap<Long, Unit>();
-
+        final Set<Unit> units2store = new HashSet<Unit>();
         int sentCount = 0;
         for (Event event : foundEvents) {
             try {
-                final Patient patientGae = patientDao.getById(smsGae.getPatientId());
+                final Patient patient = event.getPatient();
+                final Unit unit = patient.getUnit();
 
-                // unit cache
-                Unit unitGae = unitCache.get(patientGae.getUnitId());
-                if (null == unitGae) {
-                    unitGae = unitDao.getById(patientGae.getUnitId());
-                    unitCache.put(patientGae.getUnitId(), unitGae);
-                }
-                assertLimitedUnit(unitGae);
+                assertLimitedUnit(unit);
 
-                final Event sms = smsGae.mapToDto();
-                sms.setAuthor(userDao.getById(smsGae.getUserId()).mapToDto());
-
-                final String text2send = format(sms);
+                final String text2send = format(event);
                 smsGatewayService.send(
-                        patientGae.getPhoneNumber(), text2send, TextUtils.stringToMap(unitGae.getMetadata()));
+                        patient.getPhoneNumber(), text2send, TextUtils.stringToMap(unit.getSmsEngine()));
 
                 // store the 'sent' timestamp
-                smsGae.setSent(new Date());
-                smsDao.persist(smsGae);
+                event.setSent(new Date());
+                eventDao.persist(event);
                 // decrease the SMS limit if the unit is limited
-                if (null != unitGae.getLimitedSmss()) {
-                    unitGae.setLimitedSmss(unitGae.getLimitedSmss() - 1L);
+                if (null != unit.getLimitedSmss()) {
+                    unit.setLimitedSmss(unit.getLimitedSmss() - 1L);
+                    units2store.add(unit);
                 }
 
                 sentCount++;
             } catch (Throwable t) {
-                LOG.log(Level.WARNING, "failed to send SMS, id=" + smsGae.getId(), t);
-                smsGae.setSendAttemptCount(smsGae.getSendAttemptCount() + 1);
-                smsDao.persist(smsGae);
+                LOG.log(Level.WARN, "failed to send SMS, id=" + event.getId(), t);
+                event.setSendAttemptCount(event.getSendAttemptCount() + 1);
+                eventDao.persist(event);
             }
         }
-        // store all units with limited SMSs
-        for (Unit unit : unitCache.values()) {
-            if (null != unit.getLimitedSmss()) {
-                unitDao.persist(unit);
-            }
+        // store changed units with limited SMSs
+        for (Unit unit : units2store) {
+            unitDao.persist(unit);
         }
 
         LOG.info("sent " + sentCount + " SMSs");
@@ -431,12 +424,11 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * Asserts the the unit where the SMS is sent from is not limited
-     * or the limit is not exceeded.
-     * @param unitGae unit to assert
+     * Asserts the the unit where the SMS is sent from is not limited or the limit is not exceeded.
+     * @param unit unit to assert
      */
-    private void assertLimitedUnit(final Unit unitGae) {
-        if (null != unitGae.getLimitedSmss() && unitGae.getLimitedSmss().longValue() <= 0) {
+    private void assertLimitedUnit(final Unit unit) {
+        if (null != unit.getLimitedSmss() && unit.getLimitedSmss().longValue() <= 0) {
             throw new IllegalStateException(SmsUtils.SMS_LIMIT_EXCEEDE);
         }
     }

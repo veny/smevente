@@ -25,18 +25,18 @@ public class CronTaskController {
 
     /** Dependency. */
     @Autowired
-    private SmsService smsService;
+    private EventService eventService;
 
     /**
-     * SMS cron task.
+     * Event cron task.
      *
      * @param request HTTP request
      * @param response HTTP response
      */
     @RequestMapping(value = "/sms/")
-    public void smsCronTask(final HttpServletRequest request, final HttpServletResponse response) {
-        LOG.info("cron task: bulk SMS sending, clientAddr=" + request.getRemoteHost());
-        smsService.bulkSend();
+    public void sendEventCronTask(final HttpServletRequest request, final HttpServletResponse response) {
+        LOG.info("cron task: bulk event sending, clientAddr=" + request.getRemoteHost());
+        eventService.bulkSend();
         response.setStatus(200);
     }
 

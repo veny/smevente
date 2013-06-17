@@ -88,7 +88,7 @@ public final class TextUtils {
 
     /**
      * Converts String to Java Map.
-     * @param s textually representation of a map
+     * @param s textually representation of a map: alpha=charlie&foo=bar
      * @return map converted from text
      */
     public static Map<String, String> stringToMap(final String s) {

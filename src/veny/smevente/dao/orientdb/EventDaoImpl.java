@@ -77,9 +77,10 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("olderThan", olderThan);
 
-                final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                detachWithFirstLevelAssociations(rslt, db);
-                return rslt;
+                return executeWithSoftDelete(db, sql.toString(), params, true);
+//                final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+//                detachWithFirstLevelAssociations(rslt, db);
+//                return rslt;
             }
         });
     }
