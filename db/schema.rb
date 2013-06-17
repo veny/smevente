@@ -15,7 +15,9 @@ SCHEMA = [
   ['Unit', { :extends => 'AbstractEntity', :properties => {
       'name' => { :type =>  :string, :mandatory => true, :notnull => true },
       'description' => { :type =>  :string },
-      'type' => { :type =>  :string, :mandatory => true, :notnull => true }
+      'type' => { :type =>  :string }, # null == PATIENT
+      'limitedSmss' => { :type =>  :long },
+      'smsGateway' => { :type =>  :string }
     }}
   ],
   ['Membership', { :extends => 'AbstractEntity', :properties => {

@@ -127,6 +127,7 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public Event createAndSendSpecialEvent(final Event event) {
+        event.setType(Event.Type.IMMEDIATE_MESSAGE.toString());
         final Event rslt = storeEvent(event);
 
         final String text2send = format(rslt);
@@ -134,12 +135,11 @@ public class EventServiceImpl implements EventService {
         final Unit unit = unitDao.getById(event.getPatient().getUnit().getId());
         assertLimitedUnit(unit);
 
-//XXX        final Map<String, String> metadata = TextUtils.stringToMap(unitGae.getMetadata());
-//        smsGatewayService.send(patientGae.getPhoneNumber(), text2send, metadata);
+        final Map<String, String> options = TextUtils.stringToMap(event.getPatient().getUnit().getSmsGateway());
+        smsGatewayService.send(event.getPatient().getPhoneNumber(), text2send, options);
 
         // store the 'sent' timestamp
         rslt.setSent(new Date());
-//XXX        smsGae.setStatus(sms.getStatus() | Event.STATUS_SPECIAL);
         eventDao.persist(rslt);
 
         // decrease the SMS limit if the unit is limited
@@ -222,7 +222,9 @@ public class EventServiceImpl implements EventService {
     @Override
     public Pair<Patient, List<Event>> findEventsByPatient(final Object patientId) {
         final Patient client = patientDao.getById(patientId);
-        final List<Event> events = eventDao.findBy("patient", patientId, null);
+        final List<Event> events = eventDao.findByPatient(patientId);
+        // delete patients, it is key A
+        for (Event e : events) { e.setPatient(null); }
         LOG.info("found events by patient, patientId=" + patientId + ", size=" + events.size());
         return new Pair<Patient, List<Event>>(client, events);
     }
@@ -235,8 +237,8 @@ public class EventServiceImpl implements EventService {
         assertLimitedUnit(unit);
 
         final String text2send = format(event2send);
-//XXX        final Map<String, String> metadata = TextUtils.stringToMap(unitGae.getMetadata());
-//        smsGatewayService.send(patientGae.getPhoneNumber(), text2send, metadata);
+        final Map<String, String> options = TextUtils.stringToMap(unit.getSmsGateway());
+        smsGatewayService.send(event2send.getPatient().getPhoneNumber(), text2send, options);
 
         // store the 'sent' timestamp
         event2send.setSent(new Date());
@@ -271,7 +273,7 @@ public class EventServiceImpl implements EventService {
 
                 final String text2send = format(event);
                 smsGatewayService.send(
-                        patient.getPhoneNumber(), text2send, TextUtils.stringToMap(unit.getSmsEngine()));
+                        patient.getPhoneNumber(), text2send, TextUtils.stringToMap(unit.getSmsGateway()));
 
                 // store the 'sent' timestamp
                 event.setSent(new Date());
@@ -417,6 +419,7 @@ public class EventServiceImpl implements EventService {
             throw new NullPointerException("procedure ID cannot be null");
         }
         if (Strings.isNullOrEmpty(event.getText())) { throw new IllegalArgumentException("text cannot be blank"); }
+        if (0 == event.getText().trim().length()) { throw new IllegalArgumentException("text cannot be blank"); }
         if (Event.Type.IN_CALENDAR == event.enumType()) {
             if (null == event.getStartTime()) { throw new NullPointerException("start time cannot be null"); }
             if (event.getLength() <= 0) { throw new IllegalArgumentException("length lesser then 0"); }

@@ -80,6 +80,7 @@ public interface EventService {
 
     /**
      * Gets list of events for given patient.
+     * It filters special events of type Event.Type.IMMEDIATE_MESSAGE.
      *
      * @param patientId patient ID
      * @return the patient and his list of events sorted descending by start date

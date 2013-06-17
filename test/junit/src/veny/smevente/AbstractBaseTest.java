@@ -23,6 +23,7 @@ import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.EventService;
+import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
 
@@ -140,13 +141,14 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
 
     // CHECKSTYLE:OFF
     public static final String UNITNAME = "unitXY";
+    public static final String DEFAULT_SMS_GATEWAY_OPTIONS =
+            SmsGatewayService.METADATA_USERNAME + "=foo&" + SmsGatewayService.METADATA_PASSWORD + "=bar";
     // CHECKSTYLE:ON
 
     /** @return a new created default unit */
     protected Unit createDefaultUnit() {
         return createUnit(
-                UNITNAME, "unit's desc", Unit.TextVariant.PATIENT,
-                11L, "usr:x,passwd:y");
+                UNITNAME, "unit's desc", Unit.TextVariant.PATIENT, 11L, DEFAULT_SMS_GATEWAY_OPTIONS);
     }
     /**
      * Creates a new unit with given attributes.
@@ -154,18 +156,18 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
      * @param description unit's description
      * @param variant unit's text variant
      * @param limitedSmss limited amount of SMS that can be sent
-     * @param smsEngine SMS engine configuration
+     * @param smsGateway SMS gateway configuration
      * @return a new unit created
      */
     protected Unit createUnit(
             final String name, final String description, final Unit.TextVariant variant,
-            final Long limitedSmss, final String smsEngine) {
+            final Long limitedSmss, final String smsGateway) {
         final Unit toCreate = new Unit();
         toCreate.setName(name);
         toCreate.setDescription(description);
-        toCreate.setType(variant.toString());
+        toCreate.setType(null == variant ? null : variant.toString());
         toCreate.setLimitedSmss(limitedSmss);
-        toCreate.setSmsEngine(smsEngine);
+        toCreate.setSmsGateway(smsGateway);
         return unitService.createUnit(toCreate);
     }
     /**
@@ -179,7 +181,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         assertEquals("unit's desc", unit.getDescription());
         assertEquals(Unit.TextVariant.PATIENT.toString(), unit.getType());
         assertTrue(11L == unit.getLimitedSmss());
-        assertEquals("usr:x,passwd:y", unit.getSmsEngine());
+        assertEquals(DEFAULT_SMS_GATEWAY_OPTIONS, unit.getSmsGateway());
     }
 
     // ------------------------------------------------ Patient Assistant Stuff
@@ -235,7 +237,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     // CHECKSTYLE:OFF
     public static final String PROCEDURE_NAME = "Procedure XY";
     public static final String PROCEDURE_COLOR = "AABBCC";
-    public static final long PROCEDURE_TIME = 60;
+    public static final int PROCEDURE_TIME = 60;
     public static final String PROCEDURE_MSGTEXT = "some message with replace #{time}";
     // CHECKSTYLE:ON
 
@@ -261,7 +263,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
      * @return a new created procedure
      */
     protected Procedure createProcedure(
-            final String name, final String color, final long time, final String msgText, final Unit unit) {
+            final String name, final String color, final int time, final String msgText, final Unit unit) {
         return createProcedure(name, color, time, msgText, null, unit);
     }
     /**
@@ -275,13 +277,13 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
      * @return a new created procedure
      */
     protected Procedure createProcedure(
-            final String name, final String color, final long time,
+            final String name, final String color, final int time,
             final String msgText, final Event.Type type, final Unit unit) {
         final Procedure toCreate = new Procedure();
         toCreate.setUnit(unit);
         toCreate.setName(name);
         toCreate.setMessageText(msgText);
-        toCreate.setType(type.toString());
+        toCreate.setType(null == type ? null : type.toString());
         if (type == null || type == Event.Type.IN_CALENDAR) {
             toCreate.setColor(color);
             toCreate.setTime(time);
@@ -301,7 +303,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         if (aggregated) { assertDefaultUnit(proc.getUnit()); }
         assertEquals(PROCEDURE_NAME, proc.getName());
         assertEquals(PROCEDURE_MSGTEXT, proc.getMessageText());
-        assertEquals(type, proc.enumType());
+        assertNull(proc.getType());
         if (Event.Type.IN_CALENDAR == proc.enumType()) {
             assertEquals(PROCEDURE_COLOR, proc.getColor());
             assertEquals(PROCEDURE_TIME, proc.getTime());
@@ -324,8 +326,8 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     protected Event createDefaultEvent() {
         final User author = createDefaultUser();
         final Patient patient = createDefaultPatient();
-        final Procedure procedure = createProcedure(
-                PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME, PROCEDURE_MSGTEXT, null, patient.getUnit());
+        final Procedure procedure = createProcedure(PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME,
+                PROCEDURE_MSGTEXT, null, patient.getUnit());
         return createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, author, patient, procedure);
     }
     /**
@@ -349,7 +351,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         event.setStartTime(startTime);
         event.setLength(len);
         event.setNotice(notice);
-        return eventService.createEvent(event);
+        return eventService.storeEvent(event);
     }
     /**
      * Asserts default event.

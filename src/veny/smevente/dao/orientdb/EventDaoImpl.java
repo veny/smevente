@@ -1,5 +1,7 @@
 package veny.smevente.dao.orientdb;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +21,9 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  */
 public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao {
 
+    /** Formater for DateTime. */
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     /** {@inheritDoc} */
     @Override
     public List<Event> findByAuthorAndPeriod(
@@ -34,8 +39,8 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
 
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("author", authorId);
-                params.put("from", from);
-                params.put("to", to);
+                params.put("from", dateFormat.format(from));
+                params.put("to", dateFormat.format(to));
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
                 detachWithFirstLevelAssociations(rslt, db);
@@ -53,12 +58,15 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
             public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
                         .append(getPersistentClass().getSimpleName())
-                        .append(" WHERE patient = :patient ORDER BY startTime DESC");
+                        .append(" WHERE patient = :patient AND type IS NOT :type ORDER BY startTime DESC");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("patient", patientId);
+                params.put("type", Event.Type.IMMEDIATE_MESSAGE.toString());
 
-                return executeWithSoftDelete(db, sql.toString(), params, true);
+                final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+                detachWithFirstLevelAssociations(rslt, db);
+                return rslt;
             }
         });
     }

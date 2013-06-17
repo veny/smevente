@@ -12,11 +12,11 @@
     <property name="locations" value="classpath:db.properties" />
   </bean>
 
-  <bean id="databaseWrapper" class="veny.smevente.dao.orientdb.DatabaseWrapper">
+  <bean id="databaseWrapper" class="veny.smevente.dao.orientdb.DatabaseWrapper" init-method="init">
     <property name="databaseUrl" value="${db.url}" />
     <property name="username" value="${db.username}" />
     <property name="password" value="${db.password}" />
-    <property name="init" value="true" />
+    <property name="junit" value="true" />
   </bean>
 
 </beans>

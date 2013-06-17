@@ -13,7 +13,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     UserServiceTest.class,
     UnitServiceTest.class,
-    SmsServiceTest.class,
+    EventServiceTest.class,
     AuthorizationTest.class
 })
 public class ServiceTestSuite { }

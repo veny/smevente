@@ -7,11 +7,11 @@
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-security-core-3.1.2.RELEASE.jar" sourcepath="/opt/spring-security-3.1.2.RELEASE/dist/spring-security-core-3.1.2.RELEASE-sources.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-security-web-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-security-config-3.1.2.RELEASE.jar"/>
-	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orient-commons-1.4.0-SNAPSHOT.jar"/>
-	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orientdb-core-1.4.0-SNAPSHOT.jar" sourcepath="/ORIENTDB_SRC_HOME/core/src/main/java"/>
-	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orientdb-client-1.4.0-SNAPSHOT.jar" sourcepath="/ORIENTDB_SRC_HOME/client/src/main/java"/>
-	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orientdb-object-1.4.0-SNAPSHOT.jar" sourcepath="/ORIENTDB_SRC_HOME/object/src/main/java"/>
-	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orientdb-enterprise-1.4.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orient-commons-1.4.0.jar"/>
+	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orientdb-core-1.4.0.jar" sourcepath="/ORIENTDB_SRC_HOME/core/src/main/java"/>
+	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/orientdb-client-1.4.0.jar" sourcepath="/ORIENTDB_SRC_HOME/client/src/main/java"/>
+	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/orientdb-object-1.4.0.jar" sourcepath="/ORIENTDB_SRC_HOME/object/src/main/java"/>
+	<classpathentry kind="var" path="ORIENTDB_HOME/lib/orientdb-enterprise-1.4.0.jar"/>
 	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME/lib/javassist.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/gwt-validation-0.9b2-SNAPSHOT-without-hibernate.jar"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
@@ -19,14 +19,14 @@
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/guava-13.0.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/ColorPicker-GWT-2.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.9.jar"/>
-	<classpathentry kind="var" path="ORIENTDB_HOME"/>
+	<classpathentry exported="true" kind="var" path="ORIENTDB_HOME"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-annotations-2.1.4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-core-2.1.4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-databind-2.1.4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-aop-3.2.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-beans-3.2.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-context-3.2.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-core-3.2.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-beans-3.2.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-context-3.2.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/spring-core-3.2.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-expression-3.2.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-web-3.2.2.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-webmvc-3.2.2.RELEASE.jar"/>

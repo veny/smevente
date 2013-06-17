@@ -39,10 +39,10 @@ public class Unit extends AbstractEntity {
     /** Type of unit (doctor/...). */
     @Column
     private String type;
-    /** Configuration of SMS engine used by the unit. */
+    /** Configuration of SMS gateway used by the unit. */
     @JsonIgnore
     @Column
-    private String smsEngine;
+    private String smsGateway;
 
     /**
      * An unit can be limited in amount of SMS that can be sent.
@@ -77,11 +77,11 @@ public class Unit extends AbstractEntity {
         this.type = type;
     }
     @JsonIgnore
-    public String getSmsEngine() {
-        return smsEngine;
+    public String getSmsGateway() {
+        return smsGateway;
     }
-    public void setSmsEngine(String smsEngine) {
-        this.smsEngine = smsEngine;
+    public void setSmsGateway(String smsGateway) {
+        this.smsGateway = smsGateway;
     }
     public Long getLimitedSmss() {
         return limitedSmss;

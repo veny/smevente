@@ -87,7 +87,7 @@ public class Procedure extends AbstractEntity {
     @Transient
     @JsonIgnore
     public Event.Type enumType() {
-        String t = getType();
+        final String t = getType();
         if (null == t || 0 == t.trim().length()) {
             return Event.Type.IN_CALENDAR;
         } else {

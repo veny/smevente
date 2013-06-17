@@ -147,7 +147,7 @@ public class Event extends AbstractEntity {
     @Transient
     @JsonIgnore
     public Type enumType() {
-        String t = getType();
+        final String t = getType();
         if (null == t || 0 == t.trim().length()) {
             return Type.IN_CALENDAR;
         } else {

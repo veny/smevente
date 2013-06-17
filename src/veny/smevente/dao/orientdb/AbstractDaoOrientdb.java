@@ -388,7 +388,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 throw new IllegalStateException("failed to read a 'softDelete' attribute, entity=" + entity, e);
             }
             if (null != softDeleteValue && softDeleteValue.booleanValue()) {
-                throw new DeletedObjectException("found deleted entity, entity=" + entity);
+                throw new DeletedObjectException("found deleted entity, entity=" + entity.getId());
             }
         }
     }
