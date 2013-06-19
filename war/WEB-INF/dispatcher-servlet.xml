@@ -35,6 +35,5 @@
   <bean id="pingController" class="veny.smevente.server.PingController" />
   <bean id="userController" class="veny.smevente.server.UserController" />
   <bean id="unitController" class="veny.smevente.server.UnitController" />
-  <bean id="dataController" class="veny.smevente.server.DataController" />
 
 </beans>
