@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import veny.smevente.service.EventService;
 
@@ -33,7 +34,7 @@ public class CronTaskController {
      * @param request HTTP request
      * @param response HTTP response
      */
-    @RequestMapping(value = "/sms/")
+    @RequestMapping(value = "/sms/", method = RequestMethod.GET)
     public void sendEventCronTask(final HttpServletRequest request, final HttpServletResponse response) {
         LOG.info("cron task: bulk event sending, clientAddr=" + request.getRemoteHost());
         eventService.bulkSend();

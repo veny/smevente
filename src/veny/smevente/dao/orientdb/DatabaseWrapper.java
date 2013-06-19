@@ -103,10 +103,11 @@ public final class DatabaseWrapper implements DisposableBean {
     }
 
     /**
-     * Creates/deletes DB schema.
+     * Creates new DB schema for testing purposes.
+     * @param junit true if new schema should be created
      */
     public void setJunit(final boolean junit) {
-        if (!junit) return;
+        if (!junit) { return; }
 
         final OObjectDatabaseTx db = get();
 
@@ -137,7 +138,7 @@ public final class DatabaseWrapper implements DisposableBean {
         if (!db.getMetadata().getSchema().existsClass(AbstractEntity.class.getSimpleName())) {
             // AbstractEntity
             OClass entity = db.getMetadata().getSchema().createAbstractClass(AbstractEntity.class.getSimpleName());
-            entity.createProperty("deleted", OType.BOOLEAN); //.setMandatory(true);
+            entity.createProperty("deleted", OType.BOOLEAN);
             entity.createProperty("revision", OType.STRING);
             // User
             OClass user = db.getMetadata().getSchema().createClass(User.class.getSimpleName(), entity);
@@ -265,56 +266,5 @@ public final class DatabaseWrapper implements DisposableBean {
         ODatabaseDocumentPool.global().close();
         LOG.info("Connection pool properly closed");
     }
-
-    // ---------------------------------------- Document<->Entity Mapping Stuff
-
-//    public ODocument createDocument(AbstractEntity entity) {
-//        final ODocument doc = new ODocument(entity.getClass().getSimpleName());
-//
-//        final PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(entity);
-//        for (PropertyDescriptor pd : pds) {
-//            final Annotation col = pd.getReadMethod().getAnnotation(Column.class);
-//            if (null != col) {
-//                final String propName = pd.getName();
-//                try {
-//                    doc.field(propName, PropertyUtils.getProperty(entity, propName));
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//
-//        // RID, Version
-//        if (!Strings.isNullOrEmpty(entity.getId())) { doc.setIdentity(new ORecordId(entity.getId())); }
-//        if (!Strings.isNullOrEmpty(entity.getVersion())) { doc.setVersion(Integer.parseInt(entity.getVersion())); }
-//        doc.setClassName(entity.getClass().getSimpleName());
-//
-//        return doc;
-//    }
-//
-//    public AbstractEntity createValueObject(final ODocument doc, final Class clazz) {
-//        AbstractEntity rslt = null;
-//        try {
-//            rslt = (AbstractEntity) clazz.newInstance();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        // RID -> ID
-//        rslt.setId(doc.getIdentity().toString());
-//        // document version
-//        rslt.setVersion(Integer.toString(doc.getVersion()));
-//
-//        final String[] fieldNames = doc.fieldNames();
-//        for (String fieldName : fieldNames) {
-//            try {
-//                PropertyUtils.setProperty(rslt, fieldName, doc.field(fieldName));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return rslt;
-//    }
 
 }

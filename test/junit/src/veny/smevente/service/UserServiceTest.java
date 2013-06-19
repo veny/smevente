@@ -73,14 +73,14 @@ public class UserServiceTest extends AbstractBaseTest {
         userA.setUsername("a");
         userA.setFullname("a a");
         userA.setPassword("a");
-        userA = userService.createUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
+        userA = userService.storeUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
         assertNotNull(userA);
 
         User userB = new User();
         userB.setUsername("b");
         userB.setFullname("b b");
         userB.setPassword("b");
-        userB = userService.createUser(userB, unit1.getId(), Membership.Role.ADMIN, 6);
+        userB = userService.storeUser(userB, unit1.getId(), Membership.Role.ADMIN, 6);
         assertNotNull(userB);
 
         final List<User> found = userService.getAllUsers();
@@ -93,13 +93,13 @@ public class UserServiceTest extends AbstractBaseTest {
         badUser.setPassword("a");
 
         try { // existing username
-            userService.createUser(badUser, unit1.getId(), Membership.Role.MEMBER, 0);
+            userService.storeUser(badUser, unit1.getId(), Membership.Role.MEMBER, 0);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
 
         try { // invalid significance
             badUser.setUsername("badUser");
-            userService.createUser(badUser, unit1.getId(), Membership.Role.MEMBER, -1);
+            userService.storeUser(badUser, unit1.getId(), Membership.Role.MEMBER, -1);
             assertEquals("expected IllegalArgumentException", true, false);
         } catch (IllegalArgumentException e) { assertEquals(true, true); }
 
@@ -149,7 +149,7 @@ public class UserServiceTest extends AbstractBaseTest {
         userA.setUsername("a");
         userA.setPassword("a");
         userA.setFullname("a a");
-        userA = userService.createUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
+        userA = userService.storeUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
         assertNotNull(userA);
 
         assertEquals(2, userService.getAllUsers().size());

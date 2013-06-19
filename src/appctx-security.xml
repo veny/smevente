@@ -24,14 +24,13 @@
   <beans:bean name="authenticationEntryPoint"
     class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
 
-  <http entry-point-ref="authenticationEntryPoint" auto-config="false" use-expressions="false">
+  <http entry-point-ref="authenticationEntryPoint" auto-config="false" use-expressions="true">
     <session-management session-fixation-protection="newSession"/>
-    <intercept-url pattern="/rest/upgrade/**" access="ROLE_ROOT" />
-    <intercept-url pattern="/rest/data/**" access="ROLE_ROOT" />
+    <!-- intercept-url pattern="/rest/data/**" access="ROLE_ROOT" / -->
+    <intercept-url pattern="/rest/cron/task/**" access="hasIpAddress('127.0.0.1')" />
     <intercept-url pattern="/rest/**" access="ROLE_AUTHENTICATED" />
     <custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
     <custom-filter position="LOGOUT_FILTER" ref="logoutFilter" />
-    <!-- intercept-url pattern="/management/**" access="hasIpAddress('${management.address}')"/-->
   </http>
 
   <!--

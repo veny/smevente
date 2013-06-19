@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
+import com.orientechnologies.orient.core.id.ORID;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
@@ -233,7 +234,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event sendSms(final Object eventId) throws SmsException {
         final Event event2send = eventDao.getById(eventId);
-        final Unit unit = event2send.getPatient().getUnit();
+        // unit is not loaded with event because of 'detachWithFirstLevelAssociations'
+        final Unit unit = unitDao.getById(event2send.getPatient().getUnit().getId());
         assertLimitedUnit(unit);
 
         final String text2send = format(event2send);
@@ -262,12 +264,21 @@ public class EventServiceImpl implements EventService {
         final List<Event> foundEvents = eventDao.findEvents2BulkSend(border);
         LOG.info("found events to bulk send, size=" + foundEvents.size());
 
-        final Set<Unit> units2store = new HashSet<Unit>();
+        // cache because if I reload unit each time a reload SMS limit too and it never expires
+        final Map<Object, Unit> unitsCache = new HashMap<Object, Unit>();
+        // cache units for storing
+        final Map<Object, Unit> units2store = new HashMap<Object, Unit>();
+
         int sentCount = 0;
         for (Event event : foundEvents) {
             try {
                 final Patient patient = event.getPatient();
-                final Unit unit = patient.getUnit();
+                Unit unit = unitsCache.get(patient.getUnit().getId());
+                if (null == unit) {
+                    // unit is not loaded with event because of 'detachWithFirstLevelAssociations'
+                    unit = unitDao.getById(patient.getUnit().getId());
+                    unitsCache.put(unit.getId(), unit);
+                }
 
                 assertLimitedUnit(unit);
 
@@ -281,7 +292,9 @@ public class EventServiceImpl implements EventService {
                 // decrease the SMS limit if the unit is limited
                 if (null != unit.getLimitedSmss()) {
                     unit.setLimitedSmss(unit.getLimitedSmss() - 1L);
-                    units2store.add(unit);
+                    if (!units2store.containsKey(unit.getId())) {
+                        units2store.put(unit.getId(), unit);
+                    }
                 }
 
                 sentCount++;
@@ -292,7 +305,7 @@ public class EventServiceImpl implements EventService {
             }
         }
         // store changed units with limited SMSs
-        for (Unit unit : units2store) {
+        for (Unit unit : units2store.values()) {
             unitDao.persist(unit);
         }
 

@@ -43,10 +43,10 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         userA.setUsername("a");
         userA.setFullname("a a");
         userA.setPassword("a");
-        userService.createUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
+        userService.storeUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
 
         try { // hasPermission(#unitId, 'V_UNIT_ADMIN')
-            userService.createUser(userA, unit2.getId(), Membership.Role.MEMBER, 0);
+            userService.storeUser(userA, unit2.getId(), Membership.Role.MEMBER, 0);
             assertEquals("expected AccessDeniedException", true, false);
         } catch (AccessDeniedException e) { assertEquals(true, true); }
     }
@@ -71,7 +71,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         user.setUsername("a");
         user.setFullname("a a");
         user.setPassword("a");
-        user = userService.createUser(user, unit1.getId(), Membership.Role.MEMBER, 0);
+        user = userService.storeUser(user, unit1.getId(), Membership.Role.MEMBER, 0);
         try { // hasPermission(#userId, 'V_MY_USER')
             userService.updateUserPassword(user.getId(), user.getPassword(), "newPassword");
             assertEquals("expected AccessDeniedException", true, false);
@@ -144,11 +144,11 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         toCreate.setEmployer("employer");
         toCreate.setCareers("careers");
 
-        unitService.createPatient(toCreate);
+        unitService.storePatient(toCreate);
 
         logout();
         try { // hasRole('ROLE_AUTHENTICATED')
-            unitService.createPatient(toCreate);
+            unitService.storePatient(toCreate);
             assertEquals("expected AuthenticationCredentialsNotFoundException", true, false);
         } catch (AuthenticationCredentialsNotFoundException e) { assertEquals(true, true); }
     }
@@ -169,19 +169,19 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         toCreate.setEmployer("employer");
         toCreate.setCareers("careers");
 
-        final Patient created = unitService.createPatient(toCreate);
+        final Patient created = unitService.storePatient(toCreate);
         // CHECKSTYLE:OFF
         final String NEW_PHONE_NUMBER = "666123456";
         // CHECKSTYLE:ON
         created.setPhoneNumber(NEW_PHONE_NUMBER);
-        unitService.updatePatient(created);
+        unitService.storePatient(created);
         assertEquals(1, unitService.findPatients(unit1.getId(), null, created.getPhoneNumber(), null).size());
 
         logout();
         try { // hasRole('ROLE_AUTHENTICATED')
             created.setPhoneNumber(PHONE_NUMBER);
 
-            unitService.updatePatient(created);
+            unitService.storePatient(created);
             assertEquals("expected AuthenticationCredentialsNotFoundException", true, false);
         } catch (AuthenticationCredentialsNotFoundException e) { assertEquals(true, true); }
 
@@ -206,7 +206,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         toCreate.setEmployer("employer");
         toCreate.setCareers("careers");
 
-        unitService.createPatient(toCreate);
+        unitService.storePatient(toCreate);
         assertEquals(1, unitService.getPatientsByUnit(unit1.getId()).size());
 
         logout();
@@ -244,7 +244,7 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         toCreate.setEmployer("employer");
         toCreate.setCareers("careers");
 
-        final Patient created = unitService.createPatient(toCreate);
+        final Patient created = unitService.storePatient(toCreate);
         assertEquals(FIRSTNAME, unitService.getPatientById(created.getId()).getFirstname());
 
         logout();
@@ -270,9 +270,9 @@ public class AuthorizationTest extends AbstractBaseTestWithAuth {
         toCreate.setEmployer("employer");
         toCreate.setCareers("careers");
 
-        final Patient created1 = unitService.createPatient(toCreate);
+        final Patient created1 = unitService.storePatient(toCreate);
         unitService.deletePatient(created1.getId());
-        final Patient created2 = unitService.createPatient(created1);
+        final Patient created2 = unitService.storePatient(created1);
 
         logout();
         try { // hasRole('ROLE_AUTHENTICATED')

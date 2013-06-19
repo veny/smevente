@@ -21,6 +21,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  */
 public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao {
 
+    // fix for https://groups.google.com/forum/?fromgroups#!topic/orient-database/vxG7W5kgbqQ
     /** Formater for DateTime. */
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -79,16 +80,15 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
             @Override
             public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
-                        .append(getPersistentClass().getName())
-                        .append(" WHERE startTime < :olderThan AND sent IS NULL");
+                        .append(getPersistentClass().getSimpleName())
+                        .append(" WHERE startTime < :olderThan AND sent IS NULL ORDER BY startTime ASC");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
-                params.put("olderThan", olderThan);
+                params.put("olderThan", dateFormat.format(olderThan));
 
-                return executeWithSoftDelete(db, sql.toString(), params, true);
-//                final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-//                detachWithFirstLevelAssociations(rslt, db);
-//                return rslt;
+                final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+                detachWithFirstLevelAssociations(rslt, db);
+                return rslt;
             }
         });
     }
