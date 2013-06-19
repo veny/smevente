@@ -60,7 +60,7 @@ public class UnitController {
         final ModelAndView modelAndView = new ModelAndView("jsonView");
 
         // other users if the logged-in user is ADMIN in given unit
-        final User user = DataController.getLoggedInUser(request);
+        final User user = ControllerHelper.getLoggedInUser(request);
         final List<User> other = userService.getOtherUsersInUnit(unitId, user.getId());
         modelAndView.addObject("unitMembers", other);
 

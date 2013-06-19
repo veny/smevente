@@ -74,7 +74,7 @@ public class UserController {
      */
     @RequestMapping(value = "/info/", method = RequestMethod.GET)
     public ModelAndView getUserInfo(final HttpServletRequest request) {
-        final User user = DataController.getLoggedInUser(request);
+        final User user = ControllerHelper.getLoggedInUser(request);
 
         // username
         final ModelAndView modelAndView = new ModelAndView("jsonView");
@@ -103,7 +103,7 @@ public class UserController {
             @RequestParam("old") final String oldPassword,
             @RequestParam("new") final String newPassword) {
 
-        final User user = DataController.getLoggedInUser(request);
+        final User user = ControllerHelper.getLoggedInUser(request);
         userService.updateUserPassword(user.getId(), oldPassword, newPassword);
         response.setStatus(HttpServletResponse.SC_OK);
     }

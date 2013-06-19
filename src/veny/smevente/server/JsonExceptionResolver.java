@@ -53,6 +53,7 @@ public class JsonExceptionResolver extends SimpleMappingExceptionResolver {
      * @param id the ID
      * @return the ExceptionDTO instance
      */
+    @SuppressWarnings("deprecation")
     private String mapToJson(final Exception ex, final String id) {
 
         final List<InvalidValueSerializable> invalidValues;

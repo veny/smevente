@@ -37,14 +37,6 @@ public class UnitDaoImpl extends AbstractDaoOrientdb<Unit> implements UnitDao {
                 params.put("clazz", getPersistentClass().getSimpleName());
 
                 return executeWithSoftDelete(db, sql.toString(), params, true);
-//                final List<Unit> found = executeWithSoftDelete(db, sql.toString(), params, true);
-//                for (Unit u : found) { db.detach(u); }
-//                return found;
-//                final List<Unit> rslt = new ArrayList<Unit>();
-//                for (Unit u : found) {
-//                    rslt.add((Unit) db.detach(u, true));
-//                }
-//                return rslt;
             }
         });
     }

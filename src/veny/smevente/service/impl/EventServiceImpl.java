@@ -5,20 +5,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Strings;
-import com.orientechnologies.orient.core.id.ORID;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
@@ -36,6 +31,8 @@ import veny.smevente.service.EventService;
 import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.TextUtils;
+
+import com.google.common.base.Strings;
 
 
 /**

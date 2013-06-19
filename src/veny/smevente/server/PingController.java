@@ -37,7 +37,7 @@ public class PingController {
     @RequestMapping(value = "/ping/")
     public ModelAndView ping(final HttpServletRequest request, final HttpServletResponse response) {
 
-        final User user = DataController.getLoggedInUser(request);
+        final User user = ControllerHelper.getLoggedInUser(request);
         LOG.info("ping, user=" + user.getUsername());
 
         final ModelAndView modelAndView = new ModelAndView();

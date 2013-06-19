@@ -3,7 +3,6 @@ package veny.smevente.server;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * A helper to process some application operations when the application context is loaded.
@@ -23,11 +22,11 @@ public class ApplicationContextHelper implements ApplicationContextAware {
     /** {@inheritDoc} */
     @Override
     public void setApplicationContext(final ApplicationContext ctx) {
-        final WebApplicationContext wctx = (WebApplicationContext) ctx;
+//        final WebApplicationContext wctx = (WebApplicationContext) ctx;
 
-        System.setProperty("javax.net.ssl.trustStore",
-                wctx.getServletContext().getRealPath("WEB-INF/sms-services.keystore"));
-        System.setProperty("javax.net.ssl.trustStorePassword", "smevente73");
+//        System.setProperty("javax.net.ssl.trustStore",
+//                wctx.getServletContext().getRealPath("WEB-INF/sms-services.keystore"));
+//        System.setProperty("javax.net.ssl.trustStorePassword", "smevente73");
 
 //        TimeZone.setDefault(TimeZone.getTimeZone("GMT-2:00"));
 
