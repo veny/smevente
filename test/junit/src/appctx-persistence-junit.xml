@@ -16,7 +16,7 @@
     <property name="databaseUrl" value="${db.url}" />
     <property name="username" value="${db.username}" />
     <property name="password" value="${db.password}" />
-    <property name="junit" value="true" />
   </bean>
+  <bean id="schema" class="veny.smevente.dao.orientdb.Schema" />
 
 </beans>

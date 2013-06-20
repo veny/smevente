@@ -12,12 +12,11 @@ import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
-import com.orientechnologies.orient.core.metadata.schema.OClass;
-import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
- * Wrapper of OrientDB engine allowing to execute.
+ * Wrapper of OrientDB engine allowing to execute commands
+ * as a Spring Template pattern.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 18.8.2012
@@ -100,101 +99,6 @@ public final class DatabaseWrapper implements DisposableBean {
         db.getEntityManager().registerEntityClass(Patient.class);
         db.getEntityManager().registerEntityClass(Procedure.class);
         db.getEntityManager().registerEntityClass(Event.class);
-    }
-
-    /**
-     * Creates new DB schema for testing purposes.
-     * @param junit true if new schema should be created
-     */
-    public void setJunit(final boolean junit) {
-        if (!junit) { return; }
-
-        final OObjectDatabaseTx db = get();
-
-        // delete classes
-        if (db.getMetadata().getSchema().existsClass("Procedure")) {
-            db.getMetadata().getSchema().dropClass("Procedure");
-        }
-        if (db.getMetadata().getSchema().existsClass("Patient")) {
-            //db.command(new OCommandSQL("DELETE FROM " + Patient.class.getSimpleName())).execute();
-            db.getMetadata().getSchema().dropClass("Patient");
-        }
-        if (db.getMetadata().getSchema().existsClass("Membership")) {
-            db.getMetadata().getSchema().dropClass("Membership");
-        }
-        if (db.getMetadata().getSchema().existsClass("Unit")) {
-            db.getMetadata().getSchema().dropClass("Unit");
-        }
-        if (db.getMetadata().getSchema().existsClass("User")) {
-            db.getMetadata().getSchema().dropClass("User");
-        }
-        if (db.getMetadata().getSchema().existsClass("Event")) {
-            db.getMetadata().getSchema().dropClass("Event");
-        }
-        if (db.getMetadata().getSchema().existsClass("AbstractEntity")) {
-            db.getMetadata().getSchema().dropClass("AbstractEntity");
-        }
-
-        if (!db.getMetadata().getSchema().existsClass(AbstractEntity.class.getSimpleName())) {
-            // AbstractEntity
-            OClass entity = db.getMetadata().getSchema().createAbstractClass(AbstractEntity.class.getSimpleName());
-            entity.createProperty("deleted", OType.BOOLEAN);
-            entity.createProperty("revision", OType.STRING);
-            // User
-            OClass user = db.getMetadata().getSchema().createClass(User.class.getSimpleName(), entity);
-            user.createProperty("username", OType.STRING).setMandatory(true).setNotNull(true);
-            user.createProperty("password", OType.STRING).setMandatory(true).setNotNull(true);
-            user.createProperty("fullname", OType.STRING).setMandatory(true).setNotNull(true);
-            user.createProperty("lastLoggedIn", OType.DATETIME);
-            user.createProperty("root", OType.BOOLEAN);
-            // Unit
-            OClass unit = db.getMetadata().getSchema().createClass(Unit.class.getSimpleName(), entity);
-            unit.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
-            unit.createProperty("description", OType.STRING);
-            unit.createProperty("type", OType.STRING); // null == PATIENT
-            unit.createProperty("limitedSmss", OType.LONG);
-            unit.createProperty("smsGateway", OType.STRING);
-            // Membership
-            OClass membership = db.getMetadata().getSchema().createClass(Membership.class.getSimpleName(), entity);
-            membership.createProperty("user", OType.LINK, user).setMandatory(true);
-            membership.createProperty("unit", OType.LINK, unit).setMandatory(true);
-            membership.createProperty("role", OType.STRING).setMandatory(true).setNotNull(true);
-            membership.createProperty("significance", OType.INTEGER);
-            // Patient
-            OClass patient = db.getMetadata().getSchema().createClass(Patient.class.getSimpleName(), entity);
-            patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
-            patient.createProperty("firstname", OType.STRING);
-            patient.createProperty("surname", OType.STRING).setMandatory(true).setNotNull(true);
-            patient.createProperty("asciiFullname", OType.STRING).setMandatory(true).setNotNull(true);
-            patient.createProperty("phoneNumber", OType.STRING);
-            patient.createProperty("birthNumber", OType.STRING);
-            patient.createProperty("degree", OType.STRING);
-            patient.createProperty("street", OType.STRING);
-            patient.createProperty("city", OType.STRING);
-            patient.createProperty("zipCode", OType.STRING);
-            patient.createProperty("employer", OType.STRING);
-            patient.createProperty("careers", OType.STRING);
-            // Procedure
-            OClass procedure = db.getMetadata().getSchema().createClass(Procedure.class.getSimpleName(), entity);
-            procedure.createProperty("unit", OType.LINK, unit).setMandatory(true);
-            procedure.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
-            procedure.createProperty("messageText", OType.STRING).setMandatory(true).setNotNull(true);
-            procedure.createProperty("type", OType.STRING); // null == Event.Type.IN_CALENDAR
-            procedure.createProperty("color", OType.STRING);
-            procedure.createProperty("time", OType.INTEGER);
-            // Event
-            OClass event = db.getMetadata().getSchema().createClass(Event.class.getSimpleName(), entity);
-            event.createProperty("author", OType.LINK, user).setMandatory(true);
-            event.createProperty("patient", OType.LINK, patient).setMandatory(true);
-            event.createProperty("procedure", OType.LINK, procedure).setMandatory(true);
-            event.createProperty("text", OType.STRING).setMandatory(true).setNotNull(true);
-            event.createProperty("notice", OType.STRING);
-            event.createProperty("startTime", OType.DATETIME); // can be 'null' for special events
-            event.createProperty("length", OType.INTEGER); // can be 'null' for special events
-            event.createProperty("sent", OType.DATETIME);
-            event.createProperty("sendAttemptCount", OType.INTEGER);
-            event.createProperty("type", OType.STRING);
-        }
     }
 
 

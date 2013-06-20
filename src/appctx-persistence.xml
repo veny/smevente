@@ -13,5 +13,6 @@
     <property name="username" value="admin" />
     <property name="password" value="admin" />
   </bean>
+  <bean id="schema" class="veny.smevente.dao.orientdb.Schema" />
 
 </beans>
