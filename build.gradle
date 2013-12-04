@@ -73,3 +73,18 @@ eclipse { // https://gist.github.com/gpike/3722887
         defaultOutputDir = file('war/WEB-INF/classes')
     }
 }
+
+war {
+  from('war') {
+//    include ('index.html')
+//    include ('Smevente.css')
+//    include ('favicon.ico')
+//    include ('images/')
+    exclude('smevente/')
+    exclude('WEB-INF/classes/')
+    exclude('WEB-INF/deploy/')
+    exclude('WEB-INF/lib/gwt-servlet-deps.jar')
+  }
+  exclude('WEB-INF/classes/')
+//  webXml = file('war/WEB-INF/web.xml')
+}

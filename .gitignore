@@ -8,11 +8,14 @@
 .settings/
 .gradle/
 .metadata/
+.classpath
+.project
 build/
 test/junit/classes/
 war/WEB-INF/classes/
 war/WEB-INF/deploy/
 war/smevente/
+war/WEB-INF/lib/gwt-servlet.jar
 gwt-unitCache/
 rbuild/
 war/smevente.log
