@@ -6,6 +6,9 @@
 *.ear
 .checkstyle
 .settings/
+.gradle/
+.metadata/
+build/
 test/junit/classes/
 war/WEB-INF/classes/
 war/WEB-INF/deploy/

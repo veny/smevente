@@ -1,0 +1,75 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+
+ext {
+    springVersion = "3.2.4.RELEASE"
+    springSecurityVersion = "3.1.4.RELEASE"
+    gwtVersion = "2.5.1"
+    jacksonVersion = "2.1.4"
+    orientdbVersion = "1.4.1"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.springframework:spring-beans:$springVersion"
+    compile "org.springframework:spring-core:$springVersion"
+    compile "org.springframework:spring-webmvc:$springVersion"
+
+    // MAYBE REMOVE??? >>
+    runtime "org.springframework:spring-aop:$springVersion"
+    runtime "org.springframework:spring-context:$springVersion"
+    runtime "org.springframework:spring-expression:$springVersion"
+    runtime "org.springframework:spring-orm:$springVersion"
+    runtime "org.springframework:spring-tx:$springVersion"
+    runtime "org.springframework:spring-web:$springVersion"
+    runtime "org.springframework.security:spring-security-acl:$springSecurityVersion"
+    runtime "org.springframework.security:spring-security-taglibs:$springSecurityVersion"
+    runtime "aopalliance:aopalliance:1.0"
+    // << MAYBE REMOVE???
+
+    compile "org.springframework.security:spring-security-core:$springSecurityVersion"
+    compile "org.springframework.security:spring-security-web:$springSecurityVersion"
+    runtime "org.springframework.security:spring-security-config:$springSecurityVersion"
+
+    compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+
+    compile "com.orientechnologies:orientdb-core:$orientdbVersion"
+    compile "com.orientechnologies:orientdb-object:$orientdbVersion"
+    runtime "com.orientechnologies:orientdb-client:$orientdbVersion"
+
+    compile "log4j:log4j:1.2.9"
+    compile "commons-beanutils:commons-beanutils:1.8.3"
+    compile "org.apache.commons:commons-lang3:3.1"
+    compile "com.google.guava:guava:13.0.1"
+
+    compile files('./war/WEB-INF/lib/gwt-validation-0.9b2-SNAPSHOT-without-hibernate.jar')
+    compile files('./war/WEB-INF/lib/ColorPicker-GWT-2.1.jar')
+
+
+    providedCompile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
+
+    // Compile GWT libs, needed for gwtCompile and the javaCompile
+    // Also includes the servlet-api
+    providedCompile "com.google.gwt:gwt-dev:$gwtVersion"
+    providedCompile "com.google.gwt:gwt-user:$gwtVersion"
+}
+
+
+eclipse { // https://gist.github.com/gpike/3722887
+    project {
+        name 'smevente'
+        natures 'com.google.gwt.eclipse.core.gwtNature'
+        buildCommand 'com.google.gdt.eclipse.core.webAppProjectValidator'
+        buildCommand 'com.google.gwt.eclipse.core.gwtProjectValidator'
+    }
+    classpath {
+        containers 'com.google.gwt.eclipse.core.GWT_CONTAINER'
+        defaultOutputDir = file('war/WEB-INF/classes')
+    }
+}
