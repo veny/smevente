@@ -57,7 +57,7 @@ public class ValidationContainer {
      * @param args CLI arguments
      */
     public static void main(final String[] args) {
-        ApplicationContext actx = new ClassPathXmlApplicationContext(
+        final ApplicationContext actx = new ClassPathXmlApplicationContext(
                 new String[] { "appctx-validation.xml" });
 
         ValidationContainer vc = (ValidationContainer) actx.getBean("validationContainer");
