@@ -55,8 +55,9 @@ dependencies {
 
     // Compile GWT libs, needed for gwtCompile and the javaCompile
     // Also includes the servlet-api
-    providedCompile "com.google.gwt:gwt-dev:$gwtVersion"
-    providedCompile "com.google.gwt:gwt-user:$gwtVersion"
+    compile "com.google.gwt:gwt-user:$gwtVersion"
+    compile "com.google.gwt:gwt-dev:$gwtVersion"
+    runtime "com.google.gwt:gwt-servlet:$gwtVersion"
 }
 
 
@@ -74,12 +75,55 @@ eclipse { // https://gist.github.com/gpike/3722887
 }
 
 war {
-  war.rootSpec.exclude 'log4j-devel.properties'
-  from('war') {
-    exclude('smevente/')
-    exclude('WEB-INF/classes/')
-    exclude('WEB-INF/deploy/')
-    exclude('WEB-INF/lib/gwt-servlet-deps.jar')
+    war.rootSpec.exclude 'log4j-devel.properties'
+    from('war') {
+        exclude('smevente/')
+        exclude('WEB-INF/classes/')
+        exclude('WEB-INF/deploy/')
+        exclude('WEB-INF/lib/gwt-servlet.jar')
+    }
+    from("${buildDir}/gwt") {
+        include('smevente/')
+    }
+    baseName = 'ROOT'
+}
+
+
+task compileGwt (dependsOn: classes, type: JavaExec) {
+  ext.buildDir = "${project.buildDir}/gwt"
+  ext.extraDir = "${project.buildDir}/extra"
+
+  inputs.source sourceSets.main.java.srcDirs
+  inputs.dir sourceSets.main.output.resourcesDir
+  outputs.dir buildDir
+
+  // Workaround for incremental build (GRADLE-1483)
+  outputs.upToDateSpec = new org.gradle.api.specs.AndSpec()
+
+  doFirst {
+    file(buildDir).mkdirs()
   }
-  baseName = 'ROOT'
+
+  main = 'com.google.gwt.dev.Compiler'
+
+  classpath {
+    [
+      sourceSets.main.java.srcDirs,           // Java source
+      sourceSets.main.output.resourcesDir,    // Generated resources
+      sourceSets.main.output.classesDir,      // Generated classes
+      sourceSets.main.compileClasspath,       // Deps
+    ]
+  }
+
+  args = [
+    'veny.smevente.Smevente',
+    '-war', buildDir,
+    '-logLevel', 'INFO',
+    '-localWorkers', '2',
+    '-compileReport',
+    '-extra', extraDir,
+    // '-draftCompile' // Speeds up compile with 25%
+  ]
+
+  maxHeapSize = '256M'
 }
