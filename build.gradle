@@ -7,7 +7,7 @@ ext {
     springSecurityVersion = "3.1.4.RELEASE"
     gwtVersion = "2.5.1"
     jacksonVersion = "2.1.4"
-    orientdbVersion = "1.4.1"
+    orientdbVersion = "1.6.1"
 }
 
 repositories {
@@ -43,6 +43,7 @@ dependencies {
     compile "com.orientechnologies:orientdb-object:$orientdbVersion"
     runtime "com.orientechnologies:orientdb-client:$orientdbVersion"
 
+    runtime "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
     compile "log4j:log4j:1.2.9"
     compile "commons-beanutils:commons-beanutils:1.8.3"
     compile "org.apache.commons:commons-lang3:3.1"
@@ -51,8 +52,6 @@ dependencies {
     compile files('./war/WEB-INF/lib/gwt-validation-0.9b2-SNAPSHOT-without-hibernate.jar')
     compile files('./war/WEB-INF/lib/ColorPicker-GWT-2.1.jar')
 
-
-    providedCompile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
 
     // Compile GWT libs, needed for gwtCompile and the javaCompile
     // Also includes the servlet-api
@@ -75,16 +74,12 @@ eclipse { // https://gist.github.com/gpike/3722887
 }
 
 war {
+  war.rootSpec.exclude 'log4j-devel.properties'
   from('war') {
-//    include ('index.html')
-//    include ('Smevente.css')
-//    include ('favicon.ico')
-//    include ('images/')
     exclude('smevente/')
     exclude('WEB-INF/classes/')
     exclude('WEB-INF/deploy/')
     exclude('WEB-INF/lib/gwt-servlet-deps.jar')
   }
-  exclude('WEB-INF/classes/')
-//  webXml = file('war/WEB-INF/web.xml')
+  baseName = 'ROOT'
 }
