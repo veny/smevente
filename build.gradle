@@ -58,7 +58,12 @@ dependencies {
     compile "com.google.gwt:gwt-user:$gwtVersion"
     compile "com.google.gwt:gwt-dev:$gwtVersion"
     runtime "com.google.gwt:gwt-servlet:$gwtVersion"
-}
+
+
+    testCompile "junit:junit:4.+"
+    testCompile "org.springframework:spring-test:$springVersion"
+    testCompile "com.orientechnologies:orientdb-server:$orientdbVersion"
+ }
 
 
 eclipse { // https://gist.github.com/gpike/3722887
