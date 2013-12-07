@@ -293,9 +293,9 @@ public class UserServiceImpl implements UserService {
         for (byte b : hash) {
             formatter.format("%02x", b);
         }
-        formatter.close();
 
         final StringBuffer rslt = new StringBuffer(md.getAlgorithm()).append(':').append(formatter.toString());
+        formatter.close();
         return rslt.toString();
     }
 

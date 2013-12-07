@@ -95,7 +95,7 @@ public final class TextUtils {
         if (null == s) { throw new NullPointerException("text to convert cannot be null"); }
         final Map<String, String> map = new HashMap<String, String>();
 
-        String[] nameValuePairs = s.split("&");
+        final String[] nameValuePairs = s.split("&");
         for (String nameValuePair : nameValuePairs) {
             final String[] nameValue = nameValuePair.split("=");
             try {

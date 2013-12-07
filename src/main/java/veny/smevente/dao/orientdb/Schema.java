@@ -156,8 +156,8 @@ public class Schema {
         userDef.put("max",  "User SET username = 'max',  password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Max Mustermann'");
         // Units
         Map<String, String> unitDef = new HashMap<String, String>();
-        unitDef.put("foo", "Unit SET name = 'Foo', description = 'Desc of Foo', type = 'PATIENT'");
-        unitDef.put("bar", "Unit SET name = 'Bar', description = 'Desc of Bar', type = 'CUSTOMER'");
+        unitDef.put("foo", "Unit SET name = 'Foo', description = 'Desc of Foo', type = 'PATIENT', smsGateway = 'type=sms.sluzba.cz&username=foo&password=bar'");
+        unitDef.put("bar", "Unit SET name = 'Bar', description = 'Desc of Bar', type = 'CUSTOMER', smsGateway = 'type=sms.sluzba.cz&username=alfa&password=bravo'");
         // Membership
         Map<String, String> membDef = new HashMap<String, String>();
         membDef.put("m1", "Membership SET user = %veny%, unit = %foo%, role = 'ADMIN', significance = 10");
@@ -183,6 +183,7 @@ public class Schema {
         Object[] all = { userDef, unitDef, membDef, patDef, procDef, eventDef };
 
         for (Object entity : all) {
+            @SuppressWarnings("unchecked")
             final Map<String, String> entityMap = (Map<String, String>) entity;
 
             for (Entry<String, String> entry : entityMap.entrySet()) {

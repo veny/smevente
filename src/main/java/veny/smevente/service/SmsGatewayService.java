@@ -16,9 +16,9 @@ import veny.smevente.shared.SmeventeException;
 public interface SmsGatewayService {
 
     /** Metadata key of login name to the service. */
-    String METADATA_USERNAME = "smsGatewayUsername";
+    String METADATA_USERNAME = "username";
     /** Metadata key of password to the service. */
-    String METADATA_PASSWORD = "smsGatewayPassword";
+    String METADATA_PASSWORD = "password";
 
     /**
      * Enumeration of possible failure reasons.
