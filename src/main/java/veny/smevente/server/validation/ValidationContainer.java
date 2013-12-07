@@ -60,7 +60,7 @@ public class ValidationContainer {
         final ApplicationContext actx = new ClassPathXmlApplicationContext(
                 new String[] { "appctx-validation.xml" });
 
-        ValidationContainer vc = (ValidationContainer) actx.getBean("validationContainer");
+        final ValidationContainer vc = (ValidationContainer) actx.getBean("validationContainer");
         try {
             vc.validate("birthNumber", "PN", "010101203x");
         } catch (ValidationException e) {
