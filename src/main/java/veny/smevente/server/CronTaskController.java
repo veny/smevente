@@ -48,7 +48,7 @@ public class CronTaskController {
 
 
     /**
-     * TODO
+     * Creates new DB schema.
      *
      * @param request HTTP request
      * @param response HTTP response
@@ -61,7 +61,7 @@ public class CronTaskController {
     }
 
     /**
-     * TODO
+     * Initializes schema with a basic data set.
      *
      * @param request HTTP request
      * @param response HTTP response

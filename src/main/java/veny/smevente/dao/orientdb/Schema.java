@@ -145,6 +145,9 @@ public class Schema {
         }
     }
 
+    /**
+     * Initializes schema with a basic data set.
+     */
     public void sampleData() {
         final OObjectDatabaseTx db = dbWrapper.get();
 
