@@ -1,4 +1,4 @@
-require 'csv'
+require 'csv' # lib: fastercsv
 require 'orientdb4r'
 
 SNAPSHOT_DATE='130407'
@@ -16,8 +16,8 @@ data.each do |row|
   doc = { '@class' => 'Unit', 'type' => 'PATIENT', 'revision' => 0, 'deleted' => false }
   head.each { |k,v| doc[k] = row[v] }
   key = doc.delete 'key'
-  rid = client.create_document doc
-  UNITS[key] = rid
+  created = client.create_document doc
+  UNITS[key] = created.doc_rid
 end
 puts "--- UNITs: #{UNITS.size}"
 
@@ -32,8 +32,8 @@ data.each do |row|
   doc = { '@class' => 'User', 'revision' => 0, 'deleted' => false }
   head.each { |k,v| doc[k] = row[v] }
   key = doc.delete 'key'
-  rid = client.create_document doc
-  USERS[key] = rid
+  created = client.create_document doc
+  USERS[key] = created.doc_rid
 end
 puts "--- USERs: #{USERS.size}"
 
@@ -58,8 +58,8 @@ data.each do |row|
   doc['unit'] = rid.to_s
 
   key = doc.delete 'key'
-  rid = client.create_document doc
-  MEMBS[key] = rid
+  created = client.create_document doc
+  MEMBS[key] = created.doc_rid
 end
 puts "--- MEMBs: #{MEMBS.size}"
 
@@ -82,8 +82,8 @@ data.each do |row|
   doc['unit'] = rid.to_s
 
   key = doc.delete 'key'
-  rid = client.create_document doc
-  PROCEDURES[key] = rid
+  created = client.create_document doc
+  PROCEDURES[key] = created.doc_rid
 end
 puts "--- PROCEDUREs: #{PROCEDURES.size}"
 
@@ -108,8 +108,8 @@ data.each do |row|
   doc['unit'] = rid.to_s
 
   key = doc.delete 'key'
-  rid = client.create_document doc
-  PATIENTS[key] = rid
+  created = client.create_document doc
+  PATIENTS[key] = created.doc_rid
 end
 puts "--- PATIENTs: #{PATIENTS.size}"
 
@@ -149,8 +149,8 @@ data.each do |row|
 
   key = doc.delete 'key'
 #puts "DOC=#{doc}"
-  rid = client.create_document doc
-  EVENTS[key] = rid
+  created = client.create_document doc
+  EVENTS[key] = created.doc_rid
 end
 rescue => e
   puts "RRRRRRRRR"
