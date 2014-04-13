@@ -6,6 +6,7 @@ SNAPSHOT_DATE='130407'
 client = Orientdb4r.client
 client.connect :database => 'smevente', :user => 'admin', :password => 'admin'
 
+
 # Unit
 head = { 'name' => 2, 'key' => 3 }
 data = CSV.read("./gae-snapshot-#{SNAPSHOT_DATE}/Unit.csv")
