@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
+
 import veny.smevente.misc.SoftDelete;
 
 /**
@@ -72,7 +73,7 @@ public class Event extends AbstractEntity {
     /** Count of attempts to send the event. */
     @Column
     private int sendAttemptCount;
-    /** Event type. */
+    /** Event type. @see Event.Type */
     @Column
     private String type;
 
