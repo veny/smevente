@@ -34,7 +34,7 @@ public class Procedure extends AbstractEntity {
     /** Typical time [minutes]. */
     @Column
     private int time;
-    /** Type of procedure. */
+    /** Type of procedure [IN_CALENDAR|IMMEDIATE_MESSAGE]. */
     @Column
     private String type;
 
