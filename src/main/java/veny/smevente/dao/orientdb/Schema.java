@@ -131,7 +131,7 @@ public class Schema {
             OClass event = db.getMetadata().getSchema().createClass(Event.class.getSimpleName(), entity);
             event.createProperty("author", OType.LINK, user).setMandatory(true);
             event.createProperty("patient", OType.LINK, patient).setMandatory(true);
-            event.createProperty("procedure", OType.LINK, procedure).setMandatory(true);
+            event.createProperty("procedure", OType.LINK, procedure); // not mandatory for special messages
             event.createProperty("text", OType.STRING).setMandatory(true).setNotNull(true);
             event.createProperty("notice", OType.STRING);
             event.createProperty("startTime", OType.DATETIME); // can be 'null' for special events
