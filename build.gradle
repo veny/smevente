@@ -6,7 +6,7 @@ apply plugin: 'checkstyle'
 ext {
     springVersion = "3.2.4.RELEASE"
     springSecurityVersion = "3.1.4.RELEASE"
-    gwtVersion = "2.5.1"
+    gwtVersion = "2.6.1"
     jacksonVersion = "2.1.4"
     orientdbVersion = "1.6.1"
 }
@@ -59,6 +59,7 @@ dependencies {
     compile "com.google.gwt:gwt-user:$gwtVersion"
     compile "com.google.gwt:gwt-dev:$gwtVersion"
     runtime "com.google.gwt:gwt-servlet:$gwtVersion"
+    runtime "com.google.gwt:gwt-codeserver:$gwtVersion"
 
 
     testCompile "junit:junit:4.+"
