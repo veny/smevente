@@ -155,8 +155,8 @@ public class Schema {
 
         // Users
         Map<String, String> userDef = new HashMap<String, String>();
-        userDef.put("veny", "User SET username = 'veny', password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Vaclav Novy', root = true");
-        userDef.put("max",  "User SET username = 'max',  password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Max Mustermann'");
+        userDef.put("veny", "User SET username = 'veny', password = 'SHA:a8fdc205a9f19cc1c7507a60c4f01b13d11d7fd0', fullname = 'Vaclav Novy', root = true"); // password: 123
+        userDef.put("max",  "User SET username = 'max',  password = 'SHA:a8fdc205a9f19cc1c7507a60c4f01b13d11d7fd0', fullname = 'Max Mustermann'");
         // Units
         Map<String, String> unitDef = new HashMap<String, String>();
         unitDef.put("foo", "Unit SET name = 'Foo', description = 'Desc of Foo', type = 'PATIENT', smsGateway = 'type=sms.sluzba.cz&username=foo&password=bar'");
