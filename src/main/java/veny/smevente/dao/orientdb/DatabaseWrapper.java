@@ -1,5 +1,7 @@
 package veny.smevente.dao.orientdb;
 
+import java.util.TimeZone;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -11,6 +13,7 @@ import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
+import com.orientechnologies.orient.core.config.OStorageConfiguration;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -100,6 +103,11 @@ public final class DatabaseWrapper implements DisposableBean {
         db.getEntityManager().registerEntityClass(Patient.class);
         db.getEntityManager().registerEntityClass(Procedure.class);
         db.getEntityManager().registerEntityClass(Event.class);
+
+        // to be sure the DB works with UTC time zone
+        final OStorageConfiguration cfg = db.getStorage().getConfiguration();
+        cfg.setTimeZone(TimeZone.getTimeZone("UTC"));
+        cfg.update();
     }
 
 

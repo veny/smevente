@@ -30,7 +30,7 @@ public class Patient extends AbstractEntity {
     /** Patient's phone number. */
     @Column
     private String phoneNumber;
-    /** Patient's birth date. */
+    /** Patient's birth number. */
     @Column
     private String birthNumber;
     /** Patient's degree. */

@@ -28,7 +28,8 @@ public class ApplicationContextHelper implements ApplicationContextAware {
 //                wctx.getServletContext().getRealPath("WEB-INF/sms-services.keystore"));
 //        System.setProperty("javax.net.ssl.trustStorePassword", "smevente73");
 
-//        TimeZone.setDefault(TimeZone.getTimeZone("GMT-2:00"));
+        // server works in UTC, all date-times will be converted according to user's time zone
+        java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"));
 
         LOG.info("ApplicationContextHelper initialized ok");
     }
