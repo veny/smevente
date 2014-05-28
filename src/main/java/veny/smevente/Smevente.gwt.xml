@@ -44,6 +44,7 @@
   <!-- Enable the SuperDevMode -->
   <add-linker name="xsiframe" />
   <set-configuration-property name="devModeRedirectEnabled" value="true" />
+  <!-- Enable sourcemaps to see your java source code in the Chrome script browser -->
   <set-property name="compiler.useSourceMaps" value="true" />
 
 </module>

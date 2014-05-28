@@ -155,8 +155,8 @@ public class Schema {
 
         // Users
         Map<String, String> userDef = new HashMap<String, String>();
-        userDef.put("veny", "User SET username = 'veny', password = 'SHA:a8fdc205a9f19cc1c7507a60c4f01b13d11d7fd0', fullname = 'Vaclav Novy', root = true"); // password: 123
-        userDef.put("max",  "User SET username = 'max',  password = 'SHA:a8fdc205a9f19cc1c7507a60c4f01b13d11d7fd0', fullname = 'Max Mustermann'");
+        userDef.put("veny", "User SET username = 'veny', password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Vaclav Novy', root = true"); // password: 123
+        userDef.put("max",  "User SET username = 'max',  password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Max Mustermann'");
         // Units
         Map<String, String> unitDef = new HashMap<String, String>();
         unitDef.put("foo", "Unit SET name = 'Foo', description = 'Desc of Foo', type = 'PATIENT', smsGateway = 'type=sms.sluzba.cz&username=foo&password=bar'");
@@ -180,8 +180,8 @@ public class Schema {
         procDef.put("p3", "Procedure SET unit = %foo%, name = 'Dovolená', messageText = 'Mame dovolenou', type => 'IMMEDIATE_MESSAGE'");
         // Event
         Map<String, String> eventDef = new HashMap<String, String>();
-        eventDef.put("e1", "Event SET author = %veny%, patient = %JanNovak%, procedure = %beleni%, text = 'Message text', startTime = '2012-10-30 10:10:00:000', length = 30");
-        eventDef.put("e2", "Event SET author = %veny%, patient = %me%, procedure = %beleni%, text = 'Message text', startTime = '2013-06-20 15:00:00:000', length = 60");
+        eventDef.put("e1", "Event SET author = %veny%, patient = %JanNovak%, procedure = %beleni%, text = 'Message text', startTime = '2014-05-28 10:10:00:000', length = 30");
+        eventDef.put("e2", "Event SET author = %veny%, patient = %me%, procedure = %beleni%, text = 'Message text', startTime = '2014-06-03 15:00:00:000', length = 60");
 
         Object[] all = { userDef, unitDef, membDef, patDef, procDef, eventDef };
 
