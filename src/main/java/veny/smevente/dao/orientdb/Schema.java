@@ -85,6 +85,7 @@ public class Schema {
             user.createProperty("username", OType.STRING).setMandatory(true).setNotNull(true);
             user.createProperty("password", OType.STRING).setMandatory(true).setNotNull(true);
             user.createProperty("fullname", OType.STRING).setMandatory(true).setNotNull(true);
+            user.createProperty("timezone", OType.STRING).setMandatory(true).setNotNull(true);
             user.createProperty("lastLoggedIn", OType.DATETIME);
             user.createProperty("root", OType.BOOLEAN);
             LOG.info("class created, name=" + user.getName());
@@ -155,8 +156,8 @@ public class Schema {
 
         // Users
         Map<String, String> userDef = new HashMap<String, String>();
-        userDef.put("veny", "User SET username = 'veny', password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Vaclav Novy', root = true"); // password: 123
-        userDef.put("max",  "User SET username = 'max',  password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Max Mustermann'");
+        userDef.put("veny", "User SET username = 'veny', password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Vaclav Novy', timezone = 'Europe/Prague', root = true"); // password: 123
+        userDef.put("max",  "User SET username = 'max',  password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Max Mustermann', timezone = 'Europe/London'");
         // Units
         Map<String, String> unitDef = new HashMap<String, String>();
         unitDef.put("foo", "Unit SET name = 'Foo', description = 'Desc of Foo', type = 'PATIENT', smsGateway = 'type=sms.sluzba.cz&username=foo&password=bar'");
