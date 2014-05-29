@@ -1,5 +1,7 @@
 package veny.smevente.server;
 
+import java.util.TimeZone;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -33,6 +35,19 @@ public final class ControllerHelper {
             throw new IllegalStateException("user not found in session, no authentication?");
         }
         return user;
+    }
+
+    /**
+     * Gets the logged in user stored in session.
+     * @param request HTTP request
+     * @return current logged in user
+     */
+    public static TimeZone getLoggedInUserTimezone(final HttpServletRequest request) {
+        final User user = getLoggedInUser(request);
+        if (null == user.getTimezone() || 0 == user.getTimezone().trim().length()) {
+            throw new IllegalStateException("user without timezone");
+        }
+        return TimeZone.getTimeZone(user.getTimezone());
     }
 
     /**
