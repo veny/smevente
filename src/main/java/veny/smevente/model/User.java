@@ -38,6 +38,10 @@ public class User extends AbstractEntity {
     @Column
     private String fullname;
 
+    /** User's time zone. */
+    @Column
+    private String timezone;
+
     /** Whether the user is a system root. */
     @JsonIgnore
     @Column
@@ -68,6 +72,12 @@ public class User extends AbstractEntity {
     public void setFullname(String fullname) {
         this.fullname = fullname;
     }
+    public String getTimezone() {
+        return timezone;
+    }
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
     @JsonIgnore
     public Date getLastLoggedIn() {
         return lastLoggedIn;
@@ -83,6 +93,7 @@ public class User extends AbstractEntity {
         this.root = root;
     }
     // CHECKSTYLE:ON
+
 
     /** {@inheritDoc} */
     @Override
