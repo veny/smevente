@@ -2,6 +2,7 @@ package veny.smevente.server;
 
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -223,6 +224,7 @@ public class UserController {
      * Gets list of events for given period.
      * This methods does not distinguish between units to see all terms of a given author.
      *
+     * @param request HTTP request
      * @param userId author ID
      * @param from date from
      * @param to date to
@@ -230,11 +232,19 @@ public class UserController {
      */
     @RequestMapping(value = "/{userId}/event/from/{from}/to/{to}/", method = RequestMethod.GET)
     public ModelAndView findEvents(
+            final HttpServletRequest request,
             @PathVariable("userId") final String userId,
             @PathVariable("from") final Date from,
             @PathVariable("to") final Date to) {
 
+
         final List<Event> rslt = eventService.findEvents(userId, from, to);
+        // convert all times on event to logged in user time zone
+        final TimeZone currentUserTz = ControllerHelper.getLoggedInUserTimezone(request);
+        for (final Event event : rslt) {
+            event.setStartTime(fromUtc(event.getStartTime(), currentUserTz));
+            event.setSent(fromUtc(event.getSent(), currentUserTz));
+        }
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("events", rslt);
@@ -337,5 +347,18 @@ public class UserController {
 //    }
 
     // ----------------------------------------------------------- Helper Stuff
+
+    /**
+     * Calculate time zone offset according to user's locale.
+     * @param date date in UTC
+     * @param to target time zone
+     * @return date recalculated from UTC to given time zone.
+     */
+    private Date fromUtc(final Date date, final TimeZone to) {
+        if (null == date) { return null; }
+
+        final int tzOffset = (to.getOffset(date.getTime()));
+        return new Date(date.getTime() + tzOffset);
+    }
 
 }
