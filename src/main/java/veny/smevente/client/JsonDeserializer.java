@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.Procedure;
+import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Patient;
-import veny.smevente.model.Event;
+import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
@@ -377,7 +377,8 @@ public class JsonDeserializer {
      * @param jsObj JSON object
      * @return instance of <code>Event</code>
      */
-    private Event eventFromJson(final JSONObject jsObj) {
+    @SuppressWarnings("deprecation")
+	private Event eventFromJson(final JSONObject jsObj) {
         final Event rslt = new Event();
         rslt.setId(jsObj.get("id").isString().stringValue());
         final JSONObject jsUserObj = jsObj.get("author").isObject();
@@ -392,7 +393,8 @@ public class JsonDeserializer {
         if (null != jsStObj) {
             rslt.setProcedure(procedureFromJson(jsStObj));
         }
-        rslt.setStartTime(new Date((long) jsObj.get("startTime").isNumber().doubleValue()));
+        final Date d = new Date((long) jsObj.get("startTime").isNumber().doubleValue());
+        rslt.setStartTime(new Date(d.getTime() + (d.getTimezoneOffset() * 60 * 1000))); // eliminate browser TZ offset
         rslt.setLength((int) jsObj.get("length").isNumber().doubleValue());
         rslt.setSent(getDate(jsObj.get("sent")));
         rslt.setText(jsObj.get("text").isString().stringValue());
@@ -556,11 +558,13 @@ public class JsonDeserializer {
      * @param jsonValue JSON value
      * @return JSON value converted to <code>Date</code> or <i>null</i> if value is null
      */
-    private Date getDate(final JSONValue jsonValue) {
+    @SuppressWarnings("deprecation")
+	private Date getDate(final JSONValue jsonValue) {
         if (null == jsonValue || JSONNull.getInstance().equals(jsonValue)) {
             return null;
         }
-        return new Date((long) jsonValue.isNumber().doubleValue());
+        final Date d = new Date((long) jsonValue.isNumber().doubleValue());
+        return new Date(d.getTime() + (d.getTimezoneOffset() * 60 * 1000)); // eliminate browser TZ offset
     }
 
 }
