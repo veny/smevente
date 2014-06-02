@@ -57,6 +57,7 @@ public class ValidationContainer {
      * @param args CLI arguments
      */
     public static void main(final String[] args) {
+        @SuppressWarnings("resource")
         final ApplicationContext actx = new ClassPathXmlApplicationContext(
                 new String[] { "appctx-validation.xml" });
 
