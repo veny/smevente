@@ -25,6 +25,7 @@ class Loader < Optitron::CLI
     delete if with_delete
     imp_units
     imp_users
+exit
     imp_membs
     imp_procedures
     imp_patients
@@ -55,13 +56,16 @@ class Loader < Optitron::CLI
     end
 
     def imp_units
-      head = { 'name' => 2, 'key' => 3 } # !!!metadata
+      head = { 'name'=>2, 'key'=>3, 'limitedSmss'=>1 }
       data = read_csv 'Unit'
 
       data.each do |row|
         doc = { '@class' => 'Unit', 'type' => 'PATIENT', 'revision' => 0, 'deleted' => false }
         head.each { |k,v| doc[k] = row[v] }
         key = doc.delete 'key'
+        doc['limitedSmss'] = 0 unless doc['limitedSmss'].nil? # set all limit to '0', they are too old
+        metadata = row[4].split /[&=]/
+        doc['smsGateway'] = "type=sms.sluzba.cz&username=#{metadata[1]}&password=#{metadata[3]}"
         created = @client.create_document doc
         UNITS[key] = created.doc_rid
       end
@@ -70,20 +74,22 @@ class Loader < Optitron::CLI
 
 
     def imp_users
-      head = { 'username'=>0, 'deleted'=>2, 'password'=>6, 'fullname'=>5, 'key'=>4 } # !!!lastLoggedIn
+      head = { 'username'=>0, 'lastLoggedIn'=>1, 'deleted'=>2, 'password'=>6, 'fullname'=>5, 'key'=>4 }
       data = read_csv 'User'
 
       data.each do |row|
         doc = { '@class' => 'User', 'revision' => 0 }
         head.each { |k,v| doc[k] = row[v] }
         doc['deleted'] = (doc['deleted']=='True')
+        # expected format: yyyy-MM-dd HH:mm:ss
+        doc['lastLoggedIn'] = doc['lastLoggedIn'].gsub('T', ' ') unless doc['lastLoggedIn'].nil?
+        doc['timezone'] = 'Europe/Prague'
         key = doc.delete 'key'
         created = @client.create_document doc
         USERS[key] = created.doc_rid
       end
       puts "--- USERs: #{USERS.size}"
     end
-
 
     def imp_membs
       head = { 'userId' => 0, 'unitId' => 1, 'role' => 2, 'significance' => 4, 'key' => 3 }
