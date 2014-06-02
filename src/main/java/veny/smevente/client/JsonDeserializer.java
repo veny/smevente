@@ -378,7 +378,7 @@ public class JsonDeserializer {
      * @return instance of <code>Event</code>
      */
     @SuppressWarnings("deprecation")
-	private Event eventFromJson(final JSONObject jsObj) {
+    private Event eventFromJson(final JSONObject jsObj) {
         final Event rslt = new Event();
         rslt.setId(jsObj.get("id").isString().stringValue());
         final JSONObject jsUserObj = jsObj.get("author").isObject();
@@ -559,7 +559,7 @@ public class JsonDeserializer {
      * @return JSON value converted to <code>Date</code> or <i>null</i> if value is null
      */
     @SuppressWarnings("deprecation")
-	private Date getDate(final JSONValue jsonValue) {
+    private Date getDate(final JSONValue jsonValue) {
         if (null == jsonValue || JSONNull.getInstance().equals(jsonValue)) {
             return null;
         }
