@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -22,8 +21,8 @@ import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
-import veny.smevente.model.Event;
 import veny.smevente.model.Customer;
+import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -69,23 +68,6 @@ public class EventServiceImpl implements EventService {
     @Autowired
     private SmsGatewayService smsGatewayService;
 
-    /** Date formatter. */
-    private final DateFormat dateFormatter = new SimpleDateFormat("dd.MM.yy");
-    /** Time formatter. */
-    private final DateFormat timeFormatter = new SimpleDateFormat("H:mm");
-
-    /** Constructor. */
-    public EventServiceImpl() {
-        // inspired by http://groups.google.com/group/google-appengine-java/browse_thread/thread/d6800e75ad2ce28b
-
-        // TODO [veny,B] should be configured in Unit
-        final GregorianCalendar gc = new GregorianCalendar(new Locale("cs"));
-        final TimeZone tz = TimeZone.getTimeZone("Europe/Prague");
-        gc.setTimeZone(tz);
-        dateFormatter.setCalendar(gc);
-        timeFormatter.setCalendar(gc);
-        LOG.info("TimeFormatter initialized ok, timeZone=" + timeFormatter.getTimeZone());
-    }
 
     /** {@inheritDoc} */
     @Transactional
@@ -397,15 +379,22 @@ public class EventServiceImpl implements EventService {
      * @return formated event text
      */
     private String format(final Event event) {
+        if (null == event.getAuthor()) { throw new IllegalArgumentException("event without author"); }
+
+        final GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone(event.getAuthor().getTimezone()));
+        final DateFormat df = new SimpleDateFormat("dd.MM.yy");
+        final DateFormat tf = new SimpleDateFormat("H:mm");
+        df.setCalendar(gc);
+        tf.setCalendar(gc);
+
         final Map<String, String> replaceConf = new HashMap<String, String>();
         // date & time
         if (null != event.getStartTime()) { // can be null for special events
-            replaceConf.put("#{date}", dateFormatter.format(event.getStartTime()));
-            replaceConf.put("#{time}", timeFormatter.format(event.getStartTime()));
+            replaceConf.put("#{date}", df.format(event.getStartTime()));
+            replaceConf.put("#{time}", tf.format(event.getStartTime()));
         }
         // user
         if (event.getText().contains("#{doctor}")) {
-            if (null == event.getAuthor()) { throw new IllegalArgumentException("event without author"); }
             replaceConf.put("#{doctor}", event.getAuthor().getFullname());
         }
 
