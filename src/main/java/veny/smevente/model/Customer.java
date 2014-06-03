@@ -10,45 +10,45 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.orientechnologies.orient.core.annotation.OBeforeSerialization;
 
 /**
- * Entity class representing the Patient.
+ * Entity class representing the Customer.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 14.11.2010
  */
 @SoftDelete
-public class Patient extends AbstractEntity {
+public class Customer extends AbstractEntity {
 
     /** Unit which is master of this. */
     @ManyToOne
     private Unit unit;
-    /** Patient's first name. */
+    /** First name. */
     @Column
     private String firstname;
-    /** Patient's surname. */
+    /** Surname. */
     @Column
     private String surname;
-    /** Patient's phone number. */
+    /** Phone number. */
     @Column
     private String phoneNumber;
-    /** Patient's birth number. */
+    /** Birth number. */
     @Column
     private String birthNumber;
-    /** Patient's degree. */
+    /** Degree. */
     @Column
     private String degree;
-    /** Patient's degree. */
+    /** Street. */
     @Column
     private String street;
-    /** Patient's degree. */
+    /** City. */
     @Column
     private String city;
-    /** Patient's degree. */
+    /** Zip code. */
     @Column
     private String zipCode;
-    /** Patient's degree. */
+    /** Employer. */
     @Column
     private String employer;
-    /** Patient's degree. */
+    /** Careers. */
     @Column
     private String careers;
     /** Fullname as ASCII for search. */
@@ -127,7 +127,7 @@ public class Patient extends AbstractEntity {
     // CHECKSTYLE:ON
 
     /**
-     * Gets patient's fullname.
+     * Gets customer's fullname.
      * @return fullname
      */
     @JsonIgnore
@@ -176,7 +176,7 @@ public class Patient extends AbstractEntity {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return new StringBuilder("Patient(id=")
+        return new StringBuilder("Customer(id=")
             .append(getId())
             .append(", unit=")
             .append(null == unit ? "null" : unit.getName())
@@ -196,9 +196,9 @@ public class Patient extends AbstractEntity {
     @Override
     public boolean equals(final Object other) {
         if (this == other) { return true; }
-        if (!(other instanceof Patient)) { return false; }
+        if (!(other instanceof Customer)) { return false; }
 
-        return getId().equals(((Patient) other).getId());
+        return getId().equals(((Customer) other).getId());
     }
 
     /** {@inheritDoc} */

@@ -52,10 +52,10 @@ public class Event extends AbstractEntity {
     /** Author. */
     @ManyToOne
     private User author;
-    /** Patient. */
+    /** Customer. */
     @ManyToOne
-    private Patient patient;
-    /** Medical Help Category. */
+    private Customer customer;
+    /** Procedure. */
     @ManyToOne
     private Procedure procedure;
     /** Start time. */
@@ -90,11 +90,11 @@ public class Event extends AbstractEntity {
     public void setAuthor(User author) {
         this.author = author;
     }
-    public Patient getPatient() {
-        return patient;
+    public Customer getCustomer() {
+        return customer;
     }
-    public void setPatient(Patient patient) {
-        this.patient = patient;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
     public Procedure getProcedure() {
         return procedure;
@@ -166,13 +166,13 @@ public class Event extends AbstractEntity {
         getAuthor().setId(authorId);
     }
     /**
-     * Sets patient ID to a new patient object.
-     * @param patientId patient ID
+     * Sets customer ID to a new customer object.
+     * @param customerId customer ID
      */
-    public void setPatientId(final Object patientId) {
-        if (null == patientId) { throw new NullPointerException("patient ID is null"); }
-        setPatient(new Patient());
-        getPatient().setId(patientId);
+    public void setCustomertId(final Object customerId) {
+        if (null == customerId) { throw new NullPointerException("customer ID is null"); }
+        setCustomer(new Customer());
+        getCustomer().setId(customerId);
     }
     /**
      * Sets procedure ID to a new procedure object.
@@ -193,8 +193,8 @@ public class Event extends AbstractEntity {
             .append(getId())
             .append(", author=")
             .append(author.getUsername())
-            .append(", patientId='")
-            .append(patient.fullname())
+            .append(", customerId='")
+            .append(customer.fullname())
             .append("', procedure=")
             .append(procedure.getName())
             .append(", startTime=")

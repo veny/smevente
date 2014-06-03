@@ -2,7 +2,7 @@ package veny.smevente.dao;
 
 import java.util.List;
 
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 
 /**
  * Interface for persistence operation with <code>Patient</code> entity.
@@ -10,7 +10,7 @@ import veny.smevente.model.Patient;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 1.7.2010
  */
-public interface PatientDao extends GenericDao<Patient> {
+public interface PatientDao extends GenericDao<Customer> {
 
     /**
      * Finds patients according to given parameter name and its value.
@@ -19,7 +19,7 @@ public interface PatientDao extends GenericDao<Patient> {
      * @param value parameter value
      * @return list of found patients
      */
-    List<Patient> findLikeBy(Object unitId, String paramName, Object value);
+    List<Customer> findLikeBy(Object unitId, String paramName, Object value);
 
     /**
      * Gets patient according to given birth number.
@@ -28,6 +28,6 @@ public interface PatientDao extends GenericDao<Patient> {
      * @param birthNumber birth number to search
      * @return found patient or <i>null</i> if not found
      */
-    Patient findByBirthNumber(Object unitId, String birthNumber);
+    Customer findByBirthNumber(Object unitId, String birthNumber);
 
 }

@@ -5,7 +5,7 @@ import java.util.Date;
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -74,7 +74,7 @@ public class SmsDetailDlgPresenter extends AbstractPresenter<SmsDetailDlgPresent
 
         final Date startTime = sms.getStartTime();
         final Date endTime = new Date(startTime.getTime() + (sms.getLength() * 60 * 1000));
-        final Patient patient = sms.getPatient();
+        final Customer patient = sms.getCustomer();
 
         getView().getDate().setText(DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG).format(startTime));
         getView().getTime().setText(

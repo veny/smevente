@@ -18,7 +18,7 @@ import veny.smevente.client.uc.LoginViewImpl;
 import veny.smevente.model.AbstractEntity;
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -80,7 +80,7 @@ public final class App implements ValueChangeHandler<String> {
     /** List of other members in currently selected unit. */
     private List<User> unitMembers;
     /** List of available patients in currently selected unit. */
-    private List<Patient> patients;
+    private List<Customer> patients;
     /** List of available procedures in currently selected unit. */
     private List<Procedure> procedures;
 
@@ -425,14 +425,14 @@ public final class App implements ValueChangeHandler<String> {
      * Gets available patients in currently selected unit.
      * @return patients in currently selected unit
      */
-    public List<Patient> getPatients() {
+    public List<Customer> getPatients() {
         return patients;
     }
     /**
      * Sets patients for currently selected unit.
      * @param patients patients for currently selected unit
      */
-    public void setPatients(final List<Patient> patients) {
+    public void setPatients(final List<Customer> patients) {
         this.patients = patients;
     }
 

@@ -19,7 +19,7 @@ import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.client.utils.UiUtils;
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
@@ -88,7 +88,7 @@ public class FindPatientPresenter
     private final PopupPanel menuPopupPanel = new PopupPanel(true, true);
 
     /** List of found patients. */
-    private List<Patient> foundPatients;
+    private List<Customer> foundPatients;
 
     /** ID of patient where the context menu is raised. */
     private String clickedId = null;
@@ -157,7 +157,7 @@ public class FindPatientPresenter
             @Override
             public void onDoubleClick(final DoubleClickEvent event) {
                 if (clickedRowIndex >= 0 && clickedRowIndex < foundPatients.size()) {
-                    final Patient p = foundPatients.get(clickedRowIndex);
+                    final Customer p = foundPatients.get(clickedRowIndex);
                     App.get().switchToPresenterByType(PresenterEnum.STORE_PATIENT, p);
                 }
             }
@@ -166,7 +166,7 @@ public class FindPatientPresenter
         // context menu
         final Command updateCommand = new Command() {
             public void execute() {
-                final Patient p = hideMenuAndGetSelectedPatient();
+                final Customer p = hideMenuAndGetSelectedPatient();
                 App.get().switchToPresenterByType(PresenterEnum.STORE_PATIENT, p);
             }
         };
@@ -174,7 +174,7 @@ public class FindPatientPresenter
             public void execute() {
                 menuPopupPanel.hide();
                 final int idx = getIndexById(clickedId);
-                final Patient p = foundPatients.get(idx);
+                final Customer p = foundPatients.get(idx);
                 final String name = p.getFirstname() + " " + p.getSurname();
                 if (Window.confirm(CONSTANTS.deletePatientQuestion()[
                         App.get().getSelectedUnitTextVariant()] + "\n" + name)) {
@@ -185,14 +185,14 @@ public class FindPatientPresenter
         };
         final Command specialSmsCommand = new Command() {
             public void execute() {
-                final Patient p = hideMenuAndGetSelectedPatient();
+                final Customer p = hideMenuAndGetSelectedPatient();
                 specialSmsDlg(p);
                 clickedId = null;
             }
         };
         final Command historyCommand = new Command() {
             public void execute() {
-                final Patient p = hideMenuAndGetSelectedPatient();
+                final Customer p = hideMenuAndGetSelectedPatient();
                 App.get().switchToPresenterByType(PresenterEnum.PATIENT_HISTORY, p.getId());
             }
         };
@@ -253,11 +253,11 @@ public class FindPatientPresenter
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final Patient patient = new Patient();
+                final Customer patient = new Customer();
                 patient.setId(id);
                 eventBus.fireEvent(new CrudEvent(OperationType.DELETE, patient));
                 view.getResultTable().removeRow(line);
-                for (Patient foundPatient : foundPatients) {
+                for (Customer foundPatient : foundPatients) {
                     if (foundPatient.equals(id)) {
                         foundPatients.remove(foundPatient);
                         break;
@@ -283,9 +283,9 @@ public class FindPatientPresenter
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                foundPatients = App.get().getJsonDeserializer().deserializeList(Patient.class, "patients", jsonText);
+                foundPatients = App.get().getJsonDeserializer().deserializeList(Customer.class, "patients", jsonText);
                 int line = 1;
-                for (Patient p : foundPatients) {
+                for (Customer p : foundPatients) {
                     addPatient(p, line);
                     line++;
                 }
@@ -299,7 +299,7 @@ public class FindPatientPresenter
      * @param p the patient
      * @param line line where the patient will be inserted on
      */
-    private void addPatient(final Patient p, final int line) {
+    private void addPatient(final Customer p, final int line) {
         final FlexTable table = view.getResultTable();
         UiUtils.addCell(table, line, 0, new Label("" + line));
         UiUtils.addCell(table, line, 1, new Label(p.fullname()));
@@ -320,7 +320,7 @@ public class FindPatientPresenter
      * Hides the popup menu and gets the patient where the action has been selected on.
      * @return selected patient
      */
-    public Patient hideMenuAndGetSelectedPatient() {
+    public Customer hideMenuAndGetSelectedPatient() {
         menuPopupPanel.hide();
         final int idx = getIndexById(clickedId);
         return foundPatients.get(idx);
@@ -345,7 +345,7 @@ public class FindPatientPresenter
         if (null == foundPatients) { throw new NullPointerException("patients collection is null"); }
 
         int i = 0;
-        for (Patient p : foundPatients) {
+        for (Customer p : foundPatients) {
             if (idAsText.equals(p.getId())) { return i; }
             i++;
         }
@@ -357,7 +357,7 @@ public class FindPatientPresenter
      * Displays a dialog window to send a special SMS.
      * @param patient the recipient
      */
-    private void specialSmsDlg(final Patient patient) {
+    private void specialSmsDlg(final Customer patient) {
         final List<Procedure> immediateMsgCategories = App.get().getProcedures(Event.Type.IMMEDIATE_MESSAGE);
         if (immediateMsgCategories.isEmpty()) {
             Window.alert(CONSTANTS.noSpecialSmsInUnit());
@@ -392,7 +392,7 @@ public class FindPatientPresenter
      * @param patient the recipient
      * @param smsText text to be sent as SMS
      */
-    private void sendSpecialSms(final Patient patient, final String smsText) {
+    private void sendSpecialSms(final Customer patient, final String smsText) {
         final Map<String, String> params = new HashMap<String, String>();
         params.put("authorId", App.get().getSelectedUnitMember().getId().toString());
         params.put("patientId", patient.getId().toString());

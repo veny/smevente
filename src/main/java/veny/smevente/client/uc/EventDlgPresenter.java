@@ -9,7 +9,7 @@ import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.PatientNameSuggestOracle;
 import veny.smevente.client.utils.PatientSuggestion;
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -117,7 +117,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
     /** List of available Medical Help Categories. */
     private List<Procedure> medicalHelpCategories;
     /** Selected patient. */
-    private Patient selectedPatient = null;
+    private Customer selectedPatient = null;
 
     /**
      * Initializes presenter for Create.
@@ -126,7 +126,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
      * @param mhcs list of medical help categories
      */
     @SuppressWarnings("deprecation")
-    public void init(final Date startTime, final List<Patient> patients, final List<Procedure> mhcs) {
+    public void init(final Date startTime, final List<Customer> patients, final List<Procedure> mhcs) {
         // clear all the stuff
         clean();
 
@@ -161,12 +161,12 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
      * @param mhcs list of medical help categories
      */
     public void init(
-            final Event sms, final List<Patient> patients, final List<Procedure> mhcs) {
+            final Event sms, final List<Customer> patients, final List<Procedure> mhcs) {
 
         this.init(sms.getStartTime(), patients, mhcs);
 
         // set all form elements
-        selectedPatient = sms.getPatient();
+        selectedPatient = sms.getCustomer();
         view.getEventId().setValue(sms.getId().toString());
         view.getNameSuggestBox().getTextBox().setText(selectedPatient.fullname());
         view.getPhoneNumber().setText(selectedPatient.getPhoneNumber());
@@ -204,7 +204,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
      * Gets the selected patient.
      * @return selected patient
      */
-    public Patient getSelectedPatient() {
+    public Customer getSelectedPatient() {
         return selectedPatient;
     }
 

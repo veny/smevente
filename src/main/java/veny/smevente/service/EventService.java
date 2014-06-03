@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import veny.smevente.client.utils.Pair;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.User;
 import veny.smevente.service.SmsGatewayService.SmsException;
@@ -85,7 +85,7 @@ public interface EventService {
      * @param patientId patient ID
      * @return the patient and his list of events sorted descending by start date
      */
-    Pair<Patient, List<Event>> findEventsByPatient(Object patientId);
+    Pair<Customer, List<Event>> findEventsByPatient(Object patientId);
 
     /**
      * Sends event with given ID as SMS.

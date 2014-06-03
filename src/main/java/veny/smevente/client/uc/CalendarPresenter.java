@@ -25,7 +25,7 @@ import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
@@ -145,8 +145,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     public void create(final CrudEvent event) {
-        if (event.getData() instanceof Patient) {
-            App.get().getPatients().add((Patient) event.getData());
+        if (event.getData() instanceof Customer) {
+            App.get().getPatients().add((Customer) event.getData());
         } else if (event.getData() instanceof Procedure) {
             App.get().getAllProcedures().add((Procedure) event.getData());
         }
@@ -157,10 +157,10 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     public void update(final CrudEvent event) {
-        if (event.getData() instanceof Patient) {
-            final int idx = getPatientIndex(((Patient) event.getData()).getId());
+        if (event.getData() instanceof Customer) {
+            final int idx = getPatientIndex(((Customer) event.getData()).getId());
             if (-1 != idx) {
-                App.get().getPatients().set(idx, (Patient) event.getData());
+                App.get().getPatients().set(idx, (Customer) event.getData());
             }
         } else if (event.getData() instanceof Procedure) {
             final int idx = getProcedureIndex(((Procedure) event.getData()).getId());
@@ -172,8 +172,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** {@inheritDoc} */
     @Override
     public void delete(final CrudEvent event) {
-        if (event.getData() instanceof Patient) {
-            final int idx = getPatientIndex(((Patient) event.getData()).getId());
+        if (event.getData() instanceof Customer) {
+            final int idx = getPatientIndex(((Customer) event.getData()).getId());
             if (-1 != idx) {
                 App.get().getPatients().remove(idx);
             }
@@ -473,7 +473,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         final Command deleteCommand = new Command() {
             public void execute() {
                 popupPanel.hide();
-                if (Window.confirm(MESSAGES.deleteSmsQuestion(eventWidget.getEvent().getPatient().fullname()))) {
+                if (Window.confirm(MESSAGES.deleteSmsQuestion(eventWidget.getEvent().getCustomer().fullname()))) {
                     deleteEvent(eventWidget);
                 }
             }
@@ -485,7 +485,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             final Command sendCommand = new Command() {
                 public void execute() {
                     popupPanel.hide();
-                    if (Window.confirm(MESSAGES.sendNowQuestion(eventWidget.getEvent().getPatient().fullname()))) {
+                    if (Window.confirm(MESSAGES.sendNowQuestion(eventWidget.getEvent().getCustomer().fullname()))) {
                         sendSms(eventWidget);
                     }
                 }

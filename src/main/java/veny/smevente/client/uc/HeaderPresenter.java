@@ -18,7 +18,7 @@ import veny.smevente.client.utils.CrudEvent;
 import veny.smevente.client.utils.CrudEvent.CrudEventHandler;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -311,7 +311,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
             @Override
             public void onSuccess(final String jsonText) {
                 App.get().setPatients(
-                        App.get().getJsonDeserializer().deserializeList(Patient.class, "patients", jsonText));
+                        App.get().getJsonDeserializer().deserializeList(Customer.class, "patients", jsonText));
                 App.get().setProcedures(
                         App.get().getJsonDeserializer().deserializeList(
                                 Procedure.class, "procedures", jsonText));

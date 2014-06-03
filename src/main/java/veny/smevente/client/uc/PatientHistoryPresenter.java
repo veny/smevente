@@ -10,7 +10,7 @@ import veny.smevente.client.rest.AbstractRestCallbackWithErrorHandling;
 import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.UiUtils;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 
 /**
- * Patient History presenter.
+ * Customer History presenter.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 14.1.2011
@@ -98,8 +98,8 @@ public class PatientHistoryPresenter
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final Pair<Patient, List<Event>> historyPair =
-                    App.get().getJsonDeserializer().patientHistoryFomJson(jsonText);
+                final Pair<Customer, List<Event>> historyPair =
+                    App.get().getJsonDeserializer().customerHistoryFomJson(jsonText);
                 processHistory(historyPair);
             }
         });
@@ -110,7 +110,7 @@ public class PatientHistoryPresenter
      * Process the history response delivered from server.
      * @param historyPair pair of patient and his SMSs
      */
-    private void processHistory(final Pair<Patient, List<Event>> historyPair) {
+    private void processHistory(final Pair<Customer, List<Event>> historyPair) {
         view.getFullname().setText(historyPair.getA().fullname()
                 + " [" + historyPair.getA().formattedBirthNumber() + "]");
 

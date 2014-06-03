@@ -17,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.common.base.Strings;
 
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.service.UnitService;
@@ -65,7 +65,7 @@ public class UnitController {
         modelAndView.addObject("unitMembers", other);
 
         // patients
-        final List<Patient> patients = unitService.getPatientsByUnit(unitId);
+        final List<Customer> patients = unitService.getPatientsByUnit(unitId);
         modelAndView.addObject("patients", patients);
 
         // procedures (type=null => all)
@@ -82,15 +82,15 @@ public class UnitController {
      * The criterion to decide if create or update is patient's ID value:
      * 'create' if ID is <i>null</i>, otherwise 'update'.
      *
-     * There is used trick with @see {@link Patient#setUnitId(Object)}.
+     * There is used trick with @see {@link Customer#setUnitId(Object)}.
      *
      * @param patient patient
      * @return model & view
      */
     @RequestMapping(value = "/patient/", method = RequestMethod.POST)
-    public ModelAndView storePatient(final Patient patient) {
+    public ModelAndView storePatient(final Customer patient) {
 
-        final Patient created = unitService.storePatient(patient);
+        final Customer created = unitService.storePatient(patient);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("patient", created);
         return modelAndView;
@@ -130,7 +130,7 @@ public class UnitController {
         final String n = (Strings.isNullOrEmpty(name) ? null : name.trim());
         final String pn = (Strings.isNullOrEmpty(phoneNumber) ? null : phoneNumber.trim());
         final String bn = (Strings.isNullOrEmpty(birthNumber) ? null : birthNumber.trim());
-        final List<Patient> patients = unitService.findPatients(unitId, n, pn, bn);
+        final List<Customer> patients = unitService.findPatients(unitId, n, pn, bn);
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("patients", patients);

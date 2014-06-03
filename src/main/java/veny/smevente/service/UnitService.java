@@ -4,7 +4,7 @@ import java.util.List;
 
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 
@@ -53,7 +53,7 @@ public interface UnitService {
      * @param client client to be created
      * @return created client
      */
-    Patient storePatient(Patient client);
+    Customer storePatient(Customer client);
 
     /**
      * Gets patient by ID.
@@ -61,7 +61,7 @@ public interface UnitService {
      * @param id patient ID
      * @return found patient
      */
-    Patient getPatientById(Object id);
+    Customer getPatientById(Object id);
 
     /**
      * Gets patients by unit.
@@ -69,7 +69,7 @@ public interface UnitService {
      * @param unitId unit ID
      * @return list of patients in given unit
      */
-    List<Patient> getPatientsByUnit(Object unitId);
+    List<Customer> getPatientsByUnit(Object unitId);
 
     /**
      * Finds patients according to given name and/or phone number and/or birth number.
@@ -80,7 +80,7 @@ public interface UnitService {
      * @param birthNumber birth number to search
      * @return list of found patients
      */
-    List<Patient> findPatients(Object unitId, String name, String phoneNumber, String birthNumber);
+    List<Customer> findPatients(Object unitId, String name, String phoneNumber, String birthNumber);
 
     /**
      * Deletes patient.

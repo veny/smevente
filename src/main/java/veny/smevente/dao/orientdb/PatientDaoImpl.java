@@ -6,7 +6,7 @@ import java.util.Map;
 
 import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 
 import com.google.common.base.Strings;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -17,17 +17,17 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 1.7.2010
  */
-public class PatientDaoImpl extends AbstractDaoOrientdb<Patient> implements PatientDao {
+public class PatientDaoImpl extends AbstractDaoOrientdb<Customer> implements PatientDao {
 
     /** {@inheritDoc} */
     @Override
-    public List<Patient> findLikeBy(final Object unitId, final String paramName, final Object value) {
+    public List<Customer> findLikeBy(final Object unitId, final String paramName, final Object value) {
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
         if (Strings.isNullOrEmpty(paramName)) { throw new IllegalArgumentException("parameter name cannot be blank"); }
 
-        return getDatabaseWrapper().execute(new ODatabaseCallback<List<Patient>>() {
+        return getDatabaseWrapper().execute(new ODatabaseCallback<List<Customer>>() {
             @Override
-            public List<Patient> doWithDatabase(final OObjectDatabaseTx db) {
+            public List<Customer> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
                         .append(getPersistentClass().getSimpleName())
                         .append(" WHERE unit = :unitId AND (").append(paramName)
@@ -36,7 +36,7 @@ public class PatientDaoImpl extends AbstractDaoOrientdb<Patient> implements Pati
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("unitId", unitId);
 
-                final List<Patient> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+                final List<Customer> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
                 detachWithFirstLevelAssociations(rslt, db);
                 return rslt;
             }
@@ -45,16 +45,16 @@ public class PatientDaoImpl extends AbstractDaoOrientdb<Patient> implements Pati
 
     /** {@inheritDoc} */
     @Override
-    public Patient findByBirthNumber(final Object unitId, final String birthNumber) {
+    public Customer findByBirthNumber(final Object unitId, final String birthNumber) {
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
         if (Strings.isNullOrEmpty(birthNumber)) {
             throw new IllegalArgumentException("birth number name cannot be blank");
         }
 
-        return getDatabaseWrapper().execute(new ODatabaseCallback<Patient>() {
+        return getDatabaseWrapper().execute(new ODatabaseCallback<Customer>() {
             @Override
-            public Patient doWithDatabase(final OObjectDatabaseTx db) {
-                final List<Patient> bn = findBy("unit", unitId, "birthNumber", birthNumber.trim(), null);
+            public Customer doWithDatabase(final OObjectDatabaseTx db) {
+                final List<Customer> bn = findBy("unit", unitId, "birthNumber", birthNumber.trim(), null);
 
                 if (bn.isEmpty()) { return null; }
                 if (bn.size() > 1) {

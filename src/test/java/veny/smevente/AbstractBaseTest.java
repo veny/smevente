@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import veny.smevente.dao.orientdb.DatabaseWrapper;
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -192,7 +192,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     // CHECKSTYLE:ON
 
     /** @return a new created default patient */
-    protected Patient createDefaultPatient() {
+    protected Customer createDefaultPatient() {
         final Unit unit = createDefaultUnit();
         return createPatient(FIRSTNAME, SURNAME, PHONE_NUMBER, BIRTH_NUMBER, unit);
     }
@@ -205,10 +205,10 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
      * @param unit unit to be the patient put into
      * @return a new created patient
      */
-    protected Patient createPatient(
+    protected Customer createPatient(
             final String firstname, final String surname,
             final String phoneNumber, final String birthNumber, final Unit unit) {
-        final Patient toCreate = new Patient();
+        final Customer toCreate = new Customer();
         toCreate.setFirstname(firstname);
         toCreate.setSurname(surname);
         toCreate.setPhoneNumber(phoneNumber);
@@ -221,7 +221,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
      * @param patient patient to be checked
      * @param aggregated whether to assert the aggregated objects too
      */
-    protected void assertDefaultPatient(final Patient patient, final boolean aggregated) {
+    protected void assertDefaultPatient(final Customer patient, final boolean aggregated) {
         assertNotNull(patient);
         assertNotNull(patient.getId());
         if (aggregated) { assertDefaultUnit(patient.getUnit()); }
@@ -325,7 +325,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     /** @return a new created default event */
     protected Event createDefaultEvent() {
         final User author = createDefaultUser();
-        final Patient patient = createDefaultPatient();
+        final Customer patient = createDefaultPatient();
         final Procedure procedure = createProcedure(PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME,
                 PROCEDURE_MSGTEXT, null, patient.getUnit());
         return createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, author, patient, procedure);
@@ -337,15 +337,15 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
      * @param len length of the event
      * @param notice notice
      * @param author author
-     * @param patient patient (recipient)
+     * @param customer customer (recipient)
      * @param procedure procedure
      * @return a new created event
      */
     protected Event createEvent(final String text, final Date startTime, final int len, final String notice,
-            final User author, final Patient patient, final Procedure procedure) {
+            final User author, final Customer customer, final Procedure procedure) {
         final Event event = new Event();
         event.setAuthor(author);
-        event.setPatient(patient);
+        event.setCustomer(customer);
         event.setProcedure(procedure);
         event.setText(text);
         event.setStartTime(startTime);
@@ -363,7 +363,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         assertNotNull(event.getId());
         if (aggregated) {
             assertDefaultUser(event.getAuthor());
-            assertDefaultPatient(event.getPatient(), false);
+            assertDefaultPatient(event.getCustomer(), false);
             assertDefaultProcedure(event.getProcedure(), null, false);
         }
         assertEquals(EVENT_TEXT, event.getText());

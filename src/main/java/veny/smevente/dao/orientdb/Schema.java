@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import veny.smevente.model.AbstractEntity;
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -44,7 +44,7 @@ public class Schema {
     public void drop() {
         final String[] classes = {
                 Procedure.class.getSimpleName(),
-                Patient.class.getSimpleName(),
+                Customer.class.getSimpleName(),
                 Membership.class.getSimpleName(),
                 Unit.class.getSimpleName(),
                 User.class.getSimpleName(),
@@ -104,21 +104,21 @@ public class Schema {
             membership.createProperty("role", OType.STRING).setMandatory(true).setNotNull(true);
             membership.createProperty("significance", OType.INTEGER);
             LOG.info("class created, name=" + membership.getName());
-            // Patient
-            OClass patient = db.getMetadata().getSchema().createClass(Patient.class.getSimpleName(), entity);
-            patient.createProperty("unit", OType.LINK, unit).setMandatory(true);
-            patient.createProperty("firstname", OType.STRING);
-            patient.createProperty("surname", OType.STRING).setMandatory(true).setNotNull(true);
-            patient.createProperty("asciiFullname", OType.STRING).setMandatory(true).setNotNull(true);
-            patient.createProperty("phoneNumber", OType.STRING);
-            patient.createProperty("birthNumber", OType.STRING);
-            patient.createProperty("degree", OType.STRING);
-            patient.createProperty("street", OType.STRING);
-            patient.createProperty("city", OType.STRING);
-            patient.createProperty("zipCode", OType.STRING);
-            patient.createProperty("employer", OType.STRING);
-            patient.createProperty("careers", OType.STRING);
-            LOG.info("class created, name=" + patient.getName());
+            // Customer
+            OClass customer = db.getMetadata().getSchema().createClass(Customer.class.getSimpleName(), entity);
+            customer.createProperty("unit", OType.LINK, unit).setMandatory(true);
+            customer.createProperty("firstname", OType.STRING);
+            customer.createProperty("surname", OType.STRING).setMandatory(true).setNotNull(true);
+            customer.createProperty("asciiFullname", OType.STRING).setMandatory(true).setNotNull(true);
+            customer.createProperty("phoneNumber", OType.STRING);
+            customer.createProperty("birthNumber", OType.STRING);
+            customer.createProperty("degree", OType.STRING);
+            customer.createProperty("street", OType.STRING);
+            customer.createProperty("city", OType.STRING);
+            customer.createProperty("zipCode", OType.STRING);
+            customer.createProperty("employer", OType.STRING);
+            customer.createProperty("careers", OType.STRING);
+            LOG.info("class created, name=" + customer.getName());
             // Procedure
             OClass procedure = db.getMetadata().getSchema().createClass(Procedure.class.getSimpleName(), entity);
             procedure.createProperty("unit", OType.LINK, unit).setMandatory(true);
@@ -131,12 +131,12 @@ public class Schema {
             // Event
             OClass event = db.getMetadata().getSchema().createClass(Event.class.getSimpleName(), entity);
             event.createProperty("author", OType.LINK, user).setMandatory(true);
-            event.createProperty("patient", OType.LINK, patient).setMandatory(true);
-            event.createProperty("procedure", OType.LINK, procedure); // not mandatory for special messages
+            event.createProperty("customer", OType.LINK, customer).setMandatory(true);
+            event.createProperty("procedure", OType.LINK, procedure); // can be 'null' for events of type IMMEDIATE_MESSAGE
             event.createProperty("text", OType.STRING).setMandatory(true).setNotNull(true);
             event.createProperty("notice", OType.STRING);
-            event.createProperty("startTime", OType.DATETIME); // can be 'null' for special events
-            event.createProperty("length", OType.INTEGER); // can be 'null' for special events
+            event.createProperty("startTime", OType.DATETIME); // can be 'null' for events of type IMMEDIATE_MESSAGE
+            event.createProperty("length", OType.INTEGER); // can be 'null' for events of type IMMEDIATE_MESSAGE
             event.createProperty("sent", OType.DATETIME);
             event.createProperty("sendAttemptCount", OType.INTEGER);
             event.createProperty("type", OType.STRING);
@@ -168,12 +168,12 @@ public class Schema {
         membDef.put("m2", "Membership SET user = %veny%, unit = %bar%, role = 'MEMBER', significance = 20");
         membDef.put("m3", "Membership SET user = %max%, unit = %foo%, role = 'MEMBER', significance = 20");
         membDef.put("m4", "Membership SET user = %max%, unit = %bar%, role = 'ADMIN', significance = 40");
-        // Patient
+        // Customer
         Map<String, String> patDef = new HashMap<String, String>();
-        patDef.put("JanNovak",      "Patient SET unit = %foo%, firstname = 'Jan',  surname = 'Novák',     asciiFullname = 'JAN NOVAK',      birthNumber = '7001012000', phoneNumber = '606123123'");
-        patDef.put("PetrZlutoucky", "Patient SET unit = %foo%, firstname = 'Petr', surname = 'Žluťoučký', asciiFullname = 'PETR ZLUTOUCKY', birthNumber = '7002023000', phoneNumber = '606123123'");
-        patDef.put("LindaModra",    "Patient SET unit = %foo%, firstname = 'Lída', surname = 'Modrá',     asciiFullname = 'LIDA MODRA',     birthNumber = '7051011000', phoneNumber = '606123123'");
-        patDef.put("me",            "Patient SET unit = %bar%, firstname = 'veny', surname = 'V',         asciiFullname = 'VENY V',         birthNumber = '7004045000', phoneNumber = '606146177'");
+        patDef.put("JanNovak",      "Customer SET unit = %foo%, firstname = 'Jan',  surname = 'Novák',     asciiFullname = 'JAN NOVAK',      birthNumber = '7001012000', phoneNumber = '606123123'");
+        patDef.put("PetrZlutoucky", "Customer SET unit = %foo%, firstname = 'Petr', surname = 'Žluťoučký', asciiFullname = 'PETR ZLUTOUCKY', birthNumber = '7002023000', phoneNumber = '606123123'");
+        patDef.put("LindaModra",    "Customer SET unit = %foo%, firstname = 'Lída', surname = 'Modrá',     asciiFullname = 'LIDA MODRA',     birthNumber = '7051011000', phoneNumber = '606123123'");
+        patDef.put("me",            "Customer SET unit = %bar%, firstname = 'veny', surname = 'V',         asciiFullname = 'VENY V',         birthNumber = '7004045000', phoneNumber = '606146177'");
         // Procedure
         Map<String, String> procDef = new HashMap<String, String>();
         procDef.put("beleni", "Procedure SET unit = %foo%, name = 'Bělení', messageText = 'Prijdte na beleni', type = 'IN_CALENDAR', color = 'FF0000', time = 30");
@@ -181,8 +181,8 @@ public class Schema {
         procDef.put("p3", "Procedure SET unit = %foo%, name = 'Dovolená', messageText = 'Mame dovolenou', type => 'IMMEDIATE_MESSAGE'");
         // Event
         Map<String, String> eventDef = new HashMap<String, String>();
-        eventDef.put("e1", "Event SET author = %veny%, patient = %JanNovak%, procedure = %beleni%, text = 'Message text', startTime = '2014-05-28 10:10:00:000', length = 30");
-        eventDef.put("e2", "Event SET author = %veny%, patient = %me%, procedure = %beleni%, text = 'Message text', startTime = '2014-06-03 15:00:00:000', length = 60");
+        eventDef.put("e1", "Event SET author = %veny%, customer = %JanNovak%, procedure = %beleni%, text = 'Message text', startTime = '2014-05-28 10:10:00:000', length = 30");
+        eventDef.put("e2", "Event SET author = %veny%, customer = %me%, procedure = %beleni%, text = 'Message text', startTime = '2014-06-03 15:00:00:000', length = 60");
 
         Object[] all = { userDef, unitDef, membDef, patDef, procDef, eventDef };
 

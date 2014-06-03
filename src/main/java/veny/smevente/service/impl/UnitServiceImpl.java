@@ -14,7 +14,7 @@ import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.server.validation.ValidationContainer;
@@ -94,7 +94,7 @@ public class UnitServiceImpl implements UnitService {
     @Transactional
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public Patient storePatient(final Patient client) {
+    public Customer storePatient(final Customer client) {
         if (null == client.getUnit() || null == client.getUnit().getId()) {
             throw new NullPointerException("unknown unit");
         }
@@ -105,7 +105,7 @@ public class UnitServiceImpl implements UnitService {
 
         // unique birth number
         if (!Strings.isNullOrEmpty(client.getBirthNumber())) {
-            final Patient bn = patientDao.findByBirthNumber(client.getUnit().getId(), client.getBirthNumber());
+            final Customer bn = patientDao.findByBirthNumber(client.getUnit().getId(), client.getBirthNumber());
             if (null == bn || (null != client.getId() && bn.getId().toString().equals(client.getId().toString()))) {
                 // expected state <- birth number not found
                 if (LOG.isDebugEnabled()) {
@@ -116,7 +116,7 @@ public class UnitServiceImpl implements UnitService {
             }
         }
 
-        final Patient rslt = patientDao.persist(client);
+        final Customer rslt = patientDao.persist(client);
         LOG.info((null == client.getId() ? "created new client, " : "client updated, ") + rslt);
         return rslt;
     }
@@ -126,8 +126,8 @@ public class UnitServiceImpl implements UnitService {
     @Transactional(readOnly = true)
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public Patient getPatientById(final Object id) {
-        final Patient rslt = patientDao.getById(id);
+    public Customer getPatientById(final Object id) {
+        final Customer rslt = patientDao.getById(id);
         return rslt;
     }
 
@@ -135,9 +135,9 @@ public class UnitServiceImpl implements UnitService {
     @Transactional(readOnly = true)
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public List<Patient> getPatientsByUnit(final Object unitId) {
+    public List<Customer> getPatientsByUnit(final Object unitId) {
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
-        final List<Patient> rslt = patientDao.findBy("unit", unitId, null);
+        final List<Customer> rslt = patientDao.findBy("unit", unitId, null);
         LOG.info("found " + rslt.size() + " patients(s) by unit");
         return rslt;
     }
@@ -147,7 +147,7 @@ public class UnitServiceImpl implements UnitService {
     @Transactional(readOnly = true)
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public List<Patient> findPatients(
+    public List<Customer> findPatients(
             final Object unitId, final String name, final String phoneNumber, final String birthNumber) {
 
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
@@ -158,7 +158,7 @@ public class UnitServiceImpl implements UnitService {
             return getPatientsByUnit(unitId);
         }
 
-        List<Patient> collectedRslt = null;
+        List<Customer> collectedRslt = null;
 
         // name
         if (null != name) {
@@ -170,27 +170,27 @@ public class UnitServiceImpl implements UnitService {
 
         // phone number
         if (null != phoneNumber) {
-            final List<Patient> found = patientDao.findLikeBy(unitId, "phoneNumber", phoneNumber);
+            final List<Customer> found = patientDao.findLikeBy(unitId, "phoneNumber", phoneNumber);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("patient(s) found by phone number, size=" + found.size());
             }
             if (null == collectedRslt) {
                 collectedRslt = found;
             } else {
-                collectedRslt = (List<Patient>) CollectionUtils.intersection(collectedRslt, found);
+                collectedRslt = (List<Customer>) CollectionUtils.intersection(collectedRslt, found);
             }
         }
 
         // birth number
         if (null != birthNumber) {
-            final List<Patient> found = patientDao.findLikeBy(unitId, "birthNumber", birthNumber);
+            final List<Customer> found = patientDao.findLikeBy(unitId, "birthNumber", birthNumber);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("patient(s) found by birth number, size=" + found.size());
             }
             if (null == collectedRslt) {
                 collectedRslt = found;
             } else {
-                collectedRslt = (List<Patient>) CollectionUtils.intersection(collectedRslt, found);
+                collectedRslt = (List<Customer>) CollectionUtils.intersection(collectedRslt, found);
             }
         }
 
@@ -337,7 +337,7 @@ public class UnitServiceImpl implements UnitService {
      * Validation of a patient before persistence.
      * @param patient patient to be validated
      */
-    private void validatePatient(final Patient patient) {
+    private void validatePatient(final Customer patient) {
         if (null == patient) { throw new NullPointerException("patient cannot be null"); }
         if (null == patient.getUnit()) { throw new NullPointerException("unit cannot be null"); }
         if (null == patient.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }

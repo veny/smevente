@@ -23,7 +23,7 @@ import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -101,12 +101,12 @@ public class EventServiceImpl implements EventService {
         }
         final User author = userDao.getById(event.getAuthor().getId());
         event.setAuthor(author);
-        // patient
-        if (null == event.getPatient() || null == event.getPatient().getId()) {
-            throw new NullPointerException("unknown patient");
+        // customer
+        if (null == event.getCustomer() || null == event.getCustomer().getId()) {
+            throw new NullPointerException("unknown customer");
         }
-        final Patient patient = patientDao.getById(event.getPatient().getId());
-        event.setPatient(patient);
+        final Customer customer = patientDao.getById(event.getCustomer().getId());
+        event.setCustomer(customer);
         // procedure
         if (null == event.getProcedure() || null == event.getProcedure().getId()) {
             throw new NullPointerException("unknown procedure");
@@ -130,11 +130,11 @@ public class EventServiceImpl implements EventService {
 
         final String text2send = format(rslt);
 
-        final Unit unit = unitDao.getById(event.getPatient().getUnit().getId());
+        final Unit unit = unitDao.getById(event.getCustomer().getUnit().getId());
         assertLimitedUnit(unit);
 
-        final Map<String, String> options = TextUtils.stringToMap(event.getPatient().getUnit().getSmsGateway());
-        smsGatewayService.send(event.getPatient().getPhoneNumber(), text2send, options);
+        final Map<String, String> options = TextUtils.stringToMap(event.getCustomer().getUnit().getSmsGateway());
+        smsGatewayService.send(event.getCustomer().getPhoneNumber(), text2send, options);
 
         // store the 'sent' timestamp
         rslt.setSent(new Date());
@@ -143,9 +143,9 @@ public class EventServiceImpl implements EventService {
         // decrease the SMS limit if the unit is limited
         decreaseLimitedSmss(unit);
 
-        LOG.info("SEND special, firstname=" + rslt.getPatient().getFirstname()
-                + ", surname=" + rslt.getPatient().getSurname()
-                + ", phone=" + rslt.getPatient().getPhoneNumber() + ", text=" + text2send);
+        LOG.info("SEND special, firstname=" + rslt.getCustomer().getFirstname()
+                + ", surname=" + rslt.getCustomer().getSurname()
+                + ", phone=" + rslt.getCustomer().getPhoneNumber() + ", text=" + text2send);
         return rslt;
     }
 
@@ -208,7 +208,7 @@ public class EventServiceImpl implements EventService {
         //
         // and of course, we don't need them
         for (Event e : rslt) {
-            e.getPatient().setUnit(null);
+            e.getCustomer().setUnit(null);
             e.getProcedure().setUnit(null);
         }
         LOG.info("found events, authorId=" + authorId + ", from=" + from + ", to=" + to + ", size=" + rslt.size());
@@ -218,13 +218,13 @@ public class EventServiceImpl implements EventService {
     /** {@inheritDoc} */
     @Transactional(readOnly = true)
     @Override
-    public Pair<Patient, List<Event>> findEventsByPatient(final Object patientId) {
-        final Patient client = patientDao.getById(patientId);
-        final List<Event> events = eventDao.findByPatient(patientId);
-        // delete patients, it is key A
-        for (Event e : events) { e.setPatient(null); }
-        LOG.info("found events by patient, patientId=" + patientId + ", size=" + events.size());
-        return new Pair<Patient, List<Event>>(client, events);
+    public Pair<Customer, List<Event>> findEventsByPatient(final Object customerId) {
+        final Customer client = patientDao.getById(customerId);
+        final List<Event> events = eventDao.findByPatient(customerId);
+        // delete customers, it is key A
+        for (Event e : events) { e.setCustomer(null); }
+        LOG.info("found events by customer, customerId=" + customerId + ", size=" + events.size());
+        return new Pair<Customer, List<Event>>(client, events);
     }
 
     /** {@inheritDoc} */
@@ -232,12 +232,12 @@ public class EventServiceImpl implements EventService {
     public Event sendSms(final Object eventId) throws SmsException {
         final Event event2send = eventDao.getById(eventId);
         // unit is not loaded with event because of 'detachWithFirstLevelAssociations'
-        final Unit unit = unitDao.getById(event2send.getPatient().getUnit().getId());
+        final Unit unit = unitDao.getById(event2send.getCustomer().getUnit().getId());
         assertLimitedUnit(unit);
 
         final String text2send = format(event2send);
         final Map<String, String> options = TextUtils.stringToMap(unit.getSmsGateway());
-        smsGatewayService.send(event2send.getPatient().getPhoneNumber(), text2send, options);
+        smsGatewayService.send(event2send.getCustomer().getPhoneNumber(), text2send, options);
 
         // store the 'sent' timestamp
         event2send.setSent(new Date());
@@ -246,7 +246,7 @@ public class EventServiceImpl implements EventService {
         // decrease the SMS limit if the unit is limited
         decreaseLimitedSmss(unit);
 
-        LOG.info("SEND, id=" + eventId + ", phone=" + event2send.getPatient().getPhoneNumber()
+        LOG.info("SEND, id=" + eventId + ", phone=" + event2send.getCustomer().getPhoneNumber()
                 + ", text=" + text2send);
         return event2send;
     }
@@ -269,11 +269,11 @@ public class EventServiceImpl implements EventService {
         int sentCount = 0;
         for (Event event : foundEvents) {
             try {
-                final Patient patient = event.getPatient();
-                Unit unit = unitsCache.get(patient.getUnit().getId());
+                final Customer customer = event.getCustomer();
+                Unit unit = unitsCache.get(customer.getUnit().getId());
                 if (null == unit) {
                     // unit is not loaded with event because of 'detachWithFirstLevelAssociations'
-                    unit = unitDao.getById(patient.getUnit().getId());
+                    unit = unitDao.getById(customer.getUnit().getId());
                     unitsCache.put(unit.getId(), unit);
                 }
 
@@ -281,7 +281,7 @@ public class EventServiceImpl implements EventService {
 
                 final String text2send = format(event);
                 smsGatewayService.send(
-                        patient.getPhoneNumber(), text2send, TextUtils.stringToMap(unit.getSmsGateway()));
+                        customer.getPhoneNumber(), text2send, TextUtils.stringToMap(unit.getSmsGateway()));
 
                 // store the 'sent' timestamp
                 event.setSent(new Date());
@@ -420,8 +420,8 @@ public class EventServiceImpl implements EventService {
         if (null == event) { throw new NullPointerException("event cannot be null"); }
         if (null == event.getAuthor()) { throw new NullPointerException("author cannot be null"); }
         if (null == event.getAuthor().getId()) { throw new NullPointerException("author ID cannot be null"); }
-        if (null == event.getPatient()) { throw new NullPointerException("patient cannot be null"); }
-        if (null == event.getPatient().getId()) { throw new NullPointerException("patient ID cannot be null"); }
+        if (null == event.getCustomer()) { throw new NullPointerException("customer cannot be null"); }
+        if (null == event.getCustomer().getId()) { throw new NullPointerException("customer ID cannot be null"); }
         if (null == event.getProcedure()) {
             throw new NullPointerException("procedure cannot be null");
         }

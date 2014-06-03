@@ -8,7 +8,7 @@ import org.springframework.beans.factory.DisposableBean;
 import veny.smevente.model.AbstractEntity;
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -100,7 +100,7 @@ public final class DatabaseWrapper implements DisposableBean {
         db.getEntityManager().registerEntityClass(User.class);
         db.getEntityManager().registerEntityClass(Unit.class);
         db.getEntityManager().registerEntityClass(Membership.class);
-        db.getEntityManager().registerEntityClass(Patient.class);
+        db.getEntityManager().registerEntityClass(Customer.class);
         db.getEntityManager().registerEntityClass(Procedure.class);
         db.getEntityManager().registerEntityClass(Event.class);
 

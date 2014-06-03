@@ -4,9 +4,9 @@ import java.util.Date;
 
 import veny.smevente.client.mvp.SingletonEventBus;
 import veny.smevente.client.utils.EventWidgetEvent;
-import veny.smevente.model.Procedure;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
+import veny.smevente.model.Procedure;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -36,7 +36,7 @@ public class EventWidget extends FlowPanel implements HasClickHandlers /*HasDoub
         // PRE-CONDITIONS
         if (null == event) { throw new NullPointerException("event cannot be null"); }
         if (null == event.getAuthor()) { throw new NullPointerException("author cannot be null"); }
-        if (null == event.getPatient()) { throw new NullPointerException("patient cannot be null"); }
+        if (null == event.getCustomer()) { throw new NullPointerException("customer cannot be null"); }
         if (null == event.getProcedure()) {
             throw new NullPointerException("procedure cannot be null");
         }
@@ -49,7 +49,7 @@ public class EventWidget extends FlowPanel implements HasClickHandlers /*HasDoub
         this.add(notice);
 
         this.event = event;
-        final Patient patient = event.getPatient();
+        final Customer customer = event.getCustomer();
         final Procedure procedure = event.getProcedure();
 
         if (null == event.getSent()) {
@@ -68,9 +68,9 @@ public class EventWidget extends FlowPanel implements HasClickHandlers /*HasDoub
         final Date endTime = new Date(startTime.getTime() + (event.getLength() * 60 * 1000));
 
         @SuppressWarnings("deprecation")
-        final StringBuilder text = new StringBuilder(patient.getFirstname())
+        final StringBuilder text = new StringBuilder(customer.getFirstname())
             .append(' ')
-            .append(patient.getSurname())
+            .append(customer.getSurname())
             .append(" [")
             .append(DateTimeFormat.getShortTimeFormat().format(startTime))
             .append("-")

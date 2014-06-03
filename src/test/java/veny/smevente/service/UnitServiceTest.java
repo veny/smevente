@@ -14,7 +14,7 @@ import veny.smevente.AbstractBaseTest;
 import veny.smevente.dao.DeletedObjectException;
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.model.Event;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 
@@ -92,7 +92,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         final Unit unit = createDefaultUnit();
 
         // first patient in the first unit
-        final Patient toCreate = new Patient();
+        final Customer toCreate = new Customer();
         toCreate.setFirstname(FIRSTNAME);
         toCreate.setSurname(SURNAME);
         toCreate.setPhoneNumber(PHONE_NUMBER);
@@ -105,7 +105,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         toCreate.setCareers("careers");
         toCreate.setUnitId(unit.getId());
 
-        final Patient firstCreated = unitService.storePatient(toCreate);
+        final Customer firstCreated = unitService.storePatient(toCreate);
         assertDefaultPatient(firstCreated, true);
         assertEquals(unit.getId(), firstCreated.getUnit().getId());
         assertEquals("degree", firstCreated.getDegree());
@@ -117,7 +117,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals(1, unitService.getPatientsByUnit(unit.getId()).size());
 
         // second patient in the first unit
-        final Patient secondCreated = createPatient("a", "b", null, null, unit);
+        final Customer secondCreated = createPatient("a", "b", null, null, unit);
         assertNotNull(secondCreated);
         assertNotNull(secondCreated.getId());
         assertNotNull(secondCreated.getUnit());
@@ -129,7 +129,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertNull(secondCreated.getBirthNumber());
         assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
 
-        final Patient badPatient = new Patient();
+        final Customer badPatient = new Customer();
         badPatient.setFirstname("aa");
         badPatient.setSurname("bb");
         badPatient.setBirthNumber(BIRTH_NUMBER);
@@ -142,14 +142,14 @@ public class UnitServiceTest extends AbstractBaseTest {
         // second unit (I can create user with Birth Number in other unit)
         final Unit secondUnit = createUnit("A", "desc", Unit.TextVariant.PATIENT, 10L, null);
         badPatient.setUnitId(secondUnit.getId());
-        final Patient thirdCreated = unitService.storePatient(badPatient);
+        final Customer thirdCreated = unitService.storePatient(badPatient);
         assertEquals(secondUnit.getId(), thirdCreated.getUnit().getId());
         assertEquals(BIRTH_NUMBER, thirdCreated.getBirthNumber());
         assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
         assertEquals(1, unitService.getPatientsByUnit(secondUnit.getId()).size());
 
         // validation - birth number
-        final Patient validation = new Patient();
+        final Customer validation = new Customer();
         validation.setFirstname("a");
         validation.setSurname("a");
         validation.setBirthNumber("12345678");
@@ -187,13 +187,13 @@ public class UnitServiceTest extends AbstractBaseTest {
     /** UnitService.storePatient (update). */
     @Test // unit/patient/
     public void testStoreUpdatePatient() {
-        final Patient created = createDefaultPatient();
+        final Customer created = createDefaultPatient();
         assertNull(created.getCity());
         assertNull(created.getDegree());
 
         created.setCity("city");
         unitService.storePatient(created);
-        Patient found = unitService.getPatientById(created.getId());
+        Customer found = unitService.getPatientById(created.getId());
         assertDefaultPatient(found, true);
         assertEquals("city", found.getCity());
         assertNull(created.getDegree());
@@ -217,9 +217,9 @@ public class UnitServiceTest extends AbstractBaseTest {
     /** UnitService.getPatientsByUnit. */
     @Test // unit/{id}/info/
     public void testGetPatientsByUnit() {
-        final Patient created = createDefaultPatient();
+        final Customer created = createDefaultPatient();
         assertNotNull(created.getUnit().getId());
-        List<Patient> found = unitService.getPatientsByUnit(created.getUnit().getId());
+        List<Customer> found = unitService.getPatientsByUnit(created.getUnit().getId());
         assertNotNull(found);
         assertEquals(1, found.size());
         assertDefaultPatient(found.get(0), true);
@@ -238,7 +238,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertDefaultUnit(found.get(2).getUnit());
 
         final Unit secondUnit = createUnit("X", "desc", Unit.TextVariant.PATIENT, 0L, null);
-        final Patient c = createPatient("c", "c", null, null, secondUnit);
+        final Customer c = createPatient("c", "c", null, null, secondUnit);
         found = unitService.getPatientsByUnit(secondUnit.getId());
         assertEquals(1, found.size());
         assertEquals(secondUnit.getId(), found.get(0).getUnit().getId());
@@ -258,8 +258,8 @@ public class UnitServiceTest extends AbstractBaseTest {
     public void testFindPatients() {
         final Unit unit = createDefaultUnit();
         assertTrue(unitService.findPatients(unit.getId(), null, null, null).isEmpty());
-        final Patient adam = createPatient("Adam", "Bláha", "000000000", "7001011111", unit);
-        final Patient vaclav = createPatient("Václav", "Sýkora", "011111111", "7001022222", unit);
+        final Customer adam = createPatient("Adam", "Bláha", "000000000", "7001011111", unit);
+        final Customer vaclav = createPatient("Václav", "Sýkora", "011111111", "7001022222", unit);
         createPatient("John", "Žluťoučký", "012222222", "7003033333", unit);
         createPatient("Robert", "Kůň", "012333333", "7004044444", unit);
         createPatient("Norbert", "Kuře", "012344444", "7005055555", unit);
@@ -310,9 +310,9 @@ public class UnitServiceTest extends AbstractBaseTest {
     /** UnitService.deletePatient. */
     @Test // unit/patient/{id}/
     public void testDeletePatient() {
-        final Patient firstCreated = createDefaultPatient();
+        final Customer firstCreated = createDefaultPatient();
         final Unit unit = firstCreated.getUnit();
-        final Patient secondCreated = createPatient("a", "a", null, null, unit);
+        final Customer secondCreated = createPatient("a", "a", null, null, unit);
         assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
 
         // delete first
@@ -321,11 +321,11 @@ public class UnitServiceTest extends AbstractBaseTest {
             unitService.getPatientById(firstCreated.getId());
             assertEquals("expected DeletedObjectException", true, false);
         } catch (DeletedObjectException e) { assertEquals(true, true); }
-        List<Patient> found = unitService.getPatientsByUnit(unit.getId());
+        List<Customer> found = unitService.getPatientsByUnit(unit.getId());
         assertEquals(1, found.size());
         assertEquals(secondCreated.getId(), found.get(0).getId());
 
-        final Patient thirdCreated = createPatient("b", "b", null, null, unit);
+        final Customer thirdCreated = createPatient("b", "b", null, null, unit);
         assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
         unitService.deletePatient(firstCreated.getId()); // DO NOTHING
         unitService.deletePatient(secondCreated.getId());

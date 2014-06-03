@@ -8,7 +8,7 @@ import veny.smevente.client.mvp.View;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.Procedure;
-import veny.smevente.model.Patient;
+import veny.smevente.model.Customer;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -69,7 +69,7 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
      * @param patient the recipient
      * @param specialCategories the list of special categories
      */
-    public void init(final Patient patient, final List<Procedure> specialCategories) {
+    public void init(final Customer patient, final List<Procedure> specialCategories) {
         // clear all the stuff
         clean();
 
