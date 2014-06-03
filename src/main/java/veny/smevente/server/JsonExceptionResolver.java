@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -23,6 +24,8 @@ import eu.maydu.gwt.validation.client.ValidationException;
  */
 public class JsonExceptionResolver extends SimpleMappingExceptionResolver {
 
+    /** Logger. */
+    private static final Logger LOG = Logger.getLogger(JsonExceptionResolver.class.getName());
     /** JSON mapper. Can be reused. */
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -40,7 +43,7 @@ public class JsonExceptionResolver extends SimpleMappingExceptionResolver {
         final String id = "" + System.currentTimeMillis() + "-" + Thread.currentThread().hashCode();
 
         // log the exception
-        logger.info("exposing exception " + id, ex);
+        LOG.info("exposing exception " + id, ex);
 
         // add exception to the model
         mv.addObject("text", mapToJson(ex, id));
