@@ -12,7 +12,7 @@ UNITS = {}
 USERS = {}
 MEMBS = {}
 PROCEDURES = {}
-PATIENTS = {}
+CUSTOMERS = {}
 EVENTS = {}
 
 
@@ -25,17 +25,16 @@ class Loader < Optitron::CLI
     delete if with_delete
     imp_units
     imp_users
-exit
     imp_membs
     imp_procedures
-    imp_patients
+    imp_customers
     imp_events
   end
 
   desc 'Deletes all tables'
   def delete
     connect if @client.nil?
-    ['Event', 'Patient', 'Procedure', 'Membership', 'User', 'Unit'].each do |ent|
+    ['Event', 'Customer', 'Procedure', 'Membership', 'User', 'Unit'].each do |ent|
         rslt = @client.command "delete from #{ent}"
         puts "delete #{ent} => #{rslt['result'][0]['value']}"
     end
@@ -81,6 +80,7 @@ exit
         doc = { '@class' => 'User', 'revision' => 0 }
         head.each { |k,v| doc[k] = row[v] }
         doc['deleted'] = (doc['deleted']=='True')
+        doc['password'] = "SHA:#{doc['password']}"
         # expected format: yyyy-MM-dd HH:mm:ss
         doc['lastLoggedIn'] = doc['lastLoggedIn'].gsub('T', ' ') unless doc['lastLoggedIn'].nil?
         doc['timezone'] = 'Europe/Prague'
@@ -139,15 +139,16 @@ exit
       puts "--- PROCEDUREs: #{PROCEDURES.size}"
     end
 
-    def imp_patients
+    def imp_customers
       head = {
         'firstname'=>4, 'surname'=>3, 'upperSurname'=>2, 'deleted'=>6, 'upperFirstname'=>8, 'unitId'=>7, 'key'=>13,
-        'phoneNumber'=>12, 'birthNumber'=>14 # TODO
+        'phoneNumber'=>12, 'birthNumber'=>14, 'degree'=>5, 'street'=>11, 'city'=>1, 'zipCode'=>10,
+        'employer'=>9, 'careers'=>16
       }
       data = read_csv 'Patient'
 
       data.each do |row|
-        doc = { '@class' => 'Patient', 'revision' => 0 }
+        doc = { '@class' => 'Customer', 'revision' => 0 }
         head.each { |k,v| doc[k] = row[v] }
         doc['deleted'] = (doc['deleted']=='True')
         doc['asciiFullname'] = "#{doc.delete('upperFirstname')} #{doc.delete('upperSurname')}"
@@ -159,38 +160,40 @@ exit
 
         key = doc.delete 'key'
         created = @client.create_document doc
-        PATIENTS[key] = created.doc_rid
+        CUSTOMERS[key] = created.doc_rid
       end
-      puts "--- PATIENTs: #{PATIENTS.size}"
+      puts "--- CUSTOMERs: #{CUSTOMERS.size}"
     end
 
     def imp_events
       head = {
-        'text' => 8, 'startTime' => 10, 'length' => 2, 'key' => 7, # TODO
-        'userId' => 3, 'patientId' => 4,  'procedureId' => 5
+        'text' => 8, 'startTime' => 10, 'length' => 2, 'key' => 7, 'notice'=>1,
+        'sent'=>6, 'sendAttemptCount'=>9, 'status'=>0,
+        'userId' => 3, 'customerId' => 4,  'procedureId' => 5
       }
       data = read_csv 'Sms'
 
       begin
         data.each do |row|
-          doc = { '@class' => 'Event', 'revision' => 0, 'deleted' => false }
+          doc = { '@class' => 'Event', 'revision' => 0, 'deleted' => false, 'type' => 'IN_CALENDAR' }
           head.each { |k,v| doc[k] = row[v] }
-
-          unless doc['startTime'].nil?
-            time = DateTime.strptime(doc['startTime'], '%Y-%m-%dT%H:%M:%S')
-            doc['startTime'] = time.strftime('%Y-%m-%d %H:%M:%S:000')
-          end
+          status = doc.delete('status')
+          doc['deleted'] = true if not status.nil? and (status.to_i & 16) > 0
+          doc['type'] = 'IMMEDIATE_MESSAGE' if not status.nil? and (status.to_i & 32) > 0
+          # expected format: yyyy-MM-dd HH:mm:ss
+          doc['startTime'] = doc['startTime'].gsub('T', ' ') unless doc['startTime'].nil?
+          doc['sent'] = doc['sent'].gsub('T', ' ') unless doc['sent'].nil?
 
           key = doc.delete('userId')
           rid = USERS[key]
           puts "UUU user not found, key=#{key}, row=#{row}" if rid.nil?
           next if rid.nil?
           doc['author'] = rid.to_s
-          key = doc.delete('patientId')
-          rid = PATIENTS[key]
-          puts "PPP patient not found, key=#{key}, row=#{row}" if rid.nil?
+          key = doc.delete('customerId')
+          rid = CUSTOMERS[key]
+          puts "PPP customer not found, key=#{key}, row=#{row}" if rid.nil?
           next if rid.nil?
-          doc['patient'] = rid.to_s
+          doc['customer'] = rid.to_s
           key = doc.delete('procedureId')
           rid = PROCEDURES[key]
           doc['procedure'] = (rid.nil? ? nil : rid.to_s)
