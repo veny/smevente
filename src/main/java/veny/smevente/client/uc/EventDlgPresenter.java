@@ -114,19 +114,19 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
 
     /** Initial date and time to send SMS. */
     private Date startTime;
-    /** List of available Medical Help Categories. */
-    private List<Procedure> medicalHelpCategories;
-    /** Selected patient. */
-    private Customer selectedPatient = null;
+    /** List of available procedures. */
+    private List<Procedure> procedures;
+    /** Selected customer. */
+    private Customer selectedCustomer = null;
 
     /**
      * Initializes presenter for Create.
      * @param startTime date and time to send SMS
-     * @param patients patient list
+     * @param customers customer list
      * @param mhcs list of medical help categories
      */
     @SuppressWarnings("deprecation")
-    public void init(final Date startTime, final List<Customer> patients, final List<Procedure> mhcs) {
+    public void init(final Date startTime, final List<Customer> customers, final List<Procedure> mhcs) {
         // clear all the stuff
         clean();
 
@@ -136,13 +136,13 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getStartHour().setItemSelected(startTime.getHours(), true);
         view.getStartMinute().setItemSelected(startTime.getMinutes() / 5, true);
 
-        // Patient Name Suggestion
+        // Customer Name Suggestion
         PatientNameSuggestOracle oracle = (PatientNameSuggestOracle) view.getNameSuggestBox().getSuggestOracle();
-        oracle.setPatients(patients);
+        oracle.setPatients(customers);
 
         // Medical Help Category
-        medicalHelpCategories = mhcs;
-        for (Procedure mhc : medicalHelpCategories) {
+        procedures = mhcs;
+        for (Procedure mhc : procedures) {
             view.getProcedure().addItem(mhc.getName());
         }
         view.getProcedure().addChangeHandler(new ChangeHandler() {
@@ -157,19 +157,19 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
     /**
      * Initializes presenter for Update.
      * @param sms SMS to be displayed
-     * @param patients patient list
+     * @param customers customer list
      * @param mhcs list of medical help categories
      */
     public void init(
-            final Event sms, final List<Customer> patients, final List<Procedure> mhcs) {
+            final Event sms, final List<Customer> customers, final List<Procedure> mhcs) {
 
-        this.init(sms.getStartTime(), patients, mhcs);
+        this.init(sms.getStartTime(), customers, mhcs);
 
         // set all form elements
-        selectedPatient = sms.getCustomer();
+        selectedCustomer = sms.getCustomer();
         view.getEventId().setValue(sms.getId().toString());
-        view.getNameSuggestBox().getTextBox().setText(selectedPatient.fullname());
-        view.getPhoneNumber().setText(selectedPatient.getPhoneNumber());
+        view.getNameSuggestBox().getTextBox().setText(selectedCustomer.fullname());
+        view.getPhoneNumber().setText(selectedCustomer.getPhoneNumber());
         view.getMessageText().setText(sms.getText());
         view.getNotice().setText(sms.getNotice());
         // MHC length
@@ -201,19 +201,19 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
     }
 
     /**
-     * Gets the selected patient.
-     * @return selected patient
+     * Gets the selected customer.
+     * @return selected customer
      */
-    public Customer getSelectedPatient() {
-        return selectedPatient;
+    public Customer getSelectedCustomer() {
+        return selectedCustomer;
     }
 
     /**
-     * Gets selected Medical Help Category.
-     * @return selected Medical Help Category
+     * Gets selected procedure.
+     * @return selected procedure
      */
-    public Procedure getSelectedMedicalHelpCategory() {
-        return medicalHelpCategories.get(view.getProcedure().getSelectedIndex());
+    public Procedure getSelectedProcedure() {
+        return procedures.get(view.getProcedure().getSelectedIndex());
     }
 
     /**
@@ -261,7 +261,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
             @Override
             public void onSelection(final SelectionEvent<Suggestion> event) {
                 final PatientSuggestion sug = (PatientSuggestion) event.getSelectedItem();
-                selectedPatient = sug.getPatient();
+                selectedCustomer = sug.getPatient();
                 view.getPhoneNumber().setText(sug.getPatient().getPhoneNumber());
             }
         });
@@ -309,7 +309,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         getView().getNameSuggestBox().getTextBox().removeStyleName("validationFailedBorder");
         getView().getMessageText().removeStyleName("validationFailedBorder");
 
-        selectedPatient = null;
+        selectedCustomer = null;
     }
 
     // -------------------------------------------------------- Assistant Stuff
@@ -320,7 +320,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
      * @param switchTimeAndText whether to change the MH length and SMS text
      */
     private void changedMedicalHelpCategory(final int index, final boolean switchTimeAndText) {
-        final Procedure mhc = medicalHelpCategories.get(index);
+        final Procedure mhc = procedures.get(index);
 
         // color
         DOM.setStyleAttribute(view.getProcedureHeader().getElement(), "backgroundColor", "#" + mhc.getColor());
@@ -370,7 +370,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
 
         final FocusAction focusAction = new FocusAction();
 
-        // some selected patient?
+        // some selected customer?
         validator.addValidators("name", new Validator<Object>() {
             @Override
             public void invokeActions(final ValidationResult result) {
@@ -383,7 +383,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
                 getView().getNameSuggestBox().getTextBox().removeStyleName("validationFailedBorder");
 
                 ValidationResult rslt = null;
-                if (null == selectedPatient) {
+                if (null == selectedCustomer) {
                     rslt = new ValidationResult(CONSTANTS.validationNotSelected());
                 }
                 return rslt;

@@ -54,7 +54,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 /**
  * Calendar Presenter.
  *
- * @author Vaclav Sykora [vaclav.sykora@gmail.com]
+ * @author Vaclav Sykora [vaclav.sykora@gmaiEventDlgPresenterl.com]
  * @since 10.8.2010
  */
 public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.CalendarView>
@@ -303,7 +303,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             params.put("id", eventId);
         }
         params.put("authorId", App.get().getSelectedUnitMember().getId().toString());
-        params.put("patientId", patientIdAndProcedureId.getA().toString());
+        params.put("customerId", patientIdAndProcedureId.getA().toString());
         params.put("procedureId", patientIdAndProcedureId.getB().toString());
         params.put("text", textAndNotice.getA());
         params.put("notice", textAndNotice.getB());
@@ -599,8 +599,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
         // validation
         if (!smsDlgPresenter.getValidator().validate()) { return; }
-        final Object patientId = smsDlgPresenter.getSelectedPatient().getId();
-        final Object mhcId = smsDlgPresenter.getSelectedMedicalHelpCategory().getId();
+        final Object patientId = smsDlgPresenter.getSelectedCustomer().getId();
+        final Object mhcId = smsDlgPresenter.getSelectedProcedure().getId();
         final String smsText = smsDlgPresenter.getView().getMessageText().getText();
         final String notice = smsDlgPresenter.getView().getNotice().getText();
         final Date mhDateTime = smsDlgPresenter.getStartTime();
