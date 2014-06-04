@@ -30,11 +30,12 @@ public class PatientDaoImpl extends AbstractDaoOrientdb<Customer> implements Pat
             public List<Customer> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
                         .append(getPersistentClass().getSimpleName())
-                        .append(" WHERE unit = :unitId AND (").append(paramName)
-                        .append(".indexOf('").append(value).append("') > -1)"); // TODO[veny,A] SQL Injection? Java API
+                        .append(" WHERE unit = :unitId AND ").append(paramName)
+                        .append(" LIKE :value");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("unitId", unitId);
+                params.put("value", new StringBuilder("%").append(value).append("%").toString());
 
                 final List<Customer> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
                 detachWithFirstLevelAssociations(rslt, db);

@@ -90,7 +90,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 final ORID rid;
                 if ((id instanceof ORID)) { rid = (ORID) id; } else {
                     try { rid = new ORecordId(id.toString()); } catch (Exception e) {
-                        throw new ObjectNotFoundException("ID has to be OrientDB RID");
+                        throw new ObjectNotFoundException("ID has to be OrientDB RID, id=" + id.toString());
                     }
                 }
                 final T rslt;

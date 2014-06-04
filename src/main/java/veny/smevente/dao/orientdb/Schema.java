@@ -170,10 +170,11 @@ public class Schema {
         membDef.put("m4", "Membership SET user = %max%, unit = %bar%, role = 'ADMIN', significance = 40");
         // Customer
         Map<String, String> patDef = new HashMap<String, String>();
-        patDef.put("JanNovak",      "Customer SET unit = %foo%, firstname = 'Jan',  surname = 'Novák',     asciiFullname = 'JAN NOVAK',      birthNumber = '7001012000', phoneNumber = '606123123'");
-        patDef.put("PetrZlutoucky", "Customer SET unit = %foo%, firstname = 'Petr', surname = 'Žluťoučký', asciiFullname = 'PETR ZLUTOUCKY', birthNumber = '7002023000', phoneNumber = '606123123'");
-        patDef.put("LindaModra",    "Customer SET unit = %foo%, firstname = 'Lída', surname = 'Modrá',     asciiFullname = 'LIDA MODRA',     birthNumber = '7051011000', phoneNumber = '606123123'");
+        patDef.put("JanNovak",      "Customer SET unit = %foo%, firstname = 'Jan',  surname = 'Novák',     asciiFullname = 'JAN NOVAK',      birthNumber = '7001012000', phoneNumber = '606146177'");
+        patDef.put("PetrZlutoucky", "Customer SET unit = %foo%, firstname = 'Petr', surname = 'Žluťoučký', asciiFullname = 'PETR ZLUTOUCKY', birthNumber = '7002023000', phoneNumber = '606146177'");
+        patDef.put("LindaModra",    "Customer SET unit = %foo%, firstname = 'Lída', surname = 'Modrá',     asciiFullname = 'LIDA MODRA',     birthNumber = '7051011000', phoneNumber = '606146177'");
         patDef.put("me",            "Customer SET unit = %bar%, firstname = 'veny', surname = 'V',         asciiFullname = 'VENY V',         birthNumber = '7004045000', phoneNumber = '606146177'");
+        patDef.put("SonDablik",     "Customer SET unit = %bar%, firstname = 'Šón',  surname = 'Ďáblík',    asciiFullname = 'SON DABLIK',     birthNumber = '7008088889', phoneNumber = '012345677'");
         // Procedure
         Map<String, String> procDef = new HashMap<String, String>();
         procDef.put("beleni", "Procedure SET unit = %foo%, name = 'Bělení', messageText = 'Prijdte na beleni', type = 'IN_CALENDAR', color = 'FF0000', time = 30");

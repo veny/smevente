@@ -40,7 +40,7 @@ public class UserServiceTest extends AbstractBaseTest {
 
     /** UserService.createUser. */
     @SuppressWarnings("deprecation")
-    //@Test
+    @Test
     public void testCreateUser() {
         userService.createUser(USERNAME, PASSWORD, FULLNAME, false /* root */);
         final List<User> found = userService.getAllUsers();

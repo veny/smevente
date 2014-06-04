@@ -87,7 +87,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         final OObjectDatabaseTx db = dbw.get();
         db.command(new OCommandSQL("DELETE FROM Event")).execute();
         db.command(new OCommandSQL("DELETE FROM Procedure")).execute();
-        db.command(new OCommandSQL("DELETE FROM Patient")).execute();
+        db.command(new OCommandSQL("DELETE FROM Customer")).execute();
         db.command(new OCommandSQL("DELETE FROM Membership")).execute();
         db.command(new OCommandSQL("DELETE FROM Unit")).execute();
         db.command(new OCommandSQL("DELETE FROM User")).execute();
@@ -303,7 +303,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         if (aggregated) { assertDefaultUnit(proc.getUnit()); }
         assertEquals(PROCEDURE_NAME, proc.getName());
         assertEquals(PROCEDURE_MSGTEXT, proc.getMessageText());
-        assertNull(proc.getType());
+        assertEquals(type.toString(), proc.getType());
         if (Event.Type.IN_CALENDAR == proc.enumType()) {
             assertEquals(PROCEDURE_COLOR, proc.getColor());
             assertEquals(PROCEDURE_TIME, proc.getTime());
