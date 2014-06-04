@@ -169,7 +169,7 @@ public class Event extends AbstractEntity {
      * Sets customer ID to a new customer object.
      * @param customerId customer ID
      */
-    public void setCustomertId(final Object customerId) {
+    public void setCustomerId(final Object customerId) {
         if (null == customerId) { throw new NullPointerException("customer ID is null"); }
         setCustomer(new Customer());
         getCustomer().setId(customerId);
