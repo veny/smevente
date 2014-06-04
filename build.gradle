@@ -4,8 +4,8 @@ apply plugin: 'eclipse'
 apply plugin: 'checkstyle'
 
 ext {
-    springVersion = "3.2.4.RELEASE"
-    springSecurityVersion = "3.1.4.RELEASE"
+    springVersion = "4.0.5.RELEASE"
+    springSecurityVersion = "3.2.4.RELEASE"
     gwtVersion = "2.6.1"
     jacksonVersion = "2.1.4"
     orientdbVersion = "1.7"
@@ -19,13 +19,14 @@ dependencies {
     compile "org.springframework:spring-beans:$springVersion"
     compile "org.springframework:spring-core:$springVersion"
     compile "org.springframework:spring-webmvc:$springVersion"
+    compile "org.springframework:spring-tx:$springVersion"
 
     // MAYBE REMOVE??? >>
+//AAA duplicated with 'compile'    runtime "org.springframework:spring-tx:$springVersion"
     runtime "org.springframework:spring-aop:$springVersion"
     runtime "org.springframework:spring-context:$springVersion"
     runtime "org.springframework:spring-expression:$springVersion"
     runtime "org.springframework:spring-orm:$springVersion"
-    runtime "org.springframework:spring-tx:$springVersion"
     runtime "org.springframework:spring-web:$springVersion"
     runtime "org.springframework.security:spring-security-acl:$springSecurityVersion"
     runtime "org.springframework.security:spring-security-taglibs:$springSecurityVersion"
