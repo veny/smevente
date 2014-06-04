@@ -1,6 +1,6 @@
 package veny.smevente.client.uc;
 
-import veny.smevente.client.BuildNumber;
+import veny.smevente.client.App;
 import veny.smevente.client.l10n.SmeventeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -29,8 +29,6 @@ public class LoginViewImpl extends Composite implements LoginPresenter.LoginView
     /** UI Binder. */
     private static final Binder BINDER = GWT.create(Binder.class);
 
-    /** Build Number constants. */
-    private static final BuildNumber BUILD_NUMBER = GWT.create(BuildNumber.class);
     /** I18n constants. */
     private static final SmeventeConstants CONSTANTS = GWT.create(SmeventeConstants.class);
 
@@ -47,7 +45,7 @@ public class LoginViewImpl extends Composite implements LoginPresenter.LoginView
      */
     public LoginViewImpl() {
         initWidget(BINDER.createAndBindUi(this));
-        buildNumber.setText(CONSTANTS.version() + ": " + BUILD_NUMBER.buildNumber());
+        buildNumber.setText(CONSTANTS.version() + ": " + App.VERSION);
     }
 
     /** {@inheritDoc} */
