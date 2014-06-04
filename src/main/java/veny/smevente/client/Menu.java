@@ -158,7 +158,7 @@ public class Menu extends MenuBar implements HeaderHandler {
                 processNewWeekDate(date);
             }
         });
-        calendarItem.setCommand(new Command() {
+        calendarItem.setScheduledCommand(new Command() {
             @Override
             public void execute() {
                 popupPanel.setPopupPosition(
