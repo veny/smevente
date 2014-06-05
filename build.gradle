@@ -7,7 +7,7 @@ ext {
     springVersion = "4.0.5.RELEASE"
     springSecurityVersion = "3.2.4.RELEASE"
     gwtVersion = "2.6.1"
-    jacksonVersion = "2.1.4"
+    jacksonVersion = "2.4.0"
     orientdbVersion = "1.7"
 }
 
