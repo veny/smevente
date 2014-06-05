@@ -20,6 +20,20 @@ public final class DateUtils {
     /** Suppresses default constructor, ensuring non-instantiability. */
     private DateUtils() { }
 
+
+    /**
+     * Gets time created in browser recalculated into UTC.
+     * Object of <code>Date</code> instantiated in browser is created including the browser time zone offset.
+     *
+     * @param withBrowserTz date if time zone offset
+     * @return date with UTC time
+     */
+    @SuppressWarnings("deprecation")
+    public static Date toUTC(final Date withBrowserTz) {
+        withBrowserTz.setTime(withBrowserTz.getTime() + (withBrowserTz.getTimezoneOffset() * 60 * 1000));
+        return withBrowserTz;
+    }
+
     /**
      * Gets <code>Date</code> of a given day in current week.
      *
