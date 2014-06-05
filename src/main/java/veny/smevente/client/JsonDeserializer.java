@@ -6,15 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import veny.smevente.client.utils.DateUtils;
 import veny.smevente.client.utils.Pair;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONNumber;
@@ -377,7 +379,6 @@ public class JsonDeserializer {
      * @param jsObj JSON object
      * @return instance of <code>Event</code>
      */
-    @SuppressWarnings("deprecation")
     private Event eventFromJson(final JSONObject jsObj) {
         final Event rslt = new Event();
         rslt.setId(jsObj.get("id").isString().stringValue());
@@ -393,10 +394,9 @@ public class JsonDeserializer {
         if (null != jsStObj) {
             rslt.setProcedure(procedureFromJson(jsStObj));
         }
-        final Date d = new Date((long) jsObj.get("startTime").isNumber().doubleValue());
-        rslt.setStartTime(new Date(d.getTime() + (d.getTimezoneOffset() * 60 * 1000))); // eliminate browser TZ offset
+        rslt.setStartTime(getDate(jsObj.get("startTime"), true));
         rslt.setLength((int) jsObj.get("length").isNumber().doubleValue());
-        rslt.setSent(getDate(jsObj.get("sent")));
+        rslt.setSent(getDate(jsObj.get("sent"), false));
         rslt.setText(jsObj.get("text").isString().stringValue());
         rslt.setNotice(getString(jsObj.get("notice")));
         final Long sendAttemptCount = getLong(jsObj.get("sendAttemptCount"));
@@ -556,15 +556,20 @@ public class JsonDeserializer {
     /**
      * Gets <code>Date</code> from JSON object.
      * @param jsonValue JSON value
+     * @param mandatory whether the <code>jsonValue</code> must be presented
      * @return JSON value converted to <code>Date</code> or <i>null</i> if value is null
      */
-    @SuppressWarnings("deprecation")
-    private Date getDate(final JSONValue jsonValue) {
+    private Date getDate(final JSONValue jsonValue, final boolean mandatory) {
         if (null == jsonValue || JSONNull.getInstance().equals(jsonValue)) {
-            return null;
+            if (mandatory) {
+                throw new NullPointerException("mandatory date cannot be null");
+            } else {
+                return null;
+            }
         }
-        final Date d = new Date((long) jsonValue.isNumber().doubleValue());
-        return new Date(d.getTime() + (d.getTimezoneOffset() * 60 * 1000)); // eliminate browser TZ offset
+        final Date d = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.ISO_8601).parse(
+                jsonValue.isString().stringValue());
+        return DateUtils.toUTC(d);
     }
 
 }
