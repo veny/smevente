@@ -6,10 +6,14 @@ import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
+
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import veny.smevente.misc.SoftDelete;
 
@@ -48,6 +52,7 @@ public class Event extends AbstractEntity {
 
     /** Text. */
     @Column
+    @JsonProperty
     private String text;
     /** Author. */
     @ManyToOne
@@ -60,6 +65,7 @@ public class Event extends AbstractEntity {
     private Procedure procedure;
     /** Start time. */
     @Column
+    @JsonProperty
     private Date startTime;
     /** Length [minutes]. */
     @Column
@@ -102,6 +108,7 @@ public class Event extends AbstractEntity {
     public void setProcedure(Procedure procedure) {
         this.procedure = procedure;
     }
+    @JsonGetter
     public Date getStartTime() {
         return startTime;
     }

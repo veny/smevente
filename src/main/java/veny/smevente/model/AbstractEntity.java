@@ -7,8 +7,7 @@ import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import veny.smevente.server.OrientdbRid2JsonSerializer;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 /**
  * Basic class for all entities that holds common properties.
@@ -28,7 +27,7 @@ public abstract class AbstractEntity {
      * @see OrientdbRid2JsonSerializer
      */
     @Id
-    @JsonSerialize(using = OrientdbRid2JsonSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Object id;
 
     /**
@@ -38,6 +37,7 @@ public abstract class AbstractEntity {
      * or can be used for optimistic locking mechanism in RDBMS.
      */
     @Version
+    @JsonSerialize(using = ToStringSerializer.class)
     private Object version;
 
     /**
