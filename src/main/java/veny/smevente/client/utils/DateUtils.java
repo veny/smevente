@@ -35,16 +35,22 @@ public final class DateUtils {
     }
 
     /**
+     * Gets current time in UTC.
+     * @return current time recalculated into UTC
+     */
+    public static Date nowUTC() {
+        return toUTC(new Date());
+    }
+
+    /**
      * Gets <code>Date</code> of a given day in current week.
      *
      * @param dayIdx index of the day (Mon=1, Sun=7)
      * @return the date
      */
-    @SuppressWarnings("deprecation")
     public static Date getDateInCurrentWeek(final int dayIdx) {
-        final Date today = new Date();
-        int todayIdx = today.getDay();
-        if (0 == todayIdx) { todayIdx = 7; } // Mon=1, Sun=7
+        final Date today = nowUTC();
+        int todayIdx = getWeekIndex(today);
 
         return new Date(today.getTime() - ((todayIdx - dayIdx) * MILIS_IN_DAY));
     }
@@ -139,7 +145,6 @@ public final class DateUtils {
     public static Date getWeekTo(final Date date) {
         final int dayIdx = getWeekIndex(date);
         final Date to = new Date(date.getTime() + ((long) (7 - dayIdx) * MILIS_IN_DAY));
-//        to.setDate(date.getDate() + (7 - dayIdx));
         return getEndOfDay(to);
     }
 

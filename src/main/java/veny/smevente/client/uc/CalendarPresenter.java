@@ -30,6 +30,7 @@ import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -95,6 +96,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** Offset from top (app header + calendar table header). */
     private static final int TOP_HEIGHT_OFFSET = 103;
 
+    private static final DateTimeFormat dateTimeFormatter = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     /** Popup panel with context menu. */
     private final PopupPanel menuPopupPanel = new PopupPanel(false, false);
@@ -307,7 +309,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         params.put("procedureId", patientIdAndProcedureId.getB().toString());
         params.put("text", textAndNotice.getA());
         params.put("notice", textAndNotice.getB());
-        params.put("startTime", "" + startTime.getTime());
+        params.put("startTime", "" + dateTimeFormatter.format(startTime));
         params.put("length", "" + length);
 
         // send data to server
@@ -338,9 +340,13 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
         final Date from = DateUtils.getWeekFrom(null == weekDate ? App.get().getWeekDate() : weekDate);
         final Date to = DateUtils.getWeekTo(null == weekDate ? App.get().getWeekDate() : weekDate);
+GWT.log("from: " + dateTimeFormatter.format(from));
+GWT.log("to:   " + dateTimeFormatter.format(to));
         final RestHandler rest = createExclusiveClientRestHandler(
                 "/rest/user/" + URL.encodePathSegment((String) user.getId())
-                + "/event/from/" + from.getTime() + "/to/" + to.getTime() + "/");
+                + "/event/from/" + URL.encodePathSegment(dateTimeFormatter.format(from))
+                + "/to/" + URL.encodePathSegment(dateTimeFormatter.format(to))
+                + "/");
 
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
@@ -599,9 +605,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
         // validation
         if (!smsDlgPresenter.getValidator().validate()) { return; }
-        final Object patientId = smsDlgPresenter.getSelectedCustomer().getId();
-        final Object mhcId = smsDlgPresenter.getSelectedProcedure().getId();
-        final String smsText = smsDlgPresenter.getView().getMessageText().getText();
+        final Object customerId = smsDlgPresenter.getSelectedCustomer().getId();
+        final Object procedureId = smsDlgPresenter.getSelectedProcedure().getId();
+        final String msgText = smsDlgPresenter.getView().getMessageText().getText();
         final String notice = smsDlgPresenter.getView().getNotice().getText();
         final Date mhDateTime = smsDlgPresenter.getStartTime();
         final int mhLen = smsDlgPresenter.getMedicalHelpLength();
@@ -614,8 +620,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             return;
         }
         dlg.hide(); // invokes clean and deletes upper collected data
-        storeEvent(smsId, new Pair<Object, Object>(patientId, mhcId),
-                new Pair<String, String>(smsText, notice), mhDateTime, mhLen, eventWidget);
+        storeEvent(smsId, new Pair<Object, Object>(customerId, procedureId),
+                new Pair<String, String>(msgText, notice), mhDateTime, mhLen, eventWidget);
     }
 
     /**

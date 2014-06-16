@@ -5,6 +5,7 @@ import java.util.List;
 
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
+import veny.smevente.client.utils.DateUtils;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.PatientNameSuggestOracle;
 import veny.smevente.client.utils.PatientSuggestion;
@@ -222,10 +223,10 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
      */
     @SuppressWarnings("deprecation")
     public Date getStartTime() {
-        final Date rslt = (Date) startTime.clone();
-        rslt.setHours(Integer.parseInt(view.getStartHour().getValue(view.getStartHour().getSelectedIndex())));
-        rslt.setMinutes(Integer.parseInt(view.getStartMinute().getValue(view.getStartMinute().getSelectedIndex())));
-        return rslt;
+        final Date d = (Date) startTime.clone();
+        d.setHours(Integer.parseInt(view.getStartHour().getValue(view.getStartHour().getSelectedIndex())));
+        d.setMinutes(Integer.parseInt(view.getStartMinute().getValue(view.getStartMinute().getSelectedIndex())));
+        return d;
     }
 
     /**

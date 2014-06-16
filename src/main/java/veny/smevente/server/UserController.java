@@ -1,17 +1,18 @@
 package veny.smevente.server;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,7 +57,8 @@ public class UserController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(null, false) {
             @Override
             public void setAsText(final String text) throws IllegalArgumentException {
-                setValue(new Date(NumberUtils.parseNumber(text, Long.class).longValue()));
+                final Calendar cal = DatatypeConverter.parseDateTime(text);
+                setValue(cal.getTime());
             }
         });
     }
@@ -172,12 +174,16 @@ public class UserController {
      *
      * There is used trick with @see {@link Event#setAuthorId(Object)}.
      *
+     * @param request HTTP request
      * @param event event to be created/updated
      * @return SMS triple as JSON
      */
     @RequestMapping(value = "/event/", method = RequestMethod.POST)
-    public ModelAndView storeEvent(final Event event) {
+    public ModelAndView storeEvent(final HttpServletRequest request, final Event event) {
 
+        final TimeZone currentUserTz = ControllerHelper.getLoggedInUserTimezone(request);
+        final Date startTime = toUtc(event.getStartTime(), currentUserTz);
+        event.setStartTime(startTime);
         final Event created = eventService.storeEvent(event);
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
@@ -226,21 +232,22 @@ public class UserController {
      *
      * @param request HTTP request
      * @param userId author ID
-     * @param from date from
-     * @param to date to
+     * @param fromInUserTz date from in user's TZ
+     * @param toInUserTz date to in user's TZ
      * @return list of <code>Event</code> as JSON
      */
     @RequestMapping(value = "/{userId}/event/from/{from}/to/{to}/", method = RequestMethod.GET)
     public ModelAndView findEvents(
             final HttpServletRequest request,
             @PathVariable("userId") final String userId,
-            @PathVariable("from") final Date from,
-            @PathVariable("to") final Date to) {
+            @PathVariable("from") final Date fromInUserTz,
+            @PathVariable("to") final Date toInUserTz) {
 
-
+        final TimeZone currentUserTz = ControllerHelper.getLoggedInUserTimezone(request);
+        final Date from = toUtc(fromInUserTz, currentUserTz);
+        final Date to = toUtc(toInUserTz, currentUserTz);
         final List<Event> rslt = eventService.findEvents(userId, from, to);
         // convert all times on event to logged in user time zone
-        final TimeZone currentUserTz = ControllerHelper.getLoggedInUserTimezone(request);
         for (final Event event : rslt) {
             event.setStartTime(fromUtc(event.getStartTime(), currentUserTz));
             event.setSent(fromUtc(event.getSent(), currentUserTz));
@@ -349,16 +356,29 @@ public class UserController {
     // ----------------------------------------------------------- Helper Stuff
 
     /**
-     * Calculate time zone offset according to user's locale.
+     * Convert date from UTC to user's time zone.
      * @param date date in UTC
      * @param to target time zone
-     * @return date recalculated from UTC to given time zone.
+     * @return date recalculated from UTC to given time zone
      */
     private Date fromUtc(final Date date, final TimeZone to) {
         if (null == date) { return null; }
 
-        final int tzOffset = (to.getOffset(date.getTime()));
+        final int tzOffset = to.getOffset(date.getTime());
         return new Date(date.getTime() + tzOffset);
+    }
+
+    /**
+     * Convert date from user's time zone to UTC.
+     * @param date date in user's perspective
+     * @param to target time zone
+     * @return date recalculated from given time zone to UTC
+     */
+    private Date toUtc(final Date date, final TimeZone to) {
+        if (null == date) { return null; }
+
+        final int tzOffset = to.getOffset(date.getTime());
+        return new Date(date.getTime() - tzOffset);
     }
 
 }
