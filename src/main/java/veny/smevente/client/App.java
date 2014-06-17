@@ -15,6 +15,7 @@ import veny.smevente.client.rest.RestHandler;
 import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.LoginPresenter;
 import veny.smevente.client.uc.LoginViewImpl;
+import veny.smevente.client.utils.DateUtils;
 import veny.smevente.model.AbstractEntity;
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
@@ -100,7 +101,7 @@ public final class App implements ValueChangeHandler<String> {
      * Private constructor to avoid custom instances.
      */
     private App() {
-        weekDate = new Date();
+        weekDate = DateUtils.nowUTC();
 
         loginPresenter = new LoginPresenter();
         loginPresenter.bind(new LoginViewImpl());

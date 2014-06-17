@@ -24,13 +24,12 @@ import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
-import veny.smevente.model.Event;
 import veny.smevente.model.Customer;
+import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.shared.ExceptionJsonWrapper;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -55,7 +54,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 /**
  * Calendar Presenter.
  *
- * @author Vaclav Sykora [vaclav.sykora@gmaiEventDlgPresenterl.com]
+ * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 10.8.2010
  */
 public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.CalendarView>
@@ -96,7 +95,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     /** Offset from top (app header + calendar table header). */
     private static final int TOP_HEIGHT_OFFSET = 103;
 
-    private static final DateTimeFormat dateTimeFormatter = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+    /** Date formatter used for ISO 8601 without time zone. */
+    private final DateTimeFormat dateTimeFormatter = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     /** Popup panel with context menu. */
     private final PopupPanel menuPopupPanel = new PopupPanel(false, false);
@@ -340,8 +340,6 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
         final Date from = DateUtils.getWeekFrom(null == weekDate ? App.get().getWeekDate() : weekDate);
         final Date to = DateUtils.getWeekTo(null == weekDate ? App.get().getWeekDate() : weekDate);
-GWT.log("from: " + dateTimeFormatter.format(from));
-GWT.log("to:   " + dateTimeFormatter.format(to));
         final RestHandler rest = createExclusiveClientRestHandler(
                 "/rest/user/" + URL.encodePathSegment((String) user.getId())
                 + "/event/from/" + URL.encodePathSegment(dateTimeFormatter.format(from))
