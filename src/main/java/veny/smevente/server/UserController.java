@@ -185,6 +185,8 @@ public class UserController {
         final Date startTime = toUtc(event.getStartTime(), currentUserTz);
         event.setStartTime(startTime);
         final Event created = eventService.storeEvent(event);
+        created.setStartTime(fromUtc(created.getStartTime(), currentUserTz));
+        created.setSent(fromUtc(created.getSent(), currentUserTz));
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("event", created);
