@@ -223,16 +223,21 @@ public class UnitServiceImpl implements UnitService {
         validateProcedure(proc);
 
         // unique name and type
-        boolean uniqueOk = false;
+        Procedure foundWithEqualName = null;
         try {
-            final Procedure found =
-                procedureDao.findByNameAndType(proc.getUnit().getId(), proc.getName(), proc.enumType());
-            uniqueOk = found == null;
+            foundWithEqualName =
+                    procedureDao.findByNameAndType(proc.getUnit().getId(), proc.getName(), proc.enumType());
         } catch (IllegalStateException e) {
             // expected state <- combination of name and type not found
-            uniqueOk = true;
+            foundWithEqualName = null;
         }
-        if (!uniqueOk) {
+        // new procedure
+        if (null != foundWithEqualName && null == proc.getId()) {
+            ServerValidation.exception("duplicateValue", "name", (Object[]) null);
+        }
+        // existing procedure can have the same name
+        if (null != foundWithEqualName && null != proc.getId()
+                && !proc.getId().toString().equals(foundWithEqualName.getId().toString())) {
             ServerValidation.exception("duplicateValue", "name", (Object[]) null);
         }
 
