@@ -200,7 +200,7 @@ public class Event extends AbstractEntity {
             .append(getId())
             .append(", author=")
             .append(author.getUsername())
-            .append(", customerId='")
+            .append(", customerFN='")
             .append(customer.fullname())
             .append("', procedure=")
             .append(procedure.getName())

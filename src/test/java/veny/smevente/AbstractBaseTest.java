@@ -121,7 +121,13 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
      */
     protected User createUser(
             final String username, final String password, final String fullname, final boolean root) {
-        return userService.createUser(username, password, fullname, root);
+        final User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setFullname(fullname);
+        user.setRoot(root);
+        final User created = userService.createUser(user);
+        return created;
     }
     /**
      * @param user user to assert

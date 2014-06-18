@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import veny.smevente.model.Event;
+import veny.smevente.model.Unit;
 
 /**
  * Interface for persistence operation with <code>Event</code> entity.
@@ -35,9 +36,10 @@ public interface EventDao extends GenericDao<Event> {
     /**
      * Gets list of events that are older than given timestamp.
      *
+     * @param unit unit where the events belong into
      * @param olderThan time that all older SMSs should be found
      * @return list of SMSs
      */
-    List<Event> findEvents2BulkSend(Date olderThan);
+    List<Event> findEvents2BulkSend(Unit unit, Date olderThan);
 
 }

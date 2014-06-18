@@ -63,21 +63,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
-    public User createUser(
-            final String username, final String password,
-            final String fullname, final boolean root) {
-        final User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setFullname(fullname);
-        user.setRoot(root);
-        return createUser(user);
-    }
-
-    /** {@inheritDoc} */
-    @Transactional
-    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    @Override
     public User createUser(final User user) {
         validateUser(user, true);
 
@@ -140,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
         // unique user name
         final List<User> check = userDao.findBy("username", user.getUsername(), null);
-        if (null != check && !check.isEmpty() && !check.get(0).getId().toString().equals(user.getId())) {
+        if (null != check && !check.isEmpty() && !check.get(0).getId().toString().equals(user.getId().toString())) {
             ServerValidation.exception("duplicateValue", "username", (Object[]) null);
         } else {
             if (LOG.isDebugEnabled()) {

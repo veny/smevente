@@ -1,5 +1,7 @@
 package veny.smevente.dao.orientdb;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,9 +10,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import veny.smevente.model.AbstractEntity;
+import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
-import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
@@ -106,7 +108,7 @@ public class Schema {
             LOG.info("class created, name=" + membership.getName());
             // Customer
             OClass customer = db.getMetadata().getSchema().createClass(Customer.class.getSimpleName(), entity);
-            customer.createProperty("unit", OType.LINK, unit).setMandatory(true);
+            customer.createProperty("unit", OType.LINK, unit).setMandatory(true).setNotNull(true);
             customer.createProperty("firstname", OType.STRING);
             customer.createProperty("surname", OType.STRING).setMandatory(true).setNotNull(true);
             customer.createProperty("asciiFullname", OType.STRING).setMandatory(true).setNotNull(true);
@@ -177,13 +179,20 @@ public class Schema {
         patDef.put("SonDablik",     "Customer SET unit = %bar%, firstname = 'Šón',  surname = 'Ďáblík',    asciiFullname = 'SON DABLIK',     birthNumber = '7008088889', phoneNumber = '012345677'");
         // Procedure
         Map<String, String> procDef = new HashMap<String, String>();
-        procDef.put("beleni", "Procedure SET unit = %foo%, name = 'Bělení', messageText = 'Prijdte na beleni', type = 'IN_CALENDAR', color = 'FF0000', time = 30");
-        procDef.put("p2", "Procedure SET unit = %foo%, name = 'Extrakce', messageText = 'Prijdte na trhani', type = 'IN_CALENDAR', color = '00FF00', time = 60");
+        procDef.put("beleni", "Procedure SET unit = %foo%, name = 'Bělení', messageText = 'Prijdte na beleni dne #{date} v #{time}, #{doctor}', type = 'IN_CALENDAR', color = 'FF0000', time = 30");
+        procDef.put("trhani", "Procedure SET unit = %foo%, name = 'Extrakce', messageText = 'Trhani, #{date}, #{time}, #{doctor}', type = 'IN_CALENDAR', color = '00FF00', time = 60");
         procDef.put("p3", "Procedure SET unit = %foo%, name = 'Dovolená', messageText = 'Mame dovolenou', type => 'IMMEDIATE_MESSAGE'");
         // Event
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final Date today1 = new Date();
+        today1.setHours(10); today1.setMinutes(0); today1.setSeconds(0);
+        final Date today2 = new Date();
+        today2.setHours(12); today2.setMinutes(0); today2.setSeconds(0);
         Map<String, String> eventDef = new HashMap<String, String>();
-        eventDef.put("e1", "Event SET author = %veny%, customer = %JanNovak%, procedure = %beleni%, text = 'Message text', startTime = '2014-05-28 10:10:00:000', length = 30");
-        eventDef.put("e2", "Event SET author = %veny%, customer = %me%, procedure = %beleni%, text = 'Message text', startTime = '2014-06-03 15:00:00:000', length = 60");
+        eventDef.put("e1", "Event SET author = %veny%, customer = %JanNovak%, procedure = %beleni%, text = 'Prijdte na beleni dne #{date} v #{time}, #{doctor}', startTime = date('"
+                + formatter.format(today1) + "', 'yyyy-MM-dd HH:mm:ss'), length = 30");
+        eventDef.put("e2", "Event SET author = %veny%, customer = %me%, procedure = %trhani%, text = 'Message text, #{date}, #{time}, #{doctor}', startTime = '"
+                + formatter.format(today2) + "', length = 60");
 
         Object[] all = { userDef, unitDef, membDef, patDef, procDef, eventDef };
 

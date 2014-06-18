@@ -237,55 +237,48 @@ public class EventServiceImpl implements EventService {
     @Override
     public int bulkSend() {
         // TODO [veny,B] time should be defined in configuration
-        final Date border = new Date(System.currentTimeMillis() + (3L * 24L * 3600L * 1000L));
-        LOG.info("trying to found SMSs to bulk send, border=" + border);
-
-        final List<Event> foundEvents = eventDao.findEvents2BulkSend(border);
-        LOG.info("found events to bulk send, size=" + foundEvents.size());
-
-        // cache because if I reload unit each time a reload SMS limit too and it never expires
-        final Map<Object, Unit> unitsCache = new HashMap<Object, Unit>();
-        // cache units for storing
-        final Map<Object, Unit> units2store = new HashMap<Object, Unit>();
-
+        final Date olderThan = new Date(System.currentTimeMillis() + (3L * 24L * 3600L * 1000L));
         int sentCount = 0;
-        for (Event event : foundEvents) {
-            try {
-                final Customer customer = event.getCustomer();
-                Unit unit = unitsCache.get(customer.getUnit().getId());
-                if (null == unit) {
-                    // unit is not loaded with event because of 'detachWithFirstLevelAssociations'
-                    unit = unitDao.getById(customer.getUnit().getId());
-                    unitsCache.put(unit.getId(), unit);
+
+        // process each unit in separate because of different timeouts and SMS Service options
+        final List<Unit> units = unitDao.getAll();
+
+        for (final Unit unit : units) {
+            final List<Event> foundEvents = eventDao.findEvents2BulkSend(unit, olderThan);
+            LOG.info("found events to bulk send, size=" + foundEvents.size() + ", unit=" + unit.getName());
+
+            for (Event event : foundEvents) {
+                // assert limit of messages
+                if (null != unit.getLimitedSmss() && unit.getLimitedSmss().longValue() <= 0) {
+                    continue;
                 }
 
-                assertLimitedUnit(unit);
+                try {
+                    final Customer customer = event.getCustomer();
 
-                final String text2send = format(event);
-                smsGatewayService.send(
-                        customer.getPhoneNumber(), text2send, TextUtils.stringToMap(unit.getSmsGateway()));
+                    final String text2send = format(event);
+                    smsGatewayService.send(
+                            customer.getPhoneNumber(), text2send, TextUtils.stringToMap(unit.getSmsGateway()));
 
-                // store the 'sent' timestamp
-                event.setSent(new Date());
-                eventDao.persist(event);
-                // decrease the SMS limit if the unit is limited
-                if (null != unit.getLimitedSmss()) {
-                    unit.setLimitedSmss(unit.getLimitedSmss() - 1L);
-                    if (!units2store.containsKey(unit.getId())) {
-                        units2store.put(unit.getId(), unit);
+                    // store the 'sent' timestamp
+                    event.setSent(new Date());
+                    eventDao.persist(event);
+                    // decrease the SMS limit if the unit is limited
+                    if (null != unit.getLimitedSmss()) {
+                        unit.setLimitedSmss(unit.getLimitedSmss() - 1L);
                     }
-                }
 
-                sentCount++;
-            } catch (Throwable t) {
-                LOG.log(Level.WARN, "failed to send SMS, id=" + event.getId(), t);
-                event.setSendAttemptCount(event.getSendAttemptCount() + 1);
-                eventDao.persist(event);
+                    sentCount++;
+                } catch (Throwable t) {
+                    LOG.log(Level.WARN, "failed to send SMS, id=" + event.getId(), t);
+                    event.setSendAttemptCount(event.getSendAttemptCount() + 1);
+                    eventDao.persist(event);
+                }
             }
-        }
-        // store changed units with limited SMSs
-        for (Unit unit : units2store.values()) {
-            unitDao.persist(unit);
+            // store changed unit with limited messages
+            if (null != unit.getLimitedSmss()) {
+                unitDao.persist(unit);
+            }
         }
 
         LOG.info("sent " + sentCount + " SMSs");

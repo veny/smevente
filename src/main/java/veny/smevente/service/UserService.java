@@ -19,18 +19,6 @@ public interface UserService {
     /**
      * Stores a given user into DB.
      *
-     * @param username the user name
-     * @param password the password
-     * @param fullname full name
-     * @param root flag of root user
-     * @return created user
-     * @deprecated
-     */
-    User createUser(String username, String password, String fullname, boolean root);
-
-    /**
-     * Stores a given user into DB.
-     *
      * @param user the user to be created
      * @return created user
      */

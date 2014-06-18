@@ -273,7 +273,8 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             try {
                 db.detach(m.invoke(entity));
             } catch (Exception e) {
-                throw new IllegalStateException("failed to detach associated field", e);
+                throw new IllegalStateException("failed to detach associated field, method="
+                        + m.getName() + ", entity=" + entity, e);
             }
         }
     }

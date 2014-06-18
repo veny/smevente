@@ -10,6 +10,7 @@ import java.util.Map;
 import veny.smevente.dao.EventDao;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.model.Event;
+import veny.smevente.model.Unit;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
@@ -74,17 +75,22 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
 
     /** {@inheritDoc} */
     @Override
-    public List<Event> findEvents2BulkSend(final Date olderThan) {
+    public List<Event> findEvents2BulkSend(final Unit unit, final Date olderThan) {
 
         return getDatabaseWrapper().execute(new ODatabaseCallback<List<Event>>() {
             @Override
             public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
                         .append(getPersistentClass().getSimpleName())
-                        .append(" WHERE startTime < :olderThan AND sent IS NULL ORDER BY startTime ASC");
+                        .append(" WHERE customer.unit = :unit")
+                        .append(" AND startTime < :olderThan")
+                        .append(" AND sent IS NULL")
+                        .append(" AND (sendAttemptCount IS NULL OR sendAttemptCount <= :sac) ORDER BY startTime ASC");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
+                params.put("unit", unit.getId());
                 params.put("olderThan", dateFormat.format(olderThan));
+                params.put("sac", 3);
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
                 detachWithFirstLevelAssociations(rslt, db);

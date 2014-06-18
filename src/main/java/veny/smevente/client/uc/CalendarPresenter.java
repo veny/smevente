@@ -41,7 +41,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -669,8 +668,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     private void setScrollByTime() {
         @SuppressWarnings("deprecation")
         final int hour = new Date().getHours();
-        DOM.setElementPropertyInt(view.getCalendarBodyScrollContainer().getElement(), "scrollTop",
-                DateUtils.CALENDAR_COLUMN_HEIGHT / 24 * hour);
+        view.getCalendarBodyScrollContainer().getElement().setPropertyInt(
+                "scrollTop", DateUtils.CALENDAR_COLUMN_HEIGHT / 24 * hour);
     }
 
     /**

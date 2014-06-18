@@ -39,7 +39,7 @@ public class CronTaskController {
      * @param request HTTP request
      * @param response HTTP response
      */
-    @RequestMapping(value = "/cron/sms/", method = RequestMethod.GET)
+    @RequestMapping(value = "/cron/send/", method = RequestMethod.GET)
     public void sendEventCronTask(final HttpServletRequest request, final HttpServletResponse response) {
         LOG.info("cron task: bulk event sending, clientAddr=" + request.getRemoteHost());
         eventService.bulkSend();
@@ -72,6 +72,7 @@ public class CronTaskController {
         schema.sampleData();
         response.setStatus(200);
     }
+
     // ----------------------------------------------------------- Helper Stuff
 
 }

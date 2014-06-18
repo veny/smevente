@@ -40,7 +40,6 @@ public interface UnitService {
      *
      * @return list of all units
      */
-    @Deprecated // only for unit testing purposes
     List<Unit> getAllUnits();
 
     // ---------------------------------------------------------- Patient Stuff
