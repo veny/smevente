@@ -78,12 +78,13 @@ public class SmsDetailDlgPresenter extends AbstractPresenter<SmsDetailDlgPresent
 
         getView().getDate().setText(DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG).format(startTime));
         getView().getTime().setText(
-                DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(startTime) + " - "
-                + DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(endTime));
+                DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT).format(startTime)
+                + " - "
+                + DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT).format(endTime));
         getView().getSmsText().setText(sms.getText());
         getView().getNotice().setText(sms.getNotice());
         getView().getSent().setText(
-                DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(sms.getSent())
+                DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(sms.getSent())
                 + " [id=" + sms.getId() + "]");
         getView().getName().setText(patient.fullname() + " [" + patient.formattedBirthNumber() + "]");
         getView().getPhoneNumber().setText(patient.getPhoneNumber());
