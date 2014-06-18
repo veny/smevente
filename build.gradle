@@ -8,7 +8,7 @@ ext {
     springSecurityVersion = "3.2.4.RELEASE"
     gwtVersion = "2.6.1"
     jacksonVersion = "2.4.0"
-    orientdbVersion = "1.7"
+    orientdbVersion = "1.7.3"
 }
 
 repositories {
