@@ -1,3 +1,5 @@
+# This provisioning script takes care of installing the runtime environment on CentOS.
+
 # Set a root password
 ## $ passwd
 # Update system
@@ -460,6 +462,10 @@ package :app do
   description 'Sets up the Smevente application'
   requires :java
   requires :orientdb
+
+  # app logging directory
+  runner 'mkdir -p /var/log/smevente_app'
+  runner 'chown -R java:java /var/log/smevente_app'
 end
 
 
