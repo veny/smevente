@@ -84,6 +84,8 @@ eclipse { // https://gist.github.com/gpike/3722887
 
 war {
     war.rootSpec.exclude 'log4j-devel.properties'
+    war.rootSpec.exclude '**/gwt-user*.jar' // because ot Tomcat deployment problem: jar not loaded. See Servlet Spec 3.0, section 10.7.2. Offending class: javax/servlet/Servlet.class
+    war.rootSpec.exclude '**/gwt-dev*.jar'
     from('war') {
         exclude('smevente/')
         exclude('WEB-INF/classes/')
