@@ -28,31 +28,21 @@ import eu.maydu.gwt.validation.client.ValidationException;
  */
 public class UserServiceTest extends AbstractBaseTest {
 
-//    @Test
-//    public void testX() {
-//        UserDao dao = (UserDao) applicationContext.getBean("userDao");
-//        User u = new User();
-//        u.setUsername("username");
-//        u.setPassword("password");
-//        u.setFullname("fullname");
-//        dao.persist(u);
-//    }
-
     /** UserService.createUser. */
     @SuppressWarnings("deprecation")
     @Test
     public void testCreateUser() {
-        userService.createUser(USERNAME, PASSWORD, FULLNAME, false /* root */);
+        createDefaultUser();
         final List<User> found = userService.getAllUsers();
         assertEquals(1, found.size());
         assertDefaultUser(found.get(0));
 
-        final User a = userService.createUser("a", "a", "a a", false);
-        userService.createUser("b", "b", "b b", false);
+        final User a = createUser("a", "a", "a a", false);
+        createUser("b", "b", "b b", false);
         assertEquals(3, userService.getAllUsers().size());
 
         try { // existing username
-            userService.createUser("a", "a", "a a", false);
+            createUser("a", "a", "a a", false);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
 
@@ -60,13 +50,13 @@ public class UserServiceTest extends AbstractBaseTest {
         // deleted user doesn't block a unique name
         userService.deleteUser(a.getId());
         assertEquals(2, userService.getAllUsers().size());
-        userService.createUser("a", "a", "a a", false);
+        createUser("a", "a", "a a", false);
         assertEquals(3, userService.getAllUsers().size());
     }
 
     /** UserService.createUser. */
     @SuppressWarnings("deprecation")
-    //@Test
+    @Test
     public void testCreateUserAndMembership() {
         final Unit unit1 = createDefaultUnit();
         User userA = new User();
@@ -121,7 +111,7 @@ public class UserServiceTest extends AbstractBaseTest {
     }
 
     /** UserService.getUser. */
-    //@Test
+    @Test
     public void testGetUser() {
         final User created = createDefaultUser();
         final User found = userService.getUser(created.getId());
@@ -143,7 +133,7 @@ public class UserServiceTest extends AbstractBaseTest {
     //@Test
     public void testUpdateUser() {
         final Unit unit1 = createDefaultUnit();
-        userService.createUser(USERNAME, PASSWORD, FULLNAME, false);
+        createUser(USERNAME, PASSWORD, FULLNAME, false);
 
         User userA = new User();
         userA.setUsername("a");
@@ -152,6 +142,7 @@ public class UserServiceTest extends AbstractBaseTest {
         userA = userService.storeUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
         assertNotNull(userA);
 
+List<User> x = userService.getAllUsers();
         assertEquals(2, userService.getAllUsers().size());
 
         try { // existing username
@@ -162,8 +153,8 @@ public class UserServiceTest extends AbstractBaseTest {
         try { // null username
             userA.setUsername(null);
             userService.updateUser(userA);
-            assertEquals("expected NullPointerException", true, false);
-        } catch (NullPointerException e) { assertEquals(true, true); }
+            assertEquals("expected IllegalArgumentException", true, false);
+        } catch (IllegalArgumentException e) { assertEquals(true, true); }
 
         userA.setUsername("B");
         userA.setFullname("B B");
@@ -171,7 +162,6 @@ public class UserServiceTest extends AbstractBaseTest {
 
         assertEquals(2, userService.getAllUsers().size());
         assertNotNull("User should exist", userService.findUserByUsername("B"));
-//        assertEquals(1, userService.findUsers(unit1.getId(), "B", "B B").size());
     }
 
 //    /** UserService.createUser. */
