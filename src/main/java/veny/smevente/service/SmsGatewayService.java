@@ -77,8 +77,9 @@ public interface SmsGatewayService {
      * @param number the phone number
      * @param msg the message
      * @param metadata metadata for a concrete SMS service implementation
+     * @return <i>true</i> if message successfully sent
      */
-    void send(String number, String msg, Map<String, String> metadata) throws SmsException;
+    boolean send(String number, String msg, Map<String, String> metadata) throws SmsException;
     // CHECKSTYLE:ON
 
 }

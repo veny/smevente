@@ -57,7 +57,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
      */
     /** {@inheritDoc} */
     @Override
-    public void send(final String number, final String msg, final Map<String, String> metadata) throws SmsException {
+    public boolean send(final String number, final String msg, final Map<String, String> metadata) throws SmsException {
         if (null == number) { throw new NullPointerException("phone number cannot be null"); }
         if (null == msg) { throw new NullPointerException("message cannot be null"); }
         if (msg.length() > MAX_SMS_LEN) {
@@ -88,7 +88,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
         // do NOT send the SMS physically if system property 'sms.gateway.fake' set to 'true'.
         // [it's mostly for JUnit test that do not want to send a SMS.]
         if ("true".equalsIgnoreCase(System.getProperty("sms.gateway.fake", "false"))) {
-            return;
+            return true;
         }
 
         try {
@@ -148,6 +148,8 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
             LOG.error("failed to send SMS, number=" + number + ", data=" + data, e);
             throw new SmsException(FailureType.CLIENT_ERROR, e.getMessage());
         }
+
+        return true;
     }
 
     // ----------------------------------------------------------- Helper Stuff
