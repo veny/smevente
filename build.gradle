@@ -66,6 +66,7 @@ dependencies {
     testCompile "junit:junit:4.+"
     testCompile "org.springframework:spring-test:$springVersion"
     testCompile "com.orientechnologies:orientdb-server:$orientdbVersion"
+    testCompile "org.mockito:mockito-core:1.9.5"
  }
 
 
