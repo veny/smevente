@@ -197,21 +197,21 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     public static final String BIRTH_NUMBER = "7001012222";
     // CHECKSTYLE:ON
 
-    /** @return a new created default patient */
-    protected Customer createDefaultPatient() {
+    /** @return a new created default customer */
+    protected Customer createDefaultCustomer() {
         final Unit unit = createDefaultUnit();
-        return createPatient(FIRSTNAME, SURNAME, PHONE_NUMBER, BIRTH_NUMBER, unit);
+        return createCustomer(FIRSTNAME, SURNAME, PHONE_NUMBER, BIRTH_NUMBER, unit);
     }
     /**
-     * Creates a new patient with given attributes.
+     * Creates a new customer with given attributes.
      * @param firstname firstname
      * @param surname surname
      * @param phoneNumber phone number
      * @param birthNumber birth number
      * @param unit unit to be the patient put into
-     * @return a new created patient
+     * @return a new created customer
      */
-    protected Customer createPatient(
+    protected Customer createCustomer(
             final String firstname, final String surname,
             final String phoneNumber, final String birthNumber, final Unit unit) {
         final Customer toCreate = new Customer();
@@ -331,7 +331,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     /** @return a new created default event */
     protected Event createDefaultEvent() {
         final User author = createDefaultUser();
-        final Customer patient = createDefaultPatient();
+        final Customer patient = createDefaultCustomer();
         final Procedure procedure = createProcedure(PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME,
                 PROCEDURE_MSGTEXT, null, patient.getUnit());
         return createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, author, patient, procedure);

@@ -33,7 +33,6 @@ public class UnitServiceTest extends AbstractBaseTest {
     // ------------------------------------------------------------- Unit Stuff
 
     /** UnitService.createUnit. */
-    @SuppressWarnings("deprecation")
     @Test
     public void testCreateUnit() {
         final Unit firstUnit = createDefaultUnit();
@@ -117,7 +116,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals(1, unitService.getPatientsByUnit(unit.getId()).size());
 
         // second patient in the first unit
-        final Customer secondCreated = createPatient("a", "b", null, null, unit);
+        final Customer secondCreated = createCustomer("a", "b", null, null, unit);
         assertNotNull(secondCreated);
         assertNotNull(secondCreated.getId());
         assertNotNull(secondCreated.getUnit());
@@ -187,7 +186,7 @@ public class UnitServiceTest extends AbstractBaseTest {
     /** UnitService.storePatient (update). */
     @Test // unit/patient/
     public void testStoreUpdatePatient() {
-        final Customer created = createDefaultPatient();
+        final Customer created = createDefaultCustomer();
         assertNull(created.getCity());
         assertNull(created.getDegree());
 
@@ -217,20 +216,20 @@ public class UnitServiceTest extends AbstractBaseTest {
     /** UnitService.getPatientsByUnit. */
     @Test // unit/{id}/info/
     public void testGetPatientsByUnit() {
-        final Customer created = createDefaultPatient();
+        final Customer created = createDefaultCustomer();
         assertNotNull(created.getUnit().getId());
         List<Customer> found = unitService.getPatientsByUnit(created.getUnit().getId());
         assertNotNull(found);
         assertEquals(1, found.size());
         assertDefaultPatient(found.get(0), true);
 
-        createPatient("a", "a", null, null, created.getUnit());
+        createCustomer("a", "a", null, null, created.getUnit());
         found = unitService.getPatientsByUnit(created.getUnit().getId());
         assertEquals(2, found.size());
         assertDefaultUnit(found.get(0).getUnit());
         assertDefaultUnit(found.get(1).getUnit());
 
-        createPatient("b", "b", null, null, created.getUnit());
+        createCustomer("b", "b", null, null, created.getUnit());
         found = unitService.getPatientsByUnit(created.getUnit().getId());
         assertEquals(3, found.size());
         assertDefaultUnit(found.get(0).getUnit());
@@ -238,7 +237,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertDefaultUnit(found.get(2).getUnit());
 
         final Unit secondUnit = createUnit("X", "desc", Unit.TextVariant.PATIENT, 0L, null);
-        final Customer c = createPatient("c", "c", null, null, secondUnit);
+        final Customer c = createCustomer("c", "c", null, null, secondUnit);
         found = unitService.getPatientsByUnit(secondUnit.getId());
         assertEquals(1, found.size());
         assertEquals(secondUnit.getId(), found.get(0).getUnit().getId());
@@ -258,14 +257,14 @@ public class UnitServiceTest extends AbstractBaseTest {
     public void testFindPatients() {
         final Unit unit = createDefaultUnit();
         assertTrue(unitService.findPatients(unit.getId(), null, null, null).isEmpty());
-        final Customer adam = createPatient("Adam", "Bláha", "000000000", "7001011111", unit);
-        final Customer vaclav = createPatient("Václav", "Sýkora", "011111111", "7001022222", unit);
-        createPatient("John", "Žluťoučký", "012222222", "7003033333", unit);
-        createPatient("Robert", "Kůň", "012333333", "7004044444", unit);
-        createPatient("Norbert", "Kuře", "012344444", "7005055555", unit);
-        createPatient("Gábina", "Buližníková", "012345555", "7006066666", unit);
-        createPatient("Žulet", "Světlíková", "012345666", "7007077777", unit);
-        createPatient("Šón", "Ďáblík", "012345677", "7008088889", unit);
+        final Customer adam = createCustomer("Adam", "Bláha", "000000000", "7001011111", unit);
+        final Customer vaclav = createCustomer("Václav", "Sýkora", "011111111", "7001022222", unit);
+        createCustomer("John", "Žluťoučký", "012222222", "7003033333", unit);
+        createCustomer("Robert", "Kůň", "012333333", "7004044444", unit);
+        createCustomer("Norbert", "Kuře", "012344444", "7005055555", unit);
+        createCustomer("Gábina", "Buližníková", "012345555", "7006066666", unit);
+        createCustomer("Žulet", "Světlíková", "012345666", "7007077777", unit);
+        createCustomer("Šón", "Ďáblík", "012345677", "7008088889", unit);
 
         // by name
         assertEquals(1, unitService.findPatients(unit.getId(), "ADAM", null, null).size()); // Blaha
@@ -310,9 +309,9 @@ public class UnitServiceTest extends AbstractBaseTest {
     /** UnitService.deletePatient. */
     @Test // unit/patient/{id}/
     public void testDeletePatient() {
-        final Customer firstCreated = createDefaultPatient();
+        final Customer firstCreated = createDefaultCustomer();
         final Unit unit = firstCreated.getUnit();
-        final Customer secondCreated = createPatient("a", "a", null, null, unit);
+        final Customer secondCreated = createCustomer("a", "a", null, null, unit);
         assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
 
         // delete first
@@ -325,7 +324,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals(1, found.size());
         assertEquals(secondCreated.getId(), found.get(0).getId());
 
-        final Customer thirdCreated = createPatient("b", "b", null, null, unit);
+        final Customer thirdCreated = createCustomer("b", "b", null, null, unit);
         assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
         unitService.deletePatient(firstCreated.getId()); // DO NOTHING
         unitService.deletePatient(secondCreated.getId());
