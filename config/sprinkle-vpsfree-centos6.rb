@@ -323,6 +323,7 @@ package :apache do
   replace_text '^#NameVirtualHost.*', "NameVirtualHost *:80", '/etc/httpd/conf/httpd.conf'
 end
 
+
 ##################################### PRESENTATION
 
 package :ruby do
@@ -388,6 +389,7 @@ CONF
   runner 'chown -R ruby:ruby /var/log/smevente_www'
 end
 
+
 ############################################## APP
 
 package :java do
@@ -445,7 +447,6 @@ package :orientdb do
   runner "if [ ! -f '/opt/download/orientdb-community-#{ORIENTDB_VERSION}.tar.gz' ]; then cd /opt/download; wget http://www.orientdb.org/portal/function/portal/download/unknown@unknown.com/-/-/-/-/-/orientdb-community-#{ORIENTDB_VERSION}.tar.gz/false/false/linux -O orientdb-community-#{ORIENTDB_VERSION}.tar.gz; fi"
   runner "if [ ! -d '/opt/orientdb-community-#{ORIENTDB_VERSION}' ]; then cd /opt; tar xvfz /opt/download/orientdb-community-#{ORIENTDB_VERSION}.tar.gz; fi"
   runner "chown -R java:java /opt/orientdb-community-#{ORIENTDB_VERSION}"
-#  runner "chmod u+x /opt/apache-tomcat-#{TOMCAT_VERSION}/bin/*.sh"
   runner "ln -f -s /opt/orientdb-community-#{ORIENTDB_VERSION} /opt/orientdb"
 
   # init script
