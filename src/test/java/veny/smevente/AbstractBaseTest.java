@@ -126,6 +126,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         user.setPassword(password);
         user.setFullname(fullname);
         user.setRoot(root);
+        user.setTimezone("Europe/Prague");
         final User created = userService.createUser(user);
         return created;
     }
