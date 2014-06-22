@@ -194,22 +194,22 @@ public class UserController {
         return modelAndView;
     }
 
-//    /**
-//     * Creates a new special SMS.
-//     *
-//     * @param response HTTP response
-//     * @param sms SMS to be created
-//     * @param authorId author ID
-//     */
-//    @RequestMapping(value = "/special-sms/", method = RequestMethod.POST)
-//    public void createAndSendSpecialSms(final HttpServletResponse response,
-//            final Event sms, @RequestParam("authorId") final Long authorId) {
-//
-//        sms.setAuthorId(authorId);
-//        smsService.createAndSendSpecialSms(sms);
-//        response.setStatus(HttpServletResponse.SC_OK);
-//    }
-//
+    /**
+     * Creates and immediately sends a new special message.
+     *
+     * @param response HTTP response
+     * @param event event to be created and sent
+     * @param authorId author ID
+     */
+    @RequestMapping(value = "/special-sms/", method = RequestMethod.POST)
+    public void createAndSendSpecialSms(final HttpServletResponse response,
+            final Event event, @RequestParam("authorId") final String authorId) {
+
+        event.setAuthorId(authorId);
+        eventService.createAndSendSpecialEvent(event);
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
 //    /**
 //     * Updates given SMS.
 //     * @param sms SMS to update

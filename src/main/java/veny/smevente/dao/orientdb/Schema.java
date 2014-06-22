@@ -134,7 +134,7 @@ public class Schema {
             OClass event = db.getMetadata().getSchema().createClass(Event.class.getSimpleName(), entity);
             event.createProperty("author", OType.LINK, user).setMandatory(true).setNotNull(true);
             event.createProperty("customer", OType.LINK, customer).setMandatory(true).setNotNull(true);
-            event.createProperty("procedure", OType.LINK, procedure); // can be 'null' for events of type IMMEDIATE_MESSAGE
+            event.createProperty("procedure", OType.LINK, procedure).setMandatory(true).setNotNull(true);
             event.createProperty("text", OType.STRING).setMandatory(true).setNotNull(true);
             event.createProperty("notice", OType.STRING);
             event.createProperty("startTime", OType.DATETIME); // can be 'null' for events of type IMMEDIATE_MESSAGE

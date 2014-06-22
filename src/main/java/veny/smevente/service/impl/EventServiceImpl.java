@@ -90,7 +90,7 @@ public class EventServiceImpl implements EventService {
         final Customer customer = patientDao.getById(event.getCustomer().getId());
         event.setCustomer(customer);
         // procedure
-        if (null == event.getProcedure() || null == event.getProcedure().getId()) {
+        if ((null == event.getProcedure() || null == event.getProcedure().getId())) {
             throw new NullPointerException("unknown procedure");
         }
         final Procedure proc = procedureDao.getById(event.getProcedure().getId());

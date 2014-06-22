@@ -1,15 +1,14 @@
 package veny.smevente.client.uc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
 import veny.smevente.client.utils.EmptyValidator;
-import veny.smevente.client.utils.Pair;
-import veny.smevente.model.Procedure;
 import veny.smevente.model.Customer;
+import veny.smevente.model.Procedure;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -39,7 +38,7 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
      */
     public interface SpecialSmsDlgView extends View {
         /**
-         * @return the medical help
+         * @return the procedure
          */
         ListBox getType();
         /**
@@ -60,23 +59,24 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
         DisclosurePanel getValidationErrors();
     }
 
-    /** List of types and corresponding texts. */
-    private List<Pair<String, String>> types = new ArrayList<Pair<String, String>>();
+    /** List of special procedures. */
+    private List<Procedure> specialProcedures;
 
 
     /**
      * Initializes presenter.
-     * @param patient the recipient
-     * @param specialCategories the list of special categories
+     * @param customer the recipient
+     * @param specProcedures the list of special procedures
      */
-    public void init(final Customer patient, final List<Procedure> specialCategories) {
+    public void init(final Customer customer, final List<Procedure> specProcedures) {
         // clear all the stuff
         clean();
 
-        initTypes(specialCategories);
+        this.specialProcedures = specProcedures;
+        initProceduresCombo(specialProcedures);
 
-        view.getFullname().setText(patient.fullname());
-        view.getPhoneNumber().setText(patient.getPhoneNumber());
+        view.getFullname().setText(customer.fullname());
+        view.getPhoneNumber().setText(customer.getPhoneNumber());
 
         // default type - the first one
         changedType(0);
@@ -124,11 +124,22 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
         view.getPhoneNumber().setText("");
         view.getSmsText().setText("");
 
-        types.clear();
+        if (null != specialProcedures) { specialProcedures.clear(); }
 
         // validation
         validator.reset((String[]) null);
         getView().getSmsText().removeStyleName("validationFailedBorder");
+    }
+
+    /**
+     * Get ID of selected special procedure.
+     * @return ID of selected special procedure
+     */
+    public String getSelectedProcedureId() {
+        final int idx = view.getType().getSelectedIndex();
+GWT.log("111 " + idx);
+GWT.log("222 " + specialProcedures.get(idx).getId());
+        return specialProcedures.get(idx).getId().toString();
     }
 
     // -------------------------------------------------------- Assistant Stuff
@@ -138,9 +149,7 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
      * @param index index of selected type
      */
     private void changedType(final int index) {
-        final Pair<String, String> type = types.get(index);
-        // SMS text
-        view.getSmsText().setText(type.getB());
+        view.getSmsText().setText(specialProcedures.get(index).getMessageText());
     }
 
     /**
@@ -186,15 +195,12 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
 
     /**
      *
-     * @param specialCategories the categories used in dialog
+     * @param specialProcedures the procedures used in dialog
      */
-    private void initTypes(final List<Procedure> specialCategories) {
-        if (specialCategories != null) {
-            for (Procedure mhc : specialCategories) {
-                Pair<String, String> type = new Pair<String, String>(mhc.getName(),
-                        mhc.getMessageText());
-                types.add(type);
-                view.getType().addItem(type.getA());
+    private void initProceduresCombo(final List<Procedure> specialProcedures) {
+        if (specialProcedures != null) {
+            for (final Procedure proc : specialProcedures) {
+                view.getType().addItem(proc.getName());
             }
         }
     }

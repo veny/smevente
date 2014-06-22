@@ -110,9 +110,9 @@ public class Membership extends AbstractEntity {
             .append(", significance=")
             .append(significance)
             .append(", user=")
-            .append(null == user ? "null" : user.getUsername())
+            .append(null == user ? "<null>" : user.getUsername())
             .append(", unit=")
-            .append(unit.getName())
+            .append(null == getUnit() ? "<null>" : unit.getName())
             .append(")")
             .toString();
     }

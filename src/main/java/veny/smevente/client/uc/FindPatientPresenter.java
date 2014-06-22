@@ -355,16 +355,16 @@ public class FindPatientPresenter
 
     /**
      * Displays a dialog window to send a special SMS.
-     * @param patient the recipient
+     * @param customer the recipient
      */
-    private void specialSmsDlg(final Customer patient) {
+    private void specialSmsDlg(final Customer customer) {
         final List<Procedure> immediateMsgCategories = App.get().getProcedures(Event.Type.IMMEDIATE_MESSAGE);
         if (immediateMsgCategories.isEmpty()) {
             Window.alert(CONSTANTS.noSpecialSmsInUnit());
         } else {
             final SpecialSmsDlgPresenter p =
                 (SpecialSmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SPECIAL_SMS_DLG);
-            p.init(patient, immediateMsgCategories);
+            p.init(customer, immediateMsgCategories);
             final SmeventeDialog dlg = new SmeventeDialog("SMS", p);
 
             dlg.getOkButton().setText(CONSTANTS.send());
@@ -377,9 +377,10 @@ public class FindPatientPresenter
                         // already invoked by the ...validate() call.
                         return;
                     }
-                    final String smsText = p.getView().getSmsText().getText();
+                    final String procedureId = p.getSelectedProcedureId();
+                    final String text = p.getView().getSmsText().getText();
                     dlg.hide(); // invokes clean and deletes upper collected data
-                    sendSpecialSms(patient, smsText);
+                    sendSpecialSms(procedureId, customer, text);
                 }
             });
 
@@ -389,14 +390,16 @@ public class FindPatientPresenter
 
     /**
      * Sends request to send a special SMS.
-     * @param patient the recipient
-     * @param smsText text to be sent as SMS
+     * @param procedureId ID of selected special procedure
+     * @param customer the recipient
+     * @param text text to be sent
      */
-    private void sendSpecialSms(final Customer patient, final String smsText) {
+    private void sendSpecialSms(final String procedureId, final Customer customer, final String text) {
         final Map<String, String> params = new HashMap<String, String>();
+        params.put("procedureId", procedureId);
         params.put("authorId", App.get().getSelectedUnitMember().getId().toString());
-        params.put("patientId", patient.getId().toString());
-        params.put("text", smsText);
+        params.put("customerId", customer.getId().toString());
+        params.put("text", text);
 
         final RestHandler rest = new RestHandler("/rest/user/special-sms/");
         rest.setCallback(new RestCallback() {
