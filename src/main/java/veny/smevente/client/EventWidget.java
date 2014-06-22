@@ -13,7 +13,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
@@ -61,7 +60,7 @@ public class EventWidget extends FlowPanel implements HasClickHandlers /*HasDoub
         } else {
             addStyleName("sms-widget-sent");
         }
-        DOM.setStyleAttribute(getElement(), "backgroundColor", "#" + procedure.getColor());
+        getElement().getStyle().setProperty("backgroundColor", "#" + procedure.getColor());
 
         // header text
         final Date startTime = event.getStartTime();
