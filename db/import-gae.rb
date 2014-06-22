@@ -191,12 +191,14 @@ class Loader < Optitron::CLI
           doc['author'] = rid.to_s
           key = doc.delete('customerId')
           rid = CUSTOMERS[key]
-          puts "PPP customer not found, key=#{key}, row=#{row}" if rid.nil?
+          puts "CCC customer not found, key=#{key}, row=#{row}" if rid.nil?
           next if rid.nil?
           doc['customer'] = rid.to_s
           key = doc.delete('procedureId')
           rid = PROCEDURES[key]
-          doc['procedure'] = (rid.nil? ? nil : rid.to_s)
+          puts "PPP procedure not found, key=#{key}, row=#{row}" if rid.nil?
+          next if rid.nil?
+          doc['procedure'] = rid.to_s
 
           key = doc.delete 'key'
 #puts "DOC=#{doc}"
