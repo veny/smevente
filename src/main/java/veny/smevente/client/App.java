@@ -50,7 +50,7 @@ public final class App implements ValueChangeHandler<String> {
     public static final Logger LOG = Logger.getLogger("App");
 
     /** App version. */
-    public static final String VERSION = "0.2.0";
+    public static final String VERSION = "0.3.0";
 
     /** Minimal page width in pixel - if browser window is smaller, scrollbars will appear. */
     public static final int MIN_PAGE_WIDTH = 1000;
