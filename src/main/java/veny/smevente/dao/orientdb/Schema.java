@@ -101,8 +101,8 @@ public class Schema {
             LOG.info("class created, name=" + unit.getName());
             // Membership
             OClass membership = db.getMetadata().getSchema().createClass(Membership.class.getSimpleName(), entity);
-            membership.createProperty("user", OType.LINK, user).setMandatory(true);
-            membership.createProperty("unit", OType.LINK, unit).setMandatory(true);
+            membership.createProperty("user", OType.LINK, user).setMandatory(true).setNotNull(true);
+            membership.createProperty("unit", OType.LINK, unit).setMandatory(true).setNotNull(true);
             membership.createProperty("role", OType.STRING).setMandatory(true).setNotNull(true);
             membership.createProperty("significance", OType.INTEGER);
             LOG.info("class created, name=" + membership.getName());
@@ -123,7 +123,7 @@ public class Schema {
             LOG.info("class created, name=" + customer.getName());
             // Procedure
             OClass procedure = db.getMetadata().getSchema().createClass(Procedure.class.getSimpleName(), entity);
-            procedure.createProperty("unit", OType.LINK, unit).setMandatory(true);
+            procedure.createProperty("unit", OType.LINK, unit).setMandatory(true).setNotNull(true);
             procedure.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
             procedure.createProperty("messageText", OType.STRING).setMandatory(true).setNotNull(true);
             procedure.createProperty("type", OType.STRING); // null == Event.Type.IN_CALENDAR
@@ -132,8 +132,8 @@ public class Schema {
             LOG.info("class created, name=" + procedure.getName());
             // Event
             OClass event = db.getMetadata().getSchema().createClass(Event.class.getSimpleName(), entity);
-            event.createProperty("author", OType.LINK, user).setMandatory(true);
-            event.createProperty("customer", OType.LINK, customer).setMandatory(true);
+            event.createProperty("author", OType.LINK, user).setMandatory(true).setNotNull(true);
+            event.createProperty("customer", OType.LINK, customer).setMandatory(true).setNotNull(true);
             event.createProperty("procedure", OType.LINK, procedure); // can be 'null' for events of type IMMEDIATE_MESSAGE
             event.createProperty("text", OType.STRING).setMandatory(true).setNotNull(true);
             event.createProperty("notice", OType.STRING);
