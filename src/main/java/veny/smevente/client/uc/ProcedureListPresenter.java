@@ -22,7 +22,6 @@ import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -295,7 +294,7 @@ public class ProcedureListPresenter
             addCell(line, 4, new Label("" + proc.getTime()));
             addCell(line, 5, new Label(proc.getMessageText()));
             // color
-            DOM.setStyleAttribute(view.getResultTable().getWidget(line, 3).getElement(),
+            view.getResultTable().getWidget(line, 3).getElement().getStyle().setProperty(
                     "backgroundColor", "#" + proc.getColor());
         } else {
             addCell(line, 3, new Label(proc.getMessageText()));
