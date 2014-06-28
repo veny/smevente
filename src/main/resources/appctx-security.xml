@@ -23,6 +23,7 @@
     <session-management session-fixation-protection="newSession"/>
     <!-- intercept-url pattern="/rest/data/**" access="ROLE_ROOT" / -->
     <intercept-url pattern="/rest/sac/**" access="hasIpAddress('127.0.0.1')" />
+    <intercept-url pattern="/rest/monitor/" access="permitAll" />
     <intercept-url pattern="/rest/**" access="isAuthenticated()" />
     <custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
     <custom-filter position="LOGOUT_FILTER" ref="logoutFilter" />

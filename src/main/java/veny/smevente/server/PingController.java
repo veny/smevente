@@ -1,5 +1,8 @@
 package veny.smevente.server;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,4 +49,19 @@ public class PingController {
         return modelAndView;
     }
 
+    /**
+     * Get a overview for monitoring.
+     * @param request HTTP request
+     * @return JSON representation of overview data
+     */
+    @RequestMapping(value = "/monitor/")
+    public ModelAndView monitor(final HttpServletRequest request) {
+        LOG.info("monitor, ip=" + request.getLocalAddr());
+        final ModelAndView modelAndView = new ModelAndView();
+        final Map<String, String> data = new HashMap<String, String>();
+        data.put("status", "OK");
+        modelAndView.setViewName("jsonView");
+        modelAndView.addObject("monitor", data);
+        return modelAndView;
+    }
 }
