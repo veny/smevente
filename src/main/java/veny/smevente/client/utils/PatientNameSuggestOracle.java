@@ -9,15 +9,15 @@ import veny.smevente.model.Customer;
 import com.google.gwt.user.client.ui.SuggestOracle;
 
 /**
- * Class to provide patient suggestion by name.
+ * Class to provide customer suggestion by name.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 18.6.2010
  */
 public class PatientNameSuggestOracle extends SuggestOracle {
 
-    /** List of available patients. */
-    private List<Customer> patients = null;
+    /** List of available customers. */
+    private List<Customer> customers = null;
 
     /** {@inheritDoc} */
     @Override
@@ -39,10 +39,10 @@ public class PatientNameSuggestOracle extends SuggestOracle {
         if (query.length() >= 1) {
             String prefixToMatch = query.toLowerCase();
 
-            for (int i = 0; i < patients.size() && matching.size() < limit; i++) {
-                if (matches(patients.get(i), prefixToMatch)) {
-                    matching.add(new PatientSuggestion(patients.get(i),
-                            convertToFormattedSuggestions(patients.get(i), prefixToMatch)));
+            for (int i = 0; i < customers.size() && matching.size() < limit; i++) {
+                if (matches(customers.get(i), prefixToMatch)) {
+                    matching.add(new PatientSuggestion(customers.get(i),
+                            convertToFormattedSuggestions(customers.get(i), prefixToMatch)));
                 }
             }
         }
@@ -51,19 +51,19 @@ public class PatientNameSuggestOracle extends SuggestOracle {
     }
 
     /**
-     * Sets list of patients.
-     * @param patients list of patients
+     * Sets list of customers.
+     * @param customers list of customers
      */
-    public void setPatients(final List<Customer> patients) {
-        this.patients = patients;
+    public void setCustomers(final List<Customer> customers) {
+        this.customers = customers;
     }
 
     /**
      * Removes all of the suggestions from the oracle.
      */
     public void clear() {
-        if (null != patients) {
-            patients.clear();
+        if (null != customers) {
+            customers.clear();
         }
     }
 
@@ -87,7 +87,6 @@ public class PatientNameSuggestOracle extends SuggestOracle {
             rslt.append(patient.getSurname().substring(len));
 
         } else {
-
             // search without space -> check firstname or surname
             final int len = prefixToMatch.length();
             if (patient.getFirstname().toLowerCase().startsWith(prefixToMatch)) {
@@ -133,7 +132,7 @@ public class PatientNameSuggestOracle extends SuggestOracle {
         }
 
         // search without space -> check firstname or surname
-        return patient.getFirstname().toLowerCase().startsWith(prefixToMatch)
+        return (null != patient.getFirstname() && patient.getFirstname().toLowerCase().startsWith(prefixToMatch))
                 || patient.getSurname().toLowerCase().startsWith(prefixToMatch);
     }
 

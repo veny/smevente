@@ -5,12 +5,11 @@ import java.util.List;
 
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
-import veny.smevente.client.utils.DateUtils;
 import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.PatientNameSuggestOracle;
 import veny.smevente.client.utils.PatientSuggestion;
-import veny.smevente.model.Event;
 import veny.smevente.model.Customer;
+import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -139,7 +138,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
 
         // Customer Name Suggestion
         PatientNameSuggestOracle oracle = (PatientNameSuggestOracle) view.getNameSuggestBox().getSuggestOracle();
-        oracle.setPatients(customers);
+        oracle.setCustomers(customers);
 
         // Medical Help Category
         procedures = mhcs;
