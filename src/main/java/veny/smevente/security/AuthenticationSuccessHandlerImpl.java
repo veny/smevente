@@ -67,6 +67,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
             // store the opened client into the session
             final HttpSession session = request.getSession();
             session.setAttribute(USER_SESSION_KEY, user);
+            session.setMaxInactiveInterval(240 * 60);
 
             LOG.info("wave user created & stored in session, user=" + auth.getName()
                 + ", sessionId=" + request.getSession().getId());
