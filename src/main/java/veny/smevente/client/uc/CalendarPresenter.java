@@ -386,7 +386,8 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      */
     private void sendSms(final EventWidget smsWidget) {
         final Event sms2send = smsWidget.getEvent();
-        final RestHandler rest = new RestHandler("/rest/user/sms/" + sms2send.getId() + "/");
+        final RestHandler rest = new RestHandler("/rest/user/sms/"
+                + URL.encodePathSegment(sms2send.getId().toString()) + "/");
         rest.setCallback(new RestCallback() {
             @Override
             public void onFailure(final ExceptionJsonWrapper exWrapper) {

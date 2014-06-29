@@ -261,24 +261,22 @@ public class UserController {
         return modelAndView;
     }
 
-//    /**
-//     * Sends SMS.
-//     *
-//     * @param request HTTP request
-//     * @param response HTTP response
-//     * @param smsId SMS ID
-//     * @return list of <code>Sms</code> as JSON
-//     */
-//    @RequestMapping(value = "/sms/{id}/", method = RequestMethod.POST)
-//    public ModelAndView sendSms(
-//            final HttpServletRequest request, final HttpServletResponse response,
-//            @PathVariable("id") final Long smsId) {
-//
-//        final Event info = smsService.sendSms(smsId);
-//        final ModelAndView modelAndView = new ModelAndView("jsonView");
-//        modelAndView.addObject("sms", info);
-//        return modelAndView;
-//    }
+    /**
+     * Sends SMS.
+     *
+     * @param request HTTP request
+     * @param smsId SMS ID
+     * @return list of <code>Sms</code> as JSON
+     */
+    @RequestMapping(value = "/sms/{id}/", method = RequestMethod.POST)
+    public ModelAndView sendSms(
+            final HttpServletRequest request, @PathVariable("id") final String smsId) {
+
+        final Event info = eventService.sendSms(smsId);
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("sms", info);
+        return modelAndView;
+    }
 
     /**
      * Deletes given event.
