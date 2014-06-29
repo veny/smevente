@@ -85,7 +85,7 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                         .append(" WHERE customer.unit = :unit")
                         .append(" AND startTime < :olderThan")
                         .append(" AND sent IS NULL")
-                        .append(" AND (sendAttemptCount IS NULL OR sendAttemptCount <= :sac) ORDER BY startTime ASC");
+                        .append(" AND (sendAttemptCount IS NULL OR sendAttemptCount < :sac) ORDER BY startTime ASC");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("unit", unit.getId());
