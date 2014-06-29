@@ -6,7 +6,8 @@ require 'paint/pa' # lib: paint
 # file Sms.cvs adapted to remove multi-line messages and notices; find it fit Regexp I-search: [^0,]$
 
 #SNAPSHOT_DATE='130407'
-SNAPSHOT_DATE='140425'
+#SNAPSHOT_DATE='140425'
+SNAPSHOT_DATE='140628'
 
 UNITS = {}
 USERS = {}
