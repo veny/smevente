@@ -144,6 +144,10 @@ public class Schema {
             event.createProperty("type", OType.STRING);
             LOG.info("class created, name=" + event.getName());
 
+            // Indexes
+            final OCommandSQL createIndex = new OCommandSQL("CREATE INDEX Event.startTime NOTUNIQUE");
+            db.command(createIndex).execute(new Object[0]);
+
             db.close();
         }
     }
