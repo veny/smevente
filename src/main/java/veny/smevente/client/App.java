@@ -49,7 +49,7 @@ public final class App implements ValueChangeHandler<String> {
     /** Logger. */
     public static final Logger LOG = Logger.getLogger("App");
 
-    /** Vesions history. */
+    /** Versions history. */
     public static final String[][] VERSIONS = new String[][] {
         {"0.3.0", "28.6.2014", "Initial revision on OrientDB"}
     };
