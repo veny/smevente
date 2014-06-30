@@ -5,9 +5,9 @@ import java.util.List;
 
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
-import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.CustomerNameSuggestOracle;
 import veny.smevente.client.utils.CustomerSuggestion;
+import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
@@ -17,7 +17,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -168,7 +167,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         // set all form elements
         selectedCustomer = sms.getCustomer();
         view.getEventId().setValue(sms.getId().toString());
-        view.getNameSuggestBox().getTextBox().setText(selectedCustomer.fullname());
+        view.getNameSuggestBox().getValueBox().setText(selectedCustomer.fullname());
         view.getPhoneNumber().setText(selectedCustomer.getPhoneNumber());
         view.getMessageText().setText(sms.getText());
         view.getNotice().setText(sms.getNotice());
@@ -282,7 +281,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         // set texts
         view.getProcedureHeader().setText(CONSTANTS.procedure());
 
-        view.getNameSuggestBox().getTextBox().setFocus(true);
+        view.getNameSuggestBox().getValueBox().setFocus(true);
     }
 
     /** {@inheritDoc} */
@@ -299,14 +298,14 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getStartHour().setItemSelected(0, true);
         view.getStartMinute().setItemSelected(0, true);
         view.getProcedure().clear();
-        view.getNameSuggestBox().getTextBox().setText("");
+        view.getNameSuggestBox().getValueBox().setText("");
         view.getPhoneNumber().setText("");
         view.getMessageText().setText("");
         view.getNotice().setText("");
 
         // validation
         validator.reset((String[]) null);
-        getView().getNameSuggestBox().getTextBox().removeStyleName("validationFailedBorder");
+        getView().getNameSuggestBox().getValueBox().removeStyleName("validationFailedBorder");
         getView().getMessageText().removeStyleName("validationFailedBorder");
 
         selectedCustomer = null;
@@ -323,7 +322,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         final Procedure mhc = procedures.get(index);
 
         // color
-        DOM.setStyleAttribute(view.getProcedureHeader().getElement(), "backgroundColor", "#" + mhc.getColor());
+        view.getProcedureHeader().getElement().getStyle().setProperty("backgroundColor", "#" + mhc.getColor());
 
         if (!switchTimeAndText) { return; }
 
@@ -375,12 +374,12 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
             @Override
             public void invokeActions(final ValidationResult result) {
                 getView().getNameSuggestBox().setFocus(true);
-                getView().getNameSuggestBox().getTextBox().addStyleName("validationFailedBorder");
+                getView().getNameSuggestBox().getValueBox().addStyleName("validationFailedBorder");
             }
             @Override
             public ValidationResult validate(final ValidationMessages messages) {
                 // remove result of previous failed validation if any
-                getView().getNameSuggestBox().getTextBox().removeStyleName("validationFailedBorder");
+                getView().getNameSuggestBox().getValueBox().removeStyleName("validationFailedBorder");
 
                 ValidationResult rslt = null;
                 if (null == selectedCustomer) {

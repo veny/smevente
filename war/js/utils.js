@@ -1,3 +1,4 @@
+// http://mynthon.net/howto/-/strip-accents-romove-national-characters-replace-diacritic-chars.txt
 function replaceDiacritics(s, mode) {
     var $acc, $str, o, r, i
 

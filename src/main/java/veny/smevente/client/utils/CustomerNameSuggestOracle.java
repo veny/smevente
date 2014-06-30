@@ -2,7 +2,9 @@ package veny.smevente.client.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import veny.smevente.model.Customer;
 
@@ -15,6 +17,9 @@ import com.google.gwt.user.client.ui.SuggestOracle;
  * @since 18.6.2010
  */
 public class CustomerNameSuggestOracle extends SuggestOracle {
+
+    /** Hash of diacritics conversion which is performance consuming. */
+    private static Map<String, String> replacedDiacriticsCache = new HashMap<String, String>();
 
     /** List of available customers. */
     private List<Customer> customers = null;
@@ -104,8 +109,16 @@ public class CustomerNameSuggestOracle extends SuggestOracle {
      * @return <i>true</i> if matches
      */
     private boolean matches(final Customer customer, final String prefixToMatch) {
-        final String toMatchUpper = replaceDiacritics(prefixToMatch, 1);
-        return (null != customer.getAsciiFullname() && customer.getAsciiFullname().contains(toMatchUpper));
+        String toMatch;
+        // next 'if' block is only performance optimalization, function 'replaceDiacritics' is expensive
+        if (replacedDiacriticsCache.containsKey(prefixToMatch)) {
+            toMatch = replacedDiacriticsCache.get(prefixToMatch);
+        } else {
+            toMatch = replaceDiacritics(prefixToMatch, 1);
+            replacedDiacriticsCache.put(prefixToMatch, toMatch);
+        }
+
+        return (null != customer.getAsciiFullname() && customer.getAsciiFullname().contains(toMatch));
     }
 
     /** {@inheritDoc} */
