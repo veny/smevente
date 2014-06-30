@@ -6,8 +6,8 @@ import java.util.List;
 import veny.smevente.client.mvp.AbstractPresenter;
 import veny.smevente.client.mvp.View;
 import veny.smevente.client.utils.EmptyValidator;
-import veny.smevente.client.utils.PatientNameSuggestOracle;
-import veny.smevente.client.utils.PatientSuggestion;
+import veny.smevente.client.utils.CustomerNameSuggestOracle;
+import veny.smevente.client.utils.CustomerSuggestion;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
@@ -137,7 +137,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getStartMinute().setItemSelected(startTime.getMinutes() / 5, true);
 
         // Customer Name Suggestion
-        PatientNameSuggestOracle oracle = (PatientNameSuggestOracle) view.getNameSuggestBox().getSuggestOracle();
+        CustomerNameSuggestOracle oracle = (CustomerNameSuggestOracle) view.getNameSuggestBox().getSuggestOracle();
         oracle.setCustomers(customers);
 
         // Medical Help Category
@@ -260,9 +260,9 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getNameSuggestBox().addSelectionHandler(new SelectionHandler<Suggestion>() {
             @Override
             public void onSelection(final SelectionEvent<Suggestion> event) {
-                final PatientSuggestion sug = (PatientSuggestion) event.getSelectedItem();
-                selectedCustomer = sug.getPatient();
-                view.getPhoneNumber().setText(sug.getPatient().getPhoneNumber());
+                final CustomerSuggestion sug = (CustomerSuggestion) event.getSelectedItem();
+                selectedCustomer = sug.getCustomer();
+                view.getPhoneNumber().setText(sug.getCustomer().getPhoneNumber());
             }
         });
 

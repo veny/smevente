@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 18.6.2010
  */
-public class PatientNameSuggestOracle extends SuggestOracle {
+public class CustomerNameSuggestOracle extends SuggestOracle {
 
     /** List of available customers. */
     private List<Customer> customers = null;
@@ -27,13 +27,13 @@ public class PatientNameSuggestOracle extends SuggestOracle {
     }
 
     /**
-     * Creates a list of matching patients.
+     * Creates a list of matching customers.
      * @param query client query
      * @param limit maximal count of suggestions
      * @return list of suggestions
      */
-    private Collection<PatientSuggestion> matching(final String query, final int limit) {
-        final List<PatientSuggestion> matching = new ArrayList<PatientSuggestion>(limit);
+    private Collection<CustomerSuggestion> matching(final String query, final int limit) {
+        final List<CustomerSuggestion> matching = new ArrayList<CustomerSuggestion>(limit);
 
         // only begin to search after the user has type one character
         if (query.length() >= 1) {
@@ -41,7 +41,7 @@ public class PatientNameSuggestOracle extends SuggestOracle {
 
             for (int i = 0; i < customers.size() && matching.size() < limit; i++) {
                 if (matches(customers.get(i), prefixToMatch)) {
-                    matching.add(new PatientSuggestion(customers.get(i),
+                    matching.add(new CustomerSuggestion(customers.get(i),
                             convertToFormattedSuggestions(customers.get(i), prefixToMatch)));
                 }
             }

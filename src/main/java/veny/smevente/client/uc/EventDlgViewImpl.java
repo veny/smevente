@@ -1,6 +1,6 @@
 package veny.smevente.client.uc;
 
-import veny.smevente.client.utils.PatientNameSuggestOracle;
+import veny.smevente.client.utils.CustomerNameSuggestOracle;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -50,7 +50,7 @@ public class EventDlgViewImpl extends Composite implements EventDlgPresenter.Eve
      * Constructor.
      */
     public EventDlgViewImpl() {
-        PatientNameSuggestOracle oracle = new PatientNameSuggestOracle();
+        CustomerNameSuggestOracle oracle = new CustomerNameSuggestOracle();
         nameSuggestBox = new SuggestBox(oracle);
 
         initWidget(BINDER.createAndBindUi(this));
