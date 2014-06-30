@@ -11,8 +11,8 @@ import veny.smevente.client.uc.CalendarPresenter;
 import veny.smevente.client.uc.CalendarViewImpl;
 import veny.smevente.client.uc.ChangePasswordPresenter;
 import veny.smevente.client.uc.ChangePasswordViewImpl;
-import veny.smevente.client.uc.FindPatientPresenter;
-import veny.smevente.client.uc.FindPatientViewImpl;
+import veny.smevente.client.uc.FindCustomerPresenter;
+import veny.smevente.client.uc.FindCustomerViewImpl;
 import veny.smevente.client.uc.UserListPresenter;
 import veny.smevente.client.uc.UserListViewImpl;
 import veny.smevente.client.uc.HeaderPresenter;
@@ -207,8 +207,8 @@ public class PresenterCollection {
                 presenter = storeUserPresenter;
                 break;
             case FIND_PATIENT:
-                FindPatientPresenter findPatientPresenter = new FindPatientPresenter();
-                findPatientPresenter.bind(new FindPatientViewImpl());
+                FindCustomerPresenter findPatientPresenter = new FindCustomerPresenter();
+                findPatientPresenter.bind(new FindCustomerViewImpl());
                 presenter = findPatientPresenter;
                 break;
             case STORE_PATIENT:

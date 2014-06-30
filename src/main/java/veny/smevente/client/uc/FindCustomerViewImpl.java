@@ -20,11 +20,11 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 0.1
  */
-public class FindPatientViewImpl extends Composite implements FindPatientPresenter.FindPatientView {
+public class FindCustomerViewImpl extends Composite implements FindCustomerPresenter.FindCustomerView {
 
     /** UI Binder interface. */
-    @UiTemplate("findPatient.ui.xml")
-    interface Binder extends UiBinder<Widget, FindPatientViewImpl> { }
+    @UiTemplate("findCustomer.ui.xml")
+    interface Binder extends UiBinder<Widget, FindCustomerViewImpl> { }
     /** UI Binder. */
     private static final Binder BINDER = GWT.create(Binder.class);
 
@@ -42,7 +42,7 @@ public class FindPatientViewImpl extends Composite implements FindPatientPresent
     /**
      * Constructor.
      */
-    public FindPatientViewImpl() {
+    public FindCustomerViewImpl() {
         initWidget(BINDER.createAndBindUi(this));
 
         getResultTable().setWidget(0, 0, new Label(""));

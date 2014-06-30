@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.common.base.Strings;
-
-import veny.smevente.model.Event;
 import veny.smevente.model.Customer;
+import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
+
+import com.google.common.base.Strings;
 
 /**
  * Controller of Unit REST interface.
@@ -75,7 +75,7 @@ public class UnitController {
         return modelAndView;
     }
 
-    // ---------------------------------------------------------- Patient Stuff
+    // --------------------------------------------------------- Customer Stuff
 
     /**
      * Stores (creates or updates) a patient.<p/>
@@ -110,7 +110,7 @@ public class UnitController {
 //    }
 
     /**
-     * Finds patients in given unit according to name and/or birth number and/or phone number.
+     * Finds customers in given unit according to name and/or birth number and/or phone number.
      *
      * @param request HTTP request
      * @param unitId ID to search in
@@ -119,8 +119,8 @@ public class UnitController {
      * @param birthNumber birth number to search
      * @return model & view
      */
-    @RequestMapping(value = "/{id}/patient/", method = RequestMethod.GET)
-    public ModelAndView findPatients(
+    @RequestMapping(value = "/{id}/customer/", method = RequestMethod.GET)
+    public ModelAndView findCustomers(
             final HttpServletRequest request,
             @PathVariable("id") final String unitId,
             @RequestParam("name") final String name,
@@ -130,10 +130,13 @@ public class UnitController {
         final String n = (Strings.isNullOrEmpty(name) ? null : name.trim());
         final String pn = (Strings.isNullOrEmpty(phoneNumber) ? null : phoneNumber.trim());
         final String bn = (Strings.isNullOrEmpty(birthNumber) ? null : birthNumber.trim());
-        final List<Customer> patients = unitService.findPatients(unitId, n, pn, bn);
+        final List<Customer> customers = unitService.findPatients(unitId, n, pn, bn);
+
+        // we don't need the unit
+        for (Customer c : customers) { c.setUnit(null); }
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("patients", patients);
+        modelAndView.addObject("customers", customers);
         return modelAndView;
     }
 

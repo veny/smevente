@@ -46,8 +46,8 @@ import com.google.gwt.user.client.ui.TextBox;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 28.7.2010
  */
-public class FindPatientPresenter
-    extends AbstractPresenter<FindPatientPresenter.FindPatientView>
+public class FindCustomerPresenter
+    extends AbstractPresenter<FindCustomerPresenter.FindCustomerView>
     implements HeaderHandler {
 
     /**
@@ -56,7 +56,7 @@ public class FindPatientPresenter
      * @author Vaclav Sykora
      * @since 0.1
      */
-    public interface FindPatientView extends View {
+    public interface FindCustomerView extends View {
         /**
          * Getter for the name text field.
          * @return the input field for the name
@@ -87,17 +87,17 @@ public class FindPatientPresenter
     /** Popup panel with context menu. */
     private final PopupPanel menuPopupPanel = new PopupPanel(true, true);
 
-    /** List of found patients. */
-    private List<Customer> foundPatients;
+    /** List of found customers. */
+    private List<Customer> foundCustomers;
 
-    /** ID of patient where the context menu is raised. */
+    /** ID of customer where the context menu is raised. */
     private String clickedId = null;
 
-    /** Click handler to patient delete. */
+    /** Click handler to customer delete. */
     private ClickHandler menuClickHandler;
 
     /** The index of row in table on which the click event occured. Used to
-     *  identify the patient for which the update action will be started. */
+     *  identify the customer for which the update action will be started. */
     private int clickedRowIndex;
 
     /** Handler registration for user CRUD in the Event Bus. */
@@ -128,7 +128,7 @@ public class FindPatientPresenter
         view.getSubmit().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
-                findPatients();
+                findCustomers();
             }
         });
 
@@ -156,8 +156,8 @@ public class FindPatientPresenter
         view.getResultTable().addDoubleClickHandler(new DoubleClickHandler() {
             @Override
             public void onDoubleClick(final DoubleClickEvent event) {
-                if (clickedRowIndex >= 0 && clickedRowIndex < foundPatients.size()) {
-                    final Customer p = foundPatients.get(clickedRowIndex);
+                if (clickedRowIndex >= 0 && clickedRowIndex < foundCustomers.size()) {
+                    final Customer p = foundCustomers.get(clickedRowIndex);
                     App.get().switchToPresenterByType(PresenterEnum.STORE_PATIENT, p);
                 }
             }
@@ -174,7 +174,7 @@ public class FindPatientPresenter
             public void execute() {
                 menuPopupPanel.hide();
                 final int idx = getIndexById(clickedId);
-                final Customer p = foundPatients.get(idx);
+                final Customer p = foundCustomers.get(idx);
                 final String name = p.getFirstname() + " " + p.getSurname();
                 if (Window.confirm(CONSTANTS.deletePatientQuestion()[
                         App.get().getSelectedUnitTextVariant()] + "\n" + name)) {
@@ -235,9 +235,9 @@ public class FindPatientPresenter
         view.getBirthNumber().setText("");
         cleanResultTable();
         clickedId = null;
-        if (null != foundPatients) {
-            foundPatients.clear();
-            foundPatients = null;
+        if (null != foundCustomers) {
+            foundCustomers.clear();
+            foundCustomers = null;
         }
     }
 
@@ -257,9 +257,9 @@ public class FindPatientPresenter
                 patient.setId(id);
                 eventBus.fireEvent(new CrudEvent(OperationType.DELETE, patient));
                 view.getResultTable().removeRow(line);
-                for (Customer foundPatient : foundPatients) {
+                for (Customer foundPatient : foundCustomers) {
                     if (foundPatient.equals(id)) {
-                        foundPatients.remove(foundPatient);
+                        foundCustomers.remove(foundPatient);
                         break;
                     }
                 }
@@ -269,23 +269,23 @@ public class FindPatientPresenter
     }
 
     /**
-     * Finds patients and show the result set.
+     * Finds customers and show the result set.
      */
-    private void findPatients() {
+    private void findCustomers() {
         cleanResultTable();
 
         final RestHandler rest = new RestHandler("/rest/unit/"
                 + URL.encodePathSegment((String) App.get().getSelectedUnit().getId())
-                + "/patient/?name=" + URL.encodeQueryString(view.getName().getText().trim())
+                + "/customer/?name=" + URL.encodeQueryString(view.getName().getText().trim())
                 + "&phoneNumber=" + URL.encodeQueryString(view.getPhoneNumber().getText().trim())
                 + "&birthNumber=" + URL.encodeQueryString(view.getBirthNumber().getText().trim())
         );
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                foundPatients = App.get().getJsonDeserializer().deserializeList(Customer.class, "patients", jsonText);
+                foundCustomers = App.get().getJsonDeserializer().deserializeList(Customer.class, "customers", jsonText);
                 int line = 1;
-                for (Customer p : foundPatients) {
+                for (Customer p : foundCustomers) {
                     addPatient(p, line);
                     line++;
                 }
@@ -323,7 +323,7 @@ public class FindPatientPresenter
     public Customer hideMenuAndGetSelectedPatient() {
         menuPopupPanel.hide();
         final int idx = getIndexById(clickedId);
-        return foundPatients.get(idx);
+        return foundCustomers.get(idx);
     }
 
     /**
@@ -342,15 +342,15 @@ public class FindPatientPresenter
      * @return index in found patients (starting at 0)
      */
     private int getIndexById(final String idAsText) {
-        if (null == foundPatients) { throw new NullPointerException("patients collection is null"); }
+        if (null == foundCustomers) { throw new NullPointerException("patients collection is null"); }
 
         int i = 0;
-        for (Customer p : foundPatients) {
+        for (Customer p : foundCustomers) {
             if (idAsText.equals(p.getId())) { return i; }
             i++;
         }
         throw new IllegalStateException("patient not found, id=" + idAsText
-                + ", collection.size=" + foundPatients.size());
+                + ", collection.size=" + foundCustomers.size());
     }
 
     /**
