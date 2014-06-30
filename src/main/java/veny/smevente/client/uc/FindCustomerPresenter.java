@@ -178,7 +178,7 @@ public class FindCustomerPresenter
                 final String name = p.getFirstname() + " " + p.getSurname();
                 if (Window.confirm(CONSTANTS.deletePatientQuestion()[
                         App.get().getSelectedUnitTextVariant()] + "\n" + name)) {
-                    deletePatient(clickedId, idx + 1);
+                    deleteCustomer(clickedId, idx + 1);
                 }
                 clickedId = null;
             }
@@ -244,22 +244,22 @@ public class FindCustomerPresenter
     // -------------------------------------------------------- Assistant Stuff
 
     /**
-     * Finds patients and show the result set.
-     * @param id patient ID
+     * Delete given customer.
+     * @param id customer ID
      * @param line line in the table to be removed
      */
-    private void deletePatient(final String id, final int line) {
-        final RestHandler rest = new RestHandler("/rest/unit/patient/" + URL.encodePathSegment(id) + "/");
+    private void deleteCustomer(final String id, final int line) {
+        final RestHandler rest = new RestHandler("/rest/unit/customer/" + URL.encodePathSegment(id) + "/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                final Customer patient = new Customer();
-                patient.setId(id);
-                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, patient));
+                final Customer customer = new Customer();
+                customer.setId(id);
+                eventBus.fireEvent(new CrudEvent(OperationType.DELETE, customer));
                 view.getResultTable().removeRow(line);
-                for (Customer foundPatient : foundCustomers) {
-                    if (foundPatient.equals(id)) {
-                        foundCustomers.remove(foundPatient);
+                for (Customer foundCustomer : foundCustomers) {
+                    if (foundCustomer.equals(id)) {
+                        foundCustomers.remove(foundCustomer);
                         break;
                     }
                 }

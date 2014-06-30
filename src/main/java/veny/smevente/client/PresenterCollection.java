@@ -31,8 +31,8 @@ import veny.smevente.client.uc.SpecialSmsDlgPresenter;
 import veny.smevente.client.uc.SpecialSmsDlgViewImpl;
 import veny.smevente.client.uc.StoreProcedurePresenter;
 import veny.smevente.client.uc.StoreProcedureViewImpl;
-import veny.smevente.client.uc.StorePatientPresenter;
-import veny.smevente.client.uc.StorePatientViewImpl;
+import veny.smevente.client.uc.StoreCustomerPresenter;
+import veny.smevente.client.uc.StoreCustomerViewImpl;
 import veny.smevente.client.uc.StoreUserPresenter;
 import veny.smevente.client.uc.StoreUserViewImpl;
 import veny.smevente.model.Event;
@@ -212,8 +212,8 @@ public class PresenterCollection {
                 presenter = findPatientPresenter;
                 break;
             case STORE_PATIENT:
-                StorePatientPresenter addPatientPresenter = new StorePatientPresenter();
-                addPatientPresenter.bind(new StorePatientViewImpl());
+                StoreCustomerPresenter addPatientPresenter = new StoreCustomerPresenter();
+                addPatientPresenter.bind(new StoreCustomerViewImpl());
                 presenter = addPatientPresenter;
                 break;
             case PATIENT_HISTORY:

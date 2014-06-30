@@ -18,11 +18,11 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 0.1
  */
-public class StorePatientViewImpl extends Composite implements StorePatientPresenter.StorePatientView {
+public class StoreCustomerViewImpl extends Composite implements StoreCustomerPresenter.StoreCustomerView {
 
     /** UI Binder interface. */
-    @UiTemplate("storePatient.ui.xml")
-    interface Binder extends UiBinder<Widget, StorePatientViewImpl> { }
+    @UiTemplate("storeCustomer.ui.xml")
+    interface Binder extends UiBinder<Widget, StoreCustomerViewImpl> { }
     /** UI Binder. */
     private static final Binder BINDER = GWT.create(Binder.class);
 
@@ -46,7 +46,7 @@ public class StorePatientViewImpl extends Composite implements StorePatientPrese
     /**
      * Constructor.
      */
-    public StorePatientViewImpl() {
+    public StoreCustomerViewImpl() {
         initWidget(BINDER.createAndBindUi(this));
     }
 

@@ -78,21 +78,21 @@ public class UnitController {
     // --------------------------------------------------------- Customer Stuff
 
     /**
-     * Stores (creates or updates) a patient.<p/>
-     * The criterion to decide if create or update is patient's ID value:
+     * Stores (creates or updates) a customer.<p/>
+     * The criterion to decide if create or update is customer's ID value:
      * 'create' if ID is <i>null</i>, otherwise 'update'.
      *
      * There is used trick with @see {@link Customer#setUnitId(Object)}.
      *
-     * @param patient patient
+     * @param customer customer
      * @return model & view
      */
-    @RequestMapping(value = "/patient/", method = RequestMethod.POST)
-    public ModelAndView storePatient(final Customer patient) {
+    @RequestMapping(value = "/customer/", method = RequestMethod.POST)
+    public ModelAndView storePatient(final Customer customer) {
 
-        final Customer created = unitService.storePatient(patient);
+        final Customer created = unitService.storePatient(customer);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("patient", created);
+        modelAndView.addObject("customer", created);
         return modelAndView;
     }
 
@@ -141,14 +141,14 @@ public class UnitController {
     }
 
     /**
-     * Deletes a patient.
+     * Deletes a customer.
      *
-     * @param patientId patient ID
+     * @param customerId customer ID
      */
-    @RequestMapping(value = "/patient/{id}/", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/customer/{id}/", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deletePatient(@PathVariable("id") final String patientId) {
-        unitService.deletePatient(patientId);
+    public void deletePatient(@PathVariable("id") final String customerId) {
+        unitService.deletePatient(customerId);
     }
 
 //    /**

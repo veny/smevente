@@ -39,8 +39,8 @@ import eu.maydu.gwt.validation.client.validators.strings.StringLengthValidator;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 22.8.2010
  */
-public class StorePatientPresenter
-    extends AbstractPresenter<StorePatientPresenter.StorePatientView>
+public class StoreCustomerPresenter
+    extends AbstractPresenter<StoreCustomerPresenter.StoreCustomerView>
     implements HeaderHandler {
 
     /**
@@ -49,7 +49,7 @@ public class StorePatientPresenter
      * @author Vaclav Sykora
      * @since 22.8.2010
      */
-    public interface StorePatientView extends View {
+    public interface StoreCustomerView extends View {
         /**
          * Getter for the first name text field.
          * @return the input field for the first name
@@ -320,13 +320,13 @@ public class StorePatientPresenter
         params.put("careers", p.getCareers());
         if (null != p.getId()) { params.put("id", p.getId().toString()); }
 
-        final RestHandler rest = new RestHandler("/rest/unit/patient/");
+        final RestHandler rest = new RestHandler("/rest/unit/customer/");
         rest.setCallback(new AbstractRestCallbackWithValidation() {
             @Override
             public void onSuccess(final String jsonText) {
                 if (null == p.getId()) {
                     final Customer patient = App.get().getJsonDeserializer().deserialize(
-                            Customer.class, "patient", jsonText);
+                            Customer.class, "customer", jsonText);
                     eventBus.fireEvent(new CrudEvent(OperationType.CREATE, patient));
                     Window.alert(CONSTANTS.patientAdded()[App.get().getSelectedUnitTextVariant()]);
                 } else {
