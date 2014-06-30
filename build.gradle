@@ -138,3 +138,16 @@ task compileGwt (dependsOn: classes, type: JavaExec) {
 
   maxHeapSize = '256M'
 }
+
+task gwtSuperDev(dependsOn: classes, type: JavaExec) {
+    main = 'com.google.gwt.dev.codeserver.CodeServer'
+    classpath {
+        [
+                sourceSets.main.java.srcDirs,           // Java source
+                sourceSets.main.output.resourcesDir,    // Generated resources
+                sourceSets.main.runtimeClasspath,       // Deps
+        ]
+    }
+    args = [ 'veny.smevente.Smevente', ]
+    maxHeapSize = '512M'
+}
