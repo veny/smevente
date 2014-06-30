@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import veny.smevente.client.utils.Pair;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.User;
+import veny.smevente.service.EventService;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
 
@@ -39,10 +41,10 @@ public class UnitController {
     /** Dependency. */
     @Autowired
     private UserService userService;
-//    /** Dependency. */
-//    @Autowired
-//    private SmsService smsService;
-//
+    /** Dependency. */
+    @Autowired
+    private EventService eventService;
+
     // ------------------------------------------------------------- Unit Stuff
 
     /**
@@ -151,22 +153,26 @@ public class UnitController {
         unitService.deletePatient(customerId);
     }
 
-//    /**
-//     * Gets list of all sent SMSs for given patient ordered by MH Start Time.
-//     *
-//     * @param patientId ID of the patient
-//     * @return list of <code>Sms</code> as JSON
-//     */
-//    @RequestMapping(value = "/patient/{id}/history/", method = RequestMethod.GET)
-//    public ModelAndView getPatientHistory(@PathVariable("id") final Long patientId) {
-//
-//        final Pair<PatientDto, List<SmsDto>> rslt = smsService.findSmsByPatient(patientId);
-//
-//        final ModelAndView modelAndView = new ModelAndView("jsonView");
-//        modelAndView.addObject("history", rslt);
-//
-//        return modelAndView;
-//    }
+    /**
+     * Gets list of all events for given patient ordered by Start Time.
+     *
+     * @param customerId ID of the customer
+     * @return list of <code>Event</code> as JSON
+     */
+    @RequestMapping(value = "/customer/{id}/history/", method = RequestMethod.GET)
+    public ModelAndView getCustomerHistory(@PathVariable("id") final String customerId) {
+
+        final Pair<Customer, List<Event>> rslt = eventService.findEventsByCustomer(customerId);
+
+        // we don't need the customer, it is key A
+        for (Event e : rslt.getB()) { e.setCustomer(null); }
+
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("history", rslt);
+
+        return modelAndView;
+    }
+
 
     // -------------------------------------------------------- Procedure Stuff
 

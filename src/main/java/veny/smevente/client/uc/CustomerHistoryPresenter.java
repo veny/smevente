@@ -13,6 +13,7 @@ import veny.smevente.client.utils.UiUtils;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -25,16 +26,16 @@ import com.google.gwt.user.client.ui.Label;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 14.1.2011
  */
-public class PatientHistoryPresenter
-    extends AbstractPresenter<PatientHistoryPresenter.PatientHistoryView> {
+public class CustomerHistoryPresenter
+    extends AbstractPresenter<CustomerHistoryPresenter.CustomerHistoryView> {
 
     /**
-     * View interface for the Patient History.
+     * View interface for the Customer History.
      *
      * @author Vaclav Sykora
      * @since 14.1.2011
      */
-    public interface PatientHistoryView extends View {
+    public interface CustomerHistoryView extends View {
         /**
          * @return patient's fullname
          */
@@ -66,7 +67,7 @@ public class PatientHistoryPresenter
         // set unit specific text
         view.getResultTable().setWidget(0, 3, new Label(CONSTANTS.procedure()));
 
-        getPatientHistory(Long.parseLong(patientId.toString()));
+        getCustomerHistory(patientId.toString());
     }
 
     /** {@inheritDoc} */
@@ -88,13 +89,14 @@ public class PatientHistoryPresenter
     // -------------------------------------------------------- Assistant Stuff
 
     /**
-     * Loads patient history from server.
-     * @param patientId ID of the patient
+     * Loads customer history from server.
+     * @param customerId ID of the customer
      */
-    private void getPatientHistory(final Long patientId) {
+    private void getCustomerHistory(final String customerId) {
         clean();
 
-        final RestHandler rest = new RestHandler("/rest/unit/patient/" + patientId + "/history/");
+        final RestHandler rest = new RestHandler(
+                "/rest/unit/customer/" + URL.encodePathSegment(customerId) + "/history/");
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {

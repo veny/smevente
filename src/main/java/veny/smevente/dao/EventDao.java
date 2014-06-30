@@ -26,12 +26,12 @@ public interface EventDao extends GenericDao<Event> {
     List<Event> findByAuthorAndPeriod(Object authorId, Date from, Date to, boolean includeDeleted);
 
     /**
-     * Gets list of events for given patient (not deleted and special).
+     * Gets list of events for given customer (not deleted and special).
      *
-     * @param patientId patient ID
-     * @return list of SMSs sorted by start time descending
+     * @param customerId customer ID
+     * @return list of events sorted by start time descending
      */
-    List<Event> findByPatient(Object patientId);
+    List<Event> findByCustomer(Object customerId);
 
     /**
      * Gets list of events that are older than given timestamp.

@@ -53,17 +53,18 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
 
     /** {@inheritDoc} */
     @Override
-    public List<Event> findByPatient(final Object patientId) {
+    public List<Event> findByCustomer(final Object customerId) {
 
         return getDatabaseWrapper().execute(new ODatabaseCallback<List<Event>>() {
             @Override
             public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
                         .append(getPersistentClass().getSimpleName())
-                        .append(" WHERE patient = :patient AND type IS NOT :type ORDER BY startTime DESC");
+                        .append(" WHERE customer = :customer")
+                        .append(" AND (type IS NULL OR type <> :type) ORDER BY startTime DESC");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
-                params.put("patient", patientId);
+                params.put("customer", customerId);
                 params.put("type", Event.Type.IMMEDIATE_MESSAGE.toString());
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);

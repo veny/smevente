@@ -19,8 +19,8 @@ import veny.smevente.client.uc.HeaderPresenter;
 import veny.smevente.client.uc.HeaderViewImpl;
 import veny.smevente.client.uc.ProcedureListPresenter;
 import veny.smevente.client.uc.ProcedureListViewImpl;
-import veny.smevente.client.uc.PatientHistoryPresenter;
-import veny.smevente.client.uc.PatientHistoryViewImpl;
+import veny.smevente.client.uc.CustomerHistoryPresenter;
+import veny.smevente.client.uc.CustomerHistoryViewImpl;
 import veny.smevente.client.uc.SmsDetailDlgPresenter;
 import veny.smevente.client.uc.SmsDetailDlgViewImpl;
 import veny.smevente.client.uc.EventDlgPresenter;
@@ -217,8 +217,8 @@ public class PresenterCollection {
                 presenter = addPatientPresenter;
                 break;
             case PATIENT_HISTORY:
-                PatientHistoryPresenter patientHistoryPresenter = new PatientHistoryPresenter();
-                patientHistoryPresenter.bind(new PatientHistoryViewImpl());
+                CustomerHistoryPresenter patientHistoryPresenter = new CustomerHistoryPresenter();
+                patientHistoryPresenter.bind(new CustomerHistoryViewImpl());
                 presenter = patientHistoryPresenter;
                 break;
             case STORE_PROCEDURE:

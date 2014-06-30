@@ -12,16 +12,16 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * View implementation for the Patient History.
+ * View implementation for the Customer History.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 14.1.2011
  */
-public class PatientHistoryViewImpl extends Composite implements PatientHistoryPresenter.PatientHistoryView {
+public class CustomerHistoryViewImpl extends Composite implements CustomerHistoryPresenter.CustomerHistoryView {
 
     /** UI Binder interface. */
-    @UiTemplate("patientHistory.ui.xml")
-    interface Binder extends UiBinder<Widget, PatientHistoryViewImpl> { }
+    @UiTemplate("customerHistory.ui.xml")
+    interface Binder extends UiBinder<Widget, CustomerHistoryViewImpl> { }
     /** UI Binder. */
     private static final Binder BINDER = GWT.create(Binder.class);
 
@@ -36,7 +36,7 @@ public class PatientHistoryViewImpl extends Composite implements PatientHistoryP
     /**
      * Constructor.
      */
-    public PatientHistoryViewImpl() {
+    public CustomerHistoryViewImpl() {
         initWidget(BINDER.createAndBindUi(this));
 
         getResultTable().setWidget(0, 0, new Label(CONSTANTS.date()));

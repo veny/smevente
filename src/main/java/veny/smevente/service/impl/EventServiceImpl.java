@@ -200,11 +200,9 @@ public class EventServiceImpl implements EventService {
     /** {@inheritDoc} */
     @Transactional(readOnly = true)
     @Override
-    public Pair<Customer, List<Event>> findEventsByPatient(final Object customerId) {
+    public Pair<Customer, List<Event>> findEventsByCustomer(final Object customerId) {
         final Customer client = patientDao.getById(customerId);
-        final List<Event> events = eventDao.findByPatient(customerId);
-        // delete customers, it is key A
-        for (Event e : events) { e.setCustomer(null); }
+        final List<Event> events = eventDao.findByCustomer(customerId);
         LOG.info("found events by customer, customerId=" + customerId + ", size=" + events.size());
         return new Pair<Customer, List<Event>>(client, events);
     }

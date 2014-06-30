@@ -79,13 +79,13 @@ public interface EventService {
     List<Event> findEvents(Object authorId, Date from, Date to);
 
     /**
-     * Gets list of events for given patient.
+     * Gets list of all events for given patient.
      * It filters special events of type Event.Type.IMMEDIATE_MESSAGE.
      *
-     * @param patientId patient ID
-     * @return the patient and his list of events sorted descending by start date
+     * @param customerId customer ID
+     * @return the customer and his list of events sorted descending by start date
      */
-    Pair<Customer, List<Event>> findEventsByPatient(Object patientId);
+    Pair<Customer, List<Event>> findEventsByCustomer(Object customerId);
 
     /**
      * Sends event with given ID as SMS.

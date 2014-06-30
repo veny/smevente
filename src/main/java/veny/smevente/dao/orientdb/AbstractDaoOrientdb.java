@@ -297,7 +297,10 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             // detach aggregated fields too
             for (Method m : assocMethods) {
                 try {
-                    db.detach(m.invoke(entity));
+                    final Object toBeDetached = m.invoke(entity);
+                    if (null != toBeDetached) { // BF#15
+                        db.detach(toBeDetached);
+                    }
                 } catch (Exception e) {
                     throw new IllegalStateException("failed to detach associated field", e);
                 }

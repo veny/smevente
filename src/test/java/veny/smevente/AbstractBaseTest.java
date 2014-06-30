@@ -332,10 +332,10 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     /** @return a new created default event */
     protected Event createDefaultEvent() {
         final User author = createDefaultUser();
-        final Customer patient = createDefaultCustomer();
+        final Customer customer = createDefaultCustomer();
         final Procedure procedure = createProcedure(PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME,
-                PROCEDURE_MSGTEXT, null, patient.getUnit());
-        return createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, author, patient, procedure);
+                PROCEDURE_MSGTEXT, null, customer.getUnit());
+        return createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, author, customer, procedure);
     }
     /**
      * Creates a new event with given attributes.

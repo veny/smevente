@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import veny.smevente.AbstractBaseTest;
+import veny.smevente.client.utils.Pair;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
@@ -28,7 +30,7 @@ import veny.smevente.service.SmsGatewayService.SmsException;
 public class EventServiceTest extends AbstractBaseTest {
 
     /**
-     * Creates a mock of Sms Gateway.
+     * Creates a mock of SMS Gateway.
      */
     @SuppressWarnings("unchecked")
     @Before
@@ -37,6 +39,62 @@ public class EventServiceTest extends AbstractBaseTest {
         Mockito.when(gatewayService.send(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap())).thenReturn(true);
         ReflectionTestUtils.setField(eventService, "smsGatewayService", gatewayService);
     }
+
+
+    /** EventService.findEventsByCustomer. */
+    @Test
+    public void testFindEventsByCustomer() {
+        final Event first  = createDefaultEvent();
+
+        final Customer c = first.getCustomer();
+        assertEquals(1, eventService.findEventsByCustomer(c.getId()).getB().size());
+
+        // create second event
+        Date start = new Date();
+        createEvent("SECOND", start, EVENT_LEN, EVENT_NOTICE, first.getAuthor(), c, first.getProcedure());
+        Pair<Customer, List<Event>> events = eventService.findEventsByCustomer(c.getId());
+        assertEquals(c.getId(), events.getA().getId());
+        assertEquals(2, events.getB().size());
+        // ORDER BY startTime DESC
+        assertEquals(EVENT_TEXT, events.getB().get(1).getText());
+        assertEquals("SECOND", events.getB().get(0).getText());
+
+        // create third event
+        start = new Date();
+        final Event third = createEvent(
+                "THIRD", start, EVENT_LEN, EVENT_NOTICE, first.getAuthor(), c, first.getProcedure());
+        events = eventService.findEventsByCustomer(c.getId());
+        assertEquals(c.getId(), events.getA().getId());
+        assertEquals(3, events.getB().size());
+        // ORDER BY startTime DESC
+        assertEquals("THIRD", events.getB().get(0).getText());
+
+        // delete event
+        eventService.deleteEvent(third.getId());
+        events = eventService.findEventsByCustomer(c.getId());
+        assertEquals(2, events.getB().size());
+
+        // create special event
+        final Event event = new Event();
+        event.setAuthor(first.getAuthor());
+        event.setCustomer(first.getCustomer());
+        event.setProcedure(first.getProcedure());
+        event.setText("SPECIAL");
+        event.setType(Event.Type.IMMEDIATE_MESSAGE.toString());
+        eventService.storeEvent(event);
+        // --
+        events = eventService.findEventsByCustomer(c.getId());
+        assertEquals(2, events.getB().size());
+
+        // event for other customer
+        Customer secC = createCustomer("aa", "bb", "123123123", null, c.getUnit());
+        createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, first.getAuthor(), secC, first.getProcedure());
+        events = eventService.findEventsByCustomer(secC.getId());
+        assertEquals(1, events.getB().size());
+        events = eventService.findEventsByCustomer(c.getId());
+        assertEquals(2, events.getB().size());
+    }
+
 
     /** EventService.bulkSend. */
     @Test

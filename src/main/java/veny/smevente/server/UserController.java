@@ -86,7 +86,7 @@ public class UserController {
 
         // memberships where the user is in
         final List<Membership> membs = userService.getMembershipsByUser(user.getId());
-        // we don't need user
+        // we don't need the user
         for (Membership m : membs) { m.setUser(null); }
         modelAndView.addObject("memberships", membs);
 
