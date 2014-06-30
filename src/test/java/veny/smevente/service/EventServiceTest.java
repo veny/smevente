@@ -117,16 +117,11 @@ public class EventServiceTest extends AbstractBaseTest {
         assertNull(byId.getSent());
         assertEquals(3, byId.getSendAttemptCount());
 
-        assertEquals(0, eventService.bulkSend());
-        byId = eventService.getEvent(ev.getId());
-        assertNull(byId.getSent());
-        assertEquals(4, byId.getSendAttemptCount());
-
         // next attempt does not include the event, 3<= is limit
         assertEquals(0, eventService.bulkSend());
         byId = eventService.getEvent(ev.getId());
         assertNull(byId.getSent());
-        assertEquals(4, byId.getSendAttemptCount());
+        assertEquals(3, byId.getSendAttemptCount());
     }
 
     // -------------------------------------------------------- Assistant Stuff
