@@ -404,9 +404,9 @@ public class JsonDeserializer {
         return rslt;
     }
     /**
-     * Gets list of <code>Sms</code> from JSON.
+     * Gets list of <code>Event</code> from JSON.
      * @param jsArr JSON array
-     * @return list of <code>Sms</code>
+     * @return list of <code>Event</code>
      */
     private List<Event> eventListFromJson(final JSONArray jsArr) {
         final List<Event> rslt = new ArrayList<Event>();

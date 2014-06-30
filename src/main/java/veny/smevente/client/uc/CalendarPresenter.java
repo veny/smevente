@@ -574,12 +574,12 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
         final int y = DateUtils.calculateYFromDate(event.getStartTime());
         final int height = DateUtils.calculateWidgetHeight(event.getLength());
 
-        final EventWidget smsWidget = new EventWidget(event);
+        final EventWidget eventWidget = new EventWidget(event);
         if (height > 25) {
-            smsWidget.setHeight("" +  height + "px");
+            eventWidget.setHeight("" +  height + "px");
         }
 
-        col.add(smsWidget, 0, y);
+        col.add(eventWidget, 0, y);
     }
 
     /**
