@@ -69,71 +69,43 @@ public class PatientNameSuggestOracle extends SuggestOracle {
 
     /**
      * Returns real suggestions with the given query in <code>strong</code> HTML font.
-     * @param patient patient
-     * @param prefixToMatch current entered prefix
+     * @param customer customer
+     * @param toMatch current entered prefix
      * @return real suggestions
      */
-    private String convertToFormattedSuggestions(final Customer patient, final String prefixToMatch) {
+    private String convertToFormattedSuggestions(final Customer customer, final String toMatch) {
         final StringBuilder rslt = new StringBuilder();
+        final String toMatchUpper = replaceDiacritics(toMatch, 1);
+        final int pos = customer.getAsciiFullname().indexOf(toMatchUpper);
+        final int len = toMatch.length();
 
-        // search in form "firstname surname"
-        if (prefixToMatch.contains(" ")) {
-            final int len = prefixToMatch.substring(prefixToMatch.lastIndexOf(' ') + 1).length();
-            rslt.append("<strong>");
-            rslt.append(patient.getFirstname());
-            rslt.append(' ');
-            rslt.append(patient.getSurname().substring(0, len));
-            rslt.append("</strong>");
-            rslt.append(patient.getSurname().substring(len));
-
-        } else {
-            // search without space -> check firstname or surname
-            final int len = prefixToMatch.length();
-            if (patient.getFirstname().toLowerCase().startsWith(prefixToMatch)) {
-                rslt.append("<strong>");
-                rslt.append(patient.getFirstname().substring(0, len));
-                rslt.append("</strong>");
-                rslt.append(patient.getFirstname().substring(len));
-            } else {
-                rslt.append(patient.getFirstname());
-            }
-            rslt.append(' ');
-            if (patient.getSurname().toLowerCase().startsWith(prefixToMatch)) {
-                rslt.append("<strong>");
-                rslt.append(patient.getSurname().substring(0, len));
-                rslt.append("</strong>");
-                rslt.append(patient.getSurname().substring(len));
-            } else {
-                rslt.append(patient.getSurname());
-            }
+        if (pos >= 0) {
+            rslt.append(customer.fullname().substring(0, pos))
+                .append("<strong>")
+                .append(customer.fullname().substring(pos, pos + len))
+                .append("</strong>")
+                .append(customer.fullname().substring(pos + len));
+        } else { // never should be
+            rslt.append(customer.fullname());
         }
 
         // birth number
         rslt.append(" [")
-            .append(patient.formattedBirthNumber())
+            .append(customer.formattedBirthNumber())
             .append(']');
 
         return rslt.toString();
     }
 
     /**
-     * Whether a patient matches an entered text.
-     * @param patient patient
+     * Whether a customer matches an entered text.
+     * @param customer customer
      * @param prefixToMatch text to test
      * @return <i>true</i> if matches
      */
-    private boolean matches(final Customer patient, final String prefixToMatch) {
-        // search in form "firstname surname"
-        if (prefixToMatch.contains(" ")) {
-            final String firstname = prefixToMatch.substring(0, prefixToMatch.indexOf(' '));
-            final String surname = prefixToMatch.substring(prefixToMatch.lastIndexOf(' ') + 1);
-            return patient.getFirstname().toLowerCase().equals(firstname)
-                && patient.getSurname().toLowerCase().startsWith(surname);
-        }
-
-        // search without space -> check firstname or surname
-        return (null != patient.getFirstname() && patient.getFirstname().toLowerCase().startsWith(prefixToMatch))
-                || patient.getSurname().toLowerCase().startsWith(prefixToMatch);
+    private boolean matches(final Customer customer, final String prefixToMatch) {
+        final String toMatchUpper = replaceDiacritics(prefixToMatch, 1);
+        return (null != customer.getAsciiFullname() && customer.getAsciiFullname().contains(toMatchUpper));
     }
 
     /** {@inheritDoc} */
@@ -141,5 +113,17 @@ public class PatientNameSuggestOracle extends SuggestOracle {
     public boolean isDisplayStringHTML() {
         return true;
     }
+
+    // ------------------------------------------------------ Native JavaScript
+
+    /**
+     * Link to original JavaScript method to remove diacritics characters from a string.
+     * @param str string to be converted
+     * @param mode -1 to lower case, 1 to upper case, otherwise no change
+     * @return converted string
+     */
+    public static native String replaceDiacritics(final String str, final int mode) /*-{
+        return $wnd.replaceDiacritics(str, mode);
+    }-*/;
 
 }

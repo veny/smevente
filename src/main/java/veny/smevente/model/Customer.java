@@ -124,6 +124,9 @@ public class Customer extends AbstractEntity {
     public String getAsciiFullname() {
         return asciiFullname;
     }
+    public void setAsciiFullname(String asciiFullname) {
+        this.asciiFullname = asciiFullname;
+    }
     // CHECKSTYLE:ON
 
     /**
@@ -132,9 +135,9 @@ public class Customer extends AbstractEntity {
      */
     @JsonIgnore
     public String fullname() {
-        return new StringBuilder(getFirstname())
+        return new StringBuilder(getFirstname().trim())
             .append(' ')
-            .append(getSurname())
+            .append(getSurname().trim())
             .toString();
     }
 
@@ -144,7 +147,7 @@ public class Customer extends AbstractEntity {
     @JsonIgnore
     @OBeforeSerialization
     public void asciiFullname() {
-        this.asciiFullname = ClientTextUtils.convert2ascii(fullname()).toUpperCase();
+        setAsciiFullname(ClientTextUtils.convert2ascii(fullname()).toUpperCase());
     }
 
     /**
