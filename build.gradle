@@ -133,6 +133,7 @@ task compileGwt (dependsOn: classes, type: JavaExec) {
     '-localWorkers', '2',
     '-compileReport',
     '-extra', extraDir,
+    '-style', 'DETAILED', // TODO 140701 disable later
     // '-draftCompile' // Speeds up compile with 25%
   ]
 
