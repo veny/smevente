@@ -249,10 +249,13 @@ public class UserController {
         final Date from = toUtc(fromInUserTz, currentUserTz);
         final Date to = toUtc(toInUserTz, currentUserTz);
         final List<Event> rslt = eventService.findEvents(userId, from, to);
-        // convert all times on event to logged in user time zone
+        // 1. convert all times on event to logged in user time zone
+        // 2. delete unit on customer/procedure; we don't need them
         for (final Event event : rslt) {
             event.setStartTime(fromUtc(event.getStartTime(), currentUserTz));
             event.setSent(fromUtc(event.getSent(), currentUserTz));
+            event.getCustomer().setUnit(null);
+            event.getProcedure().setUnit(null);
         }
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");

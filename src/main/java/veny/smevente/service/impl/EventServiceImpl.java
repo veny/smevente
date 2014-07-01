@@ -181,18 +181,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<Event> findEvents(final Object authorId, final Date from, final Date to) {
         final List<Event> rslt = eventDao.findByAuthorAndPeriod(authorId, from, to, false);
-
-        // delete 3-level associations because of:
-        //  com.fasterxml.jackson.databind.JsonMappingException: Database 'remote:/smevente' is closed
-        //  (through reference chain: java.util.HashMap["events"]->
-        //    java.util.ArrayList[0]->veny.smevente.model.Event_$$_javassist_5["patient"]->
-        //    veny.smevente.model.Patient_$$_javassist_3["unit"]->veny.smevente.model.Unit_$$_javassist_2["deleted"])
-        //
-        // and of course, we don't need them
-        for (Event e : rslt) {
-            e.getCustomer().setUnit(null);
-            e.getProcedure().setUnit(null);
-        }
         LOG.info("found events, authorId=" + authorId + ", from=" + from + ", to=" + to + ", size=" + rslt.size());
         return rslt;
     }
