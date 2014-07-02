@@ -38,8 +38,6 @@
     <property name="warnLogCategory" value="exception" />
   </bean>
 
-  <bean id="appctxHelper" class="veny.smevente.server.ApplicationContextHelper" lazy-init="false" />
-
   <!--  Controllers -->
   <bean id="pingController" class="veny.smevente.server.PingController" />
   <bean id="userController" class="veny.smevente.server.UserController" />
