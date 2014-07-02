@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.client.utils.Pair;
+import veny.smevente.misc.AppContext;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
@@ -44,25 +45,25 @@ public class UnitController {
     /** Dependency. */
     @Autowired
     private EventService eventService;
+    /** Dependency. */
+    @Autowired
+    private AppContext appCtxHelper;
 
     // ------------------------------------------------------------- Unit Stuff
 
     /**
      * Gets unit info.
      *
-     * @param request HTTP request
      * @param unitId unit ID
      * @return model & view
      */
     @RequestMapping(value = "/{id}/info/", method = RequestMethod.GET)
-    public ModelAndView getUnitInfo(
-            final HttpServletRequest request,
-            @PathVariable("id") final String unitId) {
+    public ModelAndView getUnitInfo(@PathVariable("id") final String unitId) {
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
 
         // other users if the logged-in user is ADMIN in given unit
-        final User user = ControllerHelper.getLoggedInUser(request);
+        final User user = appCtxHelper.getLoggedInUser();
         final List<User> other = userService.getOtherUsersInUnit(unitId, user.getId());
         modelAndView.addObject("unitMembers", other);
 

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,10 @@ import veny.smevente.dao.DeletedObjectException;
 import veny.smevente.dao.GenericDao;
 import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
+import veny.smevente.misc.AppContext;
 import veny.smevente.misc.SoftDelete;
 import veny.smevente.model.AbstractEntity;
+import veny.smevente.model.User;
 
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
@@ -48,6 +51,9 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
     /** Dependency. */
     @Autowired
     private DatabaseWrapper databaseWrapper;
+    /** Dependency. */
+    @Autowired
+    private AppContext appCtx;
 
     /**
      * Constructor. Resolves actual type of persistent class.
@@ -202,6 +208,14 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             @Override
             public T doWithDatabase(final OObjectDatabaseTx db) {
                 db.attach(entity); // has to be attached, it's maybe detached by previous operation
+
+                // set flags: updatedAt, updatedBy
+                if (null != entity.getId()) {
+                    entity.setUpdatedAt(new Date());
+                    final User updater = appCtx.getLoggedInUserSoftly();
+                    entity.setUpdatedBy(null == updater ? null : updater.getId().toString());
+                }
+
                 final T rslt = db.save(entity);
                 return rslt;
             }

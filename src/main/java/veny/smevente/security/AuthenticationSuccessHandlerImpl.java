@@ -30,8 +30,8 @@ import veny.smevente.service.UserService;
  */
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
 
-    /** Session key used to store the User instance. */
-    public static final String USER_SESSION_KEY = AuthenticationSuccessHandlerImpl.class + "_110518_090015";
+//DDD    /** Session key used to store the User instance. */
+//DDD    public static final String USER_SESSION_KEY = AuthenticationSuccessHandlerImpl.class + "_110518_090015";
 
     /** Logger. */
     private static final Logger LOG = Logger.getLogger(AuthenticationSuccessHandlerImpl.class.getName());
@@ -50,30 +50,24 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
         try {
             @SuppressWarnings("unchecked")
-            final Pair<Object, List<Object>> userDetail = (Pair<Object, List<Object>>) auth.getDetails();
+            final Pair<User, List<Object>> userDetail = (Pair<User, List<Object>>) auth.getDetails();
             if (null == userDetail) {
                 throw new AuthenticationServiceException("user detail of the caller cannot be null");
             }
-            final Object userId = userDetail.getA();
-            if (null == userId) { throw new AuthenticationServiceException("user ID in user detail cannot be null"); }
-
-            final User user;
-            if (User.ROOT_ID.equals(userId)) {
-                user = User.buildRoot();
-            } else {
-                user = userService.getUser(userId);
+            final User user = userDetail.getA();
+            if (null == user) { throw new AuthenticationServiceException("user in detail cannot be null"); }
+            if (null == user.getId()) {
+                throw new AuthenticationServiceException("user ID in user detail cannot be null");
             }
 
-            // store the opened client into the session
+
+//DDD            // store the opened client into the session
             final HttpSession session = request.getSession();
-            session.setAttribute(USER_SESSION_KEY, user);
+//DDD            session.setAttribute(USER_SESSION_KEY, user);
             session.setMaxInactiveInterval(240 * 60);
 
-            LOG.info("wave user created & stored in session, user=" + auth.getName()
-                + ", sessionId=" + request.getSession().getId());
-
 //            // fire event about authentication
-//            appContext.publishEvent(new AuthenticationEvent(waveUser, true));
+//            appContext.publishEvent(new AuthenticationEvent(user, true));
 
             response.setStatus(HttpServletResponse.SC_OK);
             response.getOutputStream().println("LOGED IN");

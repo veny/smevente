@@ -5,9 +5,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 
 import veny.smevente.client.utils.Pair;
+import veny.smevente.model.User;
 
 /**
  * Represents base class of voters for Smevente specific permissions.
@@ -55,11 +58,16 @@ public abstract class AbstractPermissionVoter implements AccessDecisionVoter<Obj
      */
     protected Object getCallerId(final Authentication authentication) {
         @SuppressWarnings("unchecked")
-        final Pair<Object, List<Object>> userDetail = (Pair<Object, List<Object>>) authentication.getDetails();
-        if (null == userDetail) { throw new NullPointerException("user detail of the caller cannot be null"); }
-        final Object userId = userDetail.getA();
-        if (null == userId) { throw new NullPointerException("user ID in user detail cannot be null"); }
-        return userId;
+        final Pair<User, List<Object>> userDetail = (Pair<User, List<Object>>) authentication.getDetails();
+        if (null == userDetail) {
+            throw new AuthenticationCredentialsNotFoundException("user detail of the caller cannot be null");
+        }
+        final User user = userDetail.getA();
+        if (null == user) { throw new AuthenticationServiceException("user in detail cannot be null"); }
+        if (null == user.getId()) {
+            throw new AuthenticationServiceException("user ID in user detail cannot be null");
+        }
+        return user.getId();
     }
 
     /**
@@ -69,7 +77,7 @@ public abstract class AbstractPermissionVoter implements AccessDecisionVoter<Obj
      */
     protected List<Object> getAdminUnits(final Authentication authentication) {
         @SuppressWarnings("unchecked")
-        final Pair<Object, List<Object>> userDetail = (Pair<Object, List<Object>>) authentication.getDetails();
+        final Pair<User, List<Object>> userDetail = (Pair<User, List<Object>>) authentication.getDetails();
         if (null == userDetail) { throw new NullPointerException("user detail of the caller cannot be null"); }
         final List<Object> adminUnits = userDetail.getB();
         if (null == adminUnits) { throw new NullPointerException("unit list in user detail cannot be null"); }

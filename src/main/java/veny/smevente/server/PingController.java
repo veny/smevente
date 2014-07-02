@@ -4,13 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import veny.smevente.misc.AppContext;
 import veny.smevente.model.User;
 
 /**
@@ -31,16 +32,18 @@ public class PingController {
     /** Logger. */
     private static final Logger LOG = Logger.getLogger(PingController.class.getName());
 
+    /** Dependency. */
+    @Autowired
+    private AppContext appCtxHelper;
+
     /**
      * Get the <i>pong</i> response.
-     * @param request HTTP request
-     * @param response HTTP response
      * @return JSON representation of username string
      */
     @RequestMapping(value = "/ping/")
-    public ModelAndView ping(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView ping() {
 
-        final User user = ControllerHelper.getLoggedInUser(request);
+        final User user = appCtxHelper.getLoggedInUser();
         LOG.info("ping, user=" + user.getUsername());
 
         final ModelAndView modelAndView = new ModelAndView();

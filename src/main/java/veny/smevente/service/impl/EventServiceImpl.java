@@ -48,9 +48,6 @@ public class EventServiceImpl implements EventService {
     /** Dependency. */
     @Autowired
     private UserDao userDao;
-//    /** Dependency. */
-//    @Autowired
-//    private MembershipDao membershipDao;
     /** Dependency. */
     @Autowired
     private UnitDao unitDao;

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import veny.smevente.misc.AppContext;
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
 import veny.smevente.model.User;
@@ -44,6 +45,9 @@ public class UserController {
     /** Dependency. */
     @Autowired
     private EventService eventService;
+    /** Dependency. */
+    @Autowired
+    private AppContext appCtx;
 
     /**
      * This is an overridden version of initBinder method of Spring baseCommandController.
@@ -72,12 +76,11 @@ public class UserController {
      * <li>memberships sorted by 'significance' (without user that is the currently logged in)
      * </ul>
      *
-     * @param request HTTP request
      * @return model & view
      */
     @RequestMapping(value = "/info/", method = RequestMethod.GET)
-    public ModelAndView getUserInfo(final HttpServletRequest request) {
-        final User user = ControllerHelper.getLoggedInUser(request);
+    public ModelAndView getUserInfo() {
+        final User user = appCtx.getLoggedInUser();
 
         // username
         final ModelAndView modelAndView = new ModelAndView("jsonView");
@@ -96,17 +99,16 @@ public class UserController {
     /**
      * Changes password of current logged in user.
      *
-     * @param request HTTP request
      * @param response HTTP response
      * @param oldPassword old password
      * @param newPassword new password
      */
     @RequestMapping(value = "/password/", method = RequestMethod.POST)
-    public void changePassword(final HttpServletRequest request, final HttpServletResponse response,
+    public void changePassword(final HttpServletResponse response,
             @RequestParam("old") final String oldPassword,
             @RequestParam("new") final String newPassword) {
 
-        final User user = ControllerHelper.getLoggedInUser(request);
+        final User user = appCtx.getLoggedInUser();
         userService.updateUserPassword(user.getId(), oldPassword, newPassword);
         response.setStatus(HttpServletResponse.SC_OK);
     }
@@ -174,14 +176,13 @@ public class UserController {
      *
      * There is used trick with @see {@link Event#setAuthorId(Object)}.
      *
-     * @param request HTTP request
      * @param event event to be created/updated
      * @return SMS triple as JSON
      */
     @RequestMapping(value = "/event/", method = RequestMethod.POST)
-    public ModelAndView storeEvent(final HttpServletRequest request, final Event event) {
+    public ModelAndView storeEvent(final Event event) {
 
-        final TimeZone currentUserTz = ControllerHelper.getLoggedInUserTimezone(request);
+        final TimeZone currentUserTz = appCtx.getLoggedInUserTimezone();
         final Date startTime = toUtc(event.getStartTime(), currentUserTz);
         event.setStartTime(startTime);
         final Event created = eventService.storeEvent(event);
@@ -232,7 +233,6 @@ public class UserController {
      * Gets list of events for given period.
      * This methods does not distinguish between units to see all terms of a given author.
      *
-     * @param request HTTP request
      * @param userId author ID
      * @param fromInUserTz date from in user's TZ
      * @param toInUserTz date to in user's TZ
@@ -240,12 +240,11 @@ public class UserController {
      */
     @RequestMapping(value = "/{userId}/event/from/{from}/to/{to}/", method = RequestMethod.GET)
     public ModelAndView findEvents(
-            final HttpServletRequest request,
             @PathVariable("userId") final String userId,
             @PathVariable("from") final Date fromInUserTz,
             @PathVariable("to") final Date toInUserTz) {
 
-        final TimeZone currentUserTz = ControllerHelper.getLoggedInUserTimezone(request);
+        final TimeZone currentUserTz = appCtx.getLoggedInUserTimezone();
         final Date from = toUtc(fromInUserTz, currentUserTz);
         final Date to = toUtc(toInUserTz, currentUserTz);
         final List<Event> rslt = eventService.findEvents(userId, from, to);

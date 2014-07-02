@@ -51,6 +51,7 @@ public final class App implements ValueChangeHandler<String> {
 
     /** Versions history. */
     public static final String[][] VERSIONS = new String[][] {
+        {"0.3.4", "02.07.2014", "Enh#26, Enh#27, BF#23 again"},
         {"0.3.3", "01.07.2014", "BF#23"},
         {"0.3.2", "30.06.2014", "BF#19, BF#20, Enh#21, BF#22"},
         {"0.3.1", "29.06.2014", "BF#15, Added sendNow"},

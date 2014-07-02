@@ -81,6 +81,8 @@ public class Schema {
             OClass entity = db.getMetadata().getSchema().createAbstractClass(AbstractEntity.class.getSimpleName());
             entity.createProperty("deleted", OType.BOOLEAN);
             entity.createProperty("revision", OType.STRING);
+            entity.createProperty("updatedAt", OType.DATETIME);
+            entity.createProperty("updatedBy", OType.STRING);
             LOG.info("class created, name=" + entity.getName());
             // User
             OClass user = db.getMetadata().getSchema().createClass(User.class.getSimpleName(), entity);
@@ -113,6 +115,7 @@ public class Schema {
             customer.createProperty("surname", OType.STRING).setMandatory(true).setNotNull(true);
             customer.createProperty("asciiFullname", OType.STRING).setMandatory(true).setNotNull(true);
             customer.createProperty("phoneNumber", OType.STRING);
+            customer.createProperty("email", OType.STRING);
             customer.createProperty("birthNumber", OType.STRING);
             customer.createProperty("degree", OType.STRING);
             customer.createProperty("street", OType.STRING);
@@ -176,8 +179,8 @@ public class Schema {
         membDef.put("m4", "Membership SET user = %max%, unit = %bar%, role = 'ADMIN', significance = 40");
         // Customer
         Map<String, String> patDef = new HashMap<String, String>();
-        patDef.put("JanNovak",      "Customer SET unit = %foo%, firstname = 'Jan',  surname = 'Novák',     asciiFullname = 'JAN NOVAK',      birthNumber = '7001012000', phoneNumber = '606146177'");
-        patDef.put("PetrZlutoucky", "Customer SET unit = %foo%, firstname = 'Petr', surname = 'Žluťoučký', asciiFullname = 'PETR ZLUTOUCKY', birthNumber = '7002023000', phoneNumber = '606146177'");
+        patDef.put("JanNovak",      "Customer SET unit = %foo%, firstname = 'Jan',  surname = 'Novák',     asciiFullname = 'JAN NOVAK',      birthNumber = '7001012000', phoneNumber = '606146177', email = 'vaclav.sykora@gmail.com'");
+        patDef.put("PetrZlutoucky", "Customer SET unit = %foo%, firstname = 'Petr', surname = 'Žluťoučký', asciiFullname = 'PETR ZLUTOUCKY', birthNumber = '7002023000', phoneNumber = '606146177', email = 'vaclav.sykora@gmail.com'");
         patDef.put("LindaModra",    "Customer SET unit = %foo%, firstname = 'Lída', surname = 'Modrá',     asciiFullname = 'LIDA MODRA',     birthNumber = '7051011000', phoneNumber = '606146177'");
         patDef.put("me",            "Customer SET unit = %bar%, firstname = 'veny', surname = 'V',         asciiFullname = 'VENY V',         birthNumber = '7004045000', phoneNumber = '606146177'");
         patDef.put("SonDablik",     "Customer SET unit = %bar%, firstname = 'Šón',  surname = 'Ďáblík',    asciiFullname = 'SON DABLIK',     birthNumber = '7008088889', phoneNumber = '012345677'");
@@ -219,4 +222,7 @@ public class Schema {
         db.close();
     }
 
+
+    // CREATE PROPERTY AbstractEntity.updatedAt DATETIME
+    // CREATE PROPERTY AbstractEntity.updatedBy STRING
 }

@@ -82,21 +82,30 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         authorities.add(new SimpleGrantedAuthority(SmeventeRole.ROLE_AUTHENTICATED.name()));
 
         // get all admin memberships
-        final List<Object> adminUnits = new ArrayList<Object>();
+        final List<Object> adminUnitIds = new ArrayList<Object>();
         final List<Membership> memberships = membershipDao.findBy("user", user.getId(), null);
 
         for (Membership m : memberships) {
-            if (Role.ADMIN == m.enumRole()) { adminUnits.add(m.getUnit().getId()); }
+            if (Role.ADMIN == m.enumRole()) { adminUnitIds.add(m.getUnit().getId()); }
         }
 
         // create the authentication token to be returned
         final UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(username, password, authorities);
-        // the detail is pair of user ID and all unit IDs where the user is admin in
-        authenticationToken.setDetails(new Pair<Object, List<Object>>(user.getId(), adminUnits));
+
+        // make a clone of User that does not use underlying proxy technologies
+        // and so can be serialized and stored in session
+        final User clonedUser = new User();
+        clonedUser.setId(user.getId());
+        clonedUser.setUsername(user.getUsername());
+        clonedUser.setTimezone(user.getTimezone());
+        clonedUser.setRoot(user.isRoot());
+
+        // the detail is pair of the user and all unit IDs where the user is admin in
+        authenticationToken.setDetails(new Pair<Object, List<Object>>(clonedUser, adminUnitIds));
 
         LOG.info("user logged in, " + user.toString() + ", authorities=" + authorities
-                + ", adminUnit(s)=" + adminUnits);
+                + ", adminUnitId(s)=" + adminUnitIds);
         return authenticationToken;
     }
 

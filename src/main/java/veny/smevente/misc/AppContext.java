@@ -1,0 +1,102 @@
+package veny.smevente.misc;
+
+import java.util.List;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.log4j.Logger;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import veny.smevente.client.utils.Pair;
+import veny.smevente.model.User;
+
+/**
+ * A helper class.
+ * It is aimed to<ul>
+ * <li> process some application operations when the application starts
+ * <li> provide set of convenient methods usable in the scope of server side application
+ * </ul>
+ *
+ * @author Vaclav Sykora [vaclav.sykora@gmail.com]
+ * @since 2.7.2014
+ */
+public class AppContext {
+
+    /** Logger. */
+    private static final Logger LOG = Logger.getLogger(AppContext.class.getName());
+
+    /**
+     * Application entry point.
+     */
+    @PostConstruct
+    public void start() {
+        // server works in UTC, all date-times will be converted according to user's time zone
+        java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"));
+        LOG.info("AppContext initialized ok");
+    }
+
+    /**
+     * Gets the logged in user stored in security context.
+     * @return current logged in user
+     */
+    public User getLoggedInUser() {
+        @SuppressWarnings("unchecked")
+        final Pair<User, List<Object>> userDetails = (Pair<User, List<Object>>)
+                SecurityContextHolder.getContext().getAuthentication().getDetails();
+        if (null == userDetails) {
+            throw new AuthenticationCredentialsNotFoundException("user detail in security context cannot be null");
+        }
+        final User user = userDetails.getA();
+        if (null == user) {
+            throw new AuthenticationCredentialsNotFoundException("user in security context cannot be null");
+        }
+        if (null == user.getId()) {
+            throw new AuthenticationCredentialsNotFoundException("user ID in security context cannot be null");
+        }
+
+        return user;
+    }
+
+    /**
+     * Gets softly the logged in user stored in security context.
+     * It means no exception if no corresponding data in security context.
+     * @return current logged in user if possible, otherwise <i>null</i>
+     */
+    public User getLoggedInUserSoftly() {
+        if (null != SecurityContextHolder.getContext().getAuthentication()) {
+            @SuppressWarnings("unchecked")
+            final Pair<User, List<Object>> userDetails = (Pair<User, List<Object>>)
+                    SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (null != userDetails && null != userDetails.getA()) {
+                return userDetails.getA();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the logged in user stored in session.
+     * @return current logged in user
+     */
+    public TimeZone getLoggedInUserTimezone() {
+        final User user = getLoggedInUser();
+        if (null == user.getTimezone() || 0 == user.getTimezone().trim().length()) {
+            throw new IllegalStateException("user without timezone");
+        }
+        return TimeZone.getTimeZone(user.getTimezone());
+    }
+
+    /**
+     * Asserts if the logged in user stored in session is an root.
+     */
+    public void assertRoot() {
+        final User user = getLoggedInUser();
+        if (!user.isRoot()) {
+            LOG.error("unauthorized data change (NOT root), username=" + user.getUsername());
+            throw new IllegalStateException("non-privileged access (NOT root)");
+        }
+    }
+
+}

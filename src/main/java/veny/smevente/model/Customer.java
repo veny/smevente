@@ -30,6 +30,9 @@ public class Customer extends AbstractEntity {
     /** Phone number. */
     @Column
     private String phoneNumber;
+    /** Email. */
+    @Column
+    private String email;
     /** Birth number. */
     @Column
     private String birthNumber;
@@ -78,6 +81,12 @@ public class Customer extends AbstractEntity {
     }
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
     public String getBirthNumber() {
         return birthNumber;
@@ -189,6 +198,8 @@ public class Customer extends AbstractEntity {
             .append(surname)
             .append("', phoneNumber='")
             .append(phoneNumber)
+            .append("', email='")
+            .append(email)
             .append("', birthNumber='")
             .append(birthNumber)
             .append("')")

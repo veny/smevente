@@ -1,10 +1,13 @@
 package veny.smevente.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -41,6 +44,16 @@ public abstract class AbstractEntity {
     private Object version;
 
     /**
+     * Time-stamp indicating what time this object has been updated last time.
+     */
+    private Date updatedAt;
+
+    /**
+     * ID of user who last time updated this object.
+     */
+    private Object updatedBy;
+
+    /**
      * Flag if the entity has been soft deleted
      * (not physically removed but flagged as deleted).
      */
@@ -65,6 +78,22 @@ public abstract class AbstractEntity {
     }
     public void setVersion(Object version) {
         this.version = version;
+    }
+    @JsonIgnore
+    @Column
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    @JsonIgnore
+    @Column
+    public Object getUpdatedBy() {
+        return updatedBy;
+    }
+    public void setUpdatedBy(Object updatedBy) {
+        this.updatedBy = updatedBy;
     }
     @Column
     public boolean isDeleted() {
