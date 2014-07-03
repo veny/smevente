@@ -1,7 +1,7 @@
 package veny.smevente.client.uc;
 
-import veny.smevente.client.App;
 import veny.smevente.client.l10n.SmeventeConstants;
+import veny.smevente.shared.AppVersion;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -45,7 +45,7 @@ public class LoginViewImpl extends Composite implements LoginPresenter.LoginView
      */
     public LoginViewImpl() {
         initWidget(BINDER.createAndBindUi(this));
-        buildNumber.setText(CONSTANTS.version() + ": " + App.VERSION);
+        buildNumber.setText(CONSTANTS.version() + ": " + AppVersion.VERSION);
     }
 
     /** {@inheritDoc} */
