@@ -1,6 +1,8 @@
 package veny.smevente.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import veny.smevente.model.AbstractEntity;
 
@@ -13,6 +15,22 @@ import veny.smevente.model.AbstractEntity;
  * @param <T> the entity class
  */
 public interface GenericDao<T extends AbstractEntity> {
+
+    /**
+     * This is a pretty dirty approach how to hand over some options
+     * related to underlying storage engine
+     * and keep the API clean at the same time.
+     * It is storage to manage the DB operations with special options
+     * like 'fetch strategy' or 'detaching' of objects.
+     */
+    ThreadLocal<Map<String, String>> OPTIONS_HOLDER = new ThreadLocal<Map<String, String>>() {
+        /** {@inheritDoc} */
+        @Override
+        protected Map<String, String> initialValue() {
+            return new HashMap<String, String>();
+        }
+    };
+
 
     /**
      * Get entity by id.

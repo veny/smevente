@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.EventDao;
+import veny.smevente.dao.GenericDao;
 import veny.smevente.dao.PatientDao;
 import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
@@ -78,25 +79,39 @@ public class EventServiceImpl implements EventService {
         if (null == event.getAuthor() || null == event.getAuthor().getId()) {
             throw new NullPointerException("unknown author");
         }
+        GenericDao.OPTIONS_HOLDER.get().put("detach", "false");
         final User author = userDao.getById(event.getAuthor().getId());
         event.setAuthor(author);
         // customer
         if (null == event.getCustomer() || null == event.getCustomer().getId()) {
             throw new NullPointerException("unknown customer");
         }
+        GenericDao.OPTIONS_HOLDER.get().put("detach", "false");
         final Customer customer = patientDao.getById(event.getCustomer().getId());
         event.setCustomer(customer);
         // procedure
         if ((null == event.getProcedure() || null == event.getProcedure().getId())) {
             throw new NullPointerException("unknown procedure");
         }
+        GenericDao.OPTIONS_HOLDER.get().put("detach", "false");
         final Procedure proc = procedureDao.getById(event.getProcedure().getId());
         event.setProcedure(proc);
 
-        validateEvent(event);
+        final Event toBeStored;
+        if (null != event.getId()) {
+            GenericDao.OPTIONS_HOLDER.get().put("detach", "false");
+            toBeStored = eventDao.getById(event.getId());
+            event.copyForUpdate(toBeStored);
+        } else {
+            toBeStored = event;
+        }
 
-        final Event rslt = eventDao.persist(event);
-        LOG.info((null == event.getId() ? "created new event, " : "event updated, ") + rslt);
+        validateEvent(toBeStored);
+
+        final Event rslt = eventDao.persist(toBeStored);
+        LOG.info((null == toBeStored.getId() ? "created new event, " : "event updated, ") + rslt);
+        LOG.debug("event.customer.unit=" + toBeStored.getCustomer().getUnit());
+        LOG.debug("event.procedure.unit=" + toBeStored.getProcedure().getUnit());
         return rslt;
     }
 
@@ -127,22 +142,6 @@ public class EventServiceImpl implements EventService {
                 + ", phone=" + rslt.getCustomer().getPhoneNumber() + ", text=" + text2send);
         return rslt;
     }
-
-//    /** {@inheritDoc} */
-//    @Transactional
-//    @Override
-//    public Event updateEvent(final Event event) {
-//        validateEvent(event, false);
-//
-//        // part of validation (the aggregated entities have to exist and cannot be deleted)
-//        userDao.getById(event.getAuthor().getId());
-//        patientDao.getById(event.getPatient().getId());
-//        mhcDao.getById(event.getProcedure().getId());
-//
-//        eventDao.persist(event);
-//        LOG.info("updated event, " + event);
-//        return event;
-//    }
 
     /** {@inheritDoc} */
     @Transactional

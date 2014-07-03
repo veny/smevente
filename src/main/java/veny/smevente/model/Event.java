@@ -191,6 +191,20 @@ public class Event extends AbstractEntity {
         getProcedure().setId(procedureId);
     }
 
+    /** {@inheritDoc} */
+    public void copyForUpdate(final Event into) {
+        super.copyForUpdate(into);
+        if (null != getText()) { into.setText(getText()); }
+        if (null != getAuthor()) { into.setAuthor(getAuthor()); }
+        if (null != getCustomer()) { into.setCustomer(getCustomer()); }
+        if (null != getProcedure()) { into.setProcedure(getProcedure()); }
+        into.setStartTime(getStartTime());
+        into.setLength(getLength());
+        if (null != getNotice()) { into.setNotice(getNotice()); }
+        if (null != getType()) { into.setType(getType()); }
+    }
+
+
     // ----------------------------------------------------------- Object Stuff
 
     /** {@inheritDoc} */

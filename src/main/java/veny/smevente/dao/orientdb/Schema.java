@@ -223,6 +223,6 @@ public class Schema {
     }
 
 
-    // CREATE PROPERTY AbstractEntity.updatedAt DATETIME
-    // CREATE PROPERTY AbstractEntity.updatedBy STRING
+    // CREATE PROPERTY AbstractEntity.updatedAt DATETIME    -- Enh#26
+    // CREATE PROPERTY AbstractEntity.updatedBy STRING      -- Enh#26
 }

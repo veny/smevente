@@ -106,7 +106,15 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 }
 
                 assertNotSoftDeleted(rslt);
-                detachWithFirstLevelAssociations(rslt, db);
+
+                // detach?
+                final Map<String, String> opts = GenericDao.OPTIONS_HOLDER.get();
+                if (!opts.containsKey("detach")
+                        || (opts.containsKey("detach") && opts.get("detach").equalsIgnoreCase("true"))) {
+                    detachWithFirstLevelAssociations(rslt, db);
+                }
+
+                GenericDao.OPTIONS_HOLDER.get().clear();
                 return (T) rslt;
             }
         }, true);
@@ -240,33 +248,15 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                         throw new IllegalArgumentException("ID has to be OrientDB RID");
                     }
                 }
-                final T entity = db.load(rid);
+                final T entity = db.load(rid, "*:0");
                 if (null != softDeleteAnnotation) {
-                    db.detach(entity); // entity has to be detached, otherwise are all properties 'null'
                     entity.setDeleted(true);
-                    db.attach(entity); // all data contained in the object will be copied in the associated document
                     db.save(entity);
                 } else { db.delete(entity); }
                 return null;
             }
         }, true);
     }
-
-//    /** {@inheritDoc} */
-//    @SuppressWarnings("unchecked")
-//    public Integer count() {
-//        HibernateCallback< Integer > callback = new HibernateCallback< Integer >() {
-//            @Override
-//            public Integer doInHibernate(final Session session) throws HibernateException, SQLException {
-//                final Criteria crit = session.createCriteria(getPersistentClass());
-//                crit.setProjection(Projections.rowCount());
-//                List result = crit.list();
-//                return (Integer) result.get(0);
-//            }
-//        };
-//
-//        return getHibernateTemplate().execute(callback);
-//    }
 
 
     // --------------------------------------------------------- OrientDB Stuff

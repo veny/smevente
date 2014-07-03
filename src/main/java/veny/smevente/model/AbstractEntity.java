@@ -95,6 +95,7 @@ public abstract class AbstractEntity {
     public void setUpdatedBy(Object updatedBy) {
         this.updatedBy = updatedBy;
     }
+    @JsonIgnore
     @Column
     public boolean isDeleted() {
         return deleted;
@@ -110,5 +111,15 @@ public abstract class AbstractEntity {
         this.revision = revision;
     }
     // CHECKSTYLE:ON
+
+    /**
+     * Copy attribute of this object typically constructed by background engine (Spring MVC in this case)
+     * into an object loaded from DB for update. (see BF #23)
+     * @param <I> class of a subclass
+     * @param into the target object
+     */
+    public <I extends AbstractEntity> void copyForUpdate(final I into) {
+        if (null != getVersion()) { into.setVersion(getVersion()); }
+    }
 
 }
