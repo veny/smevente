@@ -102,7 +102,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         clonedUser.setRoot(user.isRoot());
 
         // the detail is pair of the user and all unit IDs where the user is admin in
-        authenticationToken.setDetails(new Pair<Object, List<Object>>(clonedUser, adminUnitIds));
+        authenticationToken.setDetails(new Pair<User, List<Object>>(clonedUser, adminUnitIds));
 
         LOG.info("user logged in, " + user.toString() + ", authorities=" + authorities
                 + ", adminUnitId(s)=" + adminUnitIds);

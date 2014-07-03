@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Servlet Filter to store username currently logged in user into Log4j MDC context.
+ * Inspired by {@link https://blog.trifork.com/2013/06/06/
+ * adding-user-info-to-log-entries-in-a-multi-user-app-using-mapped-diagnostic-context/}
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 17.5.2011

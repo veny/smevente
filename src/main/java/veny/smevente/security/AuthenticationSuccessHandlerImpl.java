@@ -30,9 +30,6 @@ import veny.smevente.service.UserService;
  */
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
 
-//DDD    /** Session key used to store the User instance. */
-//DDD    public static final String USER_SESSION_KEY = AuthenticationSuccessHandlerImpl.class + "_110518_090015";
-
     /** Logger. */
     private static final Logger LOG = Logger.getLogger(AuthenticationSuccessHandlerImpl.class.getName());
 
@@ -60,10 +57,8 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 throw new AuthenticationServiceException("user ID in user detail cannot be null");
             }
 
-
-//DDD            // store the opened client into the session
+            // set session durability
             final HttpSession session = request.getSession();
-//DDD            session.setAttribute(USER_SESSION_KEY, user);
             session.setMaxInactiveInterval(240 * 60);
 
 //            // fire event about authentication

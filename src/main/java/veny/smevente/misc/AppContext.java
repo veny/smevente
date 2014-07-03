@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.User;
+import veny.smevente.shared.AppVersion;
 
 /**
  * A helper class.
@@ -34,7 +35,7 @@ public class AppContext {
     public void start() {
         // server works in UTC, all date-times will be converted according to user's time zone
         java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"));
-        LOG.info("AppContext initialized ok");
+        LOG.info("AppContext initialized ok, version=" + AppVersion.VERSION);
     }
 
     /**
@@ -64,13 +65,14 @@ public class AppContext {
      * It means no exception if no corresponding data in security context.
      * @return current logged in user if possible, otherwise <i>null</i>
      */
+    @SuppressWarnings("unchecked")
     public User getLoggedInUserSoftly() {
         if (null != SecurityContextHolder.getContext().getAuthentication()) {
-            @SuppressWarnings("unchecked")
-            final Pair<User, List<Object>> userDetails = (Pair<User, List<Object>>)
-                    SecurityContextHolder.getContext().getAuthentication().getDetails();
-            if (null != userDetails && null != userDetails.getA()) {
-                return userDetails.getA();
+
+            final Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (null != userDetails && (userDetails instanceof Pair)
+                    && (null != ((Pair<User, List<Object>>) userDetails).getA())) {
+                return ((Pair<User, List<Object>>) userDetails).getA();
             }
         }
         return null;
