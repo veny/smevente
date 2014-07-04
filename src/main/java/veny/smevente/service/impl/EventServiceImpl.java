@@ -110,8 +110,6 @@ public class EventServiceImpl implements EventService {
 
         final Event rslt = eventDao.persist(toBeStored);
         LOG.info((null == toBeStored.getId() ? "created new event, " : "event updated, ") + rslt);
-        LOG.debug("event.customer.unit=" + toBeStored.getCustomer().getUnit());
-        LOG.debug("event.procedure.unit=" + toBeStored.getProcedure().getUnit());
         return rslt;
     }
 
