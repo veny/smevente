@@ -79,6 +79,16 @@ public class AppContext {
     }
 
     /**
+     * Gets softly ID of the logged in user stored in security context.
+     * It means no exception if no corresponding data in security context.
+     * @return current logged in user ID if possible, otherwise <i>null</i>
+     */
+    public String getLoggedInUserIdSoftly() {
+        final User u = getLoggedInUserSoftly();
+        return null == u || null == u.getId() ? null : u.getId().toString();
+    }
+
+    /**
      * Gets the logged in user stored in session.
      * @return current logged in user
      */

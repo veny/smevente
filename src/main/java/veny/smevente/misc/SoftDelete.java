@@ -19,6 +19,6 @@ public @interface SoftDelete {
     /**
      * Name of an attribute representing a flag that the object has been deleted.
      */
-    String attribute() default "deleted";
+    String attribute() default "deletedAt";
 
 }

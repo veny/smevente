@@ -79,10 +79,11 @@ public class Schema {
         if (!db.getMetadata().getSchema().existsClass(AbstractEntity.class.getSimpleName())) {
             // AbstractEntity
             OClass entity = db.getMetadata().getSchema().createAbstractClass(AbstractEntity.class.getSimpleName());
-            entity.createProperty("deleted", OType.BOOLEAN);
             entity.createProperty("revision", OType.STRING);
             entity.createProperty("updatedAt", OType.DATETIME);
             entity.createProperty("updatedBy", OType.STRING);
+            entity.createProperty("deletedAt", OType.DATETIME);
+            entity.createProperty("deletedBy", OType.STRING);
             LOG.info("class created, name=" + entity.getName());
             // User
             OClass user = db.getMetadata().getSchema().createClass(User.class.getSimpleName(), entity);
@@ -223,6 +224,31 @@ public class Schema {
     }
 
 
-    // CREATE PROPERTY AbstractEntity.updatedAt DATETIME    -- Enh#26
-    // CREATE PROPERTY AbstractEntity.updatedBy STRING      -- Enh#26
+    // -- Enh#26
+    // CREATE PROPERTY AbstractEntity.updatedAt DATETIME
+    // CREATE PROPERTY AbstractEntity.updatedBy STRING
+
+    // -- Enh#8
+    // CREATE PROPERTY AbstractEntity.deletedAt DATETIME
+    // CREATE PROPERTY AbstractEntity.deletedBy STRING
+    // UPDATE Customer   SET deletedAt='2000-01-01 00:00:00' WHERE deleted=true
+    // UPDATE Event      SET deletedAt='2000-01-01 00:00:00' WHERE deleted=true
+    // UPDATE Membership SET deletedAt='2000-01-01 00:00:00' WHERE deleted=true
+    // UPDATE Procedure  SET deletedAt='2000-01-01 00:00:00' WHERE deleted=true
+    // UPDATE Unit       SET deletedAt='2000-01-01 00:00:00' WHERE deleted=true
+    // UPDATE User       SET deletedAt='2000-01-01 00:00:00' WHERE deleted=true
+    // UPDATE Customer   SET deletedBy='<X>' WHERE deleted=true
+    // UPDATE Event      SET deletedBy='<X>' WHERE deleted=true
+    // UPDATE Membership SET deletedBy='<X>' WHERE deleted=true
+    // UPDATE Procedure  SET deletedBy='<X>' WHERE deleted=true
+    // UPDATE Unit       SET deletedBy='<X>' WHERE deleted=true
+    // UPDATE User       SET deletedBy='<X>' WHERE deleted=true
+    // DROP PROPERTY AbstractEntity.deleted
+    // UPDATE Customer   REMOVE deleted
+    // UPDATE Event      REMOVE deleted
+    // UPDATE Membership REMOVE deleted
+    // UPDATE Procedure  REMOVE deleted
+    // UPDATE Unit       REMOVE deleted
+    // UPDATE User       REMOVE deleted
+
 }
