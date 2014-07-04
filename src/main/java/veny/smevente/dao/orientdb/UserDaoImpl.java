@@ -37,7 +37,7 @@ public class UserDaoImpl extends AbstractDaoOrientdb<User> implements UserDao {
                 if (users.size() > 1) {
                     throw new IllegalStateException("expected max 1 user, but found " + users.size());
                 }
-
+db.detach(users.get(0));
                 return users.isEmpty() ? null : (User) db.detach(users.get(0));
                 // user has to be detached because he will be stored in HttpSession
             }

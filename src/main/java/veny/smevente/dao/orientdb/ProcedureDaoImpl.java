@@ -35,12 +35,16 @@ public class ProcedureDaoImpl extends AbstractDaoOrientdb<Procedure>
                 params.put("name", name);
                 params.put("type", type.toString());
 
-                final List<Procedure> mhcs = executeWithSoftDelete(db, sql.toString(), params, true);
-                if (mhcs.size() > 1) {
-                    throw new IllegalStateException("expected max 1 MHC, but found " + mhcs.size());
+                final List<Procedure> procedures = executeWithSoftDelete(db, sql.toString(), params, true);
+                if (procedures.size() > 1) {
+                    throw new IllegalStateException("expected max 1 MHC, but found " + procedures.size());
                 }
 
-                return mhcs.isEmpty() ? null : (Procedure) mhcs.get(0);
+                if (procedures.isEmpty()) { return null; }
+                else {
+                    db.detachAll(procedures.get(0), false);
+                    return (Procedure) procedures.get(0);
+                }
             }
         });
     }

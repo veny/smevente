@@ -36,7 +36,9 @@ public class UnitDaoImpl extends AbstractDaoOrientdb<Unit> implements UnitDao {
                 params.put("x", userId); // TODO [veny,A] there is problem with binded userId
                 params.put("clazz", getPersistentClass().getSimpleName());
 
-                return executeWithSoftDelete(db, sql.toString(), params, true);
+                final List<Unit> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
+                for (final Unit entity : rslt) { db.detachAll(entity, false); }
+                return rslt;
             }
         });
     }

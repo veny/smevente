@@ -18,7 +18,7 @@ import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.EventDao;
 import veny.smevente.dao.GenericDao;
-import veny.smevente.dao.PatientDao;
+import veny.smevente.dao.CustomerDao;
 import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
@@ -54,7 +54,7 @@ public class EventServiceImpl implements EventService {
     private UnitDao unitDao;
     /** Dependency. */
     @Autowired
-    private PatientDao patientDao;
+    private CustomerDao patientDao;
     /** Dependency. */
     @Autowired
     private ProcedureDao procedureDao;

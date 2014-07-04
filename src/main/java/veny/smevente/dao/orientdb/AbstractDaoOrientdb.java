@@ -24,7 +24,6 @@ import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.misc.AppContext;
 import veny.smevente.misc.SoftDelete;
 import veny.smevente.model.AbstractEntity;
-import veny.smevente.model.User;
 
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
@@ -104,16 +103,14 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                     throw new ObjectNotFoundException(
                             "entity '" + getPersistentClass().getSimpleName() + "' not found, id=" + id, e);
                 }
-
                 assertNotSoftDeleted(rslt);
-
                 // detach?
                 final Map<String, String> opts = GenericDao.OPTIONS_HOLDER.get();
                 if (!opts.containsKey("detach")
                         || (opts.containsKey("detach") && opts.get("detach").equalsIgnoreCase("true"))) {
-                    detachWithFirstLevelAssociations(rslt, db);
+                    //detachWithFirstLevelAssociations(rslt, db);
+                    db.detachAll(rslt, false);
                 }
-
                 GenericDao.OPTIONS_HOLDER.get().clear();
                 return (T) rslt;
             }
@@ -135,7 +132,8 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 final StringBuilder sql =
                         new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName());
                 final List<T> rslt = executeWithSoftDelete(db, sql.toString(), null, !withDeleted);
-                detachWithFirstLevelAssociations(rslt, db);
+                //detachWithFirstLevelAssociations(rslt, db);
+                for (final T entity : rslt) { db.detachAll(entity, false); }
                 return rslt;
             }
         }, false);
@@ -156,7 +154,8 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 params.put(paramName, value);
 
                 final List<T> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                detachWithFirstLevelAssociations(rslt, db);
+                //detachWithFirstLevelAssociations(rslt, db);
+                for (final T entity : rslt) { db.detachAll(entity, false); }
                 return rslt;
             }
         }, false);
@@ -183,7 +182,8 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 params.put(paramName2, value2);
 
                 final List<T> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                detachWithFirstLevelAssociations(rslt, db);
+                //detachWithFirstLevelAssociations(rslt, db);
+                for (final T entity : rslt) { db.detachAll(entity, false); }
                 return rslt;
             }
         }, false);
@@ -220,18 +220,17 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 // set flags: updatedAt, updatedBy
                 if (null != entity.getId()) {
                     entity.setUpdatedAt(new Date());
-                    final User updater = appCtx.getLoggedInUserSoftly();
-                    entity.setUpdatedBy(null == updater ? null : updater.getId().toString());
+                    entity.setUpdatedBy(appCtx.getLoggedInUserIdSoftly());
                 }
 
                 final T rslt = db.save(entity);
+                // detach:
+                // 1) has to be after commit, otherwise ID is temporary like '#9:-2'
+                // 2) otherwise are all properties 'null'
+                db.detach(rslt);
                 return rslt;
             }
         }, true);
-        // detach:
-        // 1) has to be after commit, otherwise ID is temporary like '#9:-2'
-        // 2) otherwise are all properties 'null'
-        databaseWrapper.get().detach(r);
         return r;
     }
 
@@ -250,7 +249,8 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 }
                 final T entity = db.load(rid, "*:0");
                 if (null != softDeleteAnnotation) {
-                    entity.setDeleted(true);
+                    entity.setDeletedAt(new Date());
+                    entity.setDeletedBy(appCtx.getLoggedInUserIdSoftly());
                     db.save(entity);
                 } else { db.delete(entity); }
                 return null;
@@ -267,7 +267,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
      * @param entity entity to detach
      * @param db object database
      */
-    protected void detachWithFirstLevelAssociations(final T entity, final OObjectDatabaseTx db) {
+    protected void detachWithFirstLevelAssociationsX(final T entity, final OObjectDatabaseTx db) {
         if (null == entity) { throw new NullPointerException("entity is null"); }
         final List<Method> assocMethods = getAssociationGetters();
 
@@ -284,14 +284,14 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                         + m.getName() + ", entity=" + entity, e);
             }
         }
-    }
+    } //DDD
 
     /**
      * Detaches list of given objects and on each object detach aggregated entity too.
      * @param list objects to detach
      * @param db object database
      */
-    protected void detachWithFirstLevelAssociations(final List<T> list, final OObjectDatabaseTx db) {
+    protected void detachWithFirstLevelAssociationsX(final List<T> list, final OObjectDatabaseTx db) {
         if (null == list || list.isEmpty()) { return; }
         final List<Method> assocMethods = getAssociationGetters();
 
@@ -310,7 +310,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 }
             }
         }
-    }
+    } //DDD
 
     /**
      * Gets list of 'getters' of fields labeled with JPA annotation representing an association.
@@ -343,16 +343,15 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
      * Decorates a SQL query with a extension of WHERE clause to eliminate soft deleted entities.
      * @param db database
      * @param origSql original SQL
-     * @param origParams original query parameters
+     * @param params query parameters
      * @param apply flag whether the 'soft delete' filter should be applied
      * @return result set from database
      */
     protected List<T> executeWithSoftDelete(
             final OObjectDatabaseTx db, final String origSql,
-            final Map<String, Object> origParams, final boolean apply) {
+            final Map<String, Object> params, final boolean apply) {
 
         final StringBuffer sql = new StringBuffer(origSql);
-        Map<String, Object> params = origParams;
 
         if (null != softDeleteAnnotation && apply) {
             final StringBuffer add = new StringBuffer();
@@ -361,8 +360,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             } else {
                 add.append(" WHERE ");
             }
-            add.append('(').append(softDeleteAnnotation.attribute()).append(" = :softDelete")
-                .append(" OR ").append(softDeleteAnnotation.attribute()).append(" IS NULL)");
+            add.append(softDeleteAnnotation.attribute()).append(" IS NULL)");
             int big = sql.indexOf(" ORDER BY ");
             int small = sql.indexOf(" order by ");
 
@@ -371,9 +369,6 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             } else {
                 sql.append(add);
             }
-
-            if (null == params) { params = new HashMap<String, Object>(); }
-            params.put("softDelete", Boolean.FALSE);
         }
 
         final OSQLSynchQuery<T> query = new OSQLSynchQuery<T>(sql.toString());
@@ -391,14 +386,14 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
      */
     private void assertNotSoftDeleted(final T entity) {
         if (null != softDeleteAnnotation) {
-            final Boolean softDeleteValue;
+            final Date softDeleteValue;
             try {
                 softDeleteValue =
-                    (Boolean) propertyUtilsBean.getProperty(entity, softDeleteAnnotation.attribute());
+                    (Date) propertyUtilsBean.getProperty(entity, softDeleteAnnotation.attribute());
             } catch (Exception e) {
                 throw new IllegalStateException("failed to read a 'softDelete' attribute, entity=" + entity, e);
             }
-            if (null != softDeleteValue && softDeleteValue.booleanValue()) {
+            if (null != softDeleteValue) {
                 throw new DeletedObjectException("found deleted entity, entity=" + entity.getId());
             }
         }

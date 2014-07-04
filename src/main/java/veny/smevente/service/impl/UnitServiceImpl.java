@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 
-import veny.smevente.dao.PatientDao;
+import veny.smevente.dao.CustomerDao;
 import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.model.Event;
@@ -38,7 +38,7 @@ public class UnitServiceImpl implements UnitService {
     private UnitDao unitDao;
     /** Dependency. */
     @Autowired
-    private PatientDao patientDao;
+    private CustomerDao patientDao;
     /** Dependency. */
     @Autowired
     private ProcedureDao procedureDao;

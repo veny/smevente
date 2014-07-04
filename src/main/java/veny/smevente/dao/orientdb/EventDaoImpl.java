@@ -45,7 +45,8 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                 params.put("to", dateFormat.format(to));
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                detachWithFirstLevelAssociations(rslt, db);
+                //detachWithFirstLevelAssociations(rslt, db);
+                for (final Event entity : rslt) { db.detachAll(entity, false); }
                 return rslt;
             }
         });
@@ -68,7 +69,8 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                 params.put("type", Event.Type.IMMEDIATE_MESSAGE.toString());
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                detachWithFirstLevelAssociations(rslt, db);
+                //detachWithFirstLevelAssociations(rslt, db);
+                for (final Event entity : rslt) { db.detachAll(entity, false); }
                 return rslt;
             }
         });
@@ -94,7 +96,8 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                 params.put("sac", 3);
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                detachWithFirstLevelAssociations(rslt, db);
+                //detachWithFirstLevelAssociations(rslt, db);
+                for (final Event entity : rslt) { db.detachAll(entity, false); }
                 return rslt;
             }
         });
