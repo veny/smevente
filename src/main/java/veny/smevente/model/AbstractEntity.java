@@ -46,23 +46,33 @@ public abstract class AbstractEntity {
     /**
      * Time-stamp indicating what time this object has been updated last time.
      */
+    @Column
     private Date updatedAt;
 
     /**
      * ID of user who last time updated this object.
      */
-    private Object updatedBy;
+    @Column
+    private String updatedBy;
 
     /**
-     * Flag if the entity has been soft deleted
+     * Time-stamp indicating what time this object has been soft deleted.
      * (not physically removed but flagged as deleted).
      */
-    private boolean deleted;
+    @Column
+    private Date deletedAt;
+
+    /**
+     * ID of user who deleted this object.
+     */
+    @Column
+    private String deletedBy;
 
     /**
      * Represents revision of the schema in which the entry has been stored.
      * It's support for schema evolution.
      */
+    @Column
     private String revision;
 
     // CHECKSTYLE:OFF
@@ -80,7 +90,6 @@ public abstract class AbstractEntity {
         this.version = version;
     }
     @JsonIgnore
-    @Column
     public Date getUpdatedAt() {
         return updatedAt;
     }
@@ -88,22 +97,26 @@ public abstract class AbstractEntity {
         this.updatedAt = updatedAt;
     }
     @JsonIgnore
-    @Column
-    public Object getUpdatedBy() {
+    public String getUpdatedBy() {
         return updatedBy;
     }
-    public void setUpdatedBy(Object updatedBy) {
+    public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }
     @JsonIgnore
-    @Column
-    public boolean isDeleted() {
-        return deleted;
+    public Date getDeletedAt() {
+        return deletedAt;
     }
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setDeletedAt(Date deletedAt) {
+        this.deletedAt = deletedAt;
     }
-    @Column
+    @JsonIgnore
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
     public String getRevision() {
         return revision;
     }
@@ -111,6 +124,16 @@ public abstract class AbstractEntity {
         this.revision = revision;
     }
     // CHECKSTYLE:ON
+
+
+    /**
+     * Gets flag whether this entity is already deleted.
+     * @return <i>true</i> if deleted
+     */
+    @JsonIgnore
+    public boolean isDeleted() {
+        return null != getDeletedAt();
+    }
 
     /**
      * Copy attribute of this object typically constructed by background engine (Spring MVC in this case)
