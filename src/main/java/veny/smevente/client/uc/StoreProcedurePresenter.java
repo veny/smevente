@@ -22,7 +22,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -162,7 +161,7 @@ public class StoreProcedurePresenter
                 @Override
                 public void onClick(final ClickEvent event) {
                     selectedColor.setText(picker.getHexColor());
-                    DOM.setStyleAttribute(selectedColor.getElement(), "backgroundColor", "#" + selectedColor.getText());
+                    selectedColor.getElement().getStyle().setProperty("backgroundColor", "#" + selectedColor.getText());
                     ColorPickerDialog.this.hide();
                 }
             });
@@ -294,7 +293,7 @@ public class StoreProcedurePresenter
                 view.getTime().setText("" + proc.getTime());
                 view.getColor().setText(proc.getColor());
                 // color
-                DOM.setStyleAttribute(view.getColor().getElement(), "backgroundColor", "#" + proc.getColor());
+                view.getColor().getElement().getStyle().setProperty("backgroundColor", "#" + proc.getColor());
             }
         } else {
             // Using a null as argument on IE7 will lead to the setting of
@@ -302,7 +301,7 @@ public class StoreProcedurePresenter
             view.getProcedureId().setValue("");
             if (type == Event.Type.IN_CALENDAR) {
                 // color
-                DOM.setStyleAttribute(view.getColor().getElement(), "backgroundColor", "#FFFFFF");
+                view.getColor().getElement().getStyle().setProperty("backgroundColor", "#FFFFFF");
             }
         }
     }
@@ -319,7 +318,7 @@ public class StoreProcedurePresenter
             view.getTime().setText("");
             view.getTime().removeStyleName("validationFailedBorder");
             view.getColor().setText("");
-            DOM.setStyleAttribute(view.getColor().getElement(), "backgroundColor", "#FFFFFF");
+            view.getColor().getElement().getStyle().setProperty("backgroundColor", "#FFFFFF");
         }
         // validation
         validator.reset((String[]) null);
