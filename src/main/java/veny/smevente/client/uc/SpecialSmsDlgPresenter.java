@@ -8,7 +8,6 @@ import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Procedure;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -137,8 +136,6 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
      */
     public String getSelectedProcedureId() {
         final int idx = view.getType().getSelectedIndex();
-GWT.log("111 " + idx);
-GWT.log("222 " + specialProcedures.get(idx).getId());
         return specialProcedures.get(idx).getId().toString();
     }
 
