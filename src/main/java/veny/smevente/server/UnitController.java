@@ -47,7 +47,7 @@ public class UnitController {
     private EventService eventService;
     /** Dependency. */
     @Autowired
-    private AppContext appCtxHelper;
+    private AppContext appCtx;
 
     // ------------------------------------------------------------- Unit Stuff
 
@@ -63,7 +63,7 @@ public class UnitController {
         final ModelAndView modelAndView = new ModelAndView("jsonView");
 
         // other users if the logged-in user is ADMIN in given unit
-        final User user = appCtxHelper.getLoggedInUser();
+        final User user = appCtx.getLoggedInUser();
         final List<User> other = userService.getOtherUsersInUnit(unitId, user.getId());
         modelAndView.addObject("unitMembers", other);
 
@@ -165,8 +165,13 @@ public class UnitController {
 
         final Pair<Customer, List<Event>> rslt = eventService.findEventsByCustomer(customerId);
 
-        // we don't need the customer, it is key A
-        for (Event e : rslt.getB()) { e.setCustomer(null); }
+        // 1. we don't need the customer, it is key A
+        // 2. convert all times on event to logged in user time zone
+        for (Event e : rslt.getB()) {
+            e.setStartTime(appCtx.fromUtcToUserView(e.getStartTime()));
+            e.setSent(appCtx.fromUtcToUserView(e.getSent()));
+            e.setCustomer(null);
+        }
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("history", rslt);

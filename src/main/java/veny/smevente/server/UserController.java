@@ -3,7 +3,6 @@ package veny.smevente.server;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -182,12 +181,11 @@ public class UserController {
     @RequestMapping(value = "/event/", method = RequestMethod.POST)
     public ModelAndView storeEvent(final Event event) {
 
-        final TimeZone currentUserTz = appCtx.getLoggedInUserTimezone();
-        final Date startTime = toUtc(event.getStartTime(), currentUserTz);
+        final Date startTime = appCtx.fromUserViewToUtc(event.getStartTime());
         event.setStartTime(startTime);
         final Event created = eventService.storeEvent(event);
-        created.setStartTime(fromUtc(created.getStartTime(), currentUserTz));
-        created.setSent(fromUtc(created.getSent(), currentUserTz));
+        created.setStartTime(appCtx.fromUtcToUserView(created.getStartTime()));
+        created.setSent(appCtx.fromUtcToUserView(created.getSent()));
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("event", created);
@@ -244,15 +242,14 @@ public class UserController {
             @PathVariable("from") final Date fromInUserTz,
             @PathVariable("to") final Date toInUserTz) {
 
-        final TimeZone currentUserTz = appCtx.getLoggedInUserTimezone();
-        final Date from = toUtc(fromInUserTz, currentUserTz);
-        final Date to = toUtc(toInUserTz, currentUserTz);
+        final Date from = appCtx.fromUserViewToUtc(fromInUserTz);
+        final Date to = appCtx.fromUserViewToUtc(toInUserTz);
         final List<Event> rslt = eventService.findEvents(userId, from, to);
         // 1. convert all times on event to logged in user time zone
         // 2. delete unit on customer/procedure; we don't need them
         for (final Event event : rslt) {
-            event.setStartTime(fromUtc(event.getStartTime(), currentUserTz));
-            event.setSent(fromUtc(event.getSent(), currentUserTz));
+            event.setStartTime(appCtx.fromUtcToUserView(event.getStartTime()));
+            event.setSent(appCtx.fromUtcToUserView(event.getSent()));
             event.getCustomer().setUnit(null);
             event.getProcedure().setUnit(null);
         }
@@ -356,31 +353,5 @@ public class UserController {
 //    }
 
     // ----------------------------------------------------------- Helper Stuff
-
-    /**
-     * Convert date from UTC to user's time zone.
-     * @param date date in UTC
-     * @param to target time zone
-     * @return date recalculated from UTC to given time zone
-     */
-    private Date fromUtc(final Date date, final TimeZone to) {
-        if (null == date) { return null; }
-
-        final int tzOffset = to.getOffset(date.getTime());
-        return new Date(date.getTime() + tzOffset);
-    }
-
-    /**
-     * Convert date from user's time zone to UTC.
-     * @param date date in user's perspective
-     * @param to target time zone
-     * @return date recalculated from given time zone to UTC
-     */
-    private Date toUtc(final Date date, final TimeZone to) {
-        if (null == date) { return null; }
-
-        final int tzOffset = to.getOffset(date.getTime());
-        return new Date(date.getTime() - tzOffset);
-    }
 
 }

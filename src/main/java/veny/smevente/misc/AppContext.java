@@ -1,5 +1,6 @@
 package veny.smevente.misc;
 
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -109,6 +110,35 @@ public class AppContext {
             LOG.error("unauthorized data change (NOT root), username=" + user.getUsername());
             throw new IllegalStateException("non-privileged access (NOT root)");
         }
+    }
+
+
+    // ----------------------------------------------------------- Time Methods
+
+    /**
+     * Convert date from UTC to user's time zone.
+     * @param date date in UTC
+     * @return date recalculated from UTC to given time zone
+     */
+    public Date fromUtcToUserView(final Date date) {
+        if (null == date) { return null; }
+        final TimeZone to = getLoggedInUserTimezone();
+
+        final int tzOffset = to.getOffset(date.getTime());
+        return new Date(date.getTime() + tzOffset);
+    }
+
+    /**
+     * Convert date from user's time zone to UTC.
+     * @param date date in user's perspective
+     * @return date recalculated from given time zone to UTC
+     */
+    public Date fromUserViewToUtc(final Date date) {
+        if (null == date) { return null; }
+        final TimeZone to = getLoggedInUserTimezone();
+
+        final int tzOffset = to.getOffset(date.getTime());
+        return new Date(date.getTime() - tzOffset);
     }
 
 }
