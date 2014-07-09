@@ -29,6 +29,7 @@ public class StoreCustomerViewImpl extends Composite implements StoreCustomerPre
     // CHECKSTYLE:OFF
     @UiField TextBox firstname;
     @UiField TextBox surname;
+    @UiField TextBox email;
     @UiField TextBox phoneNumber;
     @UiField TextBox birthNumber;
     @UiField TextBox degree;
@@ -60,6 +61,12 @@ public class StoreCustomerViewImpl extends Composite implements StoreCustomerPre
     @Override
     public TextBox getSurname() {
         return surname;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TextBox getEmail() {
+        return email;
     }
 
     /** {@inheritDoc} */

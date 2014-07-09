@@ -311,6 +311,7 @@ public class JsonDeserializer {
         rslt.setSurname(getString(jsObj.get("surname")));
         rslt.setAsciiFullname(getString(jsObj.get("asciiFullname")));
         rslt.setPhoneNumber(getString(jsObj.get("phoneNumber")));
+        rslt.setEmail(getString(jsObj.get("email")));
         rslt.setBirthNumber(getString(jsObj.get("birthNumber")));
         rslt.setDegree(getString(jsObj.get("degree")));
         rslt.setStreet(getString(jsObj.get("street")));

@@ -224,11 +224,11 @@ public class Schema {
     }
 
 
-    // -- Enh#26
+    // -- Enh#26 [X]
     // CREATE PROPERTY AbstractEntity.updatedAt DATETIME
     // CREATE PROPERTY AbstractEntity.updatedBy STRING
 
-    // -- Enh#8
+    // -- Enh#8 [X]
     // CREATE PROPERTY AbstractEntity.deletedAt DATETIME
     // CREATE PROPERTY AbstractEntity.deletedBy STRING
     // UPDATE Customer   SET deletedAt='2000-01-01 00:00:00' WHERE deleted=true
@@ -250,5 +250,8 @@ public class Schema {
     // UPDATE Procedure  REMOVE deleted
     // UPDATE Unit       REMOVE deleted
     // UPDATE User       REMOVE deleted
+
+    // -- Enh#31 [X]
+    // CREATE PROPERTY Customer.email STRING
 
 }

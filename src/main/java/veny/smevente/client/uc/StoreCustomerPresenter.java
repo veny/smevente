@@ -61,6 +61,11 @@ public class StoreCustomerPresenter
          */
         TextBox getSurname();
         /**
+         * Getter for the email text field.
+         * @return the input field for email
+         */
+        TextBox getEmail();
+        /**
          * Getter for the phone number text field.
          * @return the input field for the phone number
          */
@@ -154,7 +159,7 @@ public class StoreCustomerPresenter
                     // already invoked by the ...validate() call.
                     return;
                 }
-                storePatient();
+                storeCustomer();
             }
         });
 
@@ -285,52 +290,54 @@ public class StoreCustomerPresenter
     }
 
     /**
-     * Creates a new patient.
+     * Stores customer.
      */
-    private void storePatient() {
-        final Customer p = new Customer();
+    private void storeCustomer() {
+        final Customer c = new Customer();
         if (null == view.getPatientId().getValue() || view.getPatientId().getValue().trim().isEmpty()) {
-            p.setId(null);
+            c.setId(null);
         } else {
-            p.setId(view.getPatientId().getValue());
+            c.setId(view.getPatientId().getValue());
         }
-        p.setUnit(App.get().getSelectedUnit());
-        p.setFirstname(view.getFirstname().getText());
-        p.setSurname(view.getSurname().getText());
-        p.setPhoneNumber(view.getPhoneNumber().getText());
-        p.setBirthNumber(view.getBirthNumber().getText());
-        p.setDegree(view.getDegree().getText());
-        p.setStreet(view.getStreet().getText());
-        p.setCity(view.getCity().getText());
-        p.setZipCode(view.getZipCode().getText());
-        p.setEmployer(view.getEmployer().getText());
-        p.setCareers(view.getCareers().getText());
+        c.setUnit(App.get().getSelectedUnit());
+        c.setFirstname(view.getFirstname().getText());
+        c.setSurname(view.getSurname().getText());
+        c.setPhoneNumber(view.getPhoneNumber().getText());
+        c.setEmail(view.getEmail().getText());
+        c.setBirthNumber(view.getBirthNumber().getText());
+        c.setDegree(view.getDegree().getText());
+        c.setStreet(view.getStreet().getText());
+        c.setCity(view.getCity().getText());
+        c.setZipCode(view.getZipCode().getText());
+        c.setEmployer(view.getEmployer().getText());
+        c.setCareers(view.getCareers().getText());
 
         final Map<String, String> params = new HashMap<String, String>();
-        params.put("unitId", p.getUnit().getId().toString());
-        params.put("firstname", p.getFirstname());
-        params.put("surname", p.getSurname());
-        params.put("phoneNumber", p.getPhoneNumber());
-        params.put("birthNumber", p.getBirthNumber());
-        params.put("degree", p.getDegree());
-        params.put("street", p.getStreet());
-        params.put("city", p.getCity());
-        params.put("zipCode", p.getZipCode());
-        params.put("employer", p.getEmployer());
-        params.put("careers", p.getCareers());
-        if (null != p.getId()) { params.put("id", p.getId().toString()); }
+        params.put("unitId", c.getUnit().getId().toString());
+        params.put("firstname", c.getFirstname());
+        params.put("surname", c.getSurname());
+        params.put("phoneNumber", c.getPhoneNumber());
+        params.put("email", c.getEmail());
+        params.put("birthNumber", c.getBirthNumber());
+        params.put("degree", c.getDegree());
+        params.put("street", c.getStreet());
+        params.put("city", c.getCity());
+        params.put("zipCode", c.getZipCode());
+        params.put("employer", c.getEmployer());
+        params.put("careers", c.getCareers());
+        if (null != c.getId()) { params.put("id", c.getId().toString()); }
 
         final RestHandler rest = new RestHandler("/rest/unit/customer/");
         rest.setCallback(new AbstractRestCallbackWithValidation() {
             @Override
             public void onSuccess(final String jsonText) {
-                if (null == p.getId()) {
-                    final Customer patient = App.get().getJsonDeserializer().deserialize(
+                if (null == c.getId()) {
+                    final Customer customer = App.get().getJsonDeserializer().deserialize(
                             Customer.class, "customer", jsonText);
-                    eventBus.fireEvent(new CrudEvent(OperationType.CREATE, patient));
+                    eventBus.fireEvent(new CrudEvent(OperationType.CREATE, customer));
                     Window.alert(CONSTANTS.patientAdded()[App.get().getSelectedUnitTextVariant()]);
                 } else {
-                    eventBus.fireEvent(new CrudEvent(OperationType.UPDATE, p));
+                    eventBus.fireEvent(new CrudEvent(OperationType.UPDATE, c));
                     Window.alert(CONSTANTS.patientUpdated()[App.get().getSelectedUnitTextVariant()]);
                 }
             }

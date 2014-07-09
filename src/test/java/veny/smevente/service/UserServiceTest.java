@@ -142,7 +142,6 @@ public class UserServiceTest extends AbstractBaseTest {
         userA = userService.storeUser(userA, unit1.getId(), Membership.Role.MEMBER, 0);
         assertNotNull(userA);
 
-List<User> x = userService.getAllUsers();
         assertEquals(2, userService.getAllUsers().size());
 
         try { // existing username

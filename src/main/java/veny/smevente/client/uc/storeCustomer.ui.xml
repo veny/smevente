@@ -11,6 +11,8 @@
         <g:TextBox ui:field="firstname" />
         <g:Label text="{consts.surname}" />
         <g:TextBox ui:field="surname" />
+        <g:Label text="{consts.email}" />
+        <g:TextBox ui:field="email" />
         <g:Label text="{consts.phoneNumber}" />
         <g:TextBox ui:field="phoneNumber" />
         <g:Label text="{consts.birthNumber}" />
