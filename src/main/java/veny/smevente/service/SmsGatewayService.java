@@ -1,5 +1,6 @@
 package veny.smevente.service;
 
+import java.io.IOException;
 import java.util.Map;
 
 import veny.smevente.shared.SmeventeException;
@@ -78,8 +79,10 @@ public interface SmsGatewayService {
      * @param msg the message
      * @param metadata metadata for a concrete SMS service implementation
      * @return <i>true</i> if message successfully sent
+     * @throws SmsException if some business problem related to specific provider occurs
+     * @throws IOException if some technical problem occurs
      */
-    boolean send(String number, String msg, Map<String, String> metadata) throws SmsException;
+    boolean send(String number, String msg, Map<String, String> metadata) throws SmsException, IOException;
     // CHECKSTYLE:ON
 
 }

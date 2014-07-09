@@ -2,6 +2,7 @@ package veny.smevente.misc;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
@@ -36,7 +37,8 @@ public class AppContext {
     public void start() {
         // server works in UTC, all date-times will be converted according to user's time zone
         java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"));
-        LOG.info("AppContext initialized ok, version=" + AppVersion.VERSION);
+        LOG.info("AppContext initialized ok, version=" + AppVersion.VERSION + ", timezone="
+                + TimeZone.getDefault() + ", locale=" + Locale.getDefault(Locale.Category.FORMAT));
     }
 
     /**

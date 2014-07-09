@@ -1,5 +1,6 @@
 package veny.smevente.service.impl;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,16 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
+import veny.smevente.dao.CustomerDao;
 import veny.smevente.dao.EventDao;
 import veny.smevente.dao.GenericDao;
-import veny.smevente.dao.CustomerDao;
 import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
@@ -126,10 +126,15 @@ public class EventServiceImpl implements EventService {
         assertLimitedUnit(unit);
 
         final Map<String, String> options = TextUtils.stringToMap(event.getCustomer().getUnit().getSmsGateway());
-        smsGatewayService.send(event.getCustomer().getPhoneNumber(), text2send, options);
+        try {
+            smsGatewayService.send(event.getCustomer().getPhoneNumber(), text2send, options);
+        } catch (IOException e) {
+            LOG.error("failed to send SMS, ID=" + event.getId(), e);
+        }
 
         // store the 'sent' timestamp
         rslt.setSent(new Date());
+        rslt.setSendAttemptCount(event.getSendAttemptCount() + 1);
         eventDao.persist(rslt);
 
         // decrease the SMS limit if the unit is limited
@@ -199,10 +204,15 @@ public class EventServiceImpl implements EventService {
 
         final String text2send = format(event2send);
         final Map<String, String> options = TextUtils.stringToMap(unit.getSmsGateway());
-        smsGatewayService.send(event2send.getCustomer().getPhoneNumber(), text2send, options);
+        try {
+            smsGatewayService.send(event2send.getCustomer().getPhoneNumber(), text2send, options);
+        } catch (IOException e) {
+            LOG.error("failed to send SMS, ID=" + eventId, e);
+        }
 
         // store the 'sent' timestamp
         event2send.setSent(new Date());
+        event2send.setSendAttemptCount(event2send.getSendAttemptCount() + 1);
         eventDao.persist(event2send);
 
         // decrease the SMS limit if the unit is limited
@@ -242,17 +252,22 @@ public class EventServiceImpl implements EventService {
 
                     // store the 'sent' timestamp
                     event.setSent(new Date());
-                    eventDao.persist(event);
                     // decrease the SMS limit if the unit is limited
                     if (null != unit.getLimitedSmss()) {
                         unit.setLimitedSmss(unit.getLimitedSmss() - 1L);
                     }
 
                     sentCount++;
+                } catch (SmsException e) {
+                    LOG.warn("problem by sending SMS, id=" + event.getId() + ", error=" + e.toString());
                 } catch (Throwable t) {
-                    LOG.log(Level.WARN, "failed to send SMS, id=" + event.getId(), t);
+                    LOG.error("failed to send SMS, id=" + event.getId(), t);
+                }
+                try {
                     event.setSendAttemptCount(event.getSendAttemptCount() + 1);
                     eventDao.persist(event);
+                } catch (Throwable t) {
+                    LOG.error("failed to update event, id=" + event.getId(), t);
                 }
             }
             // store changed unit with limited messages

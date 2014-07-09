@@ -50,14 +50,11 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
         }
     }
 
-    /*
-     * <status><id>200</id><message>Zprava byla uspesne odeslana</message></status>
-     * <status><id>400;1</id><message>Chybne telefonni cislo  Prefix don't exists. 500146177</message></status>
-     * <status><id>401</id><message>Chybne prihlaseni</message></status>
-     */
     /** {@inheritDoc} */
     @Override
-    public boolean send(final String number, final String msg, final Map<String, String> metadata) throws SmsException {
+    public boolean send(final String number, final String msg, final Map<String, String> metadata)
+        throws IOException, SmsException {
+
         if (null == number) { throw new NullPointerException("phone number cannot be null"); }
         if (null == msg) { throw new NullPointerException("message cannot be null"); }
         if (msg.length() > MAX_SMS_LEN) {
@@ -91,16 +88,15 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
             return true;
         }
 
-        try {
-            final URL url = new URL(ENDPOINT_SEND);
-            final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoOutput(true);
-            connection.setRequestMethod("POST");
+        final URL url = new URL(ENDPOINT_SEND);
+        final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
 
-            final OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(data);
-            writer.close();
-            final int returnCode = connection.getResponseCode();
+        final OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+        writer.write(data);
+        writer.close();
+        final int returnCode = connection.getResponseCode();
 
             // HTTP response headers
 //            for (Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
@@ -108,45 +104,40 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
 //            }
 
 
-            if (returnCode != HttpURLConnection.HTTP_OK) {
-                LOG.error("failed to send SMS, number=" + number
-                        + ", returnCode=" + returnCode + ", data=" + data);
-                throw new SmsException(FailureType.SERVICE_ERROR, "HTTP request return code: " + returnCode);
+        if (returnCode != HttpURLConnection.HTTP_OK) {
+            LOG.error("failed to send SMS, number=" + number
+                    + ", returnCode=" + returnCode + ", data=" + data);
+            throw new SmsException(FailureType.SERVICE_ERROR, "HTTP request return code: " + returnCode);
+        }
+
+        // HTTP response body
+        BufferedReader reader = null;
+        try {
+            final StringBuilder body = new StringBuilder();
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            String line = reader.readLine();
+            while (null != line) {
+                body.append(line);
+                line = reader.readLine();
             }
 
-            // HTTP response body
-            BufferedReader reader = null;
-            try {
-                final StringBuilder body = new StringBuilder();
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-                String line = reader.readLine();
-                while (null != line) {
-                    body.append(line);
-                    line = reader.readLine();
-                }
-
-                // is response OK?
-                final SmsException failure = assertResponse(body.toString());
-                if (null == failure) {
-                    LOG.info("SMS sent, number=" + number + ", msg=" + msg + ", data=" + data);
-                } else {
-                    LOG.error("failed to sent SMS, number=" + number
-                            + ", data=" + data + ", failure=" + failure.getMessage());
-                    throw failure;
-                }
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException ioe) {
-                        LOG.warn("failed to close the read buffer", ioe);
-                    }
+            // is response OK?
+            final SmsException failure = assertResponse(body.toString());
+            if (null == failure) {
+                LOG.info("SMS sent, number=" + number + ", msg=" + msg + ", data=" + data);
+            } else {
+                LOG.error("failed to sent SMS, number=" + number
+                        + ", data=" + data + ", failure=" + failure.getMessage());
+                throw failure;
+            }
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ioe) {
+                    LOG.warn("failed to close the read buffer", ioe);
                 }
             }
-
-        } catch (IOException e) {
-            LOG.error("failed to send SMS, number=" + number + ", data=" + data, e);
-            throw new SmsException(FailureType.CLIENT_ERROR, e.getMessage());
         }
 
         return true;

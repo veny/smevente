@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -31,10 +32,12 @@ public class EventServiceTest extends AbstractBaseTest {
 
     /**
      * Creates a mock of SMS Gateway.
+     * @throws IOException technical problem indication
+     * @throws SmsException business problem indication
      */
     @SuppressWarnings("unchecked")
     @Before
-    public void mockSmsGateway() {
+    public void mockSmsGateway() throws SmsException, IOException {
         final SmsGatewayService gatewayService = Mockito.mock(SmsGatewayService.class);
         Mockito.when(gatewayService.send(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap())).thenReturn(true);
         ReflectionTestUtils.setField(eventService, "smsGatewayService", gatewayService);
@@ -111,7 +114,7 @@ public class EventServiceTest extends AbstractBaseTest {
         Event sent = eventService.getEvent(ev.getId());
         assertNotNull(sent.getSent());
         assertTrue(sent.getSent().before(new Date()));
-        assertEquals(0, ev.getSendAttemptCount());
+        assertEquals(1, ev.getSendAttemptCount());
 
         // next attempt to send the same event
         assertEquals(0, eventService.bulkSend());
@@ -135,20 +138,25 @@ public class EventServiceTest extends AbstractBaseTest {
 
     /** EventService.bulkSend. */
     @Test
-    public void testBulkSendNotYes() {
+    public void testBulkSendNotYet() {
         final User author = createDefaultUser();
         final Customer patient = createDefaultCustomer();
         final Procedure procedure = createProcedure(PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME,
                 PROCEDURE_MSGTEXT, null, patient.getUnit());
-        createEvent(EVENT_TEXT, new Date(System.currentTimeMillis() + (5 * 24 * 3600 * 1000)),
+        final Event ev = createEvent(EVENT_TEXT, new Date(System.currentTimeMillis() + (5 * 24 * 3600 * 1000)),
                 EVENT_LEN, EVENT_NOTICE, author, patient, procedure);
         assertEquals(0, eventService.bulkSend()); // the event is too fresh
+        assertNull(eventService.getEvent(ev.getId()).getSent());
     }
 
-    /** EventService.bulkSend. */
+    /**
+     * EventService.bulkSend.
+     * @throws IOException technical problem indication
+     * @throws SmsException business problem indication
+     */
     @SuppressWarnings("unchecked")
     @Test
-    public void testBulkSendAttemptCount() {
+    public void testBulkSendAttemptCount() throws SmsException, IOException {
         final SmsGatewayService gatewayService = Mockito.mock(SmsGatewayService.class);
         Mockito.when(gatewayService.send(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap()))
                 .thenThrow(SmsException.class);
