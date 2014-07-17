@@ -88,6 +88,14 @@ public interface EventService {
     Pair<Customer, List<Event>> findEventsByCustomer(Object customerId);
 
     /**
+     * Sends event with given ID as email.
+     *
+     * @param eventId event ID
+     * @return the event
+     */
+    Event sendEmail(Object eventId);
+
+    /**
      * Sends event with given ID as SMS.
      *
      * @param eventId event ID

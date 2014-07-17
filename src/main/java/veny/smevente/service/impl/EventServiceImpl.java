@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.CustomerDao;
@@ -192,6 +193,12 @@ public class EventServiceImpl implements EventService {
         final List<Event> events = eventDao.findByCustomer(customerId);
         LOG.info("found events by customer, customerId=" + customerId + ", size=" + events.size());
         return new Pair<Customer, List<Event>>(client, events);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Event sendEmail(final Object eventId) throws SmsException {
+        throw new RuntimeException("not implemented yet");
     }
 
     /** {@inheritDoc} */
