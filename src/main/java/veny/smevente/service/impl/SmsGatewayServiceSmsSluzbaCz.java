@@ -105,7 +105,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
 
 
         if (returnCode != HttpURLConnection.HTTP_OK) {
-            LOG.error("failed to send SMS, number=" + number
+            LOG.info("failed to send SMS, number=" + number
                     + ", returnCode=" + returnCode + ", data=" + data);
             throw new SmsException(FailureType.SERVICE_ERROR, "HTTP request return code: " + returnCode);
         }
