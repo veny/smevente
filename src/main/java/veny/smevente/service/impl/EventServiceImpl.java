@@ -198,6 +198,7 @@ public class EventServiceImpl implements EventService {
     /** {@inheritDoc} */
     @Override
     public Event sendEmail(final Object eventId) throws SmsException {
+        // to be implemented
         throw new RuntimeException("not implemented yet");
     }
 
