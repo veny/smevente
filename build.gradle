@@ -20,6 +20,7 @@ dependencies {
     compile "org.springframework:spring-core:$springVersion"
     compile "org.springframework:spring-webmvc:$springVersion"
     compile "org.springframework:spring-tx:$springVersion"
+    compile "org.springframework:spring-context-support:$springVersion"
 
     // MAYBE REMOVE??? >>
 //AAA duplicated with 'compile'    runtime "org.springframework:spring-tx:$springVersion"
