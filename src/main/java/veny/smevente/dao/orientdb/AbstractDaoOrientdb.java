@@ -1,20 +1,12 @@
 package veny.smevente.dao.orientdb;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import veny.smevente.dao.DeletedObjectException;
@@ -108,7 +100,6 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 final Map<String, String> opts = GenericDao.OPTIONS_HOLDER.get();
                 if (!opts.containsKey("detach")
                         || (opts.containsKey("detach") && opts.get("detach").equalsIgnoreCase("true"))) {
-                    //detachWithFirstLevelAssociations(rslt, db);
                     db.detachAll(rslt, false);
                 }
                 GenericDao.OPTIONS_HOLDER.get().clear();
@@ -258,83 +249,6 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
         }, true);
     }
 
-
-    // --------------------------------------------------------- OrientDB Stuff
-
-
-    /**
-     * Detach an entity and first level associations labeled with JPA annotations.
-     * @param entity entity to detach
-     * @param db object database
-     */
-    protected void detachWithFirstLevelAssociationsX(final T entity, final OObjectDatabaseTx db) {
-        if (null == entity) { throw new NullPointerException("entity is null"); }
-        final List<Method> assocMethods = getAssociationGetters();
-
-        db.detach(entity);
-        // detach aggregated fields too
-        for (Method m : assocMethods) {
-            try {
-                final Object toBeDetached = m.invoke(entity);
-                if (null != toBeDetached) { // BF#15
-                    db.detach(toBeDetached);
-                }
-            } catch (Exception e) {
-                throw new IllegalStateException("failed to detach associated field, method="
-                        + m.getName() + ", entity=" + entity, e);
-            }
-        }
-    } //DDD
-
-    /**
-     * Detaches list of given objects and on each object detach aggregated entity too.
-     * @param list objects to detach
-     * @param db object database
-     */
-    protected void detachWithFirstLevelAssociationsX(final List<T> list, final OObjectDatabaseTx db) {
-        if (null == list || list.isEmpty()) { return; }
-        final List<Method> assocMethods = getAssociationGetters();
-
-        // detach entries in list
-        for (T entity : list) {
-            db.detach(entity);
-            // detach aggregated fields too
-            for (Method m : assocMethods) {
-                try {
-                    final Object toBeDetached = m.invoke(entity);
-                    if (null != toBeDetached) { // BF#15
-                        db.detach(toBeDetached);
-                    }
-                } catch (Exception e) {
-                    throw new IllegalStateException("failed to detach associated field", e);
-                }
-            }
-        }
-    } //DDD
-
-    /**
-     * Gets list of 'getters' of fields labeled with JPA annotation representing an association.
-     * @return list of getters
-     */
-    private List<Method> getAssociationGetters() {
-        final Field[] fields = persistentClass.getDeclaredFields();
-        final List<Method> rslt = new ArrayList<Method>();
-
-        for (Field f : fields) {
-            if (null != f.getAnnotation(OneToOne.class)
-                    || null != f.getAnnotation(OneToMany.class)
-                    || null != f.getAnnotation(ManyToOne.class)) {
-                final String methodName = "get" + WordUtils.capitalize(f.getName());
-                try {
-                    rslt.add(persistentClass.getMethod(methodName));
-                } catch (Exception e) {
-                    throw new IllegalStateException("failed to detach associated field", e);
-                }
-            }
-        }
-
-        return rslt;
-    }
 
     // ------------------------------------------------------ Soft Delete Stuff
 
