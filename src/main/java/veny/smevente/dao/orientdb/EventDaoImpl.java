@@ -23,7 +23,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao {
 
     // fix for https://groups.google.com/forum/?fromgroups#!topic/orient-database/vxG7W5kgbqQ
-    /** Formater for DateTime. */
+    /** Formatter for DateTime. */
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /** {@inheritDoc} */
@@ -45,7 +45,6 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                 params.put("to", dateFormat.format(to));
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                //detachWithFirstLevelAssociations(rslt, db);
                 for (final Event entity : rslt) { db.detachAll(entity, false); }
                 return rslt;
             }
@@ -69,7 +68,6 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                 params.put("type", Event.Type.IMMEDIATE_MESSAGE.toString());
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                //detachWithFirstLevelAssociations(rslt, db);
                 for (final Event entity : rslt) { db.detachAll(entity, false); }
                 return rslt;
             }
@@ -89,14 +87,13 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                         .append(" AND startTime < :olderThan")
                         .append(" AND sent IS NULL")
                         .append(" AND (sendAttemptCount IS NULL OR sendAttemptCount < :sac) ORDER BY startTime ASC");
-
                 final Map<String, Object> params = new HashMap<String, Object>();
+
                 params.put("unit", unit.getId());
                 params.put("olderThan", dateFormat.format(olderThan));
                 params.put("sac", 3);
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                //detachWithFirstLevelAssociations(rslt, db);
                 for (final Event entity : rslt) { db.detachAll(entity, false); }
                 return rslt;
             }

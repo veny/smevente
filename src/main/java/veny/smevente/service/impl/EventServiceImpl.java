@@ -12,9 +12,10 @@ import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.annotation.Transactional;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.CustomerDao;
@@ -67,6 +68,9 @@ public class EventServiceImpl implements EventService {
     @Autowired
     private SmsGatewayService smsGatewayService;
 
+    /** Dependency. */
+    @Autowired
+    private MailSender mailSender;
 
     /** {@inheritDoc} */
     @Transactional
@@ -197,17 +201,22 @@ public class EventServiceImpl implements EventService {
 
     /** {@inheritDoc} */
     @Override
-    public Event sendEmail(final Object eventId) throws SmsException {
-        // to be implemented
-        throw new RuntimeException("not implemented yet");
+    public Event sendEmail(final Object eventId) {
+        final SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("max@maximov.com");
+        message.setTo("vaclav.sykora@gmail.com");
+        message.setSubject("Smevente");
+        message.setText("Testrs1\ntest2\testovic LIA");
+        mailSender.send(message);
+
+        return null;
     }
 
     /** {@inheritDoc} */
     @Override
     public Event sendSms(final Object eventId) throws SmsException {
         final Event event2send = eventDao.getById(eventId);
-        // unit is not loaded with event because of 'detachWithFirstLevelAssociations'
-        final Unit unit = unitDao.getById(event2send.getCustomer().getUnit().getId());
+        final Unit unit = event2send.getCustomer().getUnit();
         assertLimitedUnit(unit);
 
         final String text2send = format(event2send);
