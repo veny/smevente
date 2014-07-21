@@ -98,6 +98,7 @@ public class Schema {
             OClass unit = db.getMetadata().getSchema().createClass(Unit.class.getSimpleName(), entity);
             unit.createProperty("name", OType.STRING).setMandatory(true).setNotNull(true);
             unit.createProperty("description", OType.STRING);
+            unit.createProperty("email", OType.STRING).setMandatory(true).setNotNull(true);
             unit.createProperty("type", OType.STRING); // null == PATIENT
             unit.createProperty("limitedSmss", OType.LONG);
             unit.createProperty("smsGateway", OType.STRING);
@@ -170,8 +171,8 @@ public class Schema {
         userDef.put("max",  "User SET username = 'max',  password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Max Mustermann', timezone = 'Europe/London'");
         // Units
         Map<String, String> unitDef = new HashMap<String, String>();
-        unitDef.put("foo", "Unit SET name = 'Foo', description = 'Desc of Foo', type = 'PATIENT', smsGateway = 'type=sms.sluzba.cz&username=foo&password=bar'");
-        unitDef.put("bar", "Unit SET name = 'Bar', description = 'Desc of Bar', type = 'CUSTOMER', smsGateway = 'type=sms.sluzba.cz&username=alfa&password=bravo'");
+        unitDef.put("foo", "Unit SET name = 'Foo', description = 'Desc of Foo', email = 'vaclav.sykora@gmail.com', type = 'PATIENT', smsGateway = 'type=sms.sluzba.cz&username=foo&password=bar'");
+        unitDef.put("bar", "Unit SET name = 'Bar', description = 'Desc of Bar', email = 'vaclav.sykora@gmail.com', type = 'CUSTOMER', smsGateway = 'type=sms.sluzba.cz&username=alfa&password=bravo'");
         // Membership
         Map<String, String> membDef = new HashMap<String, String>();
         membDef.put("m1", "Membership SET user = %veny%, unit = %foo%, role = 'ADMIN', significance = 10");
@@ -253,5 +254,11 @@ public class Schema {
 
     // -- Enh#31 [X]
     // CREATE PROPERTY Customer.email STRING
+    // -- Enh#31
+    // CREATE PROPERTY Unit.email STRING
+    // UPDATE Unit SET email = "evca.chladkova@email.cz" WHERE name LIKE "%Chládková%"
+    // UPDATE Unit SET email = "noreply@smevente.com" WHERE name NOT LIKE "%Chládková%"
+    // ALTER PROPERTY Unit.email MANDATORY true
+    // ALTER PROPERTY Unit.email NOTNULL true
 
 }
