@@ -32,7 +32,7 @@
   <bean id="eventDao" class="veny.smevente.dao.orientdb.EventDaoImpl" />
 
   <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-    <property name="host" value="smtp.gmail.com"/>
+    <property name="host" value="127.0.0.1"/>
     <property name="port" value="25"/>
     <property name="javaMailProperties">
       <props>
