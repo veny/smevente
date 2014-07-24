@@ -17,7 +17,9 @@
   <context:component-scan base-package="veny.smevente" />
 
   <bean id="starter" class="veny.smevente.misc.AppContext" init-method="start" lazy-init="false" />
-  <bean id="mdcFilter" class="veny.smevente.server.MDCFilter"/>
+  <bean id="mdcFilter" class="veny.smevente.server.MDCFilter" />
+  <!-- used for Unit#options stored as JSON -->
+  <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
 
   <bean id="userService" class="veny.smevente.service.impl.UserServiceImpl" />
   <bean id="unitService" class="veny.smevente.service.impl.UnitServiceImpl" />
