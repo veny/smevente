@@ -17,13 +17,12 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import veny.smevente.dao.orientdb.DatabaseWrapper;
-import veny.smevente.model.Event;
 import veny.smevente.model.Customer;
+import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.EventService;
-import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
 
@@ -148,14 +147,14 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
 
     // CHECKSTYLE:OFF
     public static final String UNITNAME = "unitXY";
-    public static final String DEFAULT_SMS_GATEWAY_OPTIONS =
-            SmsGatewayService.METADATA_USERNAME + "=foo&" + SmsGatewayService.METADATA_PASSWORD + "=bar";
+    public static final String DEFAULT_OPTIONS =
+            "{\"sms\":{\"gateway\":\"sms.sluzba.cz\",\"username\":\"foo\",\"password\":\"bar\"}}";
     // CHECKSTYLE:ON
 
     /** @return a new created default unit */
     protected Unit createDefaultUnit() {
         return createUnit(
-                UNITNAME, "unit's desc", Unit.TextVariant.PATIENT, 11L, DEFAULT_SMS_GATEWAY_OPTIONS);
+                UNITNAME, "unit's desc", Unit.TextVariant.PATIENT, 11L, DEFAULT_OPTIONS);
     }
     /**
      * Creates a new unit with given attributes.
@@ -163,19 +162,19 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
      * @param description unit's description
      * @param variant unit's text variant
      * @param limitedSmss limited amount of SMS that can be sent
-     * @param smsGateway SMS gateway configuration
+     * @param options unit options
      * @return a new unit created
      */
     protected Unit createUnit(
             final String name, final String description, final Unit.TextVariant variant,
-            final Long limitedSmss, final String smsGateway) {
+            final Long limitedSmss, final String options) {
         final Unit toCreate = new Unit();
         toCreate.setName(name);
         toCreate.setDescription(description);
         toCreate.setType(null == variant ? null : variant.toString());
         toCreate.setLimitedSmss(limitedSmss);
-        toCreate.setSmsGateway(smsGateway);
-        return unitService.createUnit(toCreate);
+        toCreate.setOptions(options);
+        return unitService.storeUnit(toCreate);
     }
     /**
      * Asserts default unit.
@@ -188,7 +187,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         assertEquals("unit's desc", unit.getDescription());
         assertEquals(Unit.TextVariant.PATIENT.toString(), unit.getType());
         assertTrue(11L == unit.getLimitedSmss());
-        assertEquals(DEFAULT_SMS_GATEWAY_OPTIONS, unit.getSmsGateway());
+        assertEquals(DEFAULT_OPTIONS, unit.getOptions());
     }
 
     // ------------------------------------------------ Patient Assistant Stuff

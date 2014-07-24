@@ -73,6 +73,13 @@ public class CronTaskController {
         response.setStatus(200);
     }
 
+//    @RequestMapping(value = "/mail/", method = RequestMethod.GET)
+//    public void mail(final HttpServletRequest request, final HttpServletResponse response) {
+//        LOG.info("sample data, clientAddr=" + request.getRemoteHost());
+//        eventService.sendEmail("#17:44105");
+//        response.setStatus(200);
+//    }
+
     // ----------------------------------------------------------- Helper Stuff
 
 }

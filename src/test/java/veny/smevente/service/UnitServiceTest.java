@@ -52,7 +52,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         Unit toCreate = new Unit();
         try { // existing unit name
             toCreate.setName("A");
-            unitService.createUnit(toCreate);
+            unitService.storeUnit(toCreate);
             assertEquals("expected IllegalStateException", true, false);
         } catch (IllegalStateException e) { assertEquals(true, true); }
 
@@ -68,7 +68,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals(firstCreated.getId(), firstFound.getId());
         assertDefaultUnit(firstFound);
 
-        final Unit secondCreated = createUnit("A", "desc", Unit.TextVariant.PATIENT, 0L, "sms");
+        final Unit secondCreated = createUnit("A", "desc", Unit.TextVariant.PATIENT, 0L, "{}");
         final Unit secondFound = unitService.getUnit(secondCreated.getId());
         assertEquals(secondCreated.getId(), secondFound.getId());
         assertEquals("A", secondFound.getName());

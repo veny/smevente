@@ -36,14 +36,6 @@ public interface EventService {
      */
     Event createAndSendSpecialEvent(Event event);
 
-//    /**
-//     * Updates given event.
-//     *
-//     * @param event event to be updated
-//     * @return updated event
-//     */
-//    Event updateEvent(Event event);
-
     /**
      * Removes given event.
      *
@@ -88,21 +80,21 @@ public interface EventService {
     Pair<Customer, List<Event>> findEventsByCustomer(Object customerId);
 
     /**
-     * Sends event with given ID as email.
+     * Sends given event as email.
      *
-     * @param eventId event ID
+     * @param event event to send
      * @return the event
      */
-    Event sendEmail(Object eventId);
+    Event sendEmail(Event event);
 
     /**
-     * Sends event with given ID as SMS.
+     * Sends given event as SMS.
      *
-     * @param eventId event ID
+     * @param event event to send
      * @return the event
      * @throws SmsException if sending fails
      */
-    Event sendSms(Object eventId) throws SmsException;
+    Event sendSms(Event event) throws SmsException;
 
     /**
      * Invoked by cron task to send events.

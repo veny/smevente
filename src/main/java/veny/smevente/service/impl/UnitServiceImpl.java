@@ -53,18 +53,19 @@ public class UnitServiceImpl implements UnitService {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public Unit createUnit(final Unit unit) {
-        validateUnit(unit, true);
+    public Unit storeUnit(final Unit unit) {
+        validateUnit(unit);
 
         final String name = unit.getName();
         final List<Unit> check = unitDao.findBy("name", name, null);
-        if (!check.isEmpty()) {
+        if (!check.isEmpty()
+                && (null == unit.getId()
+                || (null != unit.getId() && !unit.getId().equals(check.get(0).getId())))) {
             throw new IllegalStateException("unit with given name already exists, name=" + name);
         }
 
-//        unitGae.setMetadata(TextUtils.mapToString(unit.getMetadata()));
         final Unit rslt = unitDao.persist(unit);
-        LOG.info("created new unit, name=" + rslt);
+        LOG.info((null == unit.getId() ? "created new unit, " : "unit updated, ") + rslt);
         return rslt;
     }
 
@@ -324,18 +325,10 @@ public class UnitServiceImpl implements UnitService {
     /**
      * Validation of a unit before persistence.
      * @param unit unit to be validated
-     * @param forCreate whether the object has to be created as new entry in DB
      */
-    private void validateUnit(final Unit unit, final boolean forCreate) {
+    private void validateUnit(final Unit unit) {
         if (null == unit) { throw new NullPointerException("unit cannot be null"); }
         if (Strings.isNullOrEmpty(unit.getName())) { throw new IllegalArgumentException("unit name cannot be blank"); }
-        if (forCreate) {
-            if (null != unit.getId()) {
-                throw new IllegalArgumentException("expected object with empty ID");
-            }
-        } else {
-            if (null == unit.getId()) { throw new NullPointerException("object ID cannot be null"); }
-        }
     }
 
     /**

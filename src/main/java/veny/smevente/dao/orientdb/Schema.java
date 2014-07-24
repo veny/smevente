@@ -100,8 +100,8 @@ public class Schema {
             unit.createProperty("description", OType.STRING);
             unit.createProperty("email", OType.STRING).setMandatory(true).setNotNull(true);
             unit.createProperty("type", OType.STRING); // null == PATIENT
+            unit.createProperty("options", OType.STRING).setMandatory(true).setNotNull(true);
             unit.createProperty("limitedSmss", OType.LONG);
-            unit.createProperty("smsGateway", OType.STRING);
             LOG.info("class created, name=" + unit.getName());
             // Membership
             OClass membership = db.getMetadata().getSchema().createClass(Membership.class.getSimpleName(), entity);
@@ -171,8 +171,8 @@ public class Schema {
         userDef.put("max",  "User SET username = 'max',  password = 'SHA:40bd001563085fc35165329ea1ff5c5ecbdbbeef', fullname = 'Max Mustermann', timezone = 'Europe/London'");
         // Units
         Map<String, String> unitDef = new HashMap<String, String>();
-        unitDef.put("foo", "Unit SET name = 'Foo', description = 'Desc of Foo', email = 'vaclav.sykora@gmail.com', type = 'PATIENT', smsGateway = 'type=sms.sluzba.cz&username=foo&password=bar'");
-        unitDef.put("bar", "Unit SET name = 'Bar', description = 'Desc of Bar', email = 'vaclav.sykora@gmail.com', type = 'CUSTOMER', smsGateway = 'type=sms.sluzba.cz&username=alfa&password=bravo'");
+        unitDef.put("foo", "Unit SET name = 'Foo', description = 'Desc of Foo', email = 'vaclav.sykora@gmail.com', type = 'PATIENT',  options = '{\"sms\":{\"gateway\":\"sms.sluzba.cz\",\"username\":\"foo\",\"password\":\"bar\"}}'");
+        unitDef.put("bar", "Unit SET name = 'Bar', description = 'Desc of Bar', email = 'vaclav.sykora@gmail.com', type = 'CUSTOMER', options = '{\"sms\":{\"gateway\":\"sms.sluzba.cz\",\"username\":\"alfa\",\"password\":\"bravo\"}}'");
         // Membership
         Map<String, String> membDef = new HashMap<String, String>();
         membDef.put("m1", "Membership SET user = %veny%, unit = %foo%, role = 'ADMIN', significance = 10");
@@ -252,13 +252,21 @@ public class Schema {
     // UPDATE Unit       REMOVE deleted
     // UPDATE User       REMOVE deleted
 
-    // -- Enh#31 [X]
+    // -- Enh#31: add Customer#email [X]
     // CREATE PROPERTY Customer.email STRING
-    // -- Enh#31
+    // -- Enh#31: add Unit#email []
     // CREATE PROPERTY Unit.email STRING
     // UPDATE Unit SET email = "evca.chladkova@email.cz" WHERE name LIKE "%Chládková%"
     // UPDATE Unit SET email = "noreply@smevente.com" WHERE name NOT LIKE "%Chládková%"
     // ALTER PROPERTY Unit.email MANDATORY true
     // ALTER PROPERTY Unit.email NOTNULL true
+    // -- Enh#31: rename Unit#smsGateway -> Unit#options []
+    // ALTER PROPERTY Unit.smsGateway NAME options
+    // UPDATE Unit SET options = '{"sms":{"gateway":"sms.sluzba.cz","username":"veny","password":"XXX"}}' WHERE smsGateway LIKE '%veny%'
+    // UPDATE Unit SET options = '{"sms":{"gateway":"sms.sluzba.cz","username":"chladkova","password":"XXX"}}' WHERE smsGateway LIKE '%chladkova%'
+    // UPDATE Unit SET options = '{"sms":{"gateway":"sms.sluzba.cz","username":"smevente","password":"XXX"}}' WHERE smsGateway LIKE '%smevente%'
+    // ALTER PROPERTY Unit.options MANDATORY true
+    // ALTER PROPERTY Unit.options NOTNULL true
+    // UPDATE Unit REMOVE smsGateway
 
 }

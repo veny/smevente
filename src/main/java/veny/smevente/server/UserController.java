@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
@@ -204,7 +203,7 @@ public class UserController {
     public void createAndSendSpecialSms(final HttpServletResponse response,
             final Event event, @RequestParam("authorId") final String authorId) {
 
-        event.setAuthorId(authorId);
+        event.setAuthorId(authorId); // TODO this row could be deleted, no special parameter in method signature needed
         eventService.createAndSendSpecialEvent(event);
         response.setStatus(HttpServletResponse.SC_OK);
     }
@@ -261,19 +260,18 @@ public class UserController {
     }
 
     /**
-     * Sends SMS.
+     * Sends SMS for given event.
      *
-     * @param request HTTP request
-     * @param smsId SMS ID
-     * @return list of <code>Sms</code> as JSON
+     * @param eventId event ID
+     * @return the event (as JSON) updated after sending
      */
     @RequestMapping(value = "/sms/{id}/", method = RequestMethod.POST)
-    public ModelAndView sendSms(
-            final HttpServletRequest request, @PathVariable("id") final String smsId) {
+    public ModelAndView sendSms(@PathVariable("id") final String eventId) {
 
-        final Event info = eventService.sendSms(smsId);
+        final Event event2send = eventService.getEvent(eventId);
+        final Event rslt = eventService.sendSms(event2send);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
-        modelAndView.addObject("sms", info);
+        modelAndView.addObject("sms", rslt);
         return modelAndView;
     }
 

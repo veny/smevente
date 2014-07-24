@@ -19,12 +19,14 @@ public interface UnitService {
     // ------------------------------------------------------------- Unit Stuff
 
     /**
-     * Creates a new unit.
+     * Stores (creates or updates) an unit.<p/>
+     * The criterion to decide if create or update is entity's ID value:
+     * 'create' if ID is <i>null</i>, otherwise 'update'.
      *
-     * @param unit unit to be created
-     * @return created unit with generated ID
+     * @param unit unit to be stored
+     * @return stored unit with generated ID if created
      */
-    Unit createUnit(Unit unit);
+    Unit storeUnit(Unit unit);
 
     /**
      * Gets unit by given ID.
@@ -45,7 +47,7 @@ public interface UnitService {
     // ---------------------------------------------------------- Patient Stuff
 
     /**
-     * Stores (creates or updates) a patient.<p/>
+     * Stores (creates or updates) a customer.<p/>
      * The criterion to decide if create or update is entity's ID value:
      * 'create' if ID is <i>null</i>, otherwise 'update'.
      *

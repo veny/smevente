@@ -36,13 +36,16 @@ public class Unit extends AbstractEntity {
     /** Unit description. */
     @Column
     private String description;
+    /** Email. */
+    @Column
+    private String email;
     /** Type of unit (doctor/...). */
     @Column
     private String type;
     /** Configuration of SMS gateway used by the unit. */
     @JsonIgnore
     @Column
-    private String smsGateway;
+    private String options;
 
     /**
      * An unit can be limited in amount of SMS that can be sent.
@@ -70,6 +73,12 @@ public class Unit extends AbstractEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
     public String getType() {
         return type;
     }
@@ -77,11 +86,11 @@ public class Unit extends AbstractEntity {
         this.type = type;
     }
     @JsonIgnore
-    public String getSmsGateway() {
-        return smsGateway;
+    public String getOptions() {
+        return options;
     }
-    public void setSmsGateway(String smsGateway) {
-        this.smsGateway = smsGateway;
+    public void setOptions(String options) {
+        this.options = options;
     }
     public Long getLimitedSmss() {
         return limitedSmss;

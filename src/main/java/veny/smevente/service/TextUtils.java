@@ -1,9 +1,5 @@
 package veny.smevente.service;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,13 +24,13 @@ public final class TextUtils {
     private TextUtils() { }
 
     /**
-     * Replaces in SMS text predefined sequences.
-     * @param sms SMS text
+     * Replaces predefined sequences in message text .
+     * @param msg message text
      * @param replaceConf map with replacement configuration
-     * @return replaced SMS text
+     * @return replaced message text
      */
-    public static String formatSmsText(final String sms, final Map<String, String> replaceConf) {
-        String rslt = sms;
+    public static String formatEventText(final String msg, final Map<String, String> replaceConf) {
+        String rslt = msg;
         for (Map.Entry<String, String> e : replaceConf.entrySet()) {
             rslt = StringUtils.replace(rslt, e.getKey(), e.getValue());
         }
@@ -62,51 +58,6 @@ public final class TextUtils {
         return rslt;
     }
 
-    /**
-     * Converts Java Map to String.
-     * @param map map to convert
-     * @return textually representation of given map
-     */
-    public static String mapToString(final Map<String, String> map) {
-        final StringBuilder rslt = new StringBuilder();
-
-        for (String key : map.keySet()) {
-            if (rslt.length() > 0) {
-                rslt.append("&");
-            }
-            final String value = map.get(key);
-            try {
-                rslt.append((key != null ? URLEncoder.encode(key, "UTF-8") : ""));
-                rslt.append("=");
-                rslt.append(value != null ? URLEncoder.encode(value, "UTF-8") : "");
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalStateException("this method requires UTF-8 encoding support", e);
-            }
-        }
-        return rslt.toString();
-    }
-
-    /**
-     * Converts String to Java Map.
-     * @param s textually representation of a map: alpha=charlie&foo=bar
-     * @return map converted from text
-     */
-    public static Map<String, String> stringToMap(final String s) {
-        if (null == s) { throw new NullPointerException("text to convert cannot be null"); }
-        final Map<String, String> map = new HashMap<String, String>();
-
-        final String[] nameValuePairs = s.split("&");
-        for (String nameValuePair : nameValuePairs) {
-            final String[] nameValue = nameValuePair.split("=");
-            try {
-                map.put(URLDecoder.decode(nameValue[0], "UTF-8"),
-                        nameValue.length > 1 ? URLDecoder.decode(nameValue[1], "UTF-8") : "");
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalStateException("this method requires UTF-8 encoding support", e);
-            }
-        }
-        return map;
-    }
 
     /**
      * For testing purposes.
@@ -116,16 +67,6 @@ public final class TextUtils {
         System.out.println(convert2ascii("Žluťoučký kůň pěl ďábelské ódy")); //CSOFF
         System.out.println(sanitizeNumber("608 346 123")); //CSOFF
         System.out.println("|" + sanitizeNumber("") + "|"); //CSOFF
-
-        final Map<String, String> map = new HashMap<String, String>();
-        map.put("color", "red");
-        map.put("symbols", "{,=&*?}");
-        map.put("empty", "");
-        final String output = mapToString(map);
-        final Map<String, String> parsedMap = stringToMap(output);
-        for (String key : map.keySet()) {
-            System.out.println(key + ":'" + parsedMap.get(key) + "'"); //CSOFF
-        }
     }
 
 }

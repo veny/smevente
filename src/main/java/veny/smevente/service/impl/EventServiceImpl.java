@@ -1,6 +1,7 @@
 package veny.smevente.service.impl;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +35,8 @@ import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.TextUtils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
 
@@ -67,6 +70,10 @@ public class EventServiceImpl implements EventService {
     /** Dependency. */
     @Autowired
     private SmsGatewayService smsGatewayService;
+
+    /** Dependency. */
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /** Dependency. */
     @Autowired
@@ -122,33 +129,11 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public Event createAndSendSpecialEvent(final Event event) {
+        LOG.debug("going to send special event...");
         event.setType(Event.Type.IMMEDIATE_MESSAGE.toString());
-        final Event rslt = storeEvent(event);
+        final Event stored = storeEvent(event);
 
-        final String text2send = format(rslt);
-
-        final Unit unit = unitDao.getById(event.getCustomer().getUnit().getId());
-        assertLimitedUnit(unit);
-
-        final Map<String, String> options = TextUtils.stringToMap(event.getCustomer().getUnit().getSmsGateway());
-        try {
-            smsGatewayService.send(event.getCustomer().getPhoneNumber(), text2send, options);
-        } catch (IOException e) {
-            LOG.error("failed to send SMS, ID=" + event.getId(), e);
-        }
-
-        // store the 'sent' timestamp
-        rslt.setSent(new Date());
-        rslt.setSendAttemptCount(event.getSendAttemptCount() + 1);
-        eventDao.persist(rslt);
-
-        // decrease the SMS limit if the unit is limited
-        decreaseLimitedSmss(unit);
-
-        LOG.info("SEND special, firstname=" + rslt.getCustomer().getFirstname()
-                + ", surname=" + rslt.getCustomer().getSurname()
-                + ", phone=" + rslt.getCustomer().getPhoneNumber() + ", text=" + text2send);
-        return rslt;
+        return sendSms(stored);
     }
 
     /** {@inheritDoc} */
@@ -176,7 +161,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event getEvent(final Object id) {
         final Event rslt = eventDao.getById(id);
-        LOG.info("found event by id=" + id);
+        LOG.debug("found event by id=" + id);
         return rslt;
     }
 
@@ -201,12 +186,20 @@ public class EventServiceImpl implements EventService {
 
     /** {@inheritDoc} */
     @Override
-    public Event sendEmail(final Object eventId) {
+    public Event sendEmail(final Event event2send) {
+        final Unit unit = event2send.getCustomer().getUnit();
+
         final SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom(unit.getEmail());
+        message.setTo(event2send.getCustomer().getEmail());
+        message.setSubject(unit.getName());
+
         message.setFrom("max@maximov.com");
         message.setTo("vaclav.sykora@gmail.com");
         message.setSubject("Smevente");
         message.setText("Testrs1\ntest2\testovic LIA");
+
         mailSender.send(message);
 
         return null;
@@ -214,28 +207,29 @@ public class EventServiceImpl implements EventService {
 
     /** {@inheritDoc} */
     @Override
-    public Event sendSms(final Object eventId) throws SmsException {
-        final Event event2send = eventDao.getById(eventId);
+    public Event sendSms(final Event event2send) throws SmsException {
         final Unit unit = event2send.getCustomer().getUnit();
+
+        final Map<String, Object> unitOptions = getUnitOptions(unit);
+        @SuppressWarnings("unchecked")
+        final Map<String, String> smsOptions = (Map<String, String>) unitOptions.get("sms");
+        assertSmsOptions(smsOptions);
         assertLimitedUnit(unit);
 
         final String text2send = format(event2send);
-        final Map<String, String> options = TextUtils.stringToMap(unit.getSmsGateway());
         try {
-            smsGatewayService.send(event2send.getCustomer().getPhoneNumber(), text2send, options);
+            smsGatewayService.send(event2send.getCustomer().getPhoneNumber(), text2send, smsOptions);
+            event2send.setSent(new Date());
+            decreaseLimitedSmss(unit);
         } catch (IOException e) {
-            LOG.error("failed to send SMS, ID=" + eventId, e);
+            LOG.error("failed to send SMS, ID=" + event2send.getId(), e);
         }
 
         // store the 'sent' timestamp
-        event2send.setSent(new Date());
         event2send.setSendAttemptCount(event2send.getSendAttemptCount() + 1);
         eventDao.persist(event2send);
 
-        // decrease the SMS limit if the unit is limited
-        decreaseLimitedSmss(unit);
-
-        LOG.info("SEND, id=" + eventId + ", phone=" + event2send.getCustomer().getPhoneNumber()
+        LOG.info("SEND, id=" + event2send.getId() + ", phone=" + event2send.getCustomer().getPhoneNumber()
                 + ", text=" + text2send);
         return event2send;
     }
@@ -254,6 +248,11 @@ public class EventServiceImpl implements EventService {
             final List<Event> foundEvents = eventDao.findEvents2BulkSend(unit, olderThan);
             LOG.info("found events to bulk send, size=" + foundEvents.size() + ", unit=" + unit.getName());
 
+            final Map<String, Object> unitOptions = getUnitOptions(unit);
+            @SuppressWarnings("unchecked")
+            final Map<String, String> smsOptions = (Map<String, String>) unitOptions.get("sms");
+            assertSmsOptions(smsOptions);
+
             for (Event event : foundEvents) {
                 // assert limit of messages
                 if (null != unit.getLimitedSmss() && unit.getLimitedSmss().longValue() <= 0) {
@@ -264,8 +263,7 @@ public class EventServiceImpl implements EventService {
                     final Customer customer = event.getCustomer();
 
                     final String text2send = format(event);
-                    smsGatewayService.send(
-                            customer.getPhoneNumber(), text2send, TextUtils.stringToMap(unit.getSmsGateway()));
+                    smsGatewayService.send(customer.getPhoneNumber(), text2send, smsOptions);
 
                     // store the 'sent' timestamp
                     event.setSent(new Date());
@@ -403,7 +401,7 @@ public class EventServiceImpl implements EventService {
             replaceConf.put("#{doctor}", event.getAuthor().getFullname());
         }
 
-        return TextUtils.formatSmsText(event.getText(), replaceConf);
+        return TextUtils.formatEventText(event.getText(), replaceConf);
     }
 
     /**
@@ -431,7 +429,7 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * Asserts the the unit where the SMS is sent from is not limited or the limit is not exceeded.
+     * Asserts the unit where the SMS is sent from is not limited or the limit is not exceeded.
      * @param unit unit to assert
      */
     private void assertLimitedUnit(final Unit unit) {
@@ -441,15 +439,77 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * Decreases limit of SMSs to send in limited unit.
-     * @param unitGae unit to check and decrease if necessary
+     * Asserts the SMS options are there and valid.
+     * @param opts map with options
      */
-    private void decreaseLimitedSmss(final Unit unitGae) {
-        if (null != unitGae.getLimitedSmss()) {
-            unitGae.setLimitedSmss(unitGae.getLimitedSmss() - 1L);
-            unitDao.persist(unitGae);
-            LOG.info("sent SMS from limited unit, current limit=" + unitGae.getLimitedSmss());
+    private void assertSmsOptions(final Map<String, String> opts) {
+        if (null == opts) { throw new NullPointerException("unit options cannot be null"); }
+        if (0 == opts.size() || !opts.containsKey("gateway")
+                || !opts.containsKey(SmsGatewayService.METADATA_USERNAME)
+                || !opts.containsKey(SmsGatewayService.METADATA_PASSWORD)) {
+            throw new IllegalStateException("invalid or missing SMS options");
         }
+    }
+
+    /**
+     * Decreases limit of SMSs to send in limited unit.
+     * @param unit unit to check and decrease if necessary
+     */
+    private void decreaseLimitedSmss(final Unit unit) {
+        if (null != unit.getLimitedSmss()) {
+            unit.setLimitedSmss(unit.getLimitedSmss() - 1L);
+            unitDao.persist(unit);
+            LOG.info("sent SMS from limited unit, unit=" + unit.getId() + ", currentLimit=" + unit.getLimitedSmss());
+        }
+    }
+
+    /**
+     * Gets unit options as <code>Map</code>.
+     * @param unit unit with options
+     * @return options as Map
+     */
+    private Map<String, Object> getUnitOptions(final Unit unit) {
+        if (null == unit || null == unit.getOptions() || 0 == unit.getOptions().trim().length()) {
+            throw new IllegalArgumentException("unit options cannot be blank");
+        }
+
+        final Map<String, Object> rslt;
+        try {
+            rslt = objectMapper.readValue(unit.getOptions(), new TypeReference<HashMap<String, Object>>() { });
+        } catch (IOException e) {
+            LOG.error("failed to parse unit's options", e);
+            throw new IllegalStateException("failed to parse unit's options", e);
+        }
+        return rslt;
+    }
+
+    /**
+     * Only for testing purposes.
+     * @param args CLI arguments
+     * @throws IOException technical problem
+     */
+    public static void main(final String[] args) throws IOException {
+
+        Map<String, Object> map = new HashMap<>();
+        Map<String, String> smsGateway = new HashMap<>();
+        smsGateway.put("username", "foo");
+        smsGateway.put("password", "bar");
+        map.put("smsGateway", smsGateway);
+        map.put("key2", "value2");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        StringWriter stringWriter = new StringWriter();
+
+        objectMapper.writeValue(stringWriter, map);
+
+        System.out.println(stringWriter.toString()); //CSOFF
+
+        Map<String, Object> mapFromString =
+                objectMapper.readValue(
+                        "{\"smsGateway\":{\"type\":\"sms.sluzba.cz\",\"username\":\"foo\",\"password\":\"bar\"}}",
+                        new TypeReference<HashMap<String, Object>>() { });
+
+        System.out.println(mapFromString); //CSOFF
     }
 
 }
