@@ -249,6 +249,12 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
         }, true);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public T detach(final T entity) {
+        return databaseWrapper.get().detachAll(entity, false);
+    }
+
 
     // ------------------------------------------------------ Soft Delete Stuff
 

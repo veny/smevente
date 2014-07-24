@@ -110,5 +110,14 @@ public interface GenericDao<T extends AbstractEntity> {
 //     */
 //    Integer count();
 
+    /**
+     * Detaches entity and recursively the entire object tree.
+     * All data contained in the document will be copied in the associated object.
+     *
+     * @param entity entity to be detached
+     * @return entity with detached data
+     */
+    T detach(T entity);
+
 }
 
