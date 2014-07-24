@@ -34,7 +34,7 @@ import eu.maydu.gwt.validation.client.i18n.ValidationMessages;
 import eu.maydu.gwt.validation.client.validators.strings.StringLengthValidator;
 
 /**
- * Add Patient presenter.
+ * Store customer presenter.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 22.8.2010
@@ -44,7 +44,7 @@ public class StoreCustomerPresenter
     implements HeaderHandler {
 
     /**
-     * View interface for the Add Patient.
+     * View interface for the storing customer.
      *
      * @author Vaclav Sykora
      * @since 22.8.2010
@@ -120,9 +120,9 @@ public class StoreCustomerPresenter
          */
         DisclosurePanel getValidationErrors();
         /**
-         * @return the hidden field wit patient ID
+         * @return the hidden field wit customer ID
          */
-        Hidden getPatientId();
+        Hidden getCustomerId();
     }
 
     /** Handler registration for user CRUD in the Event Bus. */
@@ -193,10 +193,11 @@ public class StoreCustomerPresenter
 
         if (null != parameter && parameter instanceof Customer) {
             final Customer p = (Customer) parameter;
-            view.getPatientId().setValue(p.getId().toString());
+            view.getCustomerId().setValue(p.getId().toString());
             view.getFirstname().setText(p.getFirstname());
             view.getSurname().setText(p.getSurname());
             view.getPhoneNumber().setText(p.getPhoneNumber());
+            view.getEmail().setText(p.getEmail());
             view.getBirthNumber().setText(p.getBirthNumber());
             view.getDegree().setText(p.getDegree());
             view.getStreet().setText(p.getStreet());
@@ -207,7 +208,7 @@ public class StoreCustomerPresenter
         } else {
             // Using a null as argument on IE7 will lead to the setting of
             // string "null" as value, therefore the empty string is used instead.
-            view.getPatientId().setValue("");
+            view.getCustomerId().setValue("");
         }
     }
 
@@ -216,10 +217,11 @@ public class StoreCustomerPresenter
     public void clean() {
         // Using a null as argument on IE7 will lead to the setting of
         // string "null" as value, therefore the empty string is used instead.
-        view.getPatientId().setValue("");
+        view.getCustomerId().setValue("");
         view.getFirstname().setText("");
         view.getSurname().setText("");
         view.getPhoneNumber().setText("");
+        view.getEmail().setText("");
         view.getBirthNumber().setText("");
         view.getDegree().setText("");
         view.getStreet().setText("");
@@ -294,10 +296,10 @@ public class StoreCustomerPresenter
      */
     private void storeCustomer() {
         final Customer c = new Customer();
-        if (null == view.getPatientId().getValue() || view.getPatientId().getValue().trim().isEmpty()) {
+        if (null == view.getCustomerId().getValue() || view.getCustomerId().getValue().trim().isEmpty()) {
             c.setId(null);
         } else {
-            c.setId(view.getPatientId().getValue());
+            c.setId(view.getCustomerId().getValue());
         }
         c.setUnit(App.get().getSelectedUnit());
         c.setFirstname(view.getFirstname().getText());

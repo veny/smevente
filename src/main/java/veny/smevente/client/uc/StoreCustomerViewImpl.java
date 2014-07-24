@@ -41,7 +41,7 @@ public class StoreCustomerViewImpl extends Composite implements StoreCustomerPre
     @UiField Button submit;
     @UiField Button cancel;
     @UiField DisclosurePanel validationErrors;
-    @UiField Hidden patientId;
+    @UiField Hidden customerId;
     // CHECKSTYLE:ON
 
     /**
@@ -137,8 +137,8 @@ public class StoreCustomerViewImpl extends Composite implements StoreCustomerPre
 
     /** {@inheritDoc} */
     @Override
-    public Hidden getPatientId() {
-        return patientId;
+    public Hidden getCustomerId() {
+        return customerId;
     }
 
     /** {@inheritDoc} */

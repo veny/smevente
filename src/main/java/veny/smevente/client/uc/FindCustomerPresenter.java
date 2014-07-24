@@ -304,11 +304,12 @@ public class FindCustomerPresenter
         UiUtils.addCell(table, line, 0, new Label("" + line));
         UiUtils.addCell(table, line, 1, new Label(p.fullname()));
         UiUtils.addCell(table, line, 3, new Label(p.getPhoneNumber()));
-        UiUtils.addCell(table, line, 4, new Label(p.getBirthNumber()));
-        UiUtils.addCell(table, line, 5, new Label(p.getDegree()));
-        UiUtils.addCell(table, line, 6, new Label(p.getStreet()));
-        UiUtils.addCell(table, line, 7, new Label(p.getCity()));
-        UiUtils.addCell(table, line, 8, new Label(p.getZipCode()));
+        UiUtils.addCell(table, line, 4, new Label(p.getEmail()));
+        UiUtils.addCell(table, line, 5, new Label(p.getBirthNumber()));
+        UiUtils.addCell(table, line, 6, new Label(p.getDegree()));
+        UiUtils.addCell(table, line, 7, new Label(p.getStreet()));
+        UiUtils.addCell(table, line, 8, new Label(p.getCity()));
+        UiUtils.addCell(table, line, 9, new Label(p.getZipCode()));
         final Image menuImg = new Image("images/menu_button.png");
         // patient ID is stored as element ID
         menuImg.getElement().setId(p.getId().toString());

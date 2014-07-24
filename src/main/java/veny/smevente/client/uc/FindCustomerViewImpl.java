@@ -53,16 +53,18 @@ public class FindCustomerViewImpl extends Composite implements FindCustomerPrese
         getResultTable().getFlexCellFormatter().addStyleName(0, 2, "resultTable-header-cell");
         getResultTable().setWidget(0, 3, new Label(CONSTANTS.phoneNumber()));
         getResultTable().getFlexCellFormatter().addStyleName(0, 3, "resultTable-header-cell");
-        getResultTable().setWidget(0, 4, new Label(CONSTANTS.birthNumber()));
+        getResultTable().setWidget(0, 4, new Label(CONSTANTS.email()));
         getResultTable().getFlexCellFormatter().addStyleName(0, 4, "resultTable-header-cell");
-        getResultTable().setWidget(0, 5, new Label(CONSTANTS.degree()));
+        getResultTable().setWidget(0, 5, new Label(CONSTANTS.birthNumber()));
         getResultTable().getFlexCellFormatter().addStyleName(0, 5, "resultTable-header-cell");
-        getResultTable().setWidget(0, 6, new Label(CONSTANTS.street()));
+        getResultTable().setWidget(0, 6, new Label(CONSTANTS.degree()));
         getResultTable().getFlexCellFormatter().addStyleName(0, 6, "resultTable-header-cell");
-        getResultTable().setWidget(0, 7, new Label(CONSTANTS.city()));
+        getResultTable().setWidget(0, 7, new Label(CONSTANTS.street()));
         getResultTable().getFlexCellFormatter().addStyleName(0, 7, "resultTable-header-cell");
-        getResultTable().setWidget(0, 8, new Label(CONSTANTS.zipCode()));
+        getResultTable().setWidget(0, 8, new Label(CONSTANTS.city()));
         getResultTable().getFlexCellFormatter().addStyleName(0, 8, "resultTable-header-cell");
+        getResultTable().setWidget(0, 9, new Label(CONSTANTS.zipCode()));
+        getResultTable().getFlexCellFormatter().addStyleName(0, 9, "resultTable-header-cell");
     }
 
     /** {@inheritDoc} */
