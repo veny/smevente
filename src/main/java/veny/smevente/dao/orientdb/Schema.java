@@ -101,7 +101,7 @@ public class Schema {
             unit.createProperty("email", OType.STRING).setMandatory(true).setNotNull(true);
             unit.createProperty("type", OType.STRING); // null == PATIENT
             unit.createProperty("options", OType.STRING).setMandatory(true).setNotNull(true);
-            unit.createProperty("limitedSmss", OType.LONG);
+            unit.createProperty("msgLimit", OType.LONG);
             LOG.info("class created, name=" + unit.getName());
             // Membership
             OClass membership = db.getMetadata().getSchema().createClass(Membership.class.getSimpleName(), entity);
@@ -125,6 +125,7 @@ public class Schema {
             customer.createProperty("zipCode", OType.STRING);
             customer.createProperty("employer", OType.STRING);
             customer.createProperty("careers", OType.STRING);
+            customer.createProperty("sendingChannel", OType.INTEGER);
             LOG.info("class created, name=" + customer.getName());
             // Procedure
             OClass procedure = db.getMetadata().getSchema().createClass(Procedure.class.getSimpleName(), entity);
@@ -268,5 +269,13 @@ public class Schema {
     // ALTER PROPERTY Unit.options MANDATORY true
     // ALTER PROPERTY Unit.options NOTNULL true
     // UPDATE Unit REMOVE smsGateway
+    // -- Enh#31: add Customer#sendingChannel []
+    // CREATE PROPERTY Customer.sendingChannel INTEGER
+    // UPDATE Customer SET sendingChannel = 1 WHERE phoneNumber IS NOT NULL
+    // UPDATE Customer SET sendingChannel = 2 WHERE email IS NOT NULL AND email.length() > 0
+    // -- Enh#31: rename Unit#limitedSmss -> Unit#msgLimit []
+    // ALTER PROPERTY Unit.limitedSmss NAME msgLimit
+    // UPDATE Unit SET msgLimit = limitedSmss
+    // UPDATE Unit REMOVE limitedSmss
 
 }
