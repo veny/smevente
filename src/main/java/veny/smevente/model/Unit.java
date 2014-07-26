@@ -48,16 +48,16 @@ public class Unit extends AbstractEntity {
     private String options;
 
     /**
-     * An unit can be limited in amount of SMS that can be sent.
+     * An unit can be limited in amount of messages that can be sent.
      * Mostly it is for a marketing purpose, just let a potential customer to try the application.
      * The values have following meaning:<ul>
-     * <li>bigger than 0 - unit is limited but still able to send the SMSs
+     * <li>bigger than 0 - unit is limited but still able to send messages
      * <li>equals to 0 or lesser than 0 - unit is limited and the credit is over
      * <li>'null' - unlimited
      * </ul>
      */
     @Column
-    private Long limitedSmss;
+    private Long msgLimit;
 
 
     // CHECKSTYLE:OFF
@@ -92,11 +92,11 @@ public class Unit extends AbstractEntity {
     public void setOptions(String options) {
         this.options = options;
     }
-    public Long getLimitedSmss() {
-        return limitedSmss;
+    public Long getMsgLimit() {
+        return msgLimit;
     }
-    public void setLimitedSmss(Long limitedSmss) {
-        this.limitedSmss = limitedSmss;
+    public void setMsgLimit(Long msgLimit) {
+        this.msgLimit = msgLimit;
     }
     // CHECKSTYLE:ON
 
@@ -124,8 +124,8 @@ public class Unit extends AbstractEntity {
             .append(getId())
             .append(", name='")
             .append(name)
-            .append("', limitedSmss=")
-            .append(limitedSmss);
+            .append("', msgLimit=")
+            .append(msgLimit);
         rslt.append(")");
         return rslt.toString();
     }
