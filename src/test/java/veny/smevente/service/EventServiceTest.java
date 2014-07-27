@@ -122,7 +122,7 @@ public class EventServiceTest extends AbstractBaseTest {
     }
 
 
-    /** EventService.sendSms.
+    /** EventService.send.
      * @throws IOException technical problem
      * @throws SmsException */
     @SuppressWarnings("unchecked")
@@ -142,7 +142,7 @@ public class EventServiceTest extends AbstractBaseTest {
         Mockito.verify(mailSender, Mockito.times(0)).send(Mockito.any(SimpleMailMessage.class));
     }
 
-    /** EventService.sendSms.
+    /** EventService.send.
      * @throws IOException technical problem
      * @throws SmsException */
     @SuppressWarnings("unchecked")
@@ -162,7 +162,7 @@ public class EventServiceTest extends AbstractBaseTest {
         Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(SimpleMailMessage.class));
     }
 
-    /** EventService.sendSms. */
+    /** EventService.send. */
     public void testSendSmsWrongUnitOptions() {
         final Event ev = createEventToBeSentAs(Event.CHANNEL_SMS);
         final Unit unit = ev.getCustomer().getUnit();
@@ -175,7 +175,7 @@ public class EventServiceTest extends AbstractBaseTest {
         assertEquals(1, sent.getSendAttemptCount());
     }
 
-    /** EventService.sendSms. */
+    /** EventService.send. */
     @Test
     public void testSendSmsBadPhoneNumber() {
         Event ev  = createDefaultEvent();
@@ -197,7 +197,7 @@ public class EventServiceTest extends AbstractBaseTest {
         assertEquals(11L, unitService.getUnit(c.getUnit().getId()).getMsgLimit().longValue());
     }
 
-    /** EventService.sendSms. */
+    /** EventService.send. */
     @Test
     public void testSendEmailWrongAddress() {
         Event ev  = createDefaultEvent();
@@ -219,7 +219,7 @@ public class EventServiceTest extends AbstractBaseTest {
         assertEquals(11L, unitService.getUnit(c.getUnit().getId()).getMsgLimit().longValue());
     }
 
-    /** EventService.sendSms. */
+    /** EventService.send. */
     @Test(expected = IllegalStateException.class)
     public void testSendSmsExceedSmsLimit() {
         Event ev  = createDefaultEvent();
@@ -359,6 +359,11 @@ public class EventServiceTest extends AbstractBaseTest {
 
     // -------------------------------------------------------- Assistant Stuff
 
+    /** Creates event to be sent wia given channel.
+     *
+     * @param channel channel
+     * @return the event
+     */
     private Event createEventToBeSentAs(final int channel) {
         final Event ev  = createDefaultEvent();
         final Customer c = ev.getCustomer();
