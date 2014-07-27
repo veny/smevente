@@ -13,6 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import veny.smevente.AbstractBaseTest;
@@ -43,6 +45,8 @@ public class EventServiceTest extends AbstractBaseTest {
 
     /** Mocked object simulating communication with SMS gateway. */
     private SmsGatewayService gatewayService;
+    /** Mocked object simulating communication with mail server. */
+    private MailSender mailSender;
 
     /**
      * Creates a mock of SMS Gateway.
@@ -56,6 +60,10 @@ public class EventServiceTest extends AbstractBaseTest {
         Mockito.when(gatewayService.send(
                 Mockito.eq("badNumber"), Mockito.anyString(), Mockito.anyMap())).thenThrow(IOException.class);
         ReflectionTestUtils.setField(eventService, "smsGatewayService", gatewayService);
+
+        mailSender = Mockito.mock(MailSender.class);
+        Mockito.doNothing().when(mailSender).send(Mockito.any(SimpleMailMessage.class));
+        ReflectionTestUtils.setField(eventService, "mailSender", mailSender);
     }
 
 
@@ -114,29 +122,57 @@ public class EventServiceTest extends AbstractBaseTest {
     }
 
 
-    /** EventService.sendSms. */
+    /** EventService.sendSms.
+     * @throws IOException technical problem
+     * @throws SmsException */
+    @SuppressWarnings("unchecked")
     @Test
-    public void testSendSmsSimple() {
-        Event ev  = createDefaultEvent();
-        Event sent = eventService.sendSms(ev);
+    public void testSendSmsSimple() throws SmsException, IOException {
+        final Event ev = createEventToBeSentAs(Event.CHANNEL_SMS);
+        final Event sent = eventService.send(ev);
 
         assertEquals(ev.getId(), sent.getId());
         assertNotNull(sent.getSent());
         assertTrue(sent.getSent().before(new Date()));
         assertEquals(1, ev.getSendAttemptCount());
         // default unit created with limit of 11
-        assertEquals(10L, ev.getCustomer().getUnit().getLimitedSmss().longValue());
+        assertEquals(10L, ev.getCustomer().getUnit().getMsgLimit().longValue());
+        Mockito.verify(gatewayService, Mockito.times(1)).send(
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyMap());
+        Mockito.verify(mailSender, Mockito.times(0)).send(Mockito.any(SimpleMailMessage.class));
+    }
+
+    /** EventService.sendSms.
+     * @throws IOException technical problem
+     * @throws SmsException */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSendMailSimple() throws SmsException, IOException {
+        final Event ev = createEventToBeSentAs(Event.CHANNEL_EMAIL);
+        final Event sent = eventService.send(ev);
+
+        assertEquals(ev.getId(), sent.getId());
+        assertNotNull(sent.getSent());
+        assertTrue(sent.getSent().before(new Date()));
+        assertEquals(1, ev.getSendAttemptCount());
+        // default unit created with limit of 11
+        assertEquals(10L, ev.getCustomer().getUnit().getMsgLimit().longValue());
+        Mockito.verify(gatewayService, Mockito.times(0)).send(
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyMap());
+        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(SimpleMailMessage.class));
     }
 
     /** EventService.sendSms. */
-    @Test(expected = IllegalStateException.class)
     public void testSendSmsWrongUnitOptions() {
-        Event ev = createDefaultEvent();
-        Unit unit = ev.getCustomer().getUnit();
+        final Event ev = createEventToBeSentAs(Event.CHANNEL_SMS);
+        final Unit unit = ev.getCustomer().getUnit();
         unitDao.detach(unit);
         unit.setOptions("{\"sms\":{\"gateway\":\"sms.sluzba.cz\"}}");
         unitDao.persist(unit);
-        eventService.sendSms(ev);
+
+        final Event sent = eventService.send(ev);
+        assertNull(sent.getSent());
+        assertEquals(1, sent.getSendAttemptCount());
     }
 
     /** EventService.sendSms. */
@@ -146,18 +182,41 @@ public class EventServiceTest extends AbstractBaseTest {
         Customer c = ev.getCustomer();
         customerDao.detach(c);
         c.setPhoneNumber("badNumber");
+        c.setSendingChannel(Event.CHANNEL_SMS);
         customerDao.persist(c);
-        ev = eventService.sendSms(ev);
+        ev = eventService.send(ev);
         assertNull(ev.getSent());
         assertEquals(1, ev.getSendAttemptCount());
         // no decrease of limit on unit
-        assertEquals(11L, unitService.getUnit(c.getUnit().getId()).getLimitedSmss().longValue());
+        assertEquals(11L, unitService.getUnit(c.getUnit().getId()).getMsgLimit().longValue());
         // and again
-        ev = eventService.sendSms(ev);
+        ev = eventService.send(ev);
         assertNull(ev.getSent());
         assertEquals(2, ev.getSendAttemptCount());
         // no decrease of limit on unit
-        assertEquals(11L, unitService.getUnit(c.getUnit().getId()).getLimitedSmss().longValue());
+        assertEquals(11L, unitService.getUnit(c.getUnit().getId()).getMsgLimit().longValue());
+    }
+
+    /** EventService.sendSms. */
+    @Test
+    public void testSendEmailWrongAddress() {
+        Event ev  = createDefaultEvent();
+        Customer c = ev.getCustomer();
+        customerDao.detach(c);
+        c.setEmail(" ");
+        c.setSendingChannel(Event.CHANNEL_EMAIL);
+        customerDao.persist(c);
+        ev = eventService.send(ev);
+        assertNull(ev.getSent());
+        assertEquals(1, ev.getSendAttemptCount());
+        // no decrease of limit on unit
+        assertEquals(11L, unitService.getUnit(c.getUnit().getId()).getMsgLimit().longValue());
+        // and again
+        ev = eventService.send(ev);
+        assertNull(ev.getSent());
+        assertEquals(2, ev.getSendAttemptCount());
+        // no decrease of limit on unit
+        assertEquals(11L, unitService.getUnit(c.getUnit().getId()).getMsgLimit().longValue());
     }
 
     /** EventService.sendSms. */
@@ -166,14 +225,16 @@ public class EventServiceTest extends AbstractBaseTest {
         Event ev  = createDefaultEvent();
         Unit unit = ev.getCustomer().getUnit();
         unitDao.detach(unit);
-        unit.setLimitedSmss(0L);
+        unit.setMsgLimit(0L);
         unitDao.persist(unit);
-        eventService.sendSms(ev);
+        eventService.send(ev);
     }
 
-    /** EventService.createAndSendSpecialEvent. */
+    /** EventService.createAndSendSpecialEvent.
+     * @throws Exception if something wrong */
+    @SuppressWarnings("unchecked")
     @Test
-    public void testCreateAndSendSpecialEvent() {
+    public void testCreateAndSendSpecialEvent() throws Exception {
         // there is just test about storing, the rest is covered by test of 'sendSms'
         // which is internal used
         final User author = createDefaultUser();
@@ -200,6 +261,9 @@ public class EventServiceTest extends AbstractBaseTest {
         assertEquals(1, sent.getSendAttemptCount());
         assertTrue(sent.getSent().before(new Date()));
         assertEquals(Event.Type.IMMEDIATE_MESSAGE.toString(), sent.getType());
+        Mockito.verify(gatewayService, Mockito.times(1)).send(
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyMap());
+        Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(SimpleMailMessage.class));
     }
 
     /** EventService.bulkSend. */
@@ -219,12 +283,12 @@ public class EventServiceTest extends AbstractBaseTest {
         assertTrue(sent.getSent().before(new Date()));
         assertEquals(1, ev.getSendAttemptCount());
         // no decrease of limit on unit
-        assertEquals(10L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getLimitedSmss().longValue());
+        assertEquals(10L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getMsgLimit().longValue());
 
         // next attempt to send the same event
         assertEquals(0, eventService.bulkSend());
         // no decrease of limit on unit
-        assertEquals(10L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getLimitedSmss().longValue());
+        assertEquals(10L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getMsgLimit().longValue());
 
         // next 2 events
         createEvent("text", new Date(System.currentTimeMillis() - (5 * 24 * 3600 * 1000)), 10, null,
@@ -234,7 +298,7 @@ public class EventServiceTest extends AbstractBaseTest {
         assertEquals(2, eventService.bulkSend());
         assertEquals(0, eventService.bulkSend());
         // no decrease of limit on unit
-        assertEquals(8L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getLimitedSmss().longValue());
+        assertEquals(8L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getMsgLimit().longValue());
     }
 
     /** EventService.bulkSend. */
@@ -290,9 +354,18 @@ public class EventServiceTest extends AbstractBaseTest {
         assertNull(byId.getSent());
         assertEquals(3, byId.getSendAttemptCount());
         // no decrease of limit on unit
-        assertEquals(11L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getLimitedSmss().longValue());
+        assertEquals(11L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getMsgLimit().longValue());
     }
 
     // -------------------------------------------------------- Assistant Stuff
+
+    private Event createEventToBeSentAs(final int channel) {
+        final Event ev  = createDefaultEvent();
+        final Customer c = ev.getCustomer();
+        customerDao.detach(c);
+        c.setSendingChannel(channel);
+        customerDao.persist(c);
+        return ev;
+    }
 
 }

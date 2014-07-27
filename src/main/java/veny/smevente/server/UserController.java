@@ -269,7 +269,7 @@ public class UserController {
     public ModelAndView sendSms(@PathVariable("id") final String eventId) {
 
         final Event event2send = eventService.getEvent(eventId);
-        final Event rslt = eventService.sendSms(event2send);
+        final Event rslt = eventService.send(event2send);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("sms", rslt);
         return modelAndView;

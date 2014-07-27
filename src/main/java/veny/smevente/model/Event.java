@@ -50,6 +50,11 @@ public class Event extends AbstractEntity {
     /** Statistics - deleted. */
     public static final String DELETED = "DELETED";
 
+    /** Bit mask of SMS channel to send message. */
+    public static final int CHANNEL_SMS = 1;
+    /** Bit mask of email channel to send message. */
+    public static final int CHANNEL_EMAIL = 2;
+
     /** Text. */
     @Column
     @JsonProperty

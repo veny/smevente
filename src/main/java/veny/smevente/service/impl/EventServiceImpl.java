@@ -131,9 +131,8 @@ public class EventServiceImpl implements EventService {
     public Event createAndSendSpecialEvent(final Event event) {
         LOG.debug("going to send special event...");
         event.setType(Event.Type.IMMEDIATE_MESSAGE.toString());
-        final Event stored = storeEvent(event);
-
-        return sendSms(stored);
+        Event rslt = storeEvent(event);
+        return send(rslt);
     }
 
     /** {@inheritDoc} */
@@ -186,52 +185,80 @@ public class EventServiceImpl implements EventService {
 
     /** {@inheritDoc} */
     @Override
-    public Event sendEmail(final Event event2send) {
-        final Unit unit = event2send.getCustomer().getUnit();
-
-        final SimpleMailMessage message = new SimpleMailMessage();
-
-        message.setFrom(unit.getEmail());
-        message.setTo(event2send.getCustomer().getEmail());
-        message.setSubject(unit.getName());
-
-        message.setFrom("max@maximov.com");
-        message.setTo("vaclav.sykora@gmail.com");
-        message.setSubject("Smevente");
-        message.setText("Testrs1\ntest2\testovic LIA");
-
-        mailSender.send(message);
-
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Event sendSms(final Event event2send) throws SmsException {
-        final Unit unit = event2send.getCustomer().getUnit();
-
-        final Map<String, Object> unitOptions = getUnitOptions(unit);
-        @SuppressWarnings("unchecked")
-        final Map<String, String> smsOptions = (Map<String, String>) unitOptions.get("sms");
-        assertSmsOptions(smsOptions);
+    public Event send(final Event event2send) throws SmsException {
+        final Customer customer = event2send.getCustomer();
+        final Unit unit = customer.getUnit();
         assertLimitedUnit(unit);
 
         final String text2send = format(event2send);
-        try {
-            smsGatewayService.send(event2send.getCustomer().getPhoneNumber(), text2send, smsOptions);
-            event2send.setSent(new Date());
-            decreaseLimitedSmss(unit);
-        } catch (IOException e) {
-            LOG.error("failed to send SMS, ID=" + event2send.getId(), e);
+        final Map<String, Object> unitOptions = getUnitOptions(unit);
+
+        // SMS
+        boolean smsOk = false;
+        if ((customer.getSendingChannel() & Event.CHANNEL_SMS) > 0) {
+            smsOk = sendSms(event2send);
         }
 
-        // store the 'sent' timestamp
-        event2send.setSendAttemptCount(event2send.getSendAttemptCount() + 1);
-        eventDao.persist(event2send);
+        // EMAIL
+        boolean emailOk = false;
+        if ((customer.getSendingChannel() & Event.CHANNEL_EMAIL) > 0) {
+            emailOk = sendEmail(event2send);
+        }
 
-        LOG.info("SEND, id=" + event2send.getId() + ", phone=" + event2send.getCustomer().getPhoneNumber()
-                + ", text=" + text2send);
-        return event2send;
+        LOG.info("SEND, id=" + event2send.getId() + ", text=" + text2send + ", smsOk=" + smsOk + ", emailOk" + emailOk);
+        if (smsOk || emailOk) {
+            event2send.setSent(new Date());
+            decreaseLimitedMessages(unit);
+        }
+        event2send.setSendAttemptCount(event2send.getSendAttemptCount() + 1);
+
+        return eventDao.persist(event2send);
+    }
+
+    private boolean sendEmail(final Event event2send) {
+        final Customer customer = event2send.getCustomer();
+        final Unit unit = event2send.getCustomer().getUnit();
+        final String text2send = format(event2send);
+
+        if (null == customer.getEmail() || 0 == customer.getEmail().trim().length()) {
+            LOG.warn("email cannot be sent, wrong customer email address, eventId=" + event2send.getId());
+            return false;
+        }
+
+        final SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(unit.getEmail());
+        message.setTo(customer.getEmail());
+        message.setSubject(unit.getName());
+        message.setText(text2send);
+
+        try {
+            mailSender.send(message);
+        } catch (Throwable t) {
+            LOG.error("failed to send email, ID=" + event2send.getId(), t);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean sendSms(final Event event2send) {
+        final Customer customer = event2send.getCustomer();
+        final Unit unit = customer.getUnit();
+        assertLimitedUnit(unit);
+
+        final String text2send = format(event2send);
+        final Map<String, Object> unitOptions = getUnitOptions(unit);
+        @SuppressWarnings("unchecked")
+        final Map<String, String> smsOptions = (Map<String, String>) unitOptions.get("sms");
+
+        try {
+            assertSmsOptions(smsOptions);
+            smsGatewayService.send(customer.getPhoneNumber(), text2send, smsOptions);
+            LOG.info("SMS sent, id=" + event2send.getId() + ", phone=" + customer.getPhoneNumber());
+        } catch (Throwable t) {
+            LOG.error("failed to send SMS, ID=" + event2send.getId(), t);
+            return false;
+        }
+        return true;
     }
 
     /** {@inheritDoc} */
@@ -255,7 +282,7 @@ public class EventServiceImpl implements EventService {
 
             for (Event event : foundEvents) {
                 // assert limit of messages
-                if (null != unit.getLimitedSmss() && unit.getLimitedSmss().longValue() <= 0) {
+                if (null != unit.getMsgLimit() && unit.getMsgLimit().longValue() <= 0) {
                     continue;
                 }
 
@@ -268,8 +295,8 @@ public class EventServiceImpl implements EventService {
                     // store the 'sent' timestamp
                     event.setSent(new Date());
                     // decrease the SMS limit if the unit is limited
-                    if (null != unit.getLimitedSmss()) {
-                        unit.setLimitedSmss(unit.getLimitedSmss() - 1L);
+                    if (null != unit.getMsgLimit()) {
+                        unit.setMsgLimit(unit.getMsgLimit() - 1L);
                     }
 
                     sentCount++;
@@ -286,7 +313,7 @@ public class EventServiceImpl implements EventService {
                 }
             }
             // store changed unit with limited messages
-            if (null != unit.getLimitedSmss()) {
+            if (null != unit.getMsgLimit()) {
                 unitDao.persist(unit);
             }
         }
@@ -433,8 +460,8 @@ public class EventServiceImpl implements EventService {
      * @param unit unit to assert
      */
     private void assertLimitedUnit(final Unit unit) {
-        if (null != unit.getLimitedSmss() && unit.getLimitedSmss().longValue() <= 0) {
-            throw new IllegalStateException(SmsUtils.SMS_LIMIT_EXCEEDE);
+        if (null != unit.getMsgLimit() && unit.getMsgLimit().longValue() <= 0) {
+            throw new IllegalStateException(SmsUtils.MSG_LIMIT_EXCEEDE);
         }
     }
 
@@ -452,14 +479,14 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * Decreases limit of SMSs to send in limited unit.
+     * Decreases limit of messages to send in limited unit.
      * @param unit unit to check and decrease if necessary
      */
-    private void decreaseLimitedSmss(final Unit unit) {
-        if (null != unit.getLimitedSmss()) {
-            unit.setLimitedSmss(unit.getLimitedSmss() - 1L);
+    private void decreaseLimitedMessages(final Unit unit) {
+        if (null != unit.getMsgLimit()) {
+            unit.setMsgLimit(unit.getMsgLimit() - 1L);
             unitDao.persist(unit);
-            LOG.info("sent SMS from limited unit, unit=" + unit.getId() + ", currentLimit=" + unit.getLimitedSmss());
+            LOG.info("sent message from limited unit, unit=" + unit.getId() + ", currentLimit=" + unit.getMsgLimit());
         }
     }
 

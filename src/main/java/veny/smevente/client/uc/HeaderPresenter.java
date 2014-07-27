@@ -354,7 +354,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
         final Unit newUnit = memb.getUnit();
 
         // show/hide 'Limited version' text
-        view.getLimitedVersion().setVisible(null != newUnit.getLimitedSmss());
+        view.getLimitedVersion().setVisible(null != newUnit.getMsgLimit());
 
         // clear content of members drop down
         view.getUnitMembers().clear();

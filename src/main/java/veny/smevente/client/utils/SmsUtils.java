@@ -19,7 +19,7 @@ public final class SmsUtils {
     /** Textually representation of Czech locale. */
     public static final String LOCALE_CS = "cs";
     /** Message of an exception to signal that SMS limit of an unit has exceeded. */
-    public static final String SMS_LIMIT_EXCEEDE = "smsLimitExceeded";
+    public static final String MSG_LIMIT_EXCEEDE = "msgLimitExceeded";
 
     /** Map with national GSM info. */
     private static Map<String, Pair<String, List<String>>> prefixes = null;

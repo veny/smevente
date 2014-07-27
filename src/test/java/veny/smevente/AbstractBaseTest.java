@@ -172,7 +172,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         toCreate.setName(name);
         toCreate.setDescription(description);
         toCreate.setType(null == variant ? null : variant.toString());
-        toCreate.setLimitedSmss(limitedSmss);
+        toCreate.setMsgLimit(limitedSmss);
         toCreate.setOptions(options);
         return unitService.storeUnit(toCreate);
     }
@@ -186,7 +186,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         assertEquals(UNITNAME, unit.getName());
         assertEquals("unit's desc", unit.getDescription());
         assertEquals(Unit.TextVariant.PATIENT.toString(), unit.getType());
-        assertTrue(11L == unit.getLimitedSmss());
+        assertTrue(11L == unit.getMsgLimit());
         assertEquals(DEFAULT_OPTIONS, unit.getOptions());
     }
 
@@ -220,6 +220,8 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         toCreate.setPhoneNumber(phoneNumber);
         toCreate.setBirthNumber(birthNumber);
         toCreate.setUnitId(unit.getId());
+        toCreate.setEmail("somebady@domain.com");
+        toCreate.setSendingChannel(Event.CHANNEL_EMAIL | Event.CHANNEL_SMS);
         return unitService.storePatient(toCreate);
     }
     /**

@@ -206,8 +206,7 @@ public class JsonDeserializer {
         final Unit rslt = new Unit();
         rslt.setId(jsObj.get("id").isString().stringValue());
         rslt.setName(jsObj.get("name").isString().stringValue());
-        rslt.setLimitedSmss(getLong(jsObj.get("limitedSmss")));
-//XXX        rslt.addMetadata(Unit.UNIT_TYPE, getString(jsObj.get("type")));
+        rslt.setMsgLimit(getLong(jsObj.get("msgLimit")));
         return rslt;
     }
     /**

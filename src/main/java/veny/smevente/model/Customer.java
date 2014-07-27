@@ -55,7 +55,12 @@ public class Customer extends AbstractEntity {
     @Column
     private String careers;
     /** Fullname as ASCII for search. */
+    @Column
     private String asciiFullname;
+    /** Bit mask with configuration of channels to be used to deliver an event message. */
+    @Column
+    private int sendingChannel;
+
 
     // CHECKSTYLE:OFF
     public Unit getUnit() {
@@ -135,6 +140,12 @@ public class Customer extends AbstractEntity {
     }
     public void setAsciiFullname(String asciiFullname) {
         this.asciiFullname = asciiFullname;
+    }
+    public int getSendingChannel() {
+        return sendingChannel;
+    }
+    public void setSendingChannel(int sendingChannel) {
+        this.sendingChannel = sendingChannel;
     }
     // CHECKSTYLE:ON
 

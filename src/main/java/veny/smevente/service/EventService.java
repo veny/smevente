@@ -8,7 +8,6 @@ import veny.smevente.client.utils.Pair;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.User;
-import veny.smevente.service.SmsGatewayService.SmsException;
 
 /**
  * Event service.
@@ -80,21 +79,12 @@ public interface EventService {
     Pair<Customer, List<Event>> findEventsByCustomer(Object customerId);
 
     /**
-     * Sends given event as email.
+     * Sends message of given event through channel defined by customer preferences (SMS, email, ...).
      *
      * @param event event to send
      * @return the event
      */
-    Event sendEmail(Event event);
-
-    /**
-     * Sends given event as SMS.
-     *
-     * @param event event to send
-     * @return the event
-     * @throws SmsException if sending fails
-     */
-    Event sendSms(Event event) throws SmsException;
+    Event send(Event event);
 
     /**
      * Invoked by cron task to send events.

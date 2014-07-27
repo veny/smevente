@@ -43,7 +43,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         final Unit secondUnit = createUnit("A", "desc", Unit.TextVariant.PATIENT, 10L, null);
         assertNotNull(secondUnit.getId());
         assertEquals("A", secondUnit.getName());
-        assertEquals(new Long(10), secondUnit.getLimitedSmss());
+        assertEquals(new Long(10), secondUnit.getMsgLimit());
 
         assertFalse(firstUnit.getId().equals(secondUnit.getId()));
         assertEquals(2, unitService.getAllUnits().size());

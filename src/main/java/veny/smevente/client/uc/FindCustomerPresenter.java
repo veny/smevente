@@ -407,7 +407,7 @@ public class FindCustomerPresenter
             @Override
             public void onFailure(final ExceptionJsonWrapper exWrapper) {
                 if (exWrapper.getClassName().endsWith("IllegalStateException")
-                        && SmsUtils.SMS_LIMIT_EXCEEDE.equals(exWrapper.getMessage())) {
+                        && SmsUtils.MSG_LIMIT_EXCEEDE.equals(exWrapper.getMessage())) {
                     Window.alert(CONSTANTS.smsLimitExceeded());
                 } else {
                     App.get().getFailureHandler().handleServerError(exWrapper);
