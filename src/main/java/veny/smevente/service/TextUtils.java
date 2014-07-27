@@ -34,7 +34,7 @@ public final class TextUtils {
         for (Map.Entry<String, String> e : replaceConf.entrySet()) {
             rslt = StringUtils.replace(rslt, e.getKey(), e.getValue());
         }
-        return convert2ascii(rslt);
+        return rslt;
     }
 
     /**

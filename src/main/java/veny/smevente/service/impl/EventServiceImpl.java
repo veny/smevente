@@ -32,7 +32,6 @@ import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.EventService;
 import veny.smevente.service.SmsGatewayService;
-import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.TextUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -185,80 +184,8 @@ public class EventServiceImpl implements EventService {
 
     /** {@inheritDoc} */
     @Override
-    public Event send(final Event event2send) throws SmsException {
-        final Customer customer = event2send.getCustomer();
-        final Unit unit = customer.getUnit();
-        assertLimitedUnit(unit);
-
-        final String text2send = format(event2send);
-        final Map<String, Object> unitOptions = getUnitOptions(unit);
-
-        // SMS
-        boolean smsOk = false;
-        if ((customer.getSendingChannel() & Event.CHANNEL_SMS) > 0) {
-            smsOk = sendSms(event2send);
-        }
-
-        // EMAIL
-        boolean emailOk = false;
-        if ((customer.getSendingChannel() & Event.CHANNEL_EMAIL) > 0) {
-            emailOk = sendEmail(event2send);
-        }
-
-        LOG.info("SEND, id=" + event2send.getId() + ", text=" + text2send + ", smsOk=" + smsOk + ", emailOk" + emailOk);
-        if (smsOk || emailOk) {
-            event2send.setSent(new Date());
-            decreaseLimitedMessages(unit);
-        }
-        event2send.setSendAttemptCount(event2send.getSendAttemptCount() + 1);
-
-        return eventDao.persist(event2send);
-    }
-
-    private boolean sendEmail(final Event event2send) {
-        final Customer customer = event2send.getCustomer();
-        final Unit unit = event2send.getCustomer().getUnit();
-        final String text2send = format(event2send);
-
-        if (null == customer.getEmail() || 0 == customer.getEmail().trim().length()) {
-            LOG.warn("email cannot be sent, wrong customer email address, eventId=" + event2send.getId());
-            return false;
-        }
-
-        final SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(unit.getEmail());
-        message.setTo(customer.getEmail());
-        message.setSubject(unit.getName());
-        message.setText(text2send);
-
-        try {
-            mailSender.send(message);
-        } catch (Throwable t) {
-            LOG.error("failed to send email, ID=" + event2send.getId(), t);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean sendSms(final Event event2send) {
-        final Customer customer = event2send.getCustomer();
-        final Unit unit = customer.getUnit();
-        assertLimitedUnit(unit);
-
-        final String text2send = format(event2send);
-        final Map<String, Object> unitOptions = getUnitOptions(unit);
-        @SuppressWarnings("unchecked")
-        final Map<String, String> smsOptions = (Map<String, String>) unitOptions.get("sms");
-
-        try {
-            assertSmsOptions(smsOptions);
-            smsGatewayService.send(customer.getPhoneNumber(), text2send, smsOptions);
-            LOG.info("SMS sent, id=" + event2send.getId() + ", phone=" + customer.getPhoneNumber());
-        } catch (Throwable t) {
-            LOG.error("failed to send SMS, ID=" + event2send.getId(), t);
-            return false;
-        }
-        return true;
+    public Event send(final Event event2send) {
+        return send(event2send, true);
     }
 
     /** {@inheritDoc} */
@@ -267,6 +194,7 @@ public class EventServiceImpl implements EventService {
         // TODO [veny,B] time should be defined in configuration
         final Date olderThan = new Date(System.currentTimeMillis() + (3L * 24L * 3600L * 1000L));
         int sentCount = 0;
+        LOG.debug("starting bulk send...");
 
         // process each unit in separate because of different timeouts and SMS Service options
         final List<Unit> units = unitDao.getAll();
@@ -275,50 +203,25 @@ public class EventServiceImpl implements EventService {
             final List<Event> foundEvents = eventDao.findEvents2BulkSend(unit, olderThan);
             LOG.info("found events to bulk send, size=" + foundEvents.size() + ", unit=" + unit.getName());
 
-            final Map<String, Object> unitOptions = getUnitOptions(unit);
-            @SuppressWarnings("unchecked")
-            final Map<String, String> smsOptions = (Map<String, String>) unitOptions.get("sms");
-            assertSmsOptions(smsOptions);
-
-            for (Event event : foundEvents) {
-                // assert limit of messages
-                if (null != unit.getMsgLimit() && unit.getMsgLimit().longValue() <= 0) {
-                    continue;
-                }
-
+            for (final Event event : foundEvents) {
                 try {
-                    final Customer customer = event.getCustomer();
-
-                    final String text2send = format(event);
-                    smsGatewayService.send(customer.getPhoneNumber(), text2send, smsOptions);
-
-                    // store the 'sent' timestamp
-                    event.setSent(new Date());
-                    // decrease the SMS limit if the unit is limited
-                    if (null != unit.getMsgLimit()) {
-                        unit.setMsgLimit(unit.getMsgLimit() - 1L);
+                    final Event maybeSent = send(event, false);
+                    if (null != maybeSent.getSent()) {
+                        sentCount++;
+                        // decrease the message limit if the unit is limited
+                        if (null != unit.getMsgLimit()) {
+                            unit.setMsgLimit(unit.getMsgLimit() - 1L);
+                        }
                     }
-
-                    sentCount++;
-                } catch (SmsException e) {
-                    LOG.warn("problem by sending SMS, id=" + event.getId() + ", error=" + e.toString());
                 } catch (Throwable t) {
                     LOG.error("failed to send SMS, id=" + event.getId(), t);
                 }
-                try {
-                    event.setSendAttemptCount(event.getSendAttemptCount() + 1);
-                    eventDao.persist(event);
-                } catch (Throwable t) {
-                    LOG.error("failed to update event, id=" + event.getId(), t);
-                }
             }
-            // store changed unit with limited messages
-            if (null != unit.getMsgLimit()) {
-                unitDao.persist(unit);
-            }
+            // store if the unit is limited
+            if (null != unit.getMsgLimit()) { unitDao.persist(unit); }
         }
 
-        LOG.info("sent " + sentCount + " SMSs");
+        LOG.info("sent " + sentCount + " event(s)");
         return sentCount;
     }
 
@@ -389,6 +292,103 @@ public class EventServiceImpl implements EventService {
     }
 
     // -------------------------------------------------------- Assistant Stuff
+
+
+    /**
+     * Sends event/message.
+     * @param event2send event to be sent
+     * @param watchLimitOnUnit whether limited unit should be persisted after sending (disabled for bulk sending)
+     * @return the event with persisted corresponding attributes
+     */
+    private Event send(final Event event2send, final boolean watchLimitOnUnit) {
+        final Customer customer = event2send.getCustomer();
+        final Unit unit = customer.getUnit();
+        assertLimitedUnit(unit);
+
+        final String text2send = format(event2send);
+
+        // SMS
+        boolean smsOk = false;
+        if ((customer.getSendingChannel() & Event.CHANNEL_SMS) > 0) {
+            smsOk = sendSms(event2send);
+        }
+
+        // EMAIL
+        boolean emailOk = false;
+        if ((customer.getSendingChannel() & Event.CHANNEL_EMAIL) > 0) {
+            emailOk = sendEmail(event2send);
+        }
+
+        LOG.info("event sent, id=" + event2send.getId() + ", smsOk=" + smsOk + ", emailOk=" + emailOk
+                + ", text=" + text2send);
+        if (smsOk || emailOk) {
+            event2send.setSent(new Date());
+            if (watchLimitOnUnit) {
+                decreaseLimitedMessages(unit);
+            }
+        }
+        event2send.setSendAttemptCount(event2send.getSendAttemptCount() + 1);
+
+        return eventDao.persist(event2send);
+    }
+
+    /**
+     * Sends given events as email.
+     * @param event2send event to be sent
+     * @return <i>true</i> if successfully sent
+     */
+    private boolean sendEmail(final Event event2send) {
+        final Customer customer = event2send.getCustomer();
+        final Unit unit = event2send.getCustomer().getUnit();
+        final String text2send = format(event2send);
+
+        if (null == customer.getEmail() || 0 == customer.getEmail().trim().length()) {
+            LOG.warn("email cannot be sent, wrong customer email address, eventId=" + event2send.getId());
+            return false;
+        }
+
+        final SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(unit.getEmail());
+        message.setTo(customer.getEmail());
+        message.setSubject(unit.getName());
+        message.setText(text2send);
+
+        boolean rslt;
+        try {
+            mailSender.send(message);
+            rslt = true;
+            LOG.info("event sent via email, id=" + event2send.getId() + ", address=" + customer.getEmail());
+        } catch (Throwable t) {
+            LOG.error("failed to send email, ID=" + event2send.getId(), t);
+            rslt = false;
+        }
+        return rslt;
+    }
+
+    /**
+     * Sends given events as SMS.
+     * @param event2send event to be sent
+     * @return <i>true</i> if successfully sent
+     */
+    private boolean sendSms(final Event event2send) {
+        final Customer customer = event2send.getCustomer();
+        final Unit unit = customer.getUnit();
+
+        final String text2send = TextUtils.convert2ascii(format(event2send));
+        final Map<String, Object> unitOptions = getUnitOptions(unit);
+        @SuppressWarnings("unchecked")
+        final Map<String, String> smsOptions = (Map<String, String>) unitOptions.get("sms");
+
+        try {
+            assertSmsOptions(smsOptions);
+            smsGatewayService.send(customer.getPhoneNumber(), text2send, smsOptions);
+            LOG.info("event sent via SMS, id=" + event2send.getId() + ", phone=" + customer.getPhoneNumber());
+        } catch (Throwable t) {
+            LOG.error("failed to send SMS, ID=" + event2send.getId(), t);
+            return false;
+        }
+        return true;
+    }
 
 //    /**
 //     * Method for email address validation.

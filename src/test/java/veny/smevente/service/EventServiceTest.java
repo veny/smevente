@@ -268,12 +268,12 @@ public class EventServiceTest extends AbstractBaseTest {
 
     /** EventService.bulkSend. */
     @Test
-    public void testBulkSendSimple() {
+    public void testBulkSendSmsSimple() {
         // no event in DB
         assertEquals(0, eventService.bulkSend());
 
         // 1 event in DB
-        Event ev  = createDefaultEvent();
+        Event ev  = createEventToBeSentAs(Event.CHANNEL_SMS);
         assertEquals(null, ev.getSent());
         assertEquals(0, ev.getSendAttemptCount());
 
@@ -291,9 +291,9 @@ public class EventServiceTest extends AbstractBaseTest {
         assertEquals(10L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getMsgLimit().longValue());
 
         // next 2 events
-        createEvent("text", new Date(System.currentTimeMillis() - (5 * 24 * 3600 * 1000)), 10, null,
+        createEvent("A", new Date(System.currentTimeMillis() - (5 * 24 * 3600 * 1000)), 10, null,
                 sent.getAuthor(), sent.getCustomer(), sent.getProcedure());
-        createEvent("text", new Date(System.currentTimeMillis() - (5 * 24 * 3600 * 1000)), 10, null,
+        createEvent("B", new Date(System.currentTimeMillis() - (5 * 24 * 3600 * 1000)), 10, null,
                 sent.getAuthor(), sent.getCustomer(), sent.getProcedure());
         assertEquals(2, eventService.bulkSend());
         assertEquals(0, eventService.bulkSend());
@@ -331,6 +331,43 @@ public class EventServiceTest extends AbstractBaseTest {
         Customer c = ev.getCustomer();
         customerDao.detach(c);
         c.setPhoneNumber("badNumber");
+        c.setSendingChannel(Event.CHANNEL_SMS);
+        customerDao.persist(c);
+
+        assertEquals(0, eventService.bulkSend());
+        Event byId = eventService.getEvent(ev.getId());
+        assertNull(byId.getSent());
+        assertEquals(1, byId.getSendAttemptCount());
+
+        assertEquals(0, eventService.bulkSend());
+        byId = eventService.getEvent(ev.getId());
+        assertNull(byId.getSent());
+        assertEquals(2, byId.getSendAttemptCount());
+
+        assertEquals(0, eventService.bulkSend());
+        byId = eventService.getEvent(ev.getId());
+        assertNull(byId.getSent());
+        assertEquals(3, byId.getSendAttemptCount());
+
+        // next attempt does not include the event, 3<= is limit
+        assertEquals(0, eventService.bulkSend());
+        byId = eventService.getEvent(ev.getId());
+        assertNull(byId.getSent());
+        assertEquals(3, byId.getSendAttemptCount());
+        // no decrease of limit on unit
+        assertEquals(11L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getMsgLimit().longValue());
+    }
+
+    /**
+     * EventService.bulkSend.
+     */
+    @Test
+    public void testBulkSendAttemptCountByWrongEmailAddress() {
+        Event ev  = createDefaultEvent();
+        Customer c = ev.getCustomer();
+        customerDao.detach(c);
+        c.setEmail("");
+        c.setSendingChannel(Event.CHANNEL_EMAIL);
         customerDao.persist(c);
 
         assertEquals(0, eventService.bulkSend());

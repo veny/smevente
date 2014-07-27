@@ -197,13 +197,9 @@ public class UserController {
      *
      * @param response HTTP response
      * @param event event to be created and sent
-     * @param authorId author ID
      */
-    @RequestMapping(value = "/special-sms/", method = RequestMethod.POST)
-    public void createAndSendSpecialSms(final HttpServletResponse response,
-            final Event event, @RequestParam("authorId") final String authorId) {
-
-        event.setAuthorId(authorId); // TODO this row could be deleted, no special parameter in method signature needed
+    @RequestMapping(value = "/special-msg/", method = RequestMethod.POST)
+    public void createAndSendSpecialEvent(final HttpServletResponse response, final Event event) {
         eventService.createAndSendSpecialEvent(event);
         response.setStatus(HttpServletResponse.SC_OK);
     }
