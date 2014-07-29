@@ -175,7 +175,7 @@ public class UserController {
      * There is used trick with @see {@link Event#setAuthorId(Object)}.
      *
      * @param event event to be created/updated
-     * @return SMS triple as JSON
+     * @return event as JSON
      */
     @RequestMapping(value = "/event/", method = RequestMethod.POST)
     public ModelAndView storeEvent(final Event event) {
