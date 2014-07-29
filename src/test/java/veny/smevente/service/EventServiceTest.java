@@ -162,6 +162,22 @@ public class EventServiceTest extends AbstractBaseTest {
         Mockito.verify(mailSender, Mockito.times(1)).send(Mockito.any(SimpleMailMessage.class));
     }
 
+    /** EventService.send.
+     * @throws IOException technical problem
+     * @throws SmsException */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSendNoChannel() throws SmsException, IOException {
+        final Event ev = createEventToBeSentAs(0);
+        final Event sent = eventService.send(ev);
+
+        assertNull(sent.getSent());
+        assertEquals(1, ev.getSendAttemptCount());
+        Mockito.verify(gatewayService, Mockito.times(0)).send(
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyMap());
+        Mockito.verify(mailSender, Mockito.times(0)).send(Mockito.any(SimpleMailMessage.class));
+    }
+
     /** EventService.send. */
     public void testSendSmsWrongUnitOptions() {
         final Event ev = createEventToBeSentAs(Event.CHANNEL_SMS);
