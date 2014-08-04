@@ -6,6 +6,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Hidden;
@@ -30,7 +31,9 @@ public class StoreCustomerViewImpl extends Composite implements StoreCustomerPre
     @UiField TextBox firstname;
     @UiField TextBox surname;
     @UiField TextBox email;
+    @UiField CheckBox emailChannel;
     @UiField TextBox phoneNumber;
+    @UiField CheckBox smsChannel;
     @UiField TextBox birthNumber;
     @UiField TextBox degree;
     @UiField TextBox street;
@@ -68,11 +71,21 @@ public class StoreCustomerViewImpl extends Composite implements StoreCustomerPre
     public TextBox getEmail() {
         return email;
     }
+    /** {@inheritDoc} */
+    @Override
+    public CheckBox getEmailChannel() {
+        return emailChannel;
+    }
 
     /** {@inheritDoc} */
     @Override
     public TextBox getPhoneNumber() {
         return phoneNumber;
+    }
+    /** {@inheritDoc} */
+    @Override
+    public CheckBox getSmsChannel() {
+        return smsChannel;
     }
 
     /** {@inheritDoc} */

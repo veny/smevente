@@ -12,9 +12,17 @@
         <g:Label text="{consts.surname}" />
         <g:TextBox ui:field="surname" />
         <g:Label text="{consts.email}" />
-        <g:TextBox ui:field="email" />
+        <g:FlowPanel>
+            <g:TextBox ui:field="email" />
+            <g:CheckBox ui:field="emailChannel" />
+            <g:Image url="images/help.png" title="Send via email" />
+        </g:FlowPanel>
         <g:Label text="{consts.phoneNumber}" />
-        <g:TextBox ui:field="phoneNumber" />
+        <g:FlowPanel>
+            <g:TextBox ui:field="phoneNumber" />
+            <g:CheckBox ui:field="smsChannel" />
+            <g:Image url="images/help.png" title="Send via SMS" />
+        </g:FlowPanel>
         <g:Label text="{consts.birthNumber}" />
         <g:TextBox ui:field="birthNumber" />
         <g:Label text="{consts.degree}" />

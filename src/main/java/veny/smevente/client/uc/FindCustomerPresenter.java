@@ -402,7 +402,7 @@ public class FindCustomerPresenter
         params.put("customerId", customer.getId().toString());
         params.put("text", text);
 
-        final RestHandler rest = new RestHandler("/rest/user/special-sms/");
+        final RestHandler rest = new RestHandler("/rest/user/special-msg/");
         rest.setCallback(new RestCallback() {
             @Override
             public void onFailure(final ExceptionJsonWrapper exWrapper) {

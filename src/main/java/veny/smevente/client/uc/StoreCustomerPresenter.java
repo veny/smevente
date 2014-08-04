@@ -21,6 +21,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.TextBox;
@@ -66,10 +67,20 @@ public class StoreCustomerPresenter
          */
         TextBox getEmail();
         /**
+         * Getter for the email channel check box.
+         * @return email channel check box
+         */
+        CheckBox getEmailChannel();
+        /**
          * Getter for the phone number text field.
          * @return the input field for the phone number
          */
         TextBox getPhoneNumber();
+        /**
+         * Getter for the SMS channel check box.
+         * @return SMS channel check box
+         */
+        CheckBox getSmsChannel();
         /**
          * Getter for the birth number text field.
          * @return the input field for the birth number
@@ -190,6 +201,7 @@ public class StoreCustomerPresenter
     @Override
     public void onShow(final Object parameter) {
         view.getFirstname().setFocus(true);
+        //final Unit currentUnit = App.get().getSelectedUnit();
 
         if (null != parameter && parameter instanceof Customer) {
             final Customer p = (Customer) parameter;
@@ -197,7 +209,9 @@ public class StoreCustomerPresenter
             view.getFirstname().setText(p.getFirstname());
             view.getSurname().setText(p.getSurname());
             view.getPhoneNumber().setText(p.getPhoneNumber());
+            view.getSmsChannel().setValue((p.getSendingChannel() & veny.smevente.model.Event.CHANNEL_SMS) > 0);
             view.getEmail().setText(p.getEmail());
+            view.getEmailChannel().setValue((p.getSendingChannel() & veny.smevente.model.Event.CHANNEL_EMAIL) > 0);
             view.getBirthNumber().setText(p.getBirthNumber());
             view.getDegree().setText(p.getDegree());
             view.getStreet().setText(p.getStreet());
@@ -221,7 +235,9 @@ public class StoreCustomerPresenter
         view.getFirstname().setText("");
         view.getSurname().setText("");
         view.getPhoneNumber().setText("");
+        view.getSmsChannel().setValue(false);
         view.getEmail().setText("");
+        view.getEmailChannel().setValue(false);
         view.getBirthNumber().setText("");
         view.getDegree().setText("");
         view.getStreet().setText("");
@@ -327,6 +343,7 @@ public class StoreCustomerPresenter
         params.put("zipCode", c.getZipCode());
         params.put("employer", c.getEmployer());
         params.put("careers", c.getCareers());
+        params.put("sendingChannel", sendingChannel);
         if (null != c.getId()) { params.put("id", c.getId().toString()); }
 
         final RestHandler rest = new RestHandler("/rest/unit/customer/");
