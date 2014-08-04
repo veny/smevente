@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 import veny.smevente.misc.SoftDelete;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Entity class representing the Organizational Unit.
@@ -128,6 +129,27 @@ public class Unit extends AbstractEntity {
             .append(msgLimit);
         rslt.append(")");
         return rslt.toString();
+    }
+
+    /**
+     * Filters unit's options for client side usage.
+     * Currently it lets out a flag whether the unit can send SMS messages.
+     * @return options from client side perspective
+     */
+    @Transient
+    @JsonProperty
+    public String getClientOptions() {
+        final String opts = getOptions();
+        return "sms=" + (null != opts && opts.contains("sms") && opts.contains("gateway"));
+    }
+    /**
+     * Gets flag whether the unit can send SMS messages.
+     * @return flag whether the unit can send SMS messages.
+     */
+    @Transient
+    @JsonIgnore
+    public boolean isSmsEnabled() {
+        return (null != options && options.contains("sms=true"));
     }
 
 }
