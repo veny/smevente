@@ -207,6 +207,7 @@ public class JsonDeserializer {
         rslt.setId(jsObj.get("id").isString().stringValue());
         rslt.setName(jsObj.get("name").isString().stringValue());
         rslt.setMsgLimit(getLong(jsObj.get("msgLimit")));
+        rslt.setOptions(getString(jsObj.get("clientOptions")));
         return rslt;
     }
     /**
@@ -318,6 +319,7 @@ public class JsonDeserializer {
         rslt.setZipCode(getString(jsObj.get("zipCode")));
         rslt.setEmployer(getString(jsObj.get("employer")));
         rslt.setCareers(getString(jsObj.get("careers")));
+        rslt.setSendingChannel(getLong(jsObj.get("sendingChannel")).intValue());
         return rslt;
     }
     /**
