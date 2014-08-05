@@ -15,7 +15,10 @@ import veny.smevente.client.utils.EmptyValidator;
 import veny.smevente.client.utils.HeaderEvent;
 import veny.smevente.client.utils.HeaderEvent.HeaderHandler;
 import veny.smevente.model.Customer;
+import veny.smevente.model.Event;
+import veny.smevente.model.Unit;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -201,8 +204,10 @@ public class StoreCustomerPresenter
     @Override
     public void onShow(final Object parameter) {
         view.getFirstname().setFocus(true);
-        //final Unit currentUnit = App.get().getSelectedUnit();
+        final Unit currentUnit = App.get().getSelectedUnit();
 
+        view.getSmsChannel().setEnabled(currentUnit.isSmsEnabled());
+GWT.log("XXX " + currentUnit.isSmsEnabled());
         if (null != parameter && parameter instanceof Customer) {
             final Customer p = (Customer) parameter;
             view.getCustomerId().setValue(p.getId().toString());
@@ -343,7 +348,10 @@ public class StoreCustomerPresenter
         params.put("zipCode", c.getZipCode());
         params.put("employer", c.getEmployer());
         params.put("careers", c.getCareers());
-        params.put("sendingChannel", sendingChannel);
+        int sendingChannel = 0;
+        if (view.getEmailChannel().getValue()) { sendingChannel |= Event.CHANNEL_EMAIL; }
+        if (view.getSmsChannel().getValue()) { sendingChannel |= Event.CHANNEL_SMS; }
+        params.put("sendingChannel", Integer.toString(sendingChannel));
         if (null != c.getId()) { params.put("id", c.getId().toString()); }
 
         final RestHandler rest = new RestHandler("/rest/unit/customer/");
