@@ -148,6 +148,9 @@ public interface SmeventeConstants extends Constants {
     String roleMember();
     String message();
     String event();
+    String smsChannel();
+    String emailChannel();
+    String premiumService();
 
     // ------------------------------------------------------------- Validation
     String validationRequired();
@@ -164,6 +167,7 @@ public interface SmeventeConstants extends Constants {
     String validationOldPasswordBad();
     String validationNotFound();
     String smsLimitExceeded();
+    String validationEmptyIfCheckboxSelected();
 
     // ----------------------------------------------------------------- Header
     String headerLoading();
