@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -34,6 +35,7 @@ public class StoreCustomerViewImpl extends Composite implements StoreCustomerPre
     @UiField CheckBox emailChannel;
     @UiField TextBox phoneNumber;
     @UiField CheckBox smsChannel;
+    @UiField Image smsChannelHelp;
     @UiField TextBox birthNumber;
     @UiField TextBox degree;
     @UiField TextBox street;
@@ -86,6 +88,11 @@ public class StoreCustomerViewImpl extends Composite implements StoreCustomerPre
     @Override
     public CheckBox getSmsChannel() {
         return smsChannel;
+    }
+    /** {@inheritDoc} */
+    @Override
+    public Image getSmsChannelHelp() {
+        return smsChannelHelp;
     }
 
     /** {@inheritDoc} */

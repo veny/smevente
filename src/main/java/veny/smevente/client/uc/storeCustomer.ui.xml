@@ -15,13 +15,13 @@
         <g:FlowPanel>
             <g:TextBox ui:field="email" />
             <g:CheckBox ui:field="emailChannel" />
-            <g:Image url="images/help.png" title="Send via email" />
+            <g:Image url="images/help.png" title="{consts.emailChannel}" />
         </g:FlowPanel>
         <g:Label text="{consts.phoneNumber}" />
         <g:FlowPanel>
             <g:TextBox ui:field="phoneNumber" />
             <g:CheckBox ui:field="smsChannel" />
-            <g:Image url="images/help.png" title="Send via SMS" />
+            <g:Image ui:field="smsChannelHelp" url="images/help.png" title="{consts.smsChannel}" />
         </g:FlowPanel>
         <g:Label text="{consts.birthNumber}" />
         <g:TextBox ui:field="birthNumber" />
