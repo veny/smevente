@@ -18,7 +18,6 @@ import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Unit;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -27,10 +26,13 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 
 import eu.maydu.gwt.validation.client.DefaultValidationProcessor;
 import eu.maydu.gwt.validation.client.ValidationException;
+import eu.maydu.gwt.validation.client.ValidationResult;
+import eu.maydu.gwt.validation.client.Validator;
 import eu.maydu.gwt.validation.client.actions.DisclosureTextAction;
 import eu.maydu.gwt.validation.client.actions.FocusAction;
 import eu.maydu.gwt.validation.client.actions.StyleAction;
@@ -84,6 +86,11 @@ public class StoreCustomerPresenter
          * @return SMS channel check box
          */
         CheckBox getSmsChannel();
+        /**
+         * Getter for the SMS channel help image.
+         * @return SMS channel help image
+         */
+        Image getSmsChannelHelp();
         /**
          * Getter for the birth number text field.
          * @return the input field for the birth number
@@ -173,6 +180,11 @@ public class StoreCustomerPresenter
                     // already invoked by the ...validate() call.
                     return;
                 }
+                if (!view.getSmsChannel().getValue() && !view.getEmailChannel().getValue()) {
+                    if (!Window.confirm(CONSTANTS.customerWithoutChannel()[App.get().getSelectedUnitTextVariant()])) {
+                        return;
+                    }
+                }
                 storeCustomer();
             }
         });
@@ -207,7 +219,10 @@ public class StoreCustomerPresenter
         final Unit currentUnit = App.get().getSelectedUnit();
 
         view.getSmsChannel().setEnabled(currentUnit.isSmsEnabled());
-GWT.log("XXX " + currentUnit.isSmsEnabled());
+        if (!currentUnit.isSmsEnabled()) {
+            view.getSmsChannelHelp().setTitle(CONSTANTS.smsChannel() + "\n(" + CONSTANTS.premiumService() + ")");
+        }
+
         if (null != parameter && parameter instanceof Customer) {
             final Customer p = (Customer) parameter;
             view.getCustomerId().setValue(p.getId().toString());
@@ -241,6 +256,7 @@ GWT.log("XXX " + currentUnit.isSmsEnabled());
         view.getSurname().setText("");
         view.getPhoneNumber().setText("");
         view.getSmsChannel().setValue(false);
+        view.getSmsChannelHelp().setTitle(CONSTANTS.smsChannel());
         view.getEmail().setText("");
         view.getEmailChannel().setValue(false);
         view.getBirthNumber().setText("");
@@ -267,17 +283,17 @@ GWT.log("XXX " + currentUnit.isSmsEnabled());
     private void setupValidation() {
         // validation messages
         ValidationMessages vmess = new ValidationMessages() {
-            @Override
-            public String getCustomMessage(final String key, final Object... parameters) {
+            @Override public String getCustomMessage(final String key, final Object... parameters) {
                 return getValidationMessage(key, parameters);
             }
-            @Override
-            public String getPropertyName(final String propertyName) {
+            @Override public String getPropertyName(final String propertyName) {
                 String result;
                 if ("firstname".equals(propertyName)) {
                     result = CONSTANTS.firstname();
                 } else if ("surname".equals(propertyName)) {
                     result = CONSTANTS.surname();
+                } else if ("email".equals(propertyName)) {
+                    result = CONSTANTS.email();
                 } else if ("phoneNumber".equals(propertyName)) {
                     result = CONSTANTS.phoneNumber();
                 } else if ("birthNumber".equals(propertyName)) {
@@ -300,11 +316,44 @@ GWT.log("XXX " + currentUnit.isSmsEnabled());
                 new EmptyValidator(view.getSurname())
                     .addActionForFailure(focusAction)
                     .addActionForFailure(new StyleAction("validationFailedBorder")));
+        // email
+        validator.addValidators("email", new Validator<Object>() {
+            @Override
+            public void invokeActions(final ValidationResult result) {
+                getView().getEmail().setFocus(true);
+                getView().getEmail().addStyleName("validationFailedBorder");
+            }
+            @Override
+            public ValidationResult validate(final ValidationMessages messages) {
+                // remove result of previous failed validation if any
+                getView().getEmail().removeStyleName("validationFailedBorder");
+
+                ValidationResult rslt = null;
+                if (getView().getEmailChannel().getValue() && 0 == getView().getEmail().getText().trim().length()) {
+                    rslt = new ValidationResult(CONSTANTS.validationEmptyIfCheckboxSelected());
+                }
+                return rslt;
+            }
+        });
         // phone number
-        validator.addValidators("phoneNumber",
-                new StringLengthValidator(view.getPhoneNumber(), 9, 20, false, "textLength")
-                    .addActionForFailure(focusAction)
-                    .addActionForFailure(new StyleAction("validationFailedBorder")));
+        validator.addValidators("phoneNumber", new Validator<Object>() {
+            @Override
+            public void invokeActions(final ValidationResult result) {
+                getView().getPhoneNumber().setFocus(true);
+                getView().getPhoneNumber().addStyleName("validationFailedBorder");
+            }
+            @Override
+            public ValidationResult validate(final ValidationMessages messages) {
+                // remove result of previous failed validation if any
+                getView().getPhoneNumber().removeStyleName("validationFailedBorder");
+
+                ValidationResult rslt = null;
+                if (getView().getSmsChannel().getValue() && 0 == getView().getPhoneNumber().getText().trim().length()) {
+                    rslt = new ValidationResult(CONSTANTS.validationEmptyIfCheckboxSelected());
+                }
+                return rslt;
+            }
+        });
         // birth number
         validator.addValidators("birthNumber",
                 new StringLengthValidator(view.getBirthNumber(), 0, 10, false, "textLength")
