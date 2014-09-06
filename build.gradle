@@ -51,6 +51,7 @@ dependencies {
     compile "commons-beanutils:commons-beanutils:1.9.2"
     compile "org.apache.commons:commons-lang3:3.1"
     compile "com.google.guava:guava:13.0.1"
+    runtime "javax.mail:mail:1.4.7"
 
     compile files('./war/WEB-INF/lib/gwt-validation-0.9b2-SNAPSHOT-without-hibernate.jar')
     compile files('./war/WEB-INF/lib/ColorPicker-GWT-2.1.jar')
