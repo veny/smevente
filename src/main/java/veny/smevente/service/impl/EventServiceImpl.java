@@ -58,7 +58,7 @@ public class EventServiceImpl implements EventService {
     private UnitDao unitDao;
     /** Dependency. */
     @Autowired
-    private CustomerDao patientDao;
+    private CustomerDao customerDao;
     /** Dependency. */
     @Autowired
     private ProcedureDao procedureDao;
@@ -98,7 +98,7 @@ public class EventServiceImpl implements EventService {
             throw new NullPointerException("unknown customer");
         }
         GenericDao.OPTIONS_HOLDER.get().put("detach", "false");
-        final Customer customer = patientDao.getById(event.getCustomer().getId());
+        final Customer customer = customerDao.getById(event.getCustomer().getId());
         event.setCustomer(customer);
         // procedure
         if ((null == event.getProcedure() || null == event.getProcedure().getId())) {
@@ -130,7 +130,15 @@ public class EventServiceImpl implements EventService {
     public Event createAndSendSpecialEvent(final Event event) {
         LOG.debug("going to send special event...");
         event.setType(Event.Type.IMMEDIATE_MESSAGE.toString());
-        Event rslt = storeEvent(event);
+        final Event rslt = storeEvent(event);
+
+        // next lines are a work-around, because unit has to be updated with limited count of messages
+        // if the unit is limited,
+        // if the unit is not loaded -> exception because of Unit#options cannot be 'null'
+        final Customer realCust = customerDao.getById(event.getCustomer().getId());
+        unitDao.detach(realCust.getUnit());
+        rslt.setCustomer(realCust);
+
         return send(rslt);
     }
 
@@ -176,7 +184,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     @Override
     public Pair<Customer, List<Event>> findEventsByCustomer(final Object customerId) {
-        final Customer client = patientDao.getById(customerId);
+        final Customer client = customerDao.getById(customerId);
         final List<Event> events = eventDao.findByCustomer(customerId);
         LOG.info("found events by customer, customerId=" + customerId + ", size=" + events.size());
         return new Pair<Customer, List<Event>>(client, events);
