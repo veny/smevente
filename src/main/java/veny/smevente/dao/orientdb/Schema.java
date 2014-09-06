@@ -255,13 +255,13 @@ public class Schema {
 
     // -- Enh#31: add Customer#email [X]
     // CREATE PROPERTY Customer.email STRING
-    // -- Enh#31: add Unit#email []
+    // -- Enh#31: add Unit#email [X]
     // CREATE PROPERTY Unit.email STRING
     // UPDATE Unit SET email = "evca.chladkova@email.cz" WHERE name LIKE "%Chládková%"
     // UPDATE Unit SET email = "noreply@smevente.com" WHERE name NOT LIKE "%Chládková%"
     // ALTER PROPERTY Unit.email MANDATORY true
     // ALTER PROPERTY Unit.email NOTNULL true
-    // -- Enh#31: rename Unit#smsGateway -> Unit#options []
+    // -- Enh#31: rename Unit#smsGateway -> Unit#options [X]
     // ALTER PROPERTY Unit.smsGateway NAME options
     // UPDATE Unit SET options = '{"sms":{"gateway":"sms.sluzba.cz","username":"veny","password":"XXX"}}' WHERE smsGateway LIKE '%veny%'
     // UPDATE Unit SET options = '{"sms":{"gateway":"sms.sluzba.cz","username":"chladkova","password":"XXX"}}' WHERE smsGateway LIKE '%chladkova%'
@@ -269,11 +269,11 @@ public class Schema {
     // ALTER PROPERTY Unit.options MANDATORY true
     // ALTER PROPERTY Unit.options NOTNULL true
     // UPDATE Unit REMOVE smsGateway
-    // -- Enh#31: add Customer#sendingChannel []
+    // -- Enh#31: add Customer#sendingChannel [X]
     // CREATE PROPERTY Customer.sendingChannel INTEGER
     // UPDATE Customer SET sendingChannel = 1 WHERE phoneNumber IS NOT NULL
     // UPDATE Customer SET sendingChannel = 2 WHERE email IS NOT NULL AND email.length() > 0
-    // -- Enh#31: rename Unit#limitedSmss -> Unit#msgLimit []
+    // -- Enh#31: rename Unit#limitedSmss -> Unit#msgLimit [X]
     // ALTER PROPERTY Unit.limitedSmss NAME msgLimit
     // UPDATE Unit SET msgLimit = limitedSmss
     // UPDATE Unit REMOVE limitedSmss
