@@ -24,7 +24,7 @@ public class Unit extends AbstractEntity {
      * @since 2.4.2011
      */
     public enum TextVariant {
-        /** Medical environment (patient, MHC, ...). */
+        /** Medical environment (patient, procedure, ...). */
         PATIENT,
         /** Commercial environment (client, type of work, ...). */
         CUSTOMER
