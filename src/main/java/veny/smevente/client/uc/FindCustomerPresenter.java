@@ -366,7 +366,7 @@ public class FindCustomerPresenter
             final SpecialMsgDlgPresenter p =
                 (SpecialMsgDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SPECIAL_SMS_DLG);
             p.init(customer, immediateMsgCategories);
-            final SmeventeDialog dlg = new SmeventeDialog("SMS", p);
+            final SmeventeDialog dlg = new SmeventeDialog(CONSTANTS.specialSms(), p);
 
             dlg.getOkButton().setText(CONSTANTS.send());
             dlg.getOkButton().addClickHandler(new ClickHandler() {
