@@ -50,6 +50,7 @@ dependencies {
     compile "log4j:log4j:1.2.9"
     compile "commons-beanutils:commons-beanutils:1.9.2"
     compile "org.apache.commons:commons-lang3:3.1"
+//    runtime "org.apache.httpcomponents:httpclient:4.3.5"
     compile "com.google.guava:guava:13.0.1"
     runtime "javax.mail:mail:1.4.7"
 
