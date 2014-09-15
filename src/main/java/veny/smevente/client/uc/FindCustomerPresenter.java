@@ -379,7 +379,7 @@ public class FindCustomerPresenter
                         return;
                     }
                     final String procedureId = p.getSelectedProcedureId();
-                    final String text = p.getView().getSmsText().getText();
+                    final String text = p.getView().getMsgText().getText();
                     dlg.hide(); // invokes clean and deletes upper collected data
                     sendSpecialSms(procedureId, customer, text);
                 }
