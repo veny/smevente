@@ -21,7 +21,7 @@
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
             <g:Label text="{consts.smsText}" />
-            <g:TextArea ui:field="smsText" />
+            <g:TextArea ui:field="msgText" />
         </g:FlowPanel>
         <g:DisclosurePanel ui:field="validationErrors" />
     </g:VerticalPanel>

@@ -12,16 +12,16 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * View implementation for the login form.
+ * View implementation for the Special message dialog.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 11.09.2010
  */
-public class SpecialSmsDlgViewImpl extends Composite implements SpecialSmsDlgPresenter.SpecialSmsDlgView {
+public class SpecialMsgDlgViewImpl extends Composite implements SpecialMsgDlgPresenter.SpecialMsgDlgView {
 
     /** UI Binder interface. */
-    @UiTemplate("specialSmsDlg.ui.xml")
-    interface Binder extends UiBinder<Widget, SpecialSmsDlgViewImpl> { }
+    @UiTemplate("specialMsgDlg.ui.xml")
+    interface Binder extends UiBinder<Widget, SpecialMsgDlgViewImpl> { }
     /** UI Binder. */
     private static final Binder BINDER = GWT.create(Binder.class);
 
@@ -29,14 +29,14 @@ public class SpecialSmsDlgViewImpl extends Composite implements SpecialSmsDlgPre
     @UiField ListBox type;
     @UiField TextBox fullname;
     @UiField TextBox phoneNumber;
-    @UiField TextArea smsText;
+    @UiField TextArea msgText;
     @UiField DisclosurePanel validationErrors;
     // CHECKSTYLE:ON
 
     /**
      * Constructor.
      */
-    public SpecialSmsDlgViewImpl() {
+    public SpecialMsgDlgViewImpl() {
         initWidget(BINDER.createAndBindUi(this));
     }
 
@@ -60,8 +60,8 @@ public class SpecialSmsDlgViewImpl extends Composite implements SpecialSmsDlgPre
 
     /** {@inheritDoc} */
     @Override
-    public TextArea getSmsText() {
-        return smsText;
+    public TextArea getMsgText() {
+        return msgText;
     }
 
     /** {@inheritDoc} */

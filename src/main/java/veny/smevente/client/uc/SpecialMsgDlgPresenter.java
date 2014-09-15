@@ -22,20 +22,20 @@ import eu.maydu.gwt.validation.client.actions.StyleAction;
 import eu.maydu.gwt.validation.client.i18n.ValidationMessages;
 
 /**
- * Special SMS Dialog Presenter.
+ * Special message Dialog Presenter.
  *
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 11.09.2010
  */
-public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPresenter.SpecialSmsDlgView> {
+public class SpecialMsgDlgPresenter extends AbstractPresenter<SpecialMsgDlgPresenter.SpecialMsgDlgView> {
 
     /**
-     * Special SMS Dialog View interface.
+     * Special message Dialog View interface.
      *
      * @author Vaclav Sykora [vaclav.sykora@gmail.com]
      * @since 11.09.2010
      */
-    public interface SpecialSmsDlgView extends View {
+    public interface SpecialMsgDlgView extends View {
         /**
          * @return the procedure
          */
@@ -51,7 +51,7 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
         /**
          * @return the SMS text
          */
-        TextArea getSmsText();
+        TextArea getMsgText();
         /**
          * @return the errors panel
          */
@@ -106,7 +106,7 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
     /** {@inheritDoc} */
     @Override
     protected void onShow(final Object parameter) {
-        view.getSmsText().setFocus(true);
+        view.getMsgText().setFocus(true);
     }
 
     /** {@inheritDoc} */
@@ -121,13 +121,13 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
         view.getType().clear();
         view.getFullname().setText("");
         view.getPhoneNumber().setText("");
-        view.getSmsText().setText("");
+        view.getMsgText().setText("");
 
         if (null != specialProcedures) { specialProcedures.clear(); }
 
         // validation
         validator.reset((String[]) null);
-        getView().getSmsText().removeStyleName("validationFailedBorder");
+        getView().getMsgText().removeStyleName("validationFailedBorder");
     }
 
     /**
@@ -146,7 +146,7 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
      * @param index index of selected type
      */
     private void changedType(final int index) {
-        view.getSmsText().setText(specialProcedures.get(index).getMessageText());
+        view.getMsgText().setText(specialProcedures.get(index).getMessageText());
     }
 
     /**
@@ -185,7 +185,7 @@ public class SpecialSmsDlgPresenter extends AbstractPresenter<SpecialSmsDlgPrese
                     .addActionForFailure(new StyleAction("validationFailedBorder")));
         // entered SMS text?
         validator.addValidators("smsText",
-                new EmptyValidator(view.getSmsText())
+                new EmptyValidator(view.getMsgText())
                     .addActionForFailure(focusAction)
                     .addActionForFailure(new StyleAction("validationFailedBorder")));
     }

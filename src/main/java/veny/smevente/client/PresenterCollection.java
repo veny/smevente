@@ -27,8 +27,8 @@ import veny.smevente.client.uc.EventDlgPresenter;
 import veny.smevente.client.uc.EventDlgViewImpl;
 import veny.smevente.client.uc.SmsStatisticPresenter;
 import veny.smevente.client.uc.SmsStatisticViewImpl;
-import veny.smevente.client.uc.SpecialSmsDlgPresenter;
-import veny.smevente.client.uc.SpecialSmsDlgViewImpl;
+import veny.smevente.client.uc.SpecialMsgDlgPresenter;
+import veny.smevente.client.uc.SpecialMsgDlgViewImpl;
 import veny.smevente.client.uc.StoreProcedurePresenter;
 import veny.smevente.client.uc.StoreProcedureViewImpl;
 import veny.smevente.client.uc.StoreCustomerPresenter;
@@ -192,8 +192,8 @@ public class PresenterCollection {
                 presenter = smsDetailDlgPresenter;
                 break;
             case SPECIAL_SMS_DLG:
-                SpecialSmsDlgPresenter specialSmsDlgPresenter = new SpecialSmsDlgPresenter();
-                specialSmsDlgPresenter.bind(new SpecialSmsDlgViewImpl());
+                SpecialMsgDlgPresenter specialSmsDlgPresenter = new SpecialMsgDlgPresenter();
+                specialSmsDlgPresenter.bind(new SpecialMsgDlgViewImpl());
                 presenter = specialSmsDlgPresenter;
                 break;
             case USER_LIST:

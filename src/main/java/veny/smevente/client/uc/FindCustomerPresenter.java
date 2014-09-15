@@ -363,8 +363,8 @@ public class FindCustomerPresenter
         if (immediateMsgCategories.isEmpty()) {
             Window.alert(CONSTANTS.noSpecialSmsInUnit());
         } else {
-            final SpecialSmsDlgPresenter p =
-                (SpecialSmsDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SPECIAL_SMS_DLG);
+            final SpecialMsgDlgPresenter p =
+                (SpecialMsgDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SPECIAL_SMS_DLG);
             p.init(customer, immediateMsgCategories);
             final SmeventeDialog dlg = new SmeventeDialog("SMS", p);
 
