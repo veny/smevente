@@ -54,6 +54,7 @@ public final class ClientTextUtils {
     public static void main(final String[] args) {
         System.out.println(convert2ascii("Žluťoučký kůň pěl ďábelské ódy")); //CSOFF
         System.out.println(convert2ascii("Vladimír Šťovíček")); //CSOFF
+        System.out.println(convert2ascii("Špůr Josef")); //CSOFF
     }
 
 }

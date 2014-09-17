@@ -20,6 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import veny.smevente.AbstractBaseTest;
 import veny.smevente.client.utils.Pair;
 import veny.smevente.dao.CustomerDao;
+import veny.smevente.dao.DeletedObjectException;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
@@ -408,6 +409,30 @@ public class EventServiceTest extends AbstractBaseTest {
         assertEquals(3, byId.getSendAttemptCount());
         // no decrease of limit on unit
         assertEquals(11L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getMsgLimit().longValue());
+    }
+
+
+    /** EventService.deleteEvent. */
+    @Test(expected = DeletedObjectException.class)
+    public void testDeleteEvent() {
+        Event ev  = createDefaultEvent();
+        assertEquals(1, eventService.findEventsByCustomer(ev.getCustomer().getId()).getB().size());
+        eventService.deleteEvent(ev.getId());
+        assertEquals(0, eventService.findEventsByCustomer(ev.getCustomer().getId()).getB().size());
+        eventService.getEvent(ev.getId());
+    }
+
+    /** EventService.deleteEvent. */
+    @Test
+    public void testDeleteEventBF23() {
+        Event ev  = createDefaultEvent();
+        eventService.deleteEvent(ev.getId());
+        Customer customer = unitService.getPatientById(ev.getCustomer().getId());
+        assertNotNull(customer.getUnit());
+        List<Procedure> procedures =
+                unitService.getProceduresByUnit(customer.getUnit().getId(), null);
+        assertEquals(1, procedures.size());
+        assertNotNull(procedures.get(0).getUnit());
     }
 
     // -------------------------------------------------------- Assistant Stuff

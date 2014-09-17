@@ -238,7 +238,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                         throw new IllegalArgumentException("ID has to be OrientDB RID");
                     }
                 }
-                final T entity = db.load(rid, "*:0");
+                final T entity = db.load(rid);
                 if (null != softDeleteAnnotation) {
                     entity.setDeletedAt(new Date());
                     entity.setDeletedBy(appCtx.getLoggedInUserIdSoftly());
