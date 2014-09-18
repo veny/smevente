@@ -67,9 +67,9 @@ public class UnitController {
         final List<User> other = userService.getOtherUsersInUnit(unitId, user.getId());
         modelAndView.addObject("unitMembers", other);
 
-        // patients
-        final List<Customer> patients = unitService.getPatientsByUnit(unitId);
-        modelAndView.addObject("patients", patients);
+        // customers
+        final List<Customer> customers = unitService.getCustomersByUnit(unitId);
+        modelAndView.addObject("patients", customers);
 
         // procedures (type=null => all)
         final List<Procedure> procedures = unitService.getProceduresByUnit(unitId, null);
@@ -91,9 +91,9 @@ public class UnitController {
      * @return model & view
      */
     @RequestMapping(value = "/customer/", method = RequestMethod.POST)
-    public ModelAndView storePatient(final Customer customer) {
+    public ModelAndView storeCustomer(final Customer customer) {
 
-        final Customer created = unitService.storePatient(customer);
+        final Customer created = unitService.storeCustomer(customer);
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("customer", created);
         return modelAndView;
@@ -133,7 +133,7 @@ public class UnitController {
         final String n = (Strings.isNullOrEmpty(name) ? null : name.trim());
         final String pn = (Strings.isNullOrEmpty(phoneNumber) ? null : phoneNumber.trim());
         final String bn = (Strings.isNullOrEmpty(birthNumber) ? null : birthNumber.trim());
-        final List<Customer> customers = unitService.findPatients(unitId, n, pn, bn);
+        final List<Customer> customers = unitService.findCustomers(unitId, n, pn, bn);
 
         // we don't need the unit
         for (Customer c : customers) { c.setUnit(null); }
@@ -150,12 +150,12 @@ public class UnitController {
      */
     @RequestMapping(value = "/customer/{id}/", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deletePatient(@PathVariable("id") final String customerId) {
-        unitService.deletePatient(customerId);
+    public void deleteCustomer(@PathVariable("id") final String customerId) {
+        unitService.deleteCustomer(customerId);
     }
 
     /**
-     * Gets list of all events for given patient ordered by Start Time.
+     * Gets list of all events for given customer ordered by Start Time.
      *
      * @param customerId ID of the customer
      * @return list of <code>Event</code> as JSON

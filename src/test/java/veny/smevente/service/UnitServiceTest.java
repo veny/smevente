@@ -104,7 +104,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         toCreate.setCareers("careers");
         toCreate.setUnitId(unit.getId());
 
-        final Customer firstCreated = unitService.storePatient(toCreate);
+        final Customer firstCreated = unitService.storeCustomer(toCreate);
         assertDefaultPatient(firstCreated, true);
         assertEquals(unit.getId(), firstCreated.getUnit().getId());
         assertEquals("degree", firstCreated.getDegree());
@@ -113,7 +113,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals("zip code", firstCreated.getZipCode());
         assertEquals("employer", firstCreated.getEmployer());
         assertEquals("careers", firstCreated.getCareers());
-        assertEquals(1, unitService.getPatientsByUnit(unit.getId()).size());
+        assertEquals(1, unitService.getCustomersByUnit(unit.getId()).size());
 
         // second patient in the first unit
         final Customer secondCreated = createCustomer("a", "b", null, null, unit);
@@ -126,7 +126,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals("b", secondCreated.getSurname());
         assertNull(secondCreated.getPhoneNumber());
         assertNull(secondCreated.getBirthNumber());
-        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
+        assertEquals(2, unitService.getCustomersByUnit(unit.getId()).size());
 
         final Customer badPatient = new Customer();
         badPatient.setFirstname("aa");
@@ -134,18 +134,18 @@ public class UnitServiceTest extends AbstractBaseTest {
         badPatient.setBirthNumber(BIRTH_NUMBER);
         badPatient.setUnitId(unit.getId());
         try { // existing birth number
-            unitService.storePatient(badPatient);
+            unitService.storeCustomer(badPatient);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
 
         // second unit (I can create user with Birth Number in other unit)
         final Unit secondUnit = createUnit("A", "desc", Unit.TextVariant.PATIENT, 10L, null);
         badPatient.setUnitId(secondUnit.getId());
-        final Customer thirdCreated = unitService.storePatient(badPatient);
+        final Customer thirdCreated = unitService.storeCustomer(badPatient);
         assertEquals(secondUnit.getId(), thirdCreated.getUnit().getId());
         assertEquals(BIRTH_NUMBER, thirdCreated.getBirthNumber());
-        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
-        assertEquals(1, unitService.getPatientsByUnit(secondUnit.getId()).size());
+        assertEquals(2, unitService.getCustomersByUnit(unit.getId()).size());
+        assertEquals(1, unitService.getCustomersByUnit(secondUnit.getId()).size());
 
         // validation - birth number
         final Customer validation = new Customer();
@@ -154,52 +154,52 @@ public class UnitServiceTest extends AbstractBaseTest {
         validation.setBirthNumber("12345678");
         validation.setUnitId(unit.getId());
         try { // short birth number
-            unitService.storePatient(validation);
+            unitService.storeCustomer(validation);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
         validation.setBirthNumber("12345678901");
         try { // long birth number
-            unitService.storePatient(validation);
+            unitService.storeCustomer(validation);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
         // OK
         validation.setBirthNumber("1234567890");
-        unitService.storePatient(validation);
+        unitService.storeCustomer(validation);
 
         // validation - phone number
         validation.setBirthNumber(null);
         validation.setPhoneNumber("12345678");
         try { // short phone number
-            unitService.storePatient(validation);
+            unitService.storeCustomer(validation);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
         validation.setPhoneNumber("12345678901x");
         try { // phone number not a number
-            unitService.storePatient(validation);
+            unitService.storeCustomer(validation);
             assertEquals("expected ValidationException", true, false);
         } catch (ValidationException e) { assertEquals(true, true); }
         // OK
         validation.setPhoneNumber("123456789");
-        unitService.storePatient(validation);
+        unitService.storeCustomer(validation);
     }
 
-    /** UnitService.storePatient (update). */
+    /** UnitService.storeCustomer (update). */
     @Test // unit/patient/
-    public void testStoreUpdatePatient() {
+    public void testStoreUpdateCustomer() {
         final Customer created = createDefaultCustomer();
         assertNull(created.getCity());
         assertNull(created.getDegree());
 
         created.setCity("city");
-        unitService.storePatient(created);
-        Customer found = unitService.getPatientById(created.getId());
+        unitService.storeCustomer(created);
+        Customer found = unitService.getCustomerById(created.getId());
         assertDefaultPatient(found, true);
         assertEquals("city", found.getCity());
         assertNull(created.getDegree());
 
         created.setDegree("degree");
-        unitService.storePatient(created);
-        found = unitService.getPatientById(created.getId());
+        unitService.storeCustomer(created);
+        found = unitService.getCustomerById(created.getId());
         assertDefaultPatient(found, true);
         assertEquals("city", found.getCity());
         assertEquals("degree", created.getDegree());
@@ -207,30 +207,30 @@ public class UnitServiceTest extends AbstractBaseTest {
         // phone + birth number
         created.setPhoneNumber("987987987");
         created.setBirthNumber("789789789");
-        unitService.storePatient(created);
-        found = unitService.getPatientById(created.getId());
+        unitService.storeCustomer(created);
+        found = unitService.getCustomerById(created.getId());
         assertEquals("987987987", created.getPhoneNumber());
         assertEquals("789789789", found.getBirthNumber());
     }
 
-    /** UnitService.getPatientsByUnit. */
+    /** UnitService.getCustomersByUnit. */
     @Test // unit/{id}/info/
-    public void testGetPatientsByUnit() {
+    public void testGetCustomersByUnit() {
         final Customer created = createDefaultCustomer();
         assertNotNull(created.getUnit().getId());
-        List<Customer> found = unitService.getPatientsByUnit(created.getUnit().getId());
+        List<Customer> found = unitService.getCustomersByUnit(created.getUnit().getId());
         assertNotNull(found);
         assertEquals(1, found.size());
         assertDefaultPatient(found.get(0), true);
 
         createCustomer("a", "a", null, null, created.getUnit());
-        found = unitService.getPatientsByUnit(created.getUnit().getId());
+        found = unitService.getCustomersByUnit(created.getUnit().getId());
         assertEquals(2, found.size());
         assertDefaultUnit(found.get(0).getUnit());
         assertDefaultUnit(found.get(1).getUnit());
 
         createCustomer("b", "b", null, null, created.getUnit());
-        found = unitService.getPatientsByUnit(created.getUnit().getId());
+        found = unitService.getCustomersByUnit(created.getUnit().getId());
         assertEquals(3, found.size());
         assertDefaultUnit(found.get(0).getUnit());
         assertDefaultUnit(found.get(1).getUnit());
@@ -238,25 +238,25 @@ public class UnitServiceTest extends AbstractBaseTest {
 
         final Unit secondUnit = createUnit("X", "desc", Unit.TextVariant.PATIENT, 0L, null);
         final Customer c = createCustomer("c", "c", null, null, secondUnit);
-        found = unitService.getPatientsByUnit(secondUnit.getId());
+        found = unitService.getCustomersByUnit(secondUnit.getId());
         assertEquals(1, found.size());
         assertEquals(secondUnit.getId(), found.get(0).getUnit().getId());
-        assertEquals(3, unitService.getPatientsByUnit(created.getUnit().getId()).size());
+        assertEquals(3, unitService.getCustomersByUnit(created.getUnit().getId()).size());
 
         // SOFT DELETE
         // first unit
-        unitService.deletePatient(created.getId());
-        assertEquals(2, unitService.getPatientsByUnit(created.getUnit().getId()).size());
+        unitService.deleteCustomer(created.getId());
+        assertEquals(2, unitService.getCustomersByUnit(created.getUnit().getId()).size());
         // second unit
-        unitService.deletePatient(c.getId());
-        assertEquals(0, unitService.getPatientsByUnit(c.getUnit().getId()).size());
+        unitService.deleteCustomer(c.getId());
+        assertEquals(0, unitService.getCustomersByUnit(c.getUnit().getId()).size());
     }
 
-    /** UnitService.findPatients. */
+    /** UnitService.findCustomers. */
     @Test // unit/{id}/patient/
-    public void testFindPatients() {
+    public void testFindCustomers() {
         final Unit unit = createDefaultUnit();
-        assertTrue(unitService.findPatients(unit.getId(), null, null, null).isEmpty());
+        assertTrue(unitService.findCustomers(unit.getId(), null, null, null).isEmpty());
         final Customer adam = createCustomer("Adam", "Bláha", "000000000", "7001011111", unit);
         final Customer vaclav = createCustomer("Václav", "Sýkora", "011111111", "7001022222", unit);
         createCustomer("John", "Žluťoučký", "012222222", "7003033333", unit);
@@ -267,82 +267,82 @@ public class UnitServiceTest extends AbstractBaseTest {
         createCustomer("Šón", "Ďáblík", "012345677", "7008088889", unit);
 
         // by name
-        assertEquals(1, unitService.findPatients(unit.getId(), "ADAM", null, null).size()); // Blaha
-        assertEquals(1, unitService.findPatients(unit.getId(), "blaha", null, null).size()); // Blaha
-        assertEquals(3, unitService.findPatients(unit.getId(), "S", null, null).size()); // Sykora,Svetlikova,Dablik
-        assertEquals(2, unitService.findPatients(unit.getId(), "ova", null, null).size()); // Buliznikova,Svetlikova
-        assertEquals(3, unitService.findPatients(unit.getId(), "li", null, null).size()); // Buliznikova,Dablik
-        assertEquals(0, unitService.findPatients(unit.getId(), "x", null, null).size());
+        assertEquals(1, unitService.findCustomers(unit.getId(), "ADAM", null, null).size()); // Blaha
+        assertEquals(1, unitService.findCustomers(unit.getId(), "blaha", null, null).size()); // Blaha
+        assertEquals(3, unitService.findCustomers(unit.getId(), "S", null, null).size()); // Sykora,Svetlikova,Dablik
+        assertEquals(2, unitService.findCustomers(unit.getId(), "ova", null, null).size()); // Buliznikova,Svetlikova
+        assertEquals(3, unitService.findCustomers(unit.getId(), "li", null, null).size()); // Buliznikova,Dablik
+        assertEquals(0, unitService.findCustomers(unit.getId(), "x", null, null).size());
 
         // by phone number
-        assertEquals(8, unitService.findPatients(unit.getId(), null, "0", null).size());
-        assertEquals(4, unitService.findPatients(unit.getId(), null, "01234", null).size());
-        assertEquals(1, unitService.findPatients(unit.getId(), null, "012345677", null).size());
-        assertEquals(0, unitService.findPatients(unit.getId(), null, "9", null).size());
-        assertEquals(2, unitService.findPatients(unit.getId(), null, "56", null).size());
-        assertEquals(1, unitService.findPatients(unit.getId(), null, "77", null).size());
+        assertEquals(8, unitService.findCustomers(unit.getId(), null, "0", null).size());
+        assertEquals(4, unitService.findCustomers(unit.getId(), null, "01234", null).size());
+        assertEquals(1, unitService.findCustomers(unit.getId(), null, "012345677", null).size());
+        assertEquals(0, unitService.findCustomers(unit.getId(), null, "9", null).size());
+        assertEquals(2, unitService.findCustomers(unit.getId(), null, "56", null).size());
+        assertEquals(1, unitService.findCustomers(unit.getId(), null, "77", null).size());
 
         // by birth number
-        assertEquals(8, unitService.findPatients(unit.getId(), null, null, "70").size());
-        assertEquals(2, unitService.findPatients(unit.getId(), null, null, "7001").size());
-        assertEquals(1, unitService.findPatients(unit.getId(), null, null, "7003").size());
-        assertEquals(1, unitService.findPatients(unit.getId(), null, null, "88").size());
-        assertEquals(1, unitService.findPatients(unit.getId(), null, null, "89").size());
-        assertEquals(0, unitService.findPatients(unit.getId(), null, null, "123").size());
+        assertEquals(8, unitService.findCustomers(unit.getId(), null, null, "70").size());
+        assertEquals(2, unitService.findCustomers(unit.getId(), null, null, "7001").size());
+        assertEquals(1, unitService.findCustomers(unit.getId(), null, null, "7003").size());
+        assertEquals(1, unitService.findCustomers(unit.getId(), null, null, "88").size());
+        assertEquals(1, unitService.findCustomers(unit.getId(), null, null, "89").size());
+        assertEquals(0, unitService.findCustomers(unit.getId(), null, null, "123").size());
 
         // combination
-        assertEquals(8, unitService.findPatients(unit.getId(), null, null, null).size());
-        assertEquals(3, unitService.findPatients(unit.getId(), "s", null, "70").size()); // Sykora,Svetlikova,Dablik
-        assertEquals(2, unitService.findPatients(unit.getId(), "s", "0123456", "70").size()); // Svetlikova,Dablik
-        assertEquals(1, unitService.findPatients(unit.getId(), "S", "01234567", null).size()); // Dablik
-        assertEquals(0, unitService.findPatients(unit.getId(), "S", "01", "123").size());
+        assertEquals(8, unitService.findCustomers(unit.getId(), null, null, null).size());
+        assertEquals(3, unitService.findCustomers(unit.getId(), "s", null, "70").size()); // Sykora,Svetlikova,Dablik
+        assertEquals(2, unitService.findCustomers(unit.getId(), "s", "0123456", "70").size()); // Svetlikova,Dablik
+        assertEquals(1, unitService.findCustomers(unit.getId(), "S", "01234567", null).size()); // Dablik
+        assertEquals(0, unitService.findCustomers(unit.getId(), "S", "01", "123").size());
 
         // SOFT DELETE
-        unitService.deletePatient(adam.getId());
-        assertEquals(0, unitService.findPatients(unit.getId(), "ADAM", null, null).size()); // Blaha
-        assertEquals(0, unitService.findPatients(unit.getId(), "blaha", null, null).size()); // Blaha
-        unitService.deletePatient(vaclav.getId());
-        assertEquals(0, unitService.findPatients(unit.getId(), null, "011111111", null).size());
-        assertEquals(0, unitService.findPatients(unit.getId(), null, null, "7001022222").size());
+        unitService.deleteCustomer(adam.getId());
+        assertEquals(0, unitService.findCustomers(unit.getId(), "ADAM", null, null).size()); // Blaha
+        assertEquals(0, unitService.findCustomers(unit.getId(), "blaha", null, null).size()); // Blaha
+        unitService.deleteCustomer(vaclav.getId());
+        assertEquals(0, unitService.findCustomers(unit.getId(), null, "011111111", null).size());
+        assertEquals(0, unitService.findCustomers(unit.getId(), null, null, "7001022222").size());
     }
 
-    /** UnitService.deletePatient. */
+    /** UnitService.deleteCustomer. */
     @Test // unit/patient/{id}/
-    public void testDeletePatient() {
+    public void testDeleteCustomer() {
         final Customer firstCreated = createDefaultCustomer();
         final Unit unit = firstCreated.getUnit();
         final Customer secondCreated = createCustomer("a", "a", null, null, unit);
-        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
+        assertEquals(2, unitService.getCustomersByUnit(unit.getId()).size());
 
         // delete first
-        unitService.deletePatient(firstCreated.getId());
+        unitService.deleteCustomer(firstCreated.getId());
         try {
-            unitService.getPatientById(firstCreated.getId());
+            unitService.getCustomerById(firstCreated.getId());
             assertEquals("expected DeletedObjectException", true, false);
         } catch (DeletedObjectException e) { assertEquals(true, true); }
-        List<Customer> found = unitService.getPatientsByUnit(unit.getId());
+        List<Customer> found = unitService.getCustomersByUnit(unit.getId());
         assertEquals(1, found.size());
         assertEquals(secondCreated.getId(), found.get(0).getId());
 
         final Customer thirdCreated = createCustomer("b", "b", null, null, unit);
-        assertEquals(2, unitService.getPatientsByUnit(unit.getId()).size());
-        unitService.deletePatient(firstCreated.getId()); // DO NOTHING
-        unitService.deletePatient(secondCreated.getId());
+        assertEquals(2, unitService.getCustomersByUnit(unit.getId()).size());
+        unitService.deleteCustomer(firstCreated.getId()); // DO NOTHING
+        unitService.deleteCustomer(secondCreated.getId());
         try {
-            unitService.getPatientById(secondCreated.getId());
+            unitService.getCustomerById(secondCreated.getId());
             assertEquals("expected DeletedObjectException", true, false);
         } catch (DeletedObjectException e) { assertEquals(true, true); }
-        found = unitService.getPatientsByUnit(unit.getId());
+        found = unitService.getCustomersByUnit(unit.getId());
         assertEquals(1, found.size());
         assertEquals(thirdCreated.getId(), found.get(0).getId());
-        unitService.deletePatient(thirdCreated.getId());
+        unitService.deleteCustomer(thirdCreated.getId());
 
-        unitService.deletePatient(thirdCreated.getId());
+        unitService.deleteCustomer(thirdCreated.getId());
         try {
-            unitService.getPatientById(thirdCreated.getId());
+            unitService.getCustomerById(thirdCreated.getId());
             assertEquals("expected DeletedObjectException", true, false);
         } catch (DeletedObjectException e) { assertEquals(true, true); }
-        found = unitService.getPatientsByUnit(unit.getId());
+        found = unitService.getCustomersByUnit(unit.getId());
         assertEquals(0, found.size());
     }
 

@@ -427,7 +427,7 @@ public class EventServiceTest extends AbstractBaseTest {
     public void testDeleteEventBF23() {
         Event ev  = createDefaultEvent();
         eventService.deleteEvent(ev.getId());
-        Customer customer = unitService.getPatientById(ev.getCustomer().getId());
+        Customer customer = unitService.getCustomerById(ev.getCustomer().getId());
         assertNotNull(customer.getUnit());
         List<Procedure> procedures =
                 unitService.getProceduresByUnit(customer.getUnit().getId(), null);

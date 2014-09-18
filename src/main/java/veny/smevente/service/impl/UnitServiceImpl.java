@@ -38,7 +38,7 @@ public class UnitServiceImpl implements UnitService {
     private UnitDao unitDao;
     /** Dependency. */
     @Autowired
-    private CustomerDao patientDao;
+    private CustomerDao customerDao;
     /** Dependency. */
     @Autowired
     private ProcedureDao procedureDao;
@@ -89,24 +89,24 @@ public class UnitServiceImpl implements UnitService {
         return found;
     }
 
-    // ---------------------------------------------------------- Patient Stuff
+    // --------------------------------------------------------- Customer Stuff
 
     /** {@inheritDoc} */
     @Transactional
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public Customer storePatient(final Customer client) {
+    public Customer storeCustomer(final Customer client) {
         if (null == client.getUnit() || null == client.getUnit().getId()) {
             throw new NullPointerException("unknown unit");
         }
         final Unit unit = unitDao.getById(client.getUnit().getId());
         client.setUnit(unit);
 
-        validatePatient(client);
+        validateCustomer(client);
 
         // unique birth number
         if (!Strings.isNullOrEmpty(client.getBirthNumber())) {
-            final Customer bn = patientDao.findByBirthNumber(client.getUnit().getId(), client.getBirthNumber());
+            final Customer bn = customerDao.findByBirthNumber(client.getUnit().getId(), client.getBirthNumber());
             if (null == bn || (null != client.getId() && bn.getId().toString().equals(client.getId().toString()))) {
                 // expected state <- birth number not found
                 if (LOG.isDebugEnabled()) {
@@ -117,7 +117,7 @@ public class UnitServiceImpl implements UnitService {
             }
         }
 
-        final Customer rslt = patientDao.persist(client);
+        final Customer rslt = customerDao.persist(client);
         LOG.info((null == client.getId() ? "created new client, " : "client updated, ") + rslt);
         return rslt;
     }
@@ -127,8 +127,8 @@ public class UnitServiceImpl implements UnitService {
     @Transactional(readOnly = true)
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public Customer getPatientById(final Object id) {
-        final Customer rslt = patientDao.getById(id);
+    public Customer getCustomerById(final Object id) {
+        final Customer rslt = customerDao.getById(id);
         return rslt;
     }
 
@@ -136,10 +136,10 @@ public class UnitServiceImpl implements UnitService {
     @Transactional(readOnly = true)
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public List<Customer> getPatientsByUnit(final Object unitId) {
+    public List<Customer> getCustomersByUnit(final Object unitId) {
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
-        final List<Customer> rslt = patientDao.findBy("unit", unitId, null);
-        LOG.info("found " + rslt.size() + " patients(s) by unit");
+        final List<Customer> rslt = customerDao.findBy("unit", unitId, null);
+        LOG.info("found " + rslt.size() + " customer(s) by unit");
         return rslt;
     }
 
@@ -148,32 +148,32 @@ public class UnitServiceImpl implements UnitService {
     @Transactional(readOnly = true)
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public List<Customer> findPatients(
+    public List<Customer> findCustomers(
             final Object unitId, final String name, final String phoneNumber, final String birthNumber) {
 
         if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
-        LOG.info("findPatients, unitId=" + unitId + ", name=" + name
+        LOG.info("findCustomers, unitId=" + unitId + ", name=" + name
                 + ", phone=" + phoneNumber + ", birthNumber=" + birthNumber);
 
         if (null == name && null == phoneNumber && null == birthNumber) {
-            return getPatientsByUnit(unitId);
+            return getCustomersByUnit(unitId);
         }
 
         List<Customer> collectedRslt = null;
 
         // name
         if (null != name) {
-            collectedRslt = patientDao.findLikeBy(unitId, "asciiFullname", name.toUpperCase());
+            collectedRslt = customerDao.findLikeBy(unitId, "asciiFullname", name.toUpperCase());
             if (LOG.isDebugEnabled()) {
-                LOG.debug("patient(s) found by name, size=" + collectedRslt.size());
+                LOG.debug("customer(s) found by name, size=" + collectedRslt.size());
             }
         }
 
         // phone number
         if (null != phoneNumber) {
-            final List<Customer> found = patientDao.findLikeBy(unitId, "phoneNumber", phoneNumber);
+            final List<Customer> found = customerDao.findLikeBy(unitId, "phoneNumber", phoneNumber);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("patient(s) found by phone number, size=" + found.size());
+                LOG.debug("customer(s) found by phone number, size=" + found.size());
             }
             if (null == collectedRslt) {
                 collectedRslt = found;
@@ -184,9 +184,9 @@ public class UnitServiceImpl implements UnitService {
 
         // birth number
         if (null != birthNumber) {
-            final List<Customer> found = patientDao.findLikeBy(unitId, "birthNumber", birthNumber);
+            final List<Customer> found = customerDao.findLikeBy(unitId, "birthNumber", birthNumber);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("patient(s) found by birth number, size=" + found.size());
+                LOG.debug("customer(s) found by birth number, size=" + found.size());
             }
             if (null == collectedRslt) {
                 collectedRslt = found;
@@ -195,7 +195,7 @@ public class UnitServiceImpl implements UnitService {
             }
         }
 
-        LOG.info("patient(s) found, size=" + collectedRslt.size());
+        LOG.info("customer(s) found, size=" + collectedRslt.size());
         return collectedRslt;
     }
 
@@ -203,9 +203,9 @@ public class UnitServiceImpl implements UnitService {
     @Transactional
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
-    public void deletePatient(final Object id) {
-        patientDao.remove(id);
-        LOG.info("patient deleted, id=" + id);
+    public void deleteCustomer(final Object id) {
+        customerDao.remove(id);
+        LOG.info("customer deleted, id=" + id);
     }
 
     // -------------------------------------------------------- Procedure Stuff
@@ -332,33 +332,33 @@ public class UnitServiceImpl implements UnitService {
     }
 
     /**
-     * Validation of a patient before persistence.
-     * @param patient patient to be validated
+     * Validation of a customer before persistence.
+     * @param customer customer to be validated
      */
-    private void validatePatient(final Customer patient) {
-        if (null == patient) { throw new NullPointerException("patient cannot be null"); }
-        if (null == patient.getUnit()) { throw new NullPointerException("unit cannot be null"); }
-        if (null == patient.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
-        if (Strings.isNullOrEmpty(patient.getFirstname())) {
+    private void validateCustomer(final Customer customer) {
+        if (null == customer) { throw new NullPointerException("customer cannot be null"); }
+        if (null == customer.getUnit()) { throw new NullPointerException("unit cannot be null"); }
+        if (null == customer.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
+        if (Strings.isNullOrEmpty(customer.getFirstname())) {
             throw new IllegalArgumentException("first name cannot be blank");
         }
-        if (Strings.isNullOrEmpty(patient.getSurname())) {
+        if (Strings.isNullOrEmpty(customer.getSurname())) {
             throw new IllegalArgumentException("surname cannot be blank");
         }
 
         // birth number
-        if (Strings.isNullOrEmpty(patient.getBirthNumber())) {
-            LOG.warn("birth number is empty, fisrtname=" + patient.getFirstname()
-                    + ", surname=" + patient.getSurname());
+        if (Strings.isNullOrEmpty(customer.getBirthNumber())) {
+            LOG.warn("birth number is empty, fisrtname=" + customer.getFirstname()
+                    + ", surname=" + customer.getSurname());
         } else {
-            validationContainer.validate("birthNumber", "birthNumber", patient.getBirthNumber());
+            validationContainer.validate("birthNumber", "birthNumber", customer.getBirthNumber());
         }
         // phone number
-        if (Strings.isNullOrEmpty(patient.getPhoneNumber())) {
-            LOG.warn("phone number is empty, fisrtname=" + patient.getFirstname()
-                    + ", surname=" + patient.getSurname());
+        if (Strings.isNullOrEmpty(customer.getPhoneNumber())) {
+            LOG.warn("phone number is empty, fisrtname=" + customer.getFirstname()
+                    + ", surname=" + customer.getSurname());
         } else {
-            validationContainer.validate("phoneNumber", "phoneNumber", patient.getPhoneNumber());
+            validationContainer.validate("phoneNumber", "phoneNumber", customer.getPhoneNumber());
         }
     }
 

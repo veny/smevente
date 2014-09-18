@@ -44,7 +44,7 @@ public interface UnitService {
      */
     List<Unit> getAllUnits();
 
-    // ---------------------------------------------------------- Patient Stuff
+    // --------------------------------------------------------- Customer Stuff
 
     /**
      * Stores (creates or updates) a customer.<p/>
@@ -54,40 +54,40 @@ public interface UnitService {
      * @param client client to be created
      * @return created client
      */
-    Customer storePatient(Customer client);
+    Customer storeCustomer(Customer client);
 
     /**
-     * Gets patient by ID.
+     * Gets customer by ID.
      *
-     * @param id patient ID
-     * @return found patient
+     * @param id customer ID
+     * @return found customer
      */
-    Customer getPatientById(Object id);
+    Customer getCustomerById(Object id);
 
     /**
-     * Gets patients by unit.
+     * Gets customers by unit.
      *
      * @param unitId unit ID
-     * @return list of patients in given unit
+     * @return list of customers in given unit
      */
-    List<Customer> getPatientsByUnit(Object unitId);
+    List<Customer> getCustomersByUnit(Object unitId);
 
     /**
-     * Finds patients according to given name and/or phone number and/or birth number.
+     * Finds customers according to given name and/or phone number and/or birth number.
      *
      * @param unitId ID to search in
      * @param name name to search
      * @param phoneNumber phone number to search
      * @param birthNumber birth number to search
-     * @return list of found patients
+     * @return list of found customers
      */
-    List<Customer> findPatients(Object unitId, String name, String phoneNumber, String birthNumber);
+    List<Customer> findCustomers(Object unitId, String name, String phoneNumber, String birthNumber);
 
     /**
-     * Deletes patient.
-     * @param id patient ID
+     * Deletes customer.
+     * @param id customer ID
      */
-    void deletePatient(Object id);
+    void deleteCustomer(Object id);
 
     // -------------------------------------------------------- Procedure Stuff
 

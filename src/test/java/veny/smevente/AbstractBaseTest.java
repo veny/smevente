@@ -222,7 +222,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         toCreate.setUnitId(unit.getId());
         toCreate.setEmail("somebady@domain.com");
         toCreate.setSendingChannel(Event.CHANNEL_EMAIL | Event.CHANNEL_SMS);
-        return unitService.storePatient(toCreate);
+        return unitService.storeCustomer(toCreate);
     }
     /**
      * Asserts default patient.
