@@ -545,17 +545,17 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
             dateTime.setHours(time.getHours());
             dateTime.setMinutes(time.getMinutes());
 
-            final EventDlgPresenter smsDlgPresenter =
+            final EventDlgPresenter eventDlgPresenter =
                 (EventDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
-            smsDlgPresenter.init(dateTime, App.get().getPatients(), App.get().getProcedures(Event.Type.IN_CALENDAR));
-            final SmeventeDialog dlg = new SmeventeDialog(CONSTANTS.event(), smsDlgPresenter);
+            eventDlgPresenter.init(dateTime, App.get().getPatients(), App.get().getProcedures(Event.Type.IN_CALENDAR));
+            final SmeventeDialog dlg = new SmeventeDialog(CONSTANTS.event(), eventDlgPresenter);
 //            dlg.setPopupPosition(eventX, eventY);
             dlg.center();
 
             dlg.getOkButton().addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(final ClickEvent event) {
-                    processOkOnEventDialog(smsDlgPresenter, dlg, null);
+                    processOkOnEventDialog(eventDlgPresenter, dlg, null);
                 }
             });
 
@@ -594,31 +594,33 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
     /**
      * Creates a click handler that is registered on OK button in Event dialog.
-     * @param smsDlgPresenter the presenter
+     * @param eventDlgPresenter the presenter
      * @param dlg the dialog window
      * @param eventWidget event widget
      */
     private void processOkOnEventDialog(
-            final EventDlgPresenter smsDlgPresenter, final SmeventeDialog dlg, final EventWidget eventWidget) {
+            final EventDlgPresenter eventDlgPresenter, final SmeventeDialog dlg, final EventWidget eventWidget) {
 
         // validation
-        if (!smsDlgPresenter.getValidator().validate()) { return; }
-        final Object customerId = smsDlgPresenter.getSelectedCustomer().getId();
-        final Object procedureId = smsDlgPresenter.getSelectedProcedure().getId();
-        final String msgText = smsDlgPresenter.getView().getMessageText().getText();
-        final String notice = smsDlgPresenter.getView().getNotice().getText();
-        final Date mhDateTime = smsDlgPresenter.getStartTime();
-        final int mhLen = smsDlgPresenter.getMedicalHelpLength();
-        final String smsId =
-            smsDlgPresenter.isUpdate() ? smsDlgPresenter.getView().getEventId().getValue() : null;
-        // mobile phone number validation
-        final String pn = smsDlgPresenter.getView().getPhoneNumber().getText().trim();
-        if ((null == smsId) && (0 == pn.length() || !SmsUtils.isValidGsmPhoneNumber(pn, SmsUtils.LOCALE_CS))
-            && !Window.confirm(CONSTANTS.badGsmPhoneNumber())) {
-            return;
+        if (!eventDlgPresenter.getValidator().validate()) { return; }
+        final Object customerId = eventDlgPresenter.getSelectedCustomer().getId();
+        final Object procedureId = eventDlgPresenter.getSelectedProcedure().getId();
+        final String msgText = eventDlgPresenter.getView().getMessageText().getText();
+        final String notice = eventDlgPresenter.getView().getNotice().getText();
+        final Date mhDateTime = eventDlgPresenter.getStartTime();
+        final int mhLen = eventDlgPresenter.getProcedureLength();
+        final String eventId =
+                eventDlgPresenter.isUpdate() ? eventDlgPresenter.getView().getEventId().getValue() : null;
+        // show warning if customer has no channel to sent the message (neither SMS nor email)
+        if (null == eventId) { // only for new event (creation)
+            final Customer customer = eventDlgPresenter.getSelectedCustomer();
+            if ((null == customer.getPhoneNumber() || 0 == customer.getPhoneNumber().trim().length())
+                && (null == customer.getEmail() || 0 == customer.getEmail().trim().length())) { // no phone/email
+                Window.alert(CONSTANTS.noChannelToSendMessage());
+            }
         }
         dlg.hide(); // invokes clean and deletes upper collected data
-        storeEvent(smsId, new Pair<Object, Object>(customerId, procedureId),
+        storeEvent(eventId, new Pair<Object, Object>(customerId, procedureId),
                 new Pair<String, String>(msgText, notice), mhDateTime, mhLen, eventWidget);
     }
 

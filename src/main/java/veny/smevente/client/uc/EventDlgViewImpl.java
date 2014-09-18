@@ -39,7 +39,7 @@ public class EventDlgViewImpl extends Composite implements EventDlgPresenter.Eve
     @UiField ListBox procedure;
     @UiField ListBox length;
     @UiField(provided = true) SuggestBox nameSuggestBox;
-    @UiField TextBox phoneNumber;
+    @UiField TextBox birthNumber;
     @UiField TextArea messageText;
     @UiField TextArea notice;
     @UiField DisclosurePanel validationErrors;
@@ -100,8 +100,8 @@ public class EventDlgViewImpl extends Composite implements EventDlgPresenter.Eve
 
     /** {@inheritDoc} */
     @Override
-    public TextBox getPhoneNumber() {
-        return phoneNumber;
+    public TextBox getBirthNumber() {
+        return birthNumber;
     }
 
     /** {@inheritDoc} */

@@ -152,6 +152,7 @@ public interface SmeventeConstants extends Constants {
     String emailChannel();
     String premiumService();
     String []customerWithoutChannel();
+    String noChannelToSendMessage();
 
     // ------------------------------------------------------------- Validation
     String validationRequired();

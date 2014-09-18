@@ -166,7 +166,7 @@ public class FindCustomerPresenter
         // context menu
         final Command updateCommand = new Command() {
             public void execute() {
-                final Customer p = hideMenuAndGetSelectedPatient();
+                final Customer p = hideMenuAndGetSelectedCustomer();
                 App.get().switchToPresenterByType(PresenterEnum.STORE_PATIENT, p);
             }
         };
@@ -185,14 +185,14 @@ public class FindCustomerPresenter
         };
         final Command specialSmsCommand = new Command() {
             public void execute() {
-                final Customer p = hideMenuAndGetSelectedPatient();
-                specialSmsDlg(p);
+                final Customer p = hideMenuAndGetSelectedCustomer();
+                specialMessageDlg(p);
                 clickedId = null;
             }
         };
         final Command historyCommand = new Command() {
             public void execute() {
-                final Customer p = hideMenuAndGetSelectedPatient();
+                final Customer p = hideMenuAndGetSelectedCustomer();
                 App.get().switchToPresenterByType(PresenterEnum.PATIENT_HISTORY, p.getId());
             }
         };
@@ -318,10 +318,10 @@ public class FindCustomerPresenter
     }
 
     /**
-     * Hides the popup menu and gets the patient where the action has been selected on.
-     * @return selected patient
+     * Hides the popup menu and gets the customer where the action has been selected on.
+     * @return selected customer
      */
-    public Customer hideMenuAndGetSelectedPatient() {
+    public Customer hideMenuAndGetSelectedCustomer() {
         menuPopupPanel.hide();
         final int idx = getIndexById(clickedId);
         return foundCustomers.get(idx);
@@ -355,38 +355,45 @@ public class FindCustomerPresenter
     }
 
     /**
-     * Displays a dialog window to send a special SMS.
+     * Displays a dialog window to send a special message.
      * @param customer the recipient
      */
-    private void specialSmsDlg(final Customer customer) {
+    private void specialMessageDlg(final Customer customer) {
         final List<Procedure> immediateMsgCategories = App.get().getProcedures(Event.Type.IMMEDIATE_MESSAGE);
-        if (immediateMsgCategories.isEmpty()) {
+        if (immediateMsgCategories.isEmpty()) { // no procedures of type 'IMMEDIATE_MESSAGE'
             Window.alert(CONSTANTS.noSpecialSmsInUnit());
-        } else {
-            final SpecialMsgDlgPresenter p =
-                (SpecialMsgDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SPECIAL_SMS_DLG);
-            p.init(customer, immediateMsgCategories);
-            final SmeventeDialog dlg = new SmeventeDialog(CONSTANTS.specialSms(), p);
-
-            dlg.getOkButton().setText(CONSTANTS.send());
-            dlg.getOkButton().addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(final ClickEvent event) {
-                    // validation
-                    if (!p.getValidator().validate()) {
-                        // One (or more) validations failed. The actions will have been
-                        // already invoked by the ...validate() call.
-                        return;
-                    }
-                    final String procedureId = p.getSelectedProcedureId();
-                    final String text = p.getView().getMsgText().getText();
-                    dlg.hide(); // invokes clean and deletes upper collected data
-                    sendSpecialSms(procedureId, customer, text);
-                }
-            });
-
-            dlg.center();
+            return;
         }
+        // customer having neither email nor phone
+        if ((null == customer.getPhoneNumber() || 0 == customer.getPhoneNumber().trim().length())
+                && (null == customer.getEmail() || 0 == customer.getEmail().trim().length())) { // no phone/email
+            Window.alert(CONSTANTS.noChannelToSendMessage());
+            return;
+        }
+
+        final SpecialMsgDlgPresenter p =
+            (SpecialMsgDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SPECIAL_SMS_DLG);
+        p.init(customer, immediateMsgCategories);
+        final SmeventeDialog dlg = new SmeventeDialog(CONSTANTS.specialSms(), p);
+
+        dlg.getOkButton().setText(CONSTANTS.send());
+        dlg.getOkButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(final ClickEvent event) {
+                // validation
+                if (!p.getValidator().validate()) {
+                    // One (or more) validations failed. The actions will have been
+                    // already invoked by the ...validate() call.
+                    return;
+                }
+                final String procedureId = p.getSelectedProcedureId();
+                final String text = p.getView().getMsgText().getText();
+                dlg.hide(); // invokes clean and deletes upper collected data
+                sendSpecialSms(procedureId, customer, text);
+            }
+        });
+
+        dlg.center();
     }
 
     /**

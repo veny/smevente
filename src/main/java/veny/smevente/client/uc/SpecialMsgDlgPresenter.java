@@ -47,7 +47,7 @@ public class SpecialMsgDlgPresenter extends AbstractPresenter<SpecialMsgDlgPrese
         /**
          * @return the phone number
          */
-        TextBox getPhoneNumber();
+        TextBox getBirthNumber();
         /**
          * @return the SMS text
          */
@@ -75,7 +75,7 @@ public class SpecialMsgDlgPresenter extends AbstractPresenter<SpecialMsgDlgPrese
         initProceduresCombo(specialProcedures);
 
         view.getFullname().setText(customer.fullname());
-        view.getPhoneNumber().setText(customer.getPhoneNumber());
+        view.getBirthNumber().setText(customer.getBirthNumber());
 
         // default type - the first one
         changedType(0);
@@ -120,7 +120,7 @@ public class SpecialMsgDlgPresenter extends AbstractPresenter<SpecialMsgDlgPrese
     public void clean() {
         view.getType().clear();
         view.getFullname().setText("");
-        view.getPhoneNumber().setText("");
+        view.getBirthNumber().setText("");
         view.getMsgText().setText("");
 
         if (null != specialProcedures) { specialProcedures.clear(); }
@@ -178,11 +178,6 @@ public class SpecialMsgDlgPresenter extends AbstractPresenter<SpecialMsgDlgPrese
 
         final FocusAction focusAction = new FocusAction();
 
-        // phone number
-        validator.addValidators("phoneNumber",
-                new EmptyValidator(view.getPhoneNumber())
-                    .addActionForFailure(focusAction)
-                    .addActionForFailure(new StyleAction("validationFailedBorder")));
         // entered SMS text?
         validator.addValidators("smsText",
                 new EmptyValidator(view.getMsgText())

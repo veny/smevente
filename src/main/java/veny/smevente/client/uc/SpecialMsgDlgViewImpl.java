@@ -28,7 +28,7 @@ public class SpecialMsgDlgViewImpl extends Composite implements SpecialMsgDlgPre
     // CHECKSTYLE:OFF
     @UiField ListBox type;
     @UiField TextBox fullname;
-    @UiField TextBox phoneNumber;
+    @UiField TextBox birthNumber;
     @UiField TextArea msgText;
     @UiField DisclosurePanel validationErrors;
     // CHECKSTYLE:ON
@@ -54,8 +54,8 @@ public class SpecialMsgDlgViewImpl extends Composite implements SpecialMsgDlgPre
 
     /** {@inheritDoc} */
     @Override
-    public TextBox getPhoneNumber() {
-        return phoneNumber;
+    public TextBox getBirthNumber() {
+        return birthNumber;
     }
 
     /** {@inheritDoc} */

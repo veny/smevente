@@ -16,8 +16,8 @@
             <g:TextBox ui:field="fullname" enabled="false" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
-            <g:Label text="{consts.phoneNumber}" />
-            <g:TextBox ui:field="phoneNumber" enabled="false" />
+            <g:Label text="{consts.birthNumber}" />
+            <g:TextBox ui:field="birthNumber" enabled="false" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
             <g:Label text="{consts.smsText}" />

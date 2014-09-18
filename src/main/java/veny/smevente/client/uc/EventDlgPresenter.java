@@ -81,7 +81,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         /**
          * @return the phone number
          */
-        TextBox getPhoneNumber();
+        TextBox getBirthNumber();
         /**
          * @return the message text
          */
@@ -147,10 +147,10 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getProcedure().addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(final ChangeEvent event) {
-                changedMedicalHelpCategory(view.getProcedure().getSelectedIndex(), true);
+                changedProcedure(view.getProcedure().getSelectedIndex(), true);
             }
         });
-        changedMedicalHelpCategory(0, true);
+        changedProcedure(0, true);
     }
 
     /**
@@ -168,7 +168,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         selectedCustomer = sms.getCustomer();
         view.getEventId().setValue(sms.getId().toString());
         view.getNameSuggestBox().getValueBox().setText(selectedCustomer.fullname());
-        view.getPhoneNumber().setText(selectedCustomer.getPhoneNumber());
+        view.getBirthNumber().setText(selectedCustomer.formattedBirthNumber());
         view.getMessageText().setText(sms.getText());
         view.getNotice().setText(sms.getNotice());
         // MHC length
@@ -187,7 +187,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
             }
             idx++;
         }
-        changedMedicalHelpCategory(idx, false);
+        changedProcedure(idx, false);
     }
 
     /**
@@ -228,10 +228,10 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
     }
 
     /**
-     * Gets selected length of medical help.
-     * @return length of medical help
+     * Gets length of selected procedure.
+     * @return length of procedure
      */
-    public int getMedicalHelpLength() {
+    public int getProcedureLength() {
         String strLen = view.getLength().getValue(view.getLength().getSelectedIndex());
         return Integer.parseInt(strLen);
     }
@@ -261,7 +261,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
             public void onSelection(final SelectionEvent<Suggestion> event) {
                 final CustomerSuggestion sug = (CustomerSuggestion) event.getSelectedItem();
                 selectedCustomer = sug.getCustomer();
-                view.getPhoneNumber().setText(sug.getCustomer().getPhoneNumber());
+                view.getBirthNumber().setText(sug.getCustomer().formattedBirthNumber());
             }
         });
 
@@ -299,7 +299,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getStartMinute().setItemSelected(0, true);
         view.getProcedure().clear();
         view.getNameSuggestBox().getValueBox().setText("");
-        view.getPhoneNumber().setText("");
+        view.getBirthNumber().setText("");
         view.getMessageText().setText("");
         view.getNotice().setText("");
 
@@ -314,22 +314,22 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
     // -------------------------------------------------------- Assistant Stuff
 
     /**
-     * Invoked if a Medical Help Category was selected.
-     * @param index index of selected Medical Help Category
-     * @param switchTimeAndText whether to change the MH length and SMS text
+     * Invoked if a Procedure was selected.
+     * @param index index of selected procedure
+     * @param switchTimeAndText whether to change the length and message text
      */
-    private void changedMedicalHelpCategory(final int index, final boolean switchTimeAndText) {
-        final Procedure mhc = procedures.get(index);
+    private void changedProcedure(final int index, final boolean switchTimeAndText) {
+        final Procedure procedure = procedures.get(index);
 
         // color
-        view.getProcedureHeader().getElement().getStyle().setProperty("backgroundColor", "#" + mhc.getColor());
+        view.getProcedureHeader().getElement().getStyle().setProperty("backgroundColor", "#" + procedure.getColor());
 
         if (!switchTimeAndText) { return; }
 
         // time
         int idx = -1;
         for (int i = 0; i < PROCEDURE_LENGTHS.length; i++) {
-            if (mhc.getTime() <= Long.parseLong(PROCEDURE_LENGTHS[i])) {
+            if (procedure.getTime() <= Long.parseLong(PROCEDURE_LENGTHS[i])) {
                 idx = i;
                 break;
             }
@@ -337,7 +337,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getLength().setSelectedIndex(idx);
 
         // SMS text
-        view.getMessageText().setText(mhc.getMessageText());
+        view.getMessageText().setText(procedure.getMessageText());
     }
 
     /**
