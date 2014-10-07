@@ -13,6 +13,7 @@ public interface AppVersion {
     /** Versions history. */
     String[][] VERSIONS = new String[][] {
 //        {"0.4.1", "18.09.2014", "Added feedback & suggestion service"},
+        {"0.4.2", "07.10.2014", "Enh#38, OrientDB v1.7.9"},
         {"0.4.1", "18.09.2014", "BF#23 again, BF#33"},
         {"0.4.0", "06.09.2014", "Enh#31, first version of mailing functionality"},
         {"0.3.9", "26.07.2014", "Enh#32, adapted some log levels"},

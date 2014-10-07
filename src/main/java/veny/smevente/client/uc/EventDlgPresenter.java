@@ -19,13 +19,13 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 
 import eu.maydu.gwt.validation.client.DefaultValidationProcessor;
 import eu.maydu.gwt.validation.client.ValidationResult;
@@ -79,9 +79,17 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
          */
         SuggestBox getNameSuggestBox();
         /**
-         * @return the phone number
+         * @return the image of person (because of birth number)
          */
-        TextBox getBirthNumber();
+        Image getPersonImage();
+        /**
+         * @return the image of phone (because of phone number)
+         */
+        Image getPhoneImage();
+        /**
+         * @return the image of email (because of email address)
+         */
+        Image getEmailImage();
         /**
          * @return the message text
          */
@@ -168,7 +176,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         selectedCustomer = sms.getCustomer();
         view.getEventId().setValue(sms.getId().toString());
         view.getNameSuggestBox().getValueBox().setText(selectedCustomer.fullname());
-        view.getBirthNumber().setText(selectedCustomer.formattedBirthNumber());
+        view.getPersonImage().setTitle(selectedCustomer.formattedBirthNumber());
         view.getMessageText().setText(sms.getText());
         view.getNotice().setText(sms.getNotice());
         // MHC length
@@ -261,7 +269,9 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
             public void onSelection(final SelectionEvent<Suggestion> event) {
                 final CustomerSuggestion sug = (CustomerSuggestion) event.getSelectedItem();
                 selectedCustomer = sug.getCustomer();
-                view.getBirthNumber().setText(sug.getCustomer().formattedBirthNumber());
+                view.getPersonImage().setTitle(sug.getCustomer().formattedBirthNumber());
+                view.getPhoneImage().setTitle(sug.getCustomer().getPhoneNumber());
+                view.getEmailImage().setTitle(sug.getCustomer().getEmail());
             }
         });
 
@@ -299,7 +309,7 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getStartMinute().setItemSelected(0, true);
         view.getProcedure().clear();
         view.getNameSuggestBox().getValueBox().setText("");
-        view.getBirthNumber().setText("");
+        view.getPersonImage().setTitle("");
         view.getMessageText().setText("");
         view.getNotice().setText("");
 

@@ -9,12 +9,12 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -39,7 +39,9 @@ public class EventDlgViewImpl extends Composite implements EventDlgPresenter.Eve
     @UiField ListBox procedure;
     @UiField ListBox length;
     @UiField(provided = true) SuggestBox nameSuggestBox;
-    @UiField TextBox birthNumber;
+    @UiField Image personImage;
+    @UiField Image phoneImage;
+    @UiField Image emailImage;
     @UiField TextArea messageText;
     @UiField TextArea notice;
     @UiField DisclosurePanel validationErrors;
@@ -100,8 +102,20 @@ public class EventDlgViewImpl extends Composite implements EventDlgPresenter.Eve
 
     /** {@inheritDoc} */
     @Override
-    public TextBox getBirthNumber() {
-        return birthNumber;
+    public Image getPersonImage() {
+        return personImage;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Image getPhoneImage() {
+        return phoneImage;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Image getEmailImage() {
+        return emailImage;
     }
 
     /** {@inheritDoc} */

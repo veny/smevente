@@ -26,8 +26,9 @@
             <g:SuggestBox ui:field="nameSuggestBox"/>
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
-            <g:Label text="{consts.birthNumber}" />
-            <g:TextBox ui:field="birthNumber" enabled="false" />
+            <g:Image ui:field="personImage" url="images/person.png" pixelSize="24,24" />
+            <g:Image ui:field="phoneImage" url="images/phone.png" pixelSize="24,24" />
+            <g:Image ui:field="emailImage" url="images/email.png" pixelSize="24,24" />
         </g:FlowPanel>
         <g:FlowPanel styleName="medicalHelpElementHolder">
             <g:Label text="{consts.message}" />
