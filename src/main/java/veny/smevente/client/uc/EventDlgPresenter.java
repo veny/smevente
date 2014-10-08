@@ -163,33 +163,35 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
 
     /**
      * Initializes presenter for Update.
-     * @param sms SMS to be displayed
+     * @param event event to be displayed
      * @param customers customer list
-     * @param mhcs list of medical help categories
+     * @param procedures list of procedures
      */
     public void init(
-            final Event sms, final List<Customer> customers, final List<Procedure> mhcs) {
+            final Event event, final List<Customer> customers, final List<Procedure> procedures) {
 
-        this.init(sms.getStartTime(), customers, mhcs);
+        this.init(event.getStartTime(), customers, procedures);
 
         // set all form elements
-        selectedCustomer = sms.getCustomer();
-        view.getEventId().setValue(sms.getId().toString());
+        selectedCustomer = event.getCustomer();
+        view.getEventId().setValue(event.getId().toString());
         view.getNameSuggestBox().getValueBox().setText(selectedCustomer.fullname());
         view.getPersonImage().setTitle(selectedCustomer.formattedBirthNumber());
-        view.getMessageText().setText(sms.getText());
-        view.getNotice().setText(sms.getNotice());
+        view.getPhoneImage().setTitle(selectedCustomer.getPhoneNumber());
+        view.getEmailImage().setTitle(selectedCustomer.getEmail());
+        view.getMessageText().setText(event.getText());
+        view.getNotice().setText(event.getNotice());
         // MHC length
         for (int i = 0; i < PROCEDURE_LENGTHS.length; i++) {
-            if (sms.getLength() <= Long.parseLong(PROCEDURE_LENGTHS[i])) {
+            if (event.getLength() <= Long.parseLong(PROCEDURE_LENGTHS[i])) {
                 view.getLength().setSelectedIndex(i);
                 break;
             }
         }
         // MHC
         int idx = 0;
-        for (Procedure mhc : mhcs) {
-            if (mhc.getId().equals(sms.getProcedure().getId())) {
+        for (Procedure proc : procedures) {
+            if (proc.getId().equals(event.getProcedure().getId())) {
                 view.getProcedure().setSelectedIndex(idx);
                 break;
             }
@@ -310,6 +312,8 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getProcedure().clear();
         view.getNameSuggestBox().getValueBox().setText("");
         view.getPersonImage().setTitle("");
+        view.getPhoneImage().setTitle("");
+        view.getEmailImage().setTitle("");
         view.getMessageText().setText("");
         view.getNotice().setText("");
 
