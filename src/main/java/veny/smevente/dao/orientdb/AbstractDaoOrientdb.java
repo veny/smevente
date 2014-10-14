@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import veny.smevente.dao.DeletedObjectException;
@@ -31,6 +32,8 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  * @param <T> the entity class
  */
 public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements GenericDao< T > {
+
+    private static final Logger LOG = Logger.getLogger(AbstractDaoOrientdb.class.getName());
 
     /** Class of target entity. */
     private final Class< T > persistentClass;
@@ -240,6 +243,15 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 }
                 final T entity = db.load(rid);
                 if (null != softDeleteAnnotation) {
+                    // BUG #23 hunting BEGIN
+                    LOG.info("BUG23, L1: enabled=" + db.getLevel1Cache().isEnabled() + ", size=" + db.getLevel1Cache().getSize());
+                    LOG.info("BUG23, L1: rid=" + rid.toString() + ", cached=" + db.getLevel1Cache().findRecord(rid));
+                    //db.getLevel1Cache().clear(); //deleteRecord(rid);
+                    // --
+                    LOG.info("BUG23, L2: enabled=" + db.getLevel2Cache().isEnabled() + ", size=" + db.getLevel2Cache().getSize());
+                    LOG.info("BUG23, L2: rid=" + rid.toString() + ", cached=" + db.getLevel2Cache().freeRecord(rid));
+                    //db.getLevel2Cache().clear();
+                    // BUG #23 hunting END
                     entity.setDeletedAt(new Date());
                     entity.setDeletedBy(appCtx.getLoggedInUserIdSoftly());
                     db.save(entity);
