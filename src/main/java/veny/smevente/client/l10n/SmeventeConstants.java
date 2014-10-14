@@ -122,7 +122,7 @@ public interface SmeventeConstants extends Constants {
     String newPassword();
     String newPasswordAgain();
     String changePassword();
-    String smsStatistics();
+    String eventStatistics();
     String passwordChanged();
     String[] noPatientInUnit();
     String[] noMhcInUnit();

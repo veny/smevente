@@ -236,7 +236,7 @@ public class EventServiceImpl implements EventService {
     /** {@inheritDoc} */
     @Transactional(readOnly = true)
     @Override
-    public List<Pair<User, Map<String, Integer>>> getEventStatistic(
+    public List<Pair<User, Map<String, Integer>>> getEventStatistics(
             final Object unitId, final Object userId, final Date from, final Date to) {
 
         throw new IllegalStateException("not implemented yet");

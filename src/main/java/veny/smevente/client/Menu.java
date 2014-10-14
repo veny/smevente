@@ -82,8 +82,8 @@ public class Menu extends MenuBar implements HeaderHandler {
         // separator
         bar.addSeparator();
         // Main / SMS Statistic
-//        item = createSwitchUcMenuItem(CONSTANTS.smsStatistics(), PresenterEnum.SMS_STATISTIC);
-//        bar.addItem(item);
+        item = createSwitchUcMenuItem(CONSTANTS.eventStatistics(), PresenterEnum.EVENT_STATISTIC);
+        bar.addItem(item);
         // Main / Change password
         item = createSwitchUcMenuItem(CONSTANTS.changePassword(), PresenterEnum.CHANGE_PASSWORD);
         bar.addItem(item);

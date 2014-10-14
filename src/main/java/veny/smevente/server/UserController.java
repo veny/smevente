@@ -3,6 +3,7 @@ package veny.smevente.server;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import veny.smevente.client.utils.Pair;
 import veny.smevente.misc.AppContext;
 import veny.smevente.model.Event;
 import veny.smevente.model.Membership;
@@ -318,33 +320,31 @@ public class UserController {
 //
 //        return modelAndView;
 //    }
-//
-//    /**
-//     * Gets list of SMSs for given period.
-//     *
-//     * @param request HTTP request
-//     * @param userId author ID
-//     * @param unitId unit ID
-//     * @param from date from
-//     * @param to date to
-//     * @return list of <code>Sms</code> as JSON
-//     */
-//    @RequestMapping(value = "/{userId}/unit/{unitId}/from/{from}/to/{to}/", method = RequestMethod.GET)
-//    public ModelAndView getSmsStatistics(
-//            final HttpServletRequest request,
-//            @PathVariable("userId") final Long userId,
-//            @PathVariable("unitId") final Long unitId,
-//            @PathVariable("from") final long from,
-//            @PathVariable("to") final long to) {
-//
-//        List<Pair<User, Map<String, Integer>>> rslt =
-//            smsService.getSmsStatistic(unitId, userId, new Date(from), new Date(to));
-//
-//        final ModelAndView modelAndView = new ModelAndView("jsonView");
-//        modelAndView.addObject("smsStatistics", rslt);
-//
-//        return modelAndView;
-//    }
+
+    /**
+     * Gets list of events for given period.
+     *
+     * @param userId author ID
+     * @param unitId unit ID
+     * @param from date from
+     * @param to date to
+     * @return list of <code>Sms</code> as JSON
+     */
+    @RequestMapping(value = "/{userId}/unit/{unitId}/from/{from}/to/{to}/", method = RequestMethod.GET)
+    public ModelAndView getSmsStatistics(
+            @PathVariable("userId") final String userId,
+            @PathVariable("unitId") final String unitId,
+            @PathVariable("from") final Date from,
+            @PathVariable("to") final Date to) {
+
+        List<Pair<User, Map<String, Integer>>> rslt =
+            eventService.getEventStatistics(unitId, userId, from, to);
+
+        final ModelAndView modelAndView = new ModelAndView("jsonView");
+        modelAndView.addObject("statistics", rslt);
+
+        return modelAndView;
+    }
 
     // ----------------------------------------------------------- Helper Stuff
 

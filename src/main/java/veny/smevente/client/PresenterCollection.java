@@ -83,8 +83,8 @@ public class PresenterCollection {
         SPECIAL_MESSAGES,
         /** Patient History. */
         PATIENT_HISTORY,
-        /** SMS statistic. */
-        SMS_STATISTIC,
+        /** Event statistic. */
+        EVENT_STATISTIC,
         /** Change password. */
         CHANGE_PASSWORD;
 
@@ -247,7 +247,7 @@ public class PresenterCollection {
                         new ProcedureListViewImpl(Event.Type.IMMEDIATE_MESSAGE));
                 presenter = specialMedicalHelpCategoryTypesPresenter;
                 break;
-            case SMS_STATISTIC:
+            case EVENT_STATISTIC:
                 SmsStatisticPresenter smsStatisticPresenter = new SmsStatisticPresenter();
                 smsStatisticPresenter.bind(new SmsStatisticViewImpl());
                 presenter = smsStatisticPresenter;

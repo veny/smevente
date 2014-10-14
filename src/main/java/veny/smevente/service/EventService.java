@@ -99,6 +99,7 @@ public interface EventService {
      * <li>only one item if given user is MEMBER in given unit
      * <li>list of items for all unit members if the given user is ADMIN in given unit
      * </ul>
+     * The keys in map for given users are: Event.DELETED, Event.SENT, Event.FAILED, Event.SUM.
      *
      * @param unitId unit ID
      * @param userId user ID
@@ -106,7 +107,7 @@ public interface EventService {
      * @param to date to
      * @return list of event statistics
      */
-    List<Pair<User, Map<String, Integer>>> getEventStatistic(Object unitId, Object userId, Date from, Date to);
+    List<Pair<User, Map<String, Integer>>> getEventStatistics(Object unitId, Object userId, Date from, Date to);
 
     /**
      * Loads all events.
