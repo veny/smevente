@@ -12,9 +12,15 @@ public final class ClientTextUtils {
     /** Czech diacritics. */
     public static final char[][] CZ_2_ASCII = {
         { 'á', 'č', 'ď', 'é', 'ě', 'í', 'ň', 'ó', 'ř', 'š', 'ť', 'ú', 'ů', 'ý', 'ž',
-          'Á', 'Č', 'Ď', 'É', 'Ě', 'Í', 'Ň', 'Ó', 'Ř', 'Š', 'Ť', 'Ú',      'Ý', 'Ž' },
+          'Á', 'Č', 'Ď', 'É', 'Ě', 'Í', 'Ň', 'Ó', 'Ř', 'Š', 'Ť', 'Ú',      'Ý', 'Ž',
+          'ä', 'ö', 'ü',
+          'Ä', 'Ö', 'Ü'
+        },
         { 'a', 'c', 'd', 'e', 'e', 'i', 'n', 'o', 'r', 's', 't', 'u', 'u', 'y', 'z',
-          'A', 'C', 'D', 'E', 'E', 'I', 'N', 'O', 'R', 'S', 'T', 'U',      'Y', 'Z' },
+          'A', 'C', 'D', 'E', 'E', 'I', 'N', 'O', 'R', 'S', 'T', 'U',      'Y', 'Z',
+          'a', 'o', 'u',
+          'A', 'O', 'U'
+        },
     };
 
     /** Suppresses default constructor, ensuring non-instantiability. */
@@ -45,16 +51,6 @@ public final class ClientTextUtils {
             }
         }
         return rslt.toString();
-    }
-
-    /**
-     * For testing purposes.
-     * @param args CLI arguments
-     */
-    public static void main(final String[] args) {
-        System.out.println(convert2ascii("Žluťoučký kůň pěl ďábelské ódy")); //CSOFF
-        System.out.println(convert2ascii("Vladimír Šťovíček")); //CSOFF
-        System.out.println(convert2ascii("Špůr Josef")); //CSOFF
     }
 
 }
