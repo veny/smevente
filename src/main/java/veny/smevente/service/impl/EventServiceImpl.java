@@ -309,8 +309,17 @@ public class EventServiceImpl implements EventService {
      * @return the event with persisted corresponding attributes
      */
     private Event send(final Event event2send, final boolean watchLimitOnUnit) {
-        final Customer customer = event2send.getCustomer();
-        final Unit unit = customer.getUnit();
+        Customer customer = event2send.getCustomer();
+        Unit unit = customer.getUnit();
+        // workaround for a strange behavior of ODB v1.7.9
+        // ^^ sometimes the unit is null
+        // ^^ after that, procedure of last sent event is stored with unit==null !!
+        if (null == unit) {
+            LOG.warn("unit on customer is NULL, reload of customer with id=" + customer.getId());
+            customer = customerDao.getById(customer.getId());
+            unit = customer.getUnit();
+        }
+        // end of workaround
         assertLimitedUnit(unit);
 
         final String text2send = format(event2send);
@@ -327,7 +336,7 @@ public class EventServiceImpl implements EventService {
             emailOk = sendEmail(event2send);
         }
 
-        LOG.info("event sent, id=" + event2send.getId() + ", smsOk=" + smsOk + ", emailOk=" + emailOk
+        LOG.info("event to be sent, id=" + event2send.getId() + ", smsOk=" + smsOk + ", emailOk=" + emailOk
                 + ", text=" + text2send);
         if (smsOk || emailOk) {
             event2send.setSent(new Date());
