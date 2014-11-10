@@ -33,6 +33,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  */
 public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements GenericDao< T > {
 
+    /** Logger. */
     private static final Logger LOG = Logger.getLogger(AbstractDaoOrientdb.class.getName());
 
     /** Class of target entity. */
