@@ -88,13 +88,16 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                         .append(" AND sent IS NULL")
                         .append(" AND (sendAttemptCount IS NULL OR sendAttemptCount < :sac) ORDER BY startTime ASC");
                 final Map<String, Object> params = new HashMap<String, Object>();
-
                 params.put("unit", unit.getId());
                 params.put("olderThan", dateFormat.format(olderThan));
                 params.put("sac", 3);
 
+                //db.browseClass(Event.class).setFetchPlan("*:0 customer.unit:0 author:0"); // BF#23
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                for (final Event entity : rslt) { db.detachAll(entity, false); }
+                for (final Event entity : rslt) {
+                    entity.getAuthor(); entity.getCustomer(); entity.getCustomer().getUnit(); /** <-- BF23: make eager load before detach */
+                    db.detachAll(entity, false);
+                }
                 return rslt;
             }
         });

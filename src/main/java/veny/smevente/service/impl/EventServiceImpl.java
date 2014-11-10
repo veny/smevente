@@ -315,9 +315,10 @@ public class EventServiceImpl implements EventService {
         // ^^ sometimes the unit is null
         // ^^ after that, procedure of last sent event is stored with unit==null !!
         if (null == unit) {
-            LOG.warn("unit on customer is NULL, reload of customer with id=" + customer.getId());
+            LOG.warn("BUG23, unit on customer is NULL, reload of customer with id=" + customer.getId());
             customer = customerDao.getById(customer.getId());
-            unit = customer.getUnit();
+            unit = unitDao.getById(customer.getUnit().getId());
+            //customer.setUnit(unit);
         }
         // end of workaround
         assertLimitedUnit(unit);
