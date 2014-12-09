@@ -242,7 +242,8 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                         throw new IllegalArgumentException("ID has to be OrientDB RID");
                     }
                 }
-                final T entity = db.load(rid);
+//                final T entity = db.load(rid);
+                final T entity = db.load(rid, "*:2", true); // BUG #23 load Event with Procedure->Unit & Customer->Unit
                 if (null != softDeleteAnnotation) {
                     // BUG #23 hunting BEGIN
                     LOG.info("BUG23, L1: enabled=" + db.getLevel1Cache().isEnabled() + ", size=" + db.getLevel1Cache().getSize());
