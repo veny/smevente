@@ -79,24 +79,21 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
     public List<Event> findEvents2BulkSend(final Unit unit, final Date olderThan) {
 
         return getDatabaseWrapper().execute(new ODatabaseCallback<List<Event>>() {
-            @Override
-            public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
-                final StringBuilder sql = new StringBuilder("SELECT FROM ")
-                        .append(getPersistentClass().getSimpleName())
-                        .append(" WHERE customer.unit = :unit")
-                        .append(" AND startTime < :olderThan")
+            @Override public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
+                final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName())
+                        .append(" WHERE customer.unit = :unit").append(" AND startTime < :olderThan")
                         .append(" AND sent IS NULL")
                         .append(" AND (sendAttemptCount IS NULL OR sendAttemptCount < :sac) ORDER BY startTime ASC");
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("unit", unit.getId());
                 params.put("olderThan", dateFormat.format(olderThan));
                 params.put("sac", 3);
-
-                //db.browseClass(Event.class).setFetchPlan("*:0 customer.unit:0 author:0"); // BF#23
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                for (final Event entity : rslt) {
-                    entity.getAuthor(); entity.getCustomer(); entity.getCustomer().getUnit(); /** <-- BF23: make eager load before detach */
-                    db.detachAll(entity, false);
+                for (final Event event : rslt) {
+                    event.getAuthor(); /** BF23: make eager load before detach */
+                    event.getCustomer(); event.getCustomer().getUnit(); /** BF23 */
+                    event.getProcedure(); event.getProcedure().getUnit(); /** BF23 */
+                    db.detachAll(event, false);
                 }
                 return rslt;
             }

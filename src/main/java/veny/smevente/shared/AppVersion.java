@@ -12,7 +12,8 @@ public interface AppVersion {
 
     /** Versions history. */
     String[][] VERSIONS = new String[][] {
-        {"0.4.4", "09.12.2014", "BF#23 again"},
+        {"0.4.5", "16.12.2014", "BF#23 again (Event bulk send)"},
+        {"0.4.4", "09.12.2014", "BF#23 again (delete Event)"},
         {"0.4.3", "10.11.2014", "BF#39, BF#23 again"},
         {"0.4.2", "07.10.2014", "Enh#38, OrientDB v1.7.9"},
         {"0.4.1", "18.09.2014", "BF#23 again, BF#33"},
