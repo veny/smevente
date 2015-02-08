@@ -211,7 +211,13 @@ public class EventServiceImpl implements EventService {
             final List<Event> foundEvents = eventDao.findEvents2BulkSend(unit, olderThan);
             LOG.info("found events to bulk send, size=" + foundEvents.size() + ", unit=" + unit.getName());
 
-            for (final Event event : foundEvents) {
+            for (final Event fe : foundEvents) {
+                /** BF23 begin */
+                final Event event = eventDao.getById(fe.getId());
+                event.getAuthor(); /** BF23: make eager load before detach */
+                event.getCustomer(); event.getCustomer().getUnit();
+                event.getProcedure(); event.getProcedure().getUnit();
+                /** BF23 end */
                 try {
                     final Event maybeSent = send(event, false);
                     if (null != maybeSent.getSent()) {
