@@ -310,7 +310,7 @@ public class HeaderPresenter extends AbstractPresenter<HeaderPresenter.HeaderVie
         rest.setCallback(new AbstractRestCallbackWithErrorHandling() {
             @Override
             public void onSuccess(final String jsonText) {
-                App.get().setPatients(
+                App.get().setCustomers(
                         App.get().getJsonDeserializer().deserializeList(Customer.class, "patients", jsonText));
                 App.get().setProcedures(
                         App.get().getJsonDeserializer().deserializeList(
