@@ -89,6 +89,11 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("invalid value of significance: " + significance);
         }
 
+        // set timezone if not set
+        if (null == user.getTimezone() || 0 == user.getTimezone().trim().length()) {
+            user.setTimezone("Europe/Prague");
+        }
+
         // find unit
         final Unit unit = unitDao.getById(unitId);
 
