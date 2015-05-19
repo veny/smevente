@@ -81,8 +81,8 @@ public final class App implements ValueChangeHandler<String> {
     private List<Membership> memberships;
     /** List of other members in currently selected unit. */
     private List<User> unitMembers;
-    /** List of available patients in currently selected unit. */
-    private List<Customer> patients;
+    /** List of available customers in currently selected unit. */
+    private List<Customer> customers;
     /** List of available procedures in currently selected unit. */
     private List<Procedure> procedures;
 
@@ -424,18 +424,18 @@ public final class App implements ValueChangeHandler<String> {
     }
 
     /**
-     * Gets available patients in currently selected unit.
-     * @return patients in currently selected unit
+     * Gets available customers in currently selected unit.
+     * @return customers in currently selected unit
      */
-    public List<Customer> getPatients() {
-        return patients;
+    public List<Customer> getCustomers() {
+        return customers;
     }
     /**
-     * Sets patients for currently selected unit.
-     * @param patients patients for currently selected unit
+     * Sets customers for currently selected unit.
+     * @param customers customers for currently selected unit
      */
-    public void setPatients(final List<Customer> patients) {
-        this.patients = patients;
+    public void setCustomers(final List<Customer> customers) {
+        this.customers = customers;
     }
 
     /**
