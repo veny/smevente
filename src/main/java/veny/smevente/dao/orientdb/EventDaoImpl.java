@@ -89,12 +89,9 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                 params.put("olderThan", dateFormat.format(olderThan));
                 params.put("sac", 3);
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                for (final Event event : rslt) {
-//                    event.getAuthor(); /** BF23: make eager load before detach */
-//                    event.getCustomer(); event.getCustomer().getUnit(); /** BF23 */
-//                    event.getProcedure(); event.getProcedure().getUnit(); /** BF23 */
-                    db.detachAll(event, false);
-                }
+//                for (final Event event : rslt) {
+//                    db.detachAll(event, false);
+//                }
                 return rslt;
             }
         });
