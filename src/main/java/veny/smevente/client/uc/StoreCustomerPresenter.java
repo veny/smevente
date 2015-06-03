@@ -407,6 +407,7 @@ public class StoreCustomerPresenter
         rest.setCallback(new AbstractRestCallbackWithValidation() {
             @Override
             public void onSuccess(final String jsonText) {
+                c.asciiFullname(); // BF 41 - ASCII full name must be updated, is used by the suggestion oracle
                 if (null == c.getId()) {
                     final Customer customer = App.get().getJsonDeserializer().deserialize(
                             Customer.class, "customer", jsonText);
