@@ -42,7 +42,7 @@ public class CustomerNameSuggestOracle extends SuggestOracle {
 
         // only begin to search after the user has type one character
         if (query.length() >= 1) {
-            String prefixToMatch = query.toLowerCase();
+            final String prefixToMatch = query.toLowerCase();
 
             for (int i = 0; i < customers.size() && matching.size() < limit; i++) {
                 if (matches(customers.get(i), prefixToMatch)) {
