@@ -12,6 +12,8 @@ public interface AppVersion {
 
     /** Versions history. */
     String[][] VERSIONS = new String[][] {
+        {"0.4.8", "03.06.2015", "BF#42"},
+        {"0.4.7", "19.05.2015", "BF#23 again, BF #40, BF #41"},
         {"0.4.6", "08.02.2015", "BF#23 again (Event bulk send)"},
         {"0.4.5", "16.12.2014", "BF#23 again (Event bulk send)"},
         {"0.4.4", "09.12.2014", "BF#23 again (delete Event)"},
