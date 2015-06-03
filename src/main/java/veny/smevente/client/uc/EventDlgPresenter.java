@@ -144,13 +144,13 @@ public class EventDlgPresenter extends AbstractPresenter<EventDlgPresenter.Event
         view.getStartMinute().setItemSelected(startTime.getMinutes() / 5, true);
 
         // Customer Name Suggestion
-        CustomerNameSuggestOracle oracle = (CustomerNameSuggestOracle) view.getNameSuggestBox().getSuggestOracle();
-        oracle.setCustomers(customers);
+        final CustomerNameSuggestOracle orc = (CustomerNameSuggestOracle) view.getNameSuggestBox().getSuggestOracle();
+        orc.setCustomers(customers);
 
-        // Medical Help Category
+        // Procedures
         procedures = mhcs;
-        for (Procedure mhc : procedures) {
-            view.getProcedure().addItem(mhc.getName());
+        for (Procedure procedure : procedures) {
+            view.getProcedure().addItem(procedure.getName());
         }
         view.getProcedure().addChangeHandler(new ChangeHandler() {
             @Override
