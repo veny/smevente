@@ -147,7 +147,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     @Override
     public void create(final CrudEvent event) {
         if (event.getData() instanceof Customer) {
-            App.get().getPatients().add((Customer) event.getData());
+            App.get().getCustomers().add((Customer) event.getData());
         } else if (event.getData() instanceof Procedure) {
             App.get().getAllProcedures().add((Procedure) event.getData());
         }
@@ -159,9 +159,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     @Override
     public void update(final CrudEvent event) {
         if (event.getData() instanceof Customer) {
-            final int idx = getPatientIndex(((Customer) event.getData()).getId());
+            final int idx = getCustomerIndex(((Customer) event.getData()).getId());
             if (-1 != idx) {
-                App.get().getPatients().set(idx, (Customer) event.getData());
+                App.get().getCustomers().set(idx, (Customer) event.getData());
             }
         } else if (event.getData() instanceof Procedure) {
             final int idx = getProcedureIndex(((Procedure) event.getData()).getId());
@@ -174,9 +174,9 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     @Override
     public void delete(final CrudEvent event) {
         if (event.getData() instanceof Customer) {
-            final int idx = getPatientIndex(((Customer) event.getData()).getId());
+            final int idx = getCustomerIndex(((Customer) event.getData()).getId());
             if (-1 != idx) {
-                App.get().getPatients().remove(idx);
+                App.get().getCustomers().remove(idx);
             }
         } else if (event.getData() instanceof Procedure) {
             final int idx = getProcedureIndex(((Procedure) event.getData()).getId());
@@ -430,7 +430,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     private void updateDlg(final EventWidget smsWidget) {
         final EventDlgPresenter p =
             (EventDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
-        p.init(smsWidget.getEvent(), App.get().getPatients(), App.get().getProcedures(Event.Type.IN_CALENDAR));
+        p.init(smsWidget.getEvent(), App.get().getCustomers(), App.get().getProcedures(Event.Type.IN_CALENDAR));
         final SmeventeDialog dlg = new SmeventeDialog("SMS", p);
 
         dlg.getOkButton().addClickHandler(new ClickHandler() {
@@ -533,7 +533,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
      */
     @SuppressWarnings("deprecation")
     private void displayEventDialog(final int eventX, final int eventY, final DayColumn col) {
-        if (App.get().getPatients().isEmpty()) {
+        if (App.get().getCustomers().isEmpty()) {
             Window.alert(CONSTANTS.noPatientInUnit()[App.get().getSelectedUnitTextVariant()]);
         } else if (App.get().getProcedures(Event.Type.IN_CALENDAR).isEmpty()) {
             Window.alert(CONSTANTS.noMhcInUnit()[App.get().getSelectedUnitTextVariant()]);
@@ -547,7 +547,7 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
 
             final EventDlgPresenter eventDlgPresenter =
                 (EventDlgPresenter) App.get().getPresenterCollection().getPresenter(PresenterEnum.SMS_DLG);
-            eventDlgPresenter.init(dateTime, App.get().getPatients(), App.get().getProcedures(Event.Type.IN_CALENDAR));
+            eventDlgPresenter.init(dateTime, App.get().getCustomers(), App.get().getProcedures(Event.Type.IN_CALENDAR));
             final SmeventeDialog dlg = new SmeventeDialog(CONSTANTS.event(), eventDlgPresenter);
 //            dlg.setPopupPosition(eventX, eventY);
             dlg.center();
@@ -625,15 +625,15 @@ public class CalendarPresenter extends AbstractPresenter<CalendarPresenter.Calen
     }
 
     /**
-     * Finds a patient in App's patient cache according to given patient ID.
-     * @param patientId ID to search
-     * @return <i>-1</i> if not found, otherwise the patient index
+     * Finds a customer in App's customer cache according to given ID.
+     * @param customerId ID to search
+     * @return <i>-1</i> if not found, otherwise the customer's index
      */
-    private int getPatientIndex(final Object patientId) {
-        if (null == patientId) { throw new NullPointerException("patient ID cannot be null"); }
-        if (null != App.get().getPatients()) {
-            for (int i = 0; i < App.get().getPatients().size(); i++) {
-                if (App.get().getPatients().get(i).getId().equals(patientId)) { return i; }
+    private int getCustomerIndex(final Object customerId) {
+        if (null == customerId) { throw new NullPointerException("customer ID cannot be null"); }
+        if (null != App.get().getCustomers()) {
+            for (int i = 0; i < App.get().getCustomers().size(); i++) {
+                if (App.get().getCustomers().get(i).getId().equals(customerId)) { return i; }
             }
         }
         return -1;
