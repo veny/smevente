@@ -110,14 +110,17 @@ public class EventServiceImpl implements EventService {
 
         final Event toBeStored;
         if (null != event.getId()) {
+            if (LOG.isDebugEnabled()) { LOG.debug("event with ID -> load + update"); }
             GenericDao.OPTIONS_HOLDER.get().put("detach", "false");
             toBeStored = eventDao.getById(event.getId());
             event.copyForUpdate(toBeStored);
         } else {
+            if (LOG.isDebugEnabled()) { LOG.debug("event without ID -> create"); }
             toBeStored = event;
         }
 
         validateEvent(toBeStored);
+        semiEagerLoad(toBeStored);
 
         final Event rslt = eventDao.persist(toBeStored);
         LOG.info((null == toBeStored.getId() ? "created new event, " : "event updated, ") + rslt);
@@ -214,9 +217,7 @@ public class EventServiceImpl implements EventService {
             for (final Event fe : foundEvents) {
                 /** BF23 begin */
                 final Event event = eventDao.getById(fe.getId());
-                event.getAuthor(); /** BF23: make eager load before detach */
-                event.getCustomer(); event.getCustomer().getUnit();
-                event.getProcedure(); event.getProcedure().getUnit();
+                semiEagerLoad(event);
                 /** BF23 end */
                 try {
                     final Event maybeSent = send(event, false);
@@ -532,6 +533,16 @@ public class EventServiceImpl implements EventService {
             throw new IllegalStateException("failed to parse unit's options", e);
         }
         return rslt;
+    }
+
+    /**
+     * Simulate eager load to ensure all associations are load (BF23).
+     * @param event event where all associations will be loaded
+     */
+    private void semiEagerLoad(final Event event) {
+        event.getAuthor();
+        event.getCustomer(); event.getCustomer().getUnit();
+        event.getProcedure(); event.getProcedure().getUnit();
     }
 
     /**
