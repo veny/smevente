@@ -543,6 +543,10 @@ public class EventServiceImpl implements EventService {
         event.getAuthor();
         event.getCustomer(); event.getCustomer().getUnit();
         event.getProcedure(); event.getProcedure().getUnit();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("semiEagerLoad of event: customer.unit.id=" + event.getCustomer().getUnit().getId()
+                    + ", procedure.unit.id=" + event.getProcedure().getUnit().getId());
+        }
     }
 
     /**
