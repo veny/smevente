@@ -98,6 +98,7 @@ public class EventServiceImpl implements EventService {
             throw new NullPointerException("unknown customer");
         }
         GenericDao.OPTIONS_HOLDER.get().put("detach", "false");
+        GenericDao.OPTIONS_HOLDER.get().put("fetch", "tree");
         final Customer customer = customerDao.getById(event.getCustomer().getId());
         event.setCustomer(customer);
         // procedure
@@ -105,6 +106,7 @@ public class EventServiceImpl implements EventService {
             throw new NullPointerException("unknown procedure");
         }
         GenericDao.OPTIONS_HOLDER.get().put("detach", "false");
+        GenericDao.OPTIONS_HOLDER.get().put("fetch", "tree");
         final Procedure proc = procedureDao.getById(event.getProcedure().getId());
         event.setProcedure(proc);
 
@@ -544,8 +546,10 @@ public class EventServiceImpl implements EventService {
         event.getCustomer(); event.getCustomer().getUnit();
         event.getProcedure(); event.getProcedure().getUnit();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("semiEagerLoad of event: customer.unit.id=" + event.getCustomer().getUnit().getId()
-                    + ", procedure.unit.id=" + event.getProcedure().getUnit().getId());
+            final Object customerUnitId = event.getCustomer().getUnit().getId();
+            final Object procUnitId = event.getProcedure().getUnit().getId();
+            LOG.debug("semiEagerLoad of event: customer.unit.id=" + customerUnitId
+                    + ", procedure.unit.id=" + procUnitId);
         }
     }
 

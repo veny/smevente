@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import veny.smevente.dao.DeletedObjectException;
@@ -33,7 +34,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements GenericDao< T > {
 
     /** Logger. */
-//    private static final Logger LOG = Logger.getLogger(AbstractDaoOrientdb.class.getName());
+    private static final Logger LOG = Logger.getLogger(AbstractDaoOrientdb.class.getName());
 
     /** Class of target entity. */
     private final Class< T > persistentClass;
@@ -93,15 +94,23 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                         throw new ObjectNotFoundException("ID has to be OrientDB RID, id=" + id.toString());
                     }
                 }
+                final Map<String, String> opts = GenericDao.OPTIONS_HOLDER.get();
                 final T rslt;
-                try { rslt = db.load(rid); } catch (final Exception e) {
+                try {
+                    if (opts.containsKey("fetch") && opts.get("fetch").equalsIgnoreCase("tree")) {
+                        LOG.debug("loading with tree fetch plan, class=" + getPersistentClass().getSimpleName()
+                                + ", rid=" + rid);
+                        rslt = db.load(rid, "*:-1");
+                    } else {
+                        rslt = db.load(rid);
+                    }
+                } catch (final Exception e) {
                     throw new ObjectNotFoundException(
                             "entity '" + getPersistentClass().getSimpleName() + "' not found, id=" + id, e);
                 }
                 assertNotSoftDeleted(rslt);
                 // detach?
-                final Map<String, String> opts = GenericDao.OPTIONS_HOLDER.get();
-                if (!opts.containsKey("detach")
+                if (!opts.containsKey("detach") // by default: detach
                         || (opts.containsKey("detach") && opts.get("detach").equalsIgnoreCase("true"))) {
                     db.detachAll(rslt, false);
                 }
