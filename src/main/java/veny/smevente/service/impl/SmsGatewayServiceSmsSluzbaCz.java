@@ -126,7 +126,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
             if (null == failure) {
                 LOG.info("SMS sent, number=" + number + ", msg=" + msg + ", data=" + data);
             } else {
-                LOG.error("failed to sent SMS, number=" + number
+                LOG.error("failed to send SMS, number=" + number
                         + ", data=" + data + ", failure=" + failure.getMessage());
                 throw failure;
             }
