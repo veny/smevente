@@ -119,5 +119,12 @@ public interface GenericDao<T extends AbstractEntity> {
      */
     T detach(T entity);
 
+    /**
+     * Reloads a given object from database (with tree fetch plan and ignoring cache).
+     *
+     * @param entity object to be reloaded
+     * @return the reloaded object
+     */
+    T reload(T entity);
 }
 

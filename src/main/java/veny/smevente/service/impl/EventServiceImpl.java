@@ -538,7 +538,7 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * Simulate eager load to ensure all associations are load (BF23).
+     * Simulate eager load to ensure all associations are load (BF23, BF42).
      * @param event event where all associations will be loaded
      */
     private void semiEagerLoad(final Event event) {
@@ -546,6 +546,14 @@ public class EventServiceImpl implements EventService {
         event.getCustomer(); event.getCustomer().getUnit();
         event.getProcedure(); event.getProcedure().getUnit();
         if (LOG.isDebugEnabled()) {
+            if (null == event.getCustomer().getUnit()) {
+                LOG.warn("BF#42, customer without unit, id=" + event.getCustomer().getId());
+                customerDao.reload(event.getCustomer());
+            }
+            if (null == event.getProcedure().getUnit()) {
+                LOG.warn("BF#42, procedure without unit, id=" + event.getProcedure().getId());
+                procedureDao.reload(event.getProcedure());
+            }
             final Object customerUnitId = event.getCustomer().getUnit().getId();
             final Object procUnitId = event.getProcedure().getUnit().getId();
             LOG.debug("semiEagerLoad of event: customer.unit.id=" + customerUnitId

@@ -100,7 +100,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                     if (opts.containsKey("fetch") && opts.get("fetch").equalsIgnoreCase("tree")) {
                         LOG.debug("loading with tree fetch plan, class=" + getPersistentClass().getSimpleName()
                                 + ", rid=" + rid);
-                        rslt = db.load(rid, "*:-1");
+                        rslt = db.load(rid, "*:-1", true);
                     } else {
                         rslt = db.load(rid);
                     }
@@ -268,6 +268,12 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
         return databaseWrapper.get().detachAll(entity, false);
     }
 
+
+    /** {@inheritDoc} */
+    @Override
+    public T reload(final T entity) {
+        return databaseWrapper.get().reload(entity, "*:-1", true);
+    }
 
     // ------------------------------------------------------ Soft Delete Stuff
 
