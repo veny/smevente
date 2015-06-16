@@ -11,9 +11,15 @@
 
     <title>SmeventE</title>
 
-    <!-- http://getaninsight.com
-    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="js/getaninsight.js"></script> -->
+    <!-- doorbell.io Script -->
+    <script type="text/javascript">
+    window.doorbellOptions = {
+        appKey: '6Yoi3Xjnrux1I9xE9YlMzfcGfjECeINEcmTzDNXL1XsUFiQAGXJkOEiBZr3fV7V4'
+    };
+    (function(d, t) {
+        var g = d.createElement(t);g.id = 'doorbellScript';g.type = 'text/javascript';g.async = true;g.src = 'https://embed.doorbell.io/button/1551?t='+(new Date().getTime());(d.getElementsByTagName('head')[0]||d.getElementsByTagName('body')[0]).appendChild(g);
+    }(document, 'script'));
+    </script>
   </head>
 
   <body>
