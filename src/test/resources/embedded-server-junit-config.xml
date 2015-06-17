@@ -10,13 +10,12 @@
     </listeners>
   </network>
   <storages/>
-  <security>
-    <users>
-      <user name="root" password="root" resources="*"/>
-    </users>
-    <resources/>
-  </security>
+  <users>
+    <user name="root" password="root" resources="*"/>
+  </users>
   <properties>
     <entry name="log.console.level" value="fine"/>
+    <!-- The following is required to eliminate an error or warning "Error on resolving property: ORIENTDB_HOME" -->
+    <entry name="plugin.dynamic" value="false"/>
   </properties>
 </orient-server>
