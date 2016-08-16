@@ -12,6 +12,7 @@ public interface AppVersion {
 
     /** Versions history. */
     String[][] VERSIONS = new String[][] {
+        {"0.6.0",  "16.08.2016", "GWT v2.7, OrientDB v2.2.2"},
         {"0.5.0",  "16.06.2015", "Enh#34"},
         {"0.4.10", "10.06.2015", "BF#42, OrientDB v2.0.10"},
         {"0.4.9",  "10.06.2015", "BF#42"},
