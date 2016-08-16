@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+    orientdb:
+        image: veny/orientdb
+        container_name: smevente.orientdb
+        labels:
+            docker.environment: "development"
+        environment:
+            ORIENTDB_ROOT_PASSWORD: root
+        ports:
+            - 2424:2424
+            - 2480:2490
+        volumes:
+            - ../../../databases:/opt/orientdb/databases
