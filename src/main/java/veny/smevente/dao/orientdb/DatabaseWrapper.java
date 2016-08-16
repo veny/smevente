@@ -118,9 +118,9 @@ public final class DatabaseWrapper implements DisposableBean {
      * @return object represent API to access data
      */
     public OObjectDatabaseTx get() {
-    	// Ugly hack for ODB 2.0.10 -> 2.2.7
-    	// com.orientechnologies.orient.core.exception.OConfigurationException: Error on opening database: the engine 'remote' was not found
-    	// with Jetty class loader in Super Dev mode
+        // Ugly hack for ODB 2.0.10 -> 2.2.7
+        // com.orientechnologies.orient.core.exception.OConfigurationException: Error on opening database: the engine 'remote' was not found
+        // with Jetty class loader in Super Dev mode
         try {
             Class.forName("com.orientechnologies.orient.client.remote.OEngineRemote");
         } catch (ClassNotFoundException e) {
@@ -131,7 +131,7 @@ public final class DatabaseWrapper implements DisposableBean {
         // java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
         // see https://github.com/orientechnologies/orientdb/issues/5146
         if (ODatabaseRecordThreadLocal.INSTANCE == null) {
-		    System.err.println("Calling this manually normally prevent initialization issues.");
+            System.err.println("Calling this manually normally prevent initialization issues.");
         }
         return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
     }
