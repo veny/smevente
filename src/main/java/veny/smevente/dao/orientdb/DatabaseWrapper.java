@@ -14,6 +14,7 @@ import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 
 import com.orientechnologies.orient.core.config.OStorageConfiguration;
+import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -117,6 +118,21 @@ public final class DatabaseWrapper implements DisposableBean {
      * @return object represent API to access data
      */
     public OObjectDatabaseTx get() {
+    	// Ugly hack for ODB 2.0.10 -> 2.2.7
+    	// com.orientechnologies.orient.core.exception.OConfigurationException: Error on opening database: the engine 'remote' was not found
+    	// with Jetty class loader in Super Dev mode
+        try {
+            Class.forName("com.orientechnologies.orient.client.remote.OEngineRemote");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("did you insert the orientdb-client.jar into your classpath?", e);
+        }
+
+        // Ugly hack for ODB 2.0.10 -> 2.2.7
+        // java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
+        // see https://github.com/orientechnologies/orientdb/issues/5146
+        if (ODatabaseRecordThreadLocal.INSTANCE == null) {
+		    System.err.println("Calling this manually normally prevent initialization issues.");
+        }
         return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
     }
 
