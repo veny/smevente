@@ -191,7 +191,7 @@ public class Schema {
         Map<String, String> procDef = new HashMap<String, String>();
         procDef.put("beleni", "Procedure SET unit = %foo%, name = 'Bělení', messageText = 'Prijdte na beleni dne #{date} v #{time}, #{doctor}', type = 'IN_CALENDAR', color = 'FF0000', time = 30");
         procDef.put("trhani", "Procedure SET unit = %foo%, name = 'Extrakce', messageText = 'Trhani, #{date}, #{time}, #{doctor}', type = 'IN_CALENDAR', color = '00FF00', time = 60");
-        procDef.put("p3", "Procedure SET unit = %foo%, name = 'Dovolená', messageText = 'Mame dovolenou', type => 'IMMEDIATE_MESSAGE'");
+        procDef.put("p3", "Procedure SET unit = %foo%, name = 'Dovolená', messageText = 'Mame dovolenou', type = 'IMMEDIATE_MESSAGE'");
         // Event
         final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         final Date today1 = new Date();
