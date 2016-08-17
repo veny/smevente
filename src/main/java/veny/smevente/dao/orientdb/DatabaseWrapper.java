@@ -5,19 +5,19 @@ import java.util.TimeZone;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 
-import veny.smevente.model.AbstractEntity;
-import veny.smevente.model.Event;
-import veny.smevente.model.Membership;
-import veny.smevente.model.Customer;
-import veny.smevente.model.Procedure;
-import veny.smevente.model.Unit;
-import veny.smevente.model.User;
-
 import com.orientechnologies.orient.core.config.OStorageConfiguration;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+
+import veny.smevente.model.AbstractEntity;
+import veny.smevente.model.Customer;
+import veny.smevente.model.Event;
+import veny.smevente.model.Membership;
+import veny.smevente.model.Procedure;
+import veny.smevente.model.Unit;
+import veny.smevente.model.User;
 
 /**
  * Wrapper of OrientDB engine allowing to execute commands
@@ -26,6 +26,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  * @author Vaclav Sykora [vaclav.sykora@gmail.com]
  * @since 18.8.2012
  */
+@SuppressWarnings("deprecation")
 public final class DatabaseWrapper implements DisposableBean {
 
     /** Logger. */
@@ -133,6 +134,12 @@ public final class DatabaseWrapper implements DisposableBean {
         if (ODatabaseRecordThreadLocal.INSTANCE == null) {
             System.err.println("Calling this manually normally prevent initialization issues.");
         }
+
+        // OObjectDatabasePool is deprecated, but the new approach does not work in v2.2.7
+        // => ODatabaseException: The database instance is not set in the current thread
+        //pool = new OPartitionedDatabasePool(databaseUrl, username, password);
+        //db = new OObjectDatabaseTx(pool.acquire());
+
         return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
     }
 
