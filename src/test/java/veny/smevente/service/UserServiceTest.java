@@ -60,6 +60,7 @@ public class UserServiceTest extends AbstractBaseTest {
     public void testCreateUserAndMembership() {
         final Unit unit1 = createDefaultUnit();
         User userA = new User();
+        userA.setTimezone(null);
         userA.setUsername("a");
         userA.setFullname("a a");
         userA.setPassword("a");
