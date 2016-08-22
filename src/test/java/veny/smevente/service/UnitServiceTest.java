@@ -83,10 +83,10 @@ public class UnitServiceTest extends AbstractBaseTest {
         } catch (ObjectNotFoundException e) { assertEquals(true, true); }
     }
 
-    // ---------------------------------------------------------- Patient Stuff
+    // --------------------------------------------------------- Customer Stuff
 
-    /** UnitService.storePatient (create). */
-    @Test // unit/patient/
+    /** UnitService.storeCustomer (create). */
+    @Test // unit/customer/
     public void testStoreCreatePatient() {
         final Unit unit = createDefaultUnit();
 
@@ -115,7 +115,7 @@ public class UnitServiceTest extends AbstractBaseTest {
         assertEquals("careers", firstCreated.getCareers());
         assertEquals(1, unitService.getCustomersByUnit(unit.getId()).size());
 
-        // second patient in the first unit
+        // second customer in the first unit
         final Customer secondCreated = createCustomer("a", "b", null, null, unit);
         assertNotNull(secondCreated);
         assertNotNull(secondCreated.getId());
