@@ -10,6 +10,11 @@ import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+
 import veny.smevente.dao.DeletedObjectException;
 import veny.smevente.dao.GenericDao;
 import veny.smevente.dao.ObjectNotFoundException;
@@ -17,11 +22,6 @@ import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.misc.AppContext;
 import veny.smevente.misc.SoftDelete;
 import veny.smevente.model.AbstractEntity;
-
-import com.orientechnologies.orient.core.id.ORID;
-import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
  * Abstract class for most common DAO operations based on <code>OrientDB</code> engine.
@@ -218,8 +218,6 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
         final T r = databaseWrapper.execute(new ODatabaseCallback<T>() {
             @Override
             public T doWithDatabase(final OObjectDatabaseTx db) {
-                db.attach(entity); // has to be attached, it's maybe detached by previous operation
-
                 // set flags: updatedAt, updatedBy
                 if (null != entity.getId()) {
                     entity.setUpdatedAt(new Date());
@@ -299,7 +297,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             } else {
                 add.append(" WHERE ");
             }
-            add.append(softDeleteAnnotation.attribute()).append(" IS NULL)");
+            add.append(softDeleteAnnotation.attribute()).append(" IS NULL");
             int big = sql.indexOf(" ORDER BY ");
             int small = sql.indexOf(" order by ");
 
