@@ -232,7 +232,9 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     protected void assertDefaultPatient(final Customer patient, final boolean aggregated) {
         assertNotNull(patient);
         assertNotNull(patient.getId());
-        if (aggregated) { assertDefaultUnit(patient.getUnit()); }
+        if (aggregated) {
+            assertDefaultUnit(patient.getUnit());
+        }
         assertEquals(FIRSTNAME, patient.getFirstname());
         assertEquals(SURNAME, patient.getSurname());
         assertEquals(PHONE_NUMBER, patient.getPhoneNumber());
@@ -308,7 +310,9 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
             final boolean aggregated) {
         assertNotNull(proc);
         assertNotNull(proc.getId());
-        if (aggregated) { assertDefaultUnit(proc.getUnit()); }
+        if (aggregated) {
+            assertDefaultUnit(proc.getUnit());
+        }
         assertEquals(PROCEDURE_NAME, proc.getName());
         assertEquals(PROCEDURE_MSGTEXT, proc.getMessageText());
         assertEquals(type.toString(), proc.getType());
