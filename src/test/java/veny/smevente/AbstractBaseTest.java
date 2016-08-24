@@ -16,6 +16,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.server.OServer;
+import com.orientechnologies.orient.server.OServerMain;
+
 import veny.smevente.dao.orientdb.DatabaseWrapper;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
@@ -25,11 +30,6 @@ import veny.smevente.model.User;
 import veny.smevente.service.EventService;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
-
-import com.orientechnologies.orient.core.sql.OCommandSQL;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import com.orientechnologies.orient.server.OServer;
-import com.orientechnologies.orient.server.OServerMain;
 
 /**
  * Base class for the <i>Smevente</i> unit tests.
