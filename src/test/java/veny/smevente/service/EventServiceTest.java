@@ -183,7 +183,6 @@ public class EventServiceTest extends AbstractBaseTest {
     public void testSendSmsWrongUnitOptions() {
         final Event ev = createEventToBeSentAs(Event.CHANNEL_SMS);
         final Unit unit = ev.getCustomer().getUnit();
-        unitDao.detach(unit);
         unit.setOptions("{\"sms\":{\"gateway\":\"sms.sluzba.cz\"}}");
         unitDao.persist(unit);
 
@@ -197,7 +196,6 @@ public class EventServiceTest extends AbstractBaseTest {
     public void testSendSmsBadPhoneNumber() {
         Event ev  = createDefaultEvent();
         Customer c = ev.getCustomer();
-        customerDao.detach(c);
         c.setPhoneNumber("badNumber");
         c.setSendingChannel(Event.CHANNEL_SMS);
         customerDao.persist(c);
@@ -219,7 +217,6 @@ public class EventServiceTest extends AbstractBaseTest {
     public void testSendEmailWrongAddress() {
         Event ev  = createDefaultEvent();
         Customer c = ev.getCustomer();
-        customerDao.detach(c);
         c.setEmail(" ");
         c.setSendingChannel(Event.CHANNEL_EMAIL);
         customerDao.persist(c);
@@ -241,7 +238,6 @@ public class EventServiceTest extends AbstractBaseTest {
     public void testSendSmsExceedSmsLimit() {
         Event ev  = createDefaultEvent();
         Unit unit = ev.getCustomer().getUnit();
-        unitDao.detach(unit);
         unit.setMsgLimit(0L);
         unitDao.persist(unit);
         eventService.send(ev);
@@ -290,15 +286,15 @@ public class EventServiceTest extends AbstractBaseTest {
         assertEquals(0, eventService.bulkSend());
 
         // 1 event in DB
-        Event ev  = createEventToBeSentAs(Event.CHANNEL_SMS);
+        final Event ev  = createEventToBeSentAs(Event.CHANNEL_SMS);
         assertEquals(null, ev.getSent());
         assertEquals(0, ev.getSendAttemptCount());
 
         assertEquals(1, eventService.bulkSend());
-        Event sent = eventService.getEvent(ev.getId());
+        final Event sent = eventService.getEvent(ev.getId());
         assertNotNull(sent.getSent());
         assertTrue(sent.getSent().before(new Date()));
-        assertEquals(1, ev.getSendAttemptCount());
+        assertEquals(1, sent.getSendAttemptCount());
         // no decrease of limit on unit
         assertEquals(10L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getMsgLimit().longValue());
 
@@ -346,7 +342,6 @@ public class EventServiceTest extends AbstractBaseTest {
     public void testBulkSendAttemptCountByWrongPhoneNumber() {
         Event ev  = createDefaultEvent();
         Customer c = ev.getCustomer();
-        customerDao.detach(c);
         c.setPhoneNumber("badNumber");
         c.setSendingChannel(Event.CHANNEL_SMS);
         customerDao.persist(c);
@@ -382,7 +377,6 @@ public class EventServiceTest extends AbstractBaseTest {
     public void testBulkSendAttemptCountByWrongEmailAddress() {
         Event ev  = createDefaultEvent();
         Customer c = ev.getCustomer();
-        customerDao.detach(c);
         c.setEmail("");
         c.setSendingChannel(Event.CHANNEL_EMAIL);
         customerDao.persist(c);
@@ -435,9 +429,34 @@ public class EventServiceTest extends AbstractBaseTest {
         assertNotNull(procedures.get(0).getUnit());
     }
 
+    /** EventService.bulkSend. */
+    @Test
+    public void testBulkSendBF23() {
+        final Unit unit = createUnit(UNITNAME, "unit's desc", Unit.TextVariant.PATIENT, null, DEFAULT_OPTIONS);
+        final User authorA = createUser("first", PASSWORD, FULLNAME, false);
+        final User authorB = createUser("second", PASSWORD, FULLNAME, false);
+        final Customer customer = createCustomer(FIRSTNAME, SURNAME, PHONE_NUMBER, BIRTH_NUMBER, unit);
+        final Procedure procedure = createProcedure(PROCEDURE_NAME, PROCEDURE_COLOR, PROCEDURE_TIME,
+                PROCEDURE_MSGTEXT, null, unit);
+
+        for (int i = 0; i < 20; i++) {
+System.out.println("XXXX " + i);
+            // no event in DB
+            assertEquals(0, eventService.bulkSend());
+
+            Event a = createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, authorA, customer, procedure);
+            Event b = createEvent(EVENT_TEXT, EVENT_START, EVENT_LEN, EVENT_NOTICE, authorB, customer, procedure);
+            assertEquals(2, eventService.bulkSend());
+            a = eventService.getEvent(a.getId());
+            b = eventService.getEvent(b.getId());
+
+            assertEquals(0, eventService.bulkSend());
+        }
+    }
+
     // -------------------------------------------------------- Assistant Stuff
 
-    /** Creates event to be sent wia given channel.
+    /** Creates event to be sent via given channel.
      *
      * @param channel channel
      * @return the event
@@ -445,7 +464,6 @@ public class EventServiceTest extends AbstractBaseTest {
     private Event createEventToBeSentAs(final int channel) {
         final Event ev  = createDefaultEvent();
         final Customer c = ev.getCustomer();
-        customerDao.detach(c);
         c.setSendingChannel(channel);
         customerDao.persist(c);
         return ev;
