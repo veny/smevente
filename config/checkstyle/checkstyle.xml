@@ -37,7 +37,7 @@
             <property name="severity" value="info"/>
         </module>
         <module name="LineLength">
-            <property name="max" value="120"/>
+            <property name="max" value="140"/>
         </module>
         <module name="MethodLength"/>
         <module name="ParameterNumber"/>
@@ -72,9 +72,6 @@
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MissingSwitchDefault"/>
-        <module name="RedundantThrows">
-            <property name="allowUnchecked" value="true"/>
-        </module>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
         <module name="FinalClass"/>
@@ -148,9 +145,5 @@
         <property name="lineSeparator" value="lf"/>
     </module>
     <module name="Translation"/>
-    <module name="StrictDuplicateCode">
-        <property name="severity" value="info"/>
-        <property name="min" value="35"/>
-    </module>
     <module name="SuppressionCommentFilter"/>
 </module>
