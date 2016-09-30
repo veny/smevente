@@ -4,10 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -109,7 +109,7 @@ public class AppContext {
     public void assertRoot() {
         final User user = getLoggedInUser();
         if (!user.isRoot()) {
-            LOG.error("unauthorized data change (NOT root), username=" + user.getUsername());
+            LOG.severe("unauthorized data change (NOT root), username=" + user.getUsername());
             throw new IllegalStateException("non-privileged access (NOT root)");
         }
     }
@@ -123,7 +123,9 @@ public class AppContext {
      * @return date recalculated from UTC to given time zone
      */
     public Date fromUtcToUserView(final Date date) {
-        if (null == date) { return null; }
+        if (null == date) {
+            return null;
+        }
         final TimeZone to = getLoggedInUserTimezone();
 
         final int tzOffset = to.getOffset(date.getTime());
@@ -136,7 +138,9 @@ public class AppContext {
      * @return date recalculated from given time zone to UTC
      */
     public Date fromUserViewToUtc(final Date date) {
-        if (null == date) { return null; }
+        if (null == date) {
+            return null;
+        }
         final TimeZone to = getLoggedInUserTimezone();
 
         final int tzOffset = to.getOffset(date.getTime());
