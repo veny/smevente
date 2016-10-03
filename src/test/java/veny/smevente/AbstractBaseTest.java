@@ -90,6 +90,12 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
         db.command(new OCommandSQL("DELETE FROM Membership")).execute();
         db.command(new OCommandSQL("DELETE FROM Unit")).execute();
         db.command(new OCommandSQL("DELETE FROM User")).execute();
+//        db.command(new OCommandSQL("TRUNCATE CLASS Event POLYMORPHIC")).execute();
+//        db.command(new OCommandSQL("TRUNCATE CLASS Procedure POLYMORPHIC")).execute();
+//        db.command(new OCommandSQL("TRUNCATE CLASS Customer POLYMORPHIC")).execute();
+//        db.command(new OCommandSQL("TRUNCATE CLASS Membership POLYMORPHIC")).execute();
+//        db.command(new OCommandSQL("TRUNCATE CLASS Unit POLYMORPHIC")).execute();
+//        db.command(new OCommandSQL("TRUNCATE CLASS User POLYMORPHIC")).execute();
         db.close();
     }
 

@@ -36,7 +36,7 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
             public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
                         .append(getPersistentClass().getSimpleName())
-                        .append(" WHERE author = :author AND startTime > :from")
+                        .append(" WHERE author = :author AND startTime > ':from'")
                         .append(" AND startTime < :to");
 
                 final Map<String, Object> params = new HashMap<String, Object>();

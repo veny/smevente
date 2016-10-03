@@ -1,8 +1,9 @@
 package veny.smevente.dao.orientdb;
 
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 
 import com.orientechnologies.orient.core.config.OStorageConfiguration;
@@ -132,7 +133,7 @@ public final class DatabaseWrapper implements DisposableBean {
         // java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
         // see https://github.com/orientechnologies/orientdb/issues/5146
         if (ODatabaseRecordThreadLocal.INSTANCE == null) {
-            System.err.println("Calling this manually normally prevent initialization issues.");
+            System.err.println("Calling this manually normally prevent initialization issues."); //CSOFF
         }
 
         // OObjectDatabasePool is deprecated, but the new approach does not work in v2.2.7
@@ -140,7 +141,13 @@ public final class DatabaseWrapper implements DisposableBean {
         //pool = new OPartitionedDatabasePool(databaseUrl, username, password);
         //db = new OObjectDatabaseTx(pool.acquire());
 
-        return OObjectDatabasePool.global().acquire(databaseUrl, username, password);
+        final OObjectDatabaseTx db = OObjectDatabasePool.global().acquire(databaseUrl, username, password);
+
+        // Ugly hack for ODB 2.0.10 -> 2.2.7
+        // OConcurrentModificationException occurs
+        db.getLocalCache().invalidate();
+
+        return db;
     }
 
     /**
@@ -161,25 +168,34 @@ public final class DatabaseWrapper implements DisposableBean {
      * @param tx whether the transaction mode should be enabled
      * @return an object returned by the action, or <code>null</code>
      * @param <T> data type handled by the action
+     * @deprecated tx should be managed by Service layer, not by DAOs
      */
     public <T> T execute(final ODatabaseCallback<T> callback, final boolean tx) {
         final OObjectDatabaseTx db = this.get();
         T rslt = null;
 
         try {
-            if (tx) { db.begin(); }
+            if (tx) {
+                db.begin();
+            }
 
             rslt = callback.doWithDatabase(db);
 
-            if (tx) { db.commit(); }
+            if (tx) {
+                db.commit();
+            }
 
         } catch (final RuntimeException e) {
-            LOG.error("failed to execute callback: " + e.getMessage(), e);
-            if (tx) { db.rollback(); }
+            LOG.log(Level.SEVERE, "failed to execute callback: " + e.getMessage(), e);
+            if (tx) {
+                db.rollback();
+            }
             throw e;
         } catch (final Exception e) {
-            LOG.error("failed to execute callback: " + e.getMessage(), e);
-            if (tx) { db.rollback(); }
+            LOG.log(Level.SEVERE, "failed to execute callback: " + e.getMessage(), e);
+            if (tx) {
+                db.rollback();
+            }
             throw new IllegalStateException("failed to execute callback: " + e.getMessage(), e);
         } finally {
             if (null != db) {

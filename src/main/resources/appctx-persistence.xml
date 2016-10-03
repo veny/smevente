@@ -8,10 +8,18 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations" value="classpath:db-${RTE}.properties" />
+
+    <property name="ignoreResourceNotFound" value="true" />
+    <property name="searchSystemEnvironment" value="true" />
+    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+  </bean>
+
   <bean id="databaseWrapper" class="veny.smevente.dao.orientdb.DatabaseWrapper" init-method="init">
-    <property name="databaseUrl" value="remote:127.0.0.1:2424/smevente" />
-    <property name="username" value="admin" />
-    <property name="password" value="admin" />
+    <property name="databaseUrl" value="${db.url}" />
+    <property name="username" value="${db.username}" />
+    <property name="password" value="${db.password}" />
   </bean>
   <bean id="schema" class="veny.smevente.dao.orientdb.Schema" />
 

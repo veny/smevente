@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -133,8 +134,8 @@ public class UserServiceImpl implements UserService {
         if (null != check && !check.isEmpty() && !check.get(0).getId().toString().equals(user.getId().toString())) {
             ServerValidation.exception("duplicateValue", "username", (Object[]) null);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("duplicite user name check OK, userName=" + user.getUsername());
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("duplicite user name check OK, userName=" + user.getUsername());
             }
         }
 
@@ -235,7 +236,7 @@ public class UserServiceImpl implements UserService {
         // check the old password
         final User user = userDao.getById(userId);
         if (!user.getPassword().equals(encodePassword(oldPassword))) {
-            LOG.warn("trying to change password, the old one is bad, userId=" + userId);
+            LOG.warning("trying to change password, the old one is bad, userId=" + userId);
             ServerValidation.exception("validationOldPasswordBad", "old", (Object[]) null);
         }
 
@@ -274,7 +275,7 @@ public class UserServiceImpl implements UserService {
         try {
             md.update(password.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            LOG.error("failed to convert String to byte[]");
+            LOG.severe("failed to convert String to byte[]");
             throw new IllegalStateException("failed to convert String to byte[]", e);
         }
         final byte[] hash = md.digest();
@@ -353,8 +354,8 @@ public class UserServiceImpl implements UserService {
 
         if (null == user) { throw new NullPointerException("user cannot be null"); }
         if (null == unit) { throw new NullPointerException("unit cannot be null"); }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("trying to store membership, userId="
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("trying to store membership, userId="
                     + user.getId() + ", unitId=" + unit.getId() + ", role=" + role);
         }
 

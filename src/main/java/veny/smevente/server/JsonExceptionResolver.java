@@ -3,8 +3,9 @@ package veny.smevente.server;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -43,7 +44,7 @@ public class JsonExceptionResolver extends SimpleMappingExceptionResolver {
         final String id = "" + System.currentTimeMillis() + "-" + Thread.currentThread().hashCode();
 
         // log the exception
-        LOG.info("exposing exception " + id, ex);
+        LOG.log(Level.INFO, "exposing exception " + id, ex);
 
         // add exception to the model
         mv.addObject("text", mapToJson(ex, id));

@@ -1,9 +1,10 @@
 package veny.smevente.service.impl;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,8 +110,8 @@ public class UnitServiceImpl implements UnitService {
             final Customer bn = customerDao.findByBirthNumber(client.getUnit().getId(), client.getBirthNumber());
             if (null == bn || (null != client.getId() && bn.getId().toString().equals(client.getId().toString()))) {
                 // expected state <- birth number not found
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("duplicate birth number check OK, bn=" + client.getBirthNumber());
+                if (LOG.isLoggable(Level.FINE)) {
+                    LOG.fine("duplicate birth number check OK, bn=" + client.getBirthNumber());
                 }
             } else {
                 ServerValidation.exception("duplicateValue", "birthNumber", (Object[]) null);
@@ -137,7 +138,9 @@ public class UnitServiceImpl implements UnitService {
     @Override
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     public List<Customer> getCustomersByUnit(final Object unitId) {
-        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
+        if (null == unitId) {
+            throw new NullPointerException("unit ID cannot be null");
+        }
         final List<Customer> rslt = customerDao.findBy("unit", unitId, null);
         LOG.info("found " + rslt.size() + " customer(s) by unit");
         return rslt;
@@ -151,7 +154,9 @@ public class UnitServiceImpl implements UnitService {
     public List<Customer> findCustomers(
             final Object unitId, final String name, final String phoneNumber, final String birthNumber) {
 
-        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
+        if (null == unitId) {
+            throw new NullPointerException("unit ID cannot be null");
+        }
         LOG.info("findCustomers, unitId=" + unitId + ", name=" + name
                 + ", phone=" + phoneNumber + ", birthNumber=" + birthNumber);
 
@@ -164,16 +169,16 @@ public class UnitServiceImpl implements UnitService {
         // name
         if (null != name) {
             collectedRslt = customerDao.findLikeBy(unitId, "asciiFullname", name.toUpperCase());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("customer(s) found by name, size=" + collectedRslt.size());
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("customer(s) found by name, size=" + collectedRslt.size());
             }
         }
 
         // phone number
         if (null != phoneNumber) {
             final List<Customer> found = customerDao.findLikeBy(unitId, "phoneNumber", phoneNumber);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("customer(s) found by phone number, size=" + found.size());
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("customer(s) found by phone number, size=" + found.size());
             }
             if (null == collectedRslt) {
                 collectedRslt = found;
@@ -185,8 +190,8 @@ public class UnitServiceImpl implements UnitService {
         // birth number
         if (null != birthNumber) {
             final List<Customer> found = customerDao.findLikeBy(unitId, "birthNumber", birthNumber);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("customer(s) found by birth number, size=" + found.size());
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("customer(s) found by birth number, size=" + found.size());
             }
             if (null == collectedRslt) {
                 collectedRslt = found;
@@ -327,8 +332,12 @@ public class UnitServiceImpl implements UnitService {
      * @param unit unit to be validated
      */
     private void validateUnit(final Unit unit) {
-        if (null == unit) { throw new NullPointerException("unit cannot be null"); }
-        if (Strings.isNullOrEmpty(unit.getName())) { throw new IllegalArgumentException("unit name cannot be blank"); }
+        if (null == unit) {
+            throw new NullPointerException("unit cannot be null");
+        }
+        if (Strings.isNullOrEmpty(unit.getName())) {
+            throw new IllegalArgumentException("unit name cannot be blank");
+        }
     }
 
     /**
@@ -338,7 +347,9 @@ public class UnitServiceImpl implements UnitService {
     private void validateCustomer(final Customer customer) {
         if (null == customer) { throw new NullPointerException("customer cannot be null"); }
         if (null == customer.getUnit()) { throw new NullPointerException("unit cannot be null"); }
-        if (null == customer.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
+        if (null == customer.getUnit().getId()) {
+            throw new NullPointerException("unit ID cannot be null");
+        }
         if (Strings.isNullOrEmpty(customer.getFirstname())) {
             throw new IllegalArgumentException("first name cannot be blank");
         }
@@ -348,14 +359,14 @@ public class UnitServiceImpl implements UnitService {
 
         // birth number
         if (Strings.isNullOrEmpty(customer.getBirthNumber())) {
-            LOG.warn("birth number is empty, fisrtname=" + customer.getFirstname()
+            LOG.warning("birth number is empty, fisrtname=" + customer.getFirstname()
                     + ", surname=" + customer.getSurname());
         } else {
             validationContainer.validate("birthNumber", "birthNumber", customer.getBirthNumber());
         }
         // phone number
         if (Strings.isNullOrEmpty(customer.getPhoneNumber())) {
-            LOG.warn("phone number is empty, fisrtname=" + customer.getFirstname()
+            LOG.warning("phone number is empty, fisrtname=" + customer.getFirstname()
                     + ", surname=" + customer.getSurname());
         } else {
             validationContainer.validate("phoneNumber", "phoneNumber", customer.getPhoneNumber());
@@ -367,7 +378,9 @@ public class UnitServiceImpl implements UnitService {
      * @param proc procedure to be validated
      */
     private void validateProcedure(final Procedure proc) {
-        if (null == proc) { throw new NullPointerException("procedure cannot be null"); }
+        if (null == proc) {
+            throw new NullPointerException("procedure cannot be null");
+        }
         if (null == proc.getUnit()) { throw new NullPointerException("unit cannot be null"); }
         if (null == proc.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
         if (Strings.isNullOrEmpty(proc.getName())) { throw new IllegalArgumentException("name cannot be blank"); }

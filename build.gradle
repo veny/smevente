@@ -6,9 +6,9 @@ apply plugin: 'checkstyle'
 ext {
     springVersion = "4.0.5.RELEASE"
     springSecurityVersion = "3.2.4.RELEASE"
-    gwtVersion = "2.6.1"
+    gwtVersion = "2.7.0"
     jacksonVersion = "2.4.0"
-    orientdbVersion = "2.0.10"
+    orientdbVersion = "2.2.10"
 }
 
 repositories {
@@ -47,7 +47,6 @@ dependencies {
     runtime "com.orientechnologies:orientdb-client:$orientdbVersion"
 
     runtime "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
-    compile "log4j:log4j:1.2.9"
     compile "commons-beanutils:commons-beanutils:1.9.2"
     compile "org.apache.commons:commons-lang3:3.1"
 //    runtime "org.apache.httpcomponents:httpclient:4.3.5"
@@ -87,7 +86,7 @@ eclipse { // https://gist.github.com/gpike/3722887
 }
 
 war {
-    war.rootSpec.exclude 'log4j-devel.properties'
+    war.rootSpec.exclude '*-devel.properties'
     war.rootSpec.exclude '**/gwt-user*.jar' // because ot Tomcat deployment problem: jar not loaded. See Servlet Spec 3.0, section 10.7.2. Offending class: javax/servlet/Servlet.class
     war.rootSpec.exclude '**/gwt-dev*.jar'
     from('war') {
@@ -140,7 +139,7 @@ task compileGwt (dependsOn: classes, type: JavaExec) {
     // '-draftCompile' // Speeds up compile with 25%
   ]
 
-  maxHeapSize = '256M'
+  maxHeapSize = '512M'
 }
 
 task gwtSuperDev(dependsOn: classes, type: JavaExec) {

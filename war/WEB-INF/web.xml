@@ -40,16 +40,6 @@
   </session-config>
 
 
-  <filter>
-    <filter-name>mdcFilter</filter-name>
-    <filter-class>veny.smevente.server.MDCFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>mdcFilter</filter-name>
-    <url-pattern>/rest/*</url-pattern>
-  </filter-mapping>
-
-
   <!-- SECURITY -->
   <!--
     Spring's DelegatingFilterProxy provides the link between web.xml and the application context.

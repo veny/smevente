@@ -2,14 +2,14 @@ package veny.smevente.security;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.model.User;
-import veny.smevente.service.UserService;
 
 /**
  * Strategy used to handle a successful user authentication.
@@ -32,10 +31,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
     /** Logger. */
     private static final Logger LOG = Logger.getLogger(AuthenticationSuccessHandlerImpl.class.getName());
-
-    /** Dependency. */
-    @Autowired
-    private UserService userService;
 
     /** {@inheritDoc} */
     @Override
@@ -52,7 +47,9 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 throw new AuthenticationServiceException("user detail of the caller cannot be null");
             }
             final User user = userDetail.getA();
-            if (null == user) { throw new AuthenticationServiceException("user in detail cannot be null"); }
+            if (null == user) {
+                throw new AuthenticationServiceException("user in detail cannot be null");
+            }
             if (null == user.getId()) {
                 throw new AuthenticationServiceException("user ID in user detail cannot be null");
             }
@@ -67,7 +64,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
             response.setStatus(HttpServletResponse.SC_OK);
             response.getOutputStream().println("LOGED IN");
         } catch (Throwable t) {
-            LOG.error("failed to process onAuthenticationSuccess", t);
+            LOG.log(Level.SEVERE, "failed to process onAuthenticationSuccess", t);
             request.getSession().invalidate();
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 Forbidden

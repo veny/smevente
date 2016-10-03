@@ -10,8 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -112,12 +113,16 @@ public class EventServiceImpl implements EventService {
 
         final Event toBeStored;
         if (null != event.getId()) {
-            if (LOG.isDebugEnabled()) { LOG.debug("event with ID -> load + update"); }
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("event with ID -> load + update");
+            }
             GenericDao.OPTIONS_HOLDER.get().put("detach", "false");
             toBeStored = eventDao.getById(event.getId());
             event.copyForUpdate(toBeStored);
         } else {
-            if (LOG.isDebugEnabled()) { LOG.debug("event without ID -> create"); }
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("event without ID -> create");
+            }
             toBeStored = event;
         }
 
@@ -133,7 +138,7 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public Event createAndSendSpecialEvent(final Event event) {
-        LOG.debug("going to send special event...");
+        LOG.fine("going to send special event...");
         event.setType(Event.Type.IMMEDIATE_MESSAGE.toString());
         final Event rslt = storeEvent(event);
 
@@ -161,8 +166,8 @@ public class EventServiceImpl implements EventService {
     public String getEventText(final Object eventId) {
         final Event event = eventDao.getById(eventId);
         final String text2send = format(event);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("constructed event text, eventId=" + eventId + ", text=" + text2send);
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("constructed event text, eventId=" + eventId + ", text=" + text2send);
         }
         return text2send;
     }
@@ -172,7 +177,9 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event getEvent(final Object id) {
         final Event rslt = eventDao.getById(id);
-        LOG.debug("found event by id=" + id);
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("found event by id=" + id);
+        }
         return rslt;
     }
 
@@ -207,7 +214,7 @@ public class EventServiceImpl implements EventService {
         // TODO [veny,B] time should be defined in configuration
         final Date olderThan = new Date(System.currentTimeMillis() + (3L * 24L * 3600L * 1000L));
         int sentCount = 0;
-        LOG.debug("starting bulk send...");
+        LOG.fine("starting bulk send...");
 
         // process each unit in separate because of different timeouts and SMS Service options
         final List<Unit> units = unitDao.getAll();
@@ -231,11 +238,13 @@ public class EventServiceImpl implements EventService {
                         }
                     }
                 } catch (Throwable t) {
-                    LOG.error("failed to send SMS, id=" + event.getId(), t);
+                    LOG.log(Level.SEVERE, "failed to send SMS, id=" + event.getId(), t);
                 }
             }
             // store if the unit is limited
-            if (null != unit.getMsgLimit()) { unitDao.persist(unit); }
+            if (null != unit.getMsgLimit()) {
+                unitDao.persist(unit);
+            }
         }
 
         LOG.info("sent " + sentCount + " event(s)");
@@ -324,7 +333,7 @@ public class EventServiceImpl implements EventService {
         // ^^ sometimes the unit is null
         // ^^ after that, procedure of last sent event is stored with unit==null !!
         if (null == unit) {
-            LOG.warn("BUG23, unit on customer is NULL, reload of customer with id=" + customer.getId());
+            LOG.warning("BUG23, unit on customer is NULL, reload of customer with id=" + customer.getId());
             customer = customerDao.getById(customer.getId());
             unit = unitDao.getById(customer.getUnit().getId());
             //customer.setUnit(unit);
@@ -370,7 +379,7 @@ public class EventServiceImpl implements EventService {
         final String text2send = format(event2send);
 
         if (null == customer.getEmail() || 0 == customer.getEmail().trim().length()) {
-            LOG.warn("email cannot be sent, wrong customer email address, eventId=" + event2send.getId());
+            LOG.warning("email cannot be sent, wrong customer email address, eventId=" + event2send.getId());
             return false;
         }
 
@@ -386,7 +395,7 @@ public class EventServiceImpl implements EventService {
             rslt = true;
             LOG.info("event sent via email, id=" + event2send.getId() + ", address=" + customer.getEmail());
         } catch (Throwable t) {
-            LOG.error("failed to send email, ID=" + event2send.getId(), t);
+            LOG.log(Level.SEVERE, "failed to send email, ID=" + event2send.getId(), t);
             rslt = false;
         }
         return rslt;
@@ -411,7 +420,7 @@ public class EventServiceImpl implements EventService {
             smsGatewayService.send(customer.getPhoneNumber(), text2send, smsOptions);
             LOG.info("event sent via SMS, id=" + event2send.getId() + ", phone=" + customer.getPhoneNumber());
         } catch (Throwable t) {
-            LOG.error("failed to send SMS, ID=" + event2send.getId(), t);
+            LOG.log(Level.SEVERE, "failed to send SMS, ID=" + event2send.getId(), t);
             return false;
         }
         return true;
@@ -436,7 +445,9 @@ public class EventServiceImpl implements EventService {
      * @return formated event text
      */
     private String format(final Event event) {
-        if (null == event.getAuthor()) { throw new IllegalArgumentException("event without author"); }
+        if (null == event.getAuthor()) {
+            throw new IllegalArgumentException("event without author");
+        }
 
         final GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone(event.getAuthor().getTimezone()));
         final DateFormat df = new SimpleDateFormat("dd.MM.yy");
@@ -474,11 +485,19 @@ public class EventServiceImpl implements EventService {
         if (null == event.getProcedure().getId()) {
             throw new NullPointerException("procedure ID cannot be null");
         }
-        if (Strings.isNullOrEmpty(event.getText())) { throw new IllegalArgumentException("text cannot be blank"); }
-        if (0 == event.getText().trim().length()) { throw new IllegalArgumentException("text cannot be blank"); }
+        if (Strings.isNullOrEmpty(event.getText())) {
+            throw new IllegalArgumentException("text cannot be blank");
+        }
+        if (0 == event.getText().trim().length()) {
+            throw new IllegalArgumentException("text cannot be blank");
+        }
         if (Event.Type.IN_CALENDAR == event.enumType()) {
-            if (null == event.getStartTime()) { throw new NullPointerException("start time cannot be null"); }
-            if (event.getLength() <= 0) { throw new IllegalArgumentException("length lesser then 0"); }
+            if (null == event.getStartTime()) {
+                throw new NullPointerException("start time cannot be null");
+            }
+            if (event.getLength() <= 0) {
+                throw new IllegalArgumentException("length lesser then 0");
+            }
         }
     }
 
@@ -497,7 +516,9 @@ public class EventServiceImpl implements EventService {
      * @param opts map with options
      */
     private void assertSmsOptions(final Map<String, String> opts) {
-        if (null == opts) { throw new NullPointerException("unit options cannot be null"); }
+        if (null == opts) {
+            throw new NullPointerException("unit options cannot be null");
+        }
         if (0 == opts.size() || !opts.containsKey("gateway")
                 || !opts.containsKey(SmsGatewayService.METADATA_USERNAME)
                 || !opts.containsKey(SmsGatewayService.METADATA_PASSWORD)) {
@@ -531,7 +552,7 @@ public class EventServiceImpl implements EventService {
         try {
             rslt = objectMapper.readValue(unit.getOptions(), new TypeReference<HashMap<String, Object>>() { });
         } catch (IOException e) {
-            LOG.error("failed to parse unit's options", e);
+            LOG.log(Level.SEVERE, "failed to parse unit's options", e);
             throw new IllegalStateException("failed to parse unit's options", e);
         }
         return rslt;
@@ -545,18 +566,18 @@ public class EventServiceImpl implements EventService {
         event.getAuthor();
         event.getCustomer(); event.getCustomer().getUnit();
         event.getProcedure(); event.getProcedure().getUnit();
-        if (LOG.isDebugEnabled()) {
-            if (null == event.getCustomer().getUnit()) {
-                LOG.warn("BF#42, customer without unit, id=" + event.getCustomer().getId());
-                customerDao.reload(event.getCustomer());
-            }
-            if (null == event.getProcedure().getUnit()) {
-                LOG.warn("BF#42, procedure without unit, id=" + event.getProcedure().getId());
-                procedureDao.reload(event.getProcedure());
-            }
-            final Object customerUnitId = event.getCustomer().getUnit().getId();
-            final Object procUnitId = event.getProcedure().getUnit().getId();
-            LOG.debug("semiEagerLoad of event: customer.unit.id=" + customerUnitId
+        if (null == event.getCustomer().getUnit()) {
+            LOG.warning("BF#42, customer without unit, id=" + event.getCustomer().getId());
+            customerDao.reload(event.getCustomer());
+        }
+        if (null == event.getProcedure().getUnit()) {
+            LOG.warning("BF#42, procedure without unit, id=" + event.getProcedure().getId());
+            procedureDao.reload(event.getProcedure());
+        }
+        final Object customerUnitId = event.getCustomer().getUnit().getId();
+        final Object procUnitId = event.getProcedure().getUnit().getId();
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("semiEagerLoad of event: customer.unit.id=" + customerUnitId
                     + ", procedure.unit.id=" + procUnitId);
         }
     }

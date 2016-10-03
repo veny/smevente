@@ -3,8 +3,8 @@ package veny.smevente.security;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -68,7 +68,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         }
 
         if (null == user) {
-            LOG.warn("failed to log in, username=" + username);
+            LOG.warning("failed to log in, username=" + username);
             throw new InsufficientAuthenticationException("invalid username/password");
         }
 
@@ -86,7 +86,9 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         final List<Membership> memberships = membershipDao.findBy("user", user.getId(), null);
 
         for (Membership m : memberships) {
-            if (Role.ADMIN == m.enumRole()) { adminUnitIds.add(m.getUnit().getId()); }
+            if (Role.ADMIN == m.enumRole()) {
+                adminUnitIds.add(m.getUnit().getId());
+            }
         }
 
         // create the authentication token to be returned

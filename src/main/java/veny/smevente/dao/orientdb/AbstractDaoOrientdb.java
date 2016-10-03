@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.orientechnologies.orient.core.id.ORID;
@@ -98,7 +98,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
                 final T rslt;
                 try {
                     if (opts.containsKey("fetch") && opts.get("fetch").equalsIgnoreCase("tree")) {
-                        LOG.debug("loading with tree fetch plan, class=" + getPersistentClass().getSimpleName()
+                        LOG.fine("loading with tree fetch plan, class=" + getPersistentClass().getSimpleName()
                                 + ", rid=" + rid);
                         rslt = db.load(rid, "*:-1", true);
                     } else {

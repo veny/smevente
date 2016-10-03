@@ -28,7 +28,6 @@
     <intercept-url pattern="/rest/**" access="isAuthenticated()" />
     <custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
     <custom-filter position="LOGOUT_FILTER" ref="logoutFilter" />
-    <custom-filter ref="mdcFilter" after="SECURITY_CONTEXT_FILTER"/>
   </http>
 
   <!--

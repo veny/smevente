@@ -99,7 +99,9 @@ public class GeneralTest extends AbstractBaseTest {
         try {
             userService.getUser(user.getId());
             assertEquals("expected DeletedObjectException", true, false);
-        } catch (DeletedObjectException e) { assertEquals(true, true); }
+        } catch (DeletedObjectException e) {
+            assertEquals(true, true);
+        }
 
         List<User> users = userDao.getAll(true);
         assertEquals(1, users.size());
