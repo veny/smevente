@@ -37,6 +37,9 @@ import veny.smevente.service.SmsGatewayService.SmsException;
  */
 public class EventServiceTest extends AbstractBaseTest {
 
+    /** One day in miliseconds. */
+    private static final long ONE_DAY = 24 * 3600 * 1000;
+
     // CHECKSTYLE:OFF
     @Autowired
     protected UnitDao unitDao;
@@ -65,6 +68,56 @@ public class EventServiceTest extends AbstractBaseTest {
         mailSender = Mockito.mock(MailSender.class);
         Mockito.doNothing().when(mailSender).send(Mockito.any(SimpleMailMessage.class));
         ReflectionTestUtils.setField(eventService, "mailSender", mailSender);
+    }
+
+
+    /** EventService.findEvents. */
+    @Test
+    public void testFindEvents() {
+        final Event first  = createDefaultEvent();
+        final User author = first.getAuthor();
+
+        final List<Event> rslt = eventService.findEvents(
+                author.getId(),
+                new Date(EVENT_START.getTime() - ONE_DAY),
+                new Date(EVENT_START.getTime() + ONE_DAY)
+        );
+        assertEquals(1, rslt.size());
+        assertEquals(first.getId(), rslt.get(0).getId());
+        assertEquals(0, eventService.findEvents(
+                author.getId(),
+                new Date(EVENT_START.getTime() + ONE_DAY),
+                new Date(EVENT_START.getTime() + (2 * ONE_DAY))
+            ).size()
+        );
+        assertEquals(0, eventService.findEvents(
+                author.getId(),
+                new Date(EVENT_START.getTime() - (2 * ONE_DAY)),
+                new Date(EVENT_START.getTime() - ONE_DAY)
+            ).size()
+        );
+
+        // create second event
+        createEvent("SECOND", new Date(EVENT_START.getTime() + (long) (1.5f * ONE_DAY)), EVENT_LEN, EVENT_NOTICE,
+                first.getAuthor(), first.getCustomer(), first.getProcedure());
+        assertEquals(1, eventService.findEvents(
+                author.getId(),
+                new Date(EVENT_START.getTime() - ONE_DAY),
+                new Date(EVENT_START.getTime() + ONE_DAY)
+            ).size()
+        );
+        assertEquals(1, eventService.findEvents(
+                author.getId(),
+                new Date(EVENT_START.getTime() + ONE_DAY),
+                new Date(EVENT_START.getTime() + (2 * ONE_DAY))
+            ).size()
+        );
+        assertEquals(0, eventService.findEvents(
+                author.getId(),
+                new Date(EVENT_START.getTime() - (2 * ONE_DAY)),
+                new Date(EVENT_START.getTime() - ONE_DAY)
+            ).size()
+        );
     }
 
 
@@ -303,11 +356,13 @@ public class EventServiceTest extends AbstractBaseTest {
         // no decrease of limit on unit
         assertEquals(10L, unitService.getUnit(ev.getCustomer().getUnit().getId()).getMsgLimit().longValue());
 
-        // next 2 events
-        createEvent("A", new Date(System.currentTimeMillis() - (5 * 24 * 3600 * 1000)), 10, null,
+        // next 3 events, one of them in future -> not to be send
+        createEvent("A", new Date(System.currentTimeMillis() - (5 * ONE_DAY)), 10, null,
                 sent.getAuthor(), sent.getCustomer(), sent.getProcedure());
-        createEvent("B", new Date(System.currentTimeMillis() - (5 * 24 * 3600 * 1000)), 10, null,
+        createEvent("B", new Date(System.currentTimeMillis()), 10, null,
                 sent.getAuthor(), sent.getCustomer(), sent.getProcedure());
+        createEvent("C", new Date(System.currentTimeMillis() + (5 * ONE_DAY)), 10, null,
+                sent.getAuthor(), sent.getCustomer(), sent.getProcedure()); // this is in future -> no send
         assertEquals(2, eventService.bulkSend());
         assertEquals(0, eventService.bulkSend());
         // no decrease of limit on unit
@@ -440,7 +495,6 @@ public class EventServiceTest extends AbstractBaseTest {
                 PROCEDURE_MSGTEXT, null, unit);
 
         for (int i = 0; i < 20; i++) {
-System.out.println("XXXX " + i);
             // no event in DB
             assertEquals(0, eventService.bulkSend());
 

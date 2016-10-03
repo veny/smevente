@@ -35,17 +35,19 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
             @Override
             public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ")
-                        .append(getPersistentClass().getSimpleName())
-                        .append(" WHERE author = :author AND startTime > ':from'")
-                        .append(" AND startTime < :to");
+                        .append(getPersistentClass().getSimpleName()).append(" WHERE author = :author")
+                        .append(" AND startTime > '").append(dateFormat.format(from)).append("' AND startTime < '")
+                        .append(dateFormat.format(to)).append("'");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("author", authorId);
-                params.put("from", dateFormat.format(from));
-                params.put("to", dateFormat.format(to));
+                // 161003: avoided to use named parameters for datetime after upgrade to ODB 2.2.x (not working?)
+                //  params.put("from", dateFormat.format(from)); //                params.put("to", dateFormat.format(to));
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                for (final Event entity : rslt) { db.detachAll(entity, false); }
+                for (final Event entity : rslt) {
+                    db.detachAll(entity, false);
+                }
                 return rslt;
             }
         });
@@ -68,7 +70,9 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
                 params.put("type", Event.Type.IMMEDIATE_MESSAGE.toString());
 
                 final List<Event> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                for (final Event entity : rslt) { db.detachAll(entity, false); }
+                for (final Event entity : rslt) {
+                    db.detachAll(entity, false);
+                }
                 return rslt;
             }
         });
@@ -81,8 +85,9 @@ public class EventDaoImpl extends AbstractDaoOrientdb<Event> implements EventDao
         return getDatabaseWrapper().execute(new ODatabaseCallback<List<Event>>() {
             @Override public List<Event> doWithDatabase(final OObjectDatabaseTx db) {
                 final StringBuilder sql = new StringBuilder("SELECT FROM ").append(getPersistentClass().getSimpleName())
-                        .append(" WHERE customer.unit = :unit").append(" AND startTime < :olderThan")
-                        .append(" AND sent IS NULL")
+                        .append(" WHERE customer.unit = :unit").append(" AND startTime < '")
+                        .append(dateFormat.format(olderThan)) // avoided to use named parameters, {@see findByAuthorAndPeriod}
+                        .append("' AND sent IS NULL")
                         .append(" AND (sendAttemptCount IS NULL OR sendAttemptCount < :sac) ORDER BY startTime ASC");
                 final Map<String, Object> params = new HashMap<String, Object>();
                 params.put("unit", unit.getId());
