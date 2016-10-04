@@ -52,7 +52,7 @@
         <prop key="mail.transport.protocol">smtp</prop>
         <prop key="mail.smtp.auth">false</prop>
         <prop key="mail.smtp.starttls.enable">false</prop>
-        <prop key="mail.debug">true</prop>
+        <prop key="mail.debug">${mail.debug}</prop>
       </props>
     </property>
   </bean>
