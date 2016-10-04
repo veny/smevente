@@ -22,7 +22,9 @@ public class UnitDaoImpl extends AbstractDaoOrientdb<Unit> implements UnitDao {
     /** {@inheritDoc} */
     @Override
     public List<Unit> getUnitsByUser(final Object userId) {
-        if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
+        if (null == userId) {
+            throw new NullPointerException("user ID cannot be null");
+        }
 
         return getDatabaseWrapper().execute(new ODatabaseCallback<List<Unit>>() {
             @Override
@@ -37,7 +39,9 @@ public class UnitDaoImpl extends AbstractDaoOrientdb<Unit> implements UnitDao {
                 params.put("clazz", getPersistentClass().getSimpleName());
 
                 final List<Unit> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
-                for (final Unit entity : rslt) { db.detachAll(entity, false); }
+                for (final Unit entity : rslt) {
+                    db.detachAll(entity, false);
+                }
                 return rslt;
             }
         });

@@ -18,8 +18,12 @@ public class MembershipDaoImpl extends AbstractDaoOrientdb<Membership> implement
     /** {@inheritDoc} */
     @Override
     public Membership findByUserAndUnit(final Object userId, final Object unitId) {
-        if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
-        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
+        if (null == userId) {
+            throw new NullPointerException("user ID cannot be null");
+        }
+        if (null == unitId) {
+            throw new NullPointerException("unit ID cannot be null");
+        }
 
         final List<Membership> membs = this.findBy("user", userId, "unit", unitId, null);
         if (membs.size() > 1) {

@@ -22,8 +22,12 @@ public class CustomerDaoImpl extends AbstractDaoOrientdb<Customer> implements Cu
     /** {@inheritDoc} */
     @Override
     public List<Customer> findLikeBy(final Object unitId, final String paramName, final Object value) {
-        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
-        if (Strings.isNullOrEmpty(paramName)) { throw new IllegalArgumentException("parameter name cannot be blank"); }
+        if (null == unitId) {
+            throw new NullPointerException("unit ID cannot be null");
+        }
+        if (Strings.isNullOrEmpty(paramName)) {
+            throw new IllegalArgumentException("parameter name cannot be blank");
+        }
 
         return getDatabaseWrapper().execute(new ODatabaseCallback<List<Customer>>() {
             @Override
@@ -39,7 +43,9 @@ public class CustomerDaoImpl extends AbstractDaoOrientdb<Customer> implements Cu
 
                 final List<Customer> rslt = executeWithSoftDelete(db, sql.toString(), params, true);
                 //detachWithFirstLevelAssociations(rslt, db);
-                for (final Customer entity : rslt) { db.detachAll(entity, false); }
+                for (final Customer entity : rslt) {
+                    db.detachAll(entity, false);
+                }
                 return rslt;
             }
         });
@@ -48,7 +54,9 @@ public class CustomerDaoImpl extends AbstractDaoOrientdb<Customer> implements Cu
     /** {@inheritDoc} */
     @Override
     public Customer findByBirthNumber(final Object unitId, final String birthNumber) {
-        if (null == unitId) { throw new NullPointerException("unit ID cannot be null"); }
+        if (null == unitId) {
+            throw new NullPointerException("unit ID cannot be null");
+        }
         if (Strings.isNullOrEmpty(birthNumber)) {
             throw new IllegalArgumentException("birth number name cannot be blank");
         }
@@ -58,7 +66,9 @@ public class CustomerDaoImpl extends AbstractDaoOrientdb<Customer> implements Cu
             public Customer doWithDatabase(final OObjectDatabaseTx db) {
                 final List<Customer> bn = findBy("unit", unitId, "birthNumber", birthNumber.trim(), null);
 
-                if (bn.isEmpty()) { return null; }
+                if (bn.isEmpty()) {
+                    return null;
+                }
                 if (bn.size() > 1) {
                     throw new IllegalStateException(
                             "not unique birth number in unit, unitId=" + unitId

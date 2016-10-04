@@ -40,8 +40,9 @@ public class ProcedureDaoImpl extends AbstractDaoOrientdb<Procedure>
                     throw new IllegalStateException("expected max 1 MHC, but found " + procedures.size());
                 }
 
-                if (procedures.isEmpty()) { return null; }
-                else {
+                if (procedures.isEmpty()) {
+                    return null;
+                } else {
                     db.detachAll(procedures.get(0), false);
                     return (Procedure) procedures.get(0);
                 }
