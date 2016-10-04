@@ -35,6 +35,7 @@ public class AppContext {
      */
     @PostConstruct
     public void start() {
+        LOG.fine("initialization...");
         // server works in UTC, all date-times will be converted according to user's time zone
         java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"));
         LOG.info("AppContext initialized ok, version=" + AppVersion.VERSION + ", timezone="
