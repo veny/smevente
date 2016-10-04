@@ -32,9 +32,21 @@
   <bean id="procedureDao" class="veny.smevente.dao.orientdb.ProcedureDaoImpl" />
   <bean id="eventDao" class="veny.smevente.dao.orientdb.EventDaoImpl" />
 
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>classpath:db-${RTE}.properties</value>
+        <value>classpath:mail-${RTE}.properties</value>
+      </list>
+    </property>
+    <property name="ignoreResourceNotFound" value="true" />
+    <property name="searchSystemEnvironment" value="true" />
+    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+  </bean>
+
   <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-    <property name="host" value="127.0.0.1"/>
-    <property name="port" value="25"/>
+    <property name="host" value="${mail.host}"/>
+    <property name="port" value="${mail.port}"/>
     <property name="javaMailProperties">
       <props>
         <prop key="mail.transport.protocol">smtp</prop>
