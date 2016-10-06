@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+    orientdb:
+        image: veny/orientdb
+        environment:
+            ORIENTDB_ROOT_PASSWORD: alfa_delta_bravo
+        volumes:
+            - ../../../databases:/opt/orientdb/databases
+            - ../../.volumes/log/orientdb:/opt/orientdb/log
+    tomcat:
+        image: veny/tomcat
+        depends_on:
+            - orientdb
+        environment:
+            ENVIRONMENT: production
+            db.url: remote:orientdb/smevente
+            db.username: admin
+            db.password: admin
+            mail.host: postfix
+            mail.port: 25
+            mail.debug: "false"
+        volumes:
+            - ../../../build/libs:/opt/tomcat/webapps
+            - ../../.volumes/log/tomcat:/opt/tomcat/logs
+    httpd:
+        image: veny/apache2
+        depends_on:
+            - tomcat
+        ports:
+            - "80:80"
+        volumes:
+            - ./apache2/smevente_lc.conf:/etc/httpd/conf.d/smevente_lc.conf
+            - ../../.volumes/log/httpd:/var/log/httpd
+    postfix:
+        image: veny/postfix
+        volumes:
+            - ../../.volumes/log/postfix:/var/log
+        environment:
+            MYHOSTNAME: smevente.com

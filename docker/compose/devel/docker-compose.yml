@@ -4,12 +4,18 @@ services:
     orientdb:
         image: veny/orientdb
         container_name: smevente.orientdb
-        labels:
-            docker.environment: "development"
         environment:
             ORIENTDB_ROOT_PASSWORD: root
         ports:
-            - 2424:2424
-            - 2480:2490
+            - "2424:2424"
+            - "2480:2490"
         volumes:
             - ../../../databases:/opt/orientdb/databases
+            - ../../.volumes/log/orientdb:/opt/orientdb/log
+    postfix:
+        image: veny/postfix
+        container_name: smevente.postfix
+        ports:
+            - "25:25"
+        volumes:
+            - ../../.volumes/log/postfix:/var/log
