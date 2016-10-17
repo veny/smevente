@@ -22,7 +22,8 @@
   <http entry-point-ref="authenticationEntryPoint" auto-config="false" use-expressions="true">
     <session-management session-fixation-protection="newSession"/>
     <!-- intercept-url pattern="/rest/data/**" access="ROLE_ROOT" / -->
-    <intercept-url pattern="/rest/sac/**" access="hasIpAddress('127.0.0.1')" />
+    <!-- intercept-url pattern="/rest/sac/**" access="hasIpAddress('127.0.0.1')" / -->
+    <intercept-url pattern="/rest/sac/**" access="permitAll" /> <!-- SOLVED BY Apache2 RewriteRules -->
     <intercept-url pattern="/rest/monitor/" access="permitAll" />
     <intercept-url pattern="/rest/proxy/" access="permitAll" />
     <intercept-url pattern="/rest/**" access="isAuthenticated()" />
