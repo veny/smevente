@@ -33,6 +33,7 @@ import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.EventService;
 import veny.smevente.service.SmsGatewayService;
+import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.TextUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -391,11 +392,16 @@ public class EventServiceImpl implements EventService {
 
         boolean rslt;
         try {
-            mailSender.send(message);
+            // do NOT send the email physically if email address is "-=NO_MAIL=-"
+            if ("-=NO_MAIL=-".equals(customer.getEmail())) {
+                LOG.fine("fake mail (not sent), id=" + event2send.getId() + ", address=" + customer.getEmail());
+            } else {
+                mailSender.send(message);
+                LOG.info("event sent via email, id=" + event2send.getId() + ", address=" + customer.getEmail());
+            }
             rslt = true;
-            LOG.info("event sent via email, id=" + event2send.getId() + ", address=" + customer.getEmail());
         } catch (Throwable t) {
-            LOG.log(Level.SEVERE, "failed to send email, ID=" + event2send.getId(), t);
+            LOG.log(Level.SEVERE, "failed to send email, id=" + event2send.getId(), t);
             rslt = false;
         }
         return rslt;
@@ -420,7 +426,12 @@ public class EventServiceImpl implements EventService {
             smsGatewayService.send(customer.getPhoneNumber(), text2send, smsOptions);
             LOG.info("event sent via SMS, id=" + event2send.getId() + ", phone=" + customer.getPhoneNumber());
         } catch (Throwable t) {
-            LOG.log(Level.SEVERE, "failed to send SMS, ID=" + event2send.getId(), t);
+            if (t instanceof SmsException
+                    && SmsGatewayService.FailureType.BAD_PHONE_NUMBER == ((SmsException) t).getFailureType()) {
+                LOG.warning("failed to send SMS (bad phone number), ID= + event2send.getId()");
+            } else {
+                LOG.log(Level.SEVERE, "failed to send SMS, ID=" + event2send.getId(), t);
+            }
             return false;
         }
         return true;
@@ -474,11 +485,21 @@ public class EventServiceImpl implements EventService {
      * @param event event to validate
      */
     private void validateEvent(final Event event) {
-        if (null == event) { throw new NullPointerException("event cannot be null"); }
-        if (null == event.getAuthor()) { throw new NullPointerException("author cannot be null"); }
-        if (null == event.getAuthor().getId()) { throw new NullPointerException("author ID cannot be null"); }
-        if (null == event.getCustomer()) { throw new NullPointerException("customer cannot be null"); }
-        if (null == event.getCustomer().getId()) { throw new NullPointerException("customer ID cannot be null"); }
+        if (null == event) {
+            throw new NullPointerException("event cannot be null");
+        }
+        if (null == event.getAuthor()) {
+            throw new NullPointerException("author cannot be null");
+        }
+        if (null == event.getAuthor().getId()) {
+            throw new NullPointerException("author ID cannot be null");
+        }
+        if (null == event.getCustomer()) {
+            throw new NullPointerException("customer cannot be null");
+        }
+        if (null == event.getCustomer().getId()) {
+            throw new NullPointerException("customer ID cannot be null");
+        }
         if (null == event.getProcedure()) {
             throw new NullPointerException("procedure cannot be null");
         }
