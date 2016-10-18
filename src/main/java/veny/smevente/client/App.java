@@ -451,11 +451,17 @@ public final class App implements ValueChangeHandler<String> {
      * @return procedures in currently selected unit of specified type
      */
     public List<Procedure> getProcedures(final Event.Type type) {
-        if (null == type) { throw new NullPointerException("procedure type cannot be null"); }
-        if (null == procedures) { throw new NullPointerException("procedures are null (not loaded?)"); }
+        if (null == type) {
+            throw new NullPointerException("procedure type cannot be null");
+        }
+        if (null == procedures) {
+            throw new NullPointerException("procedures are null (not loaded?)");
+        }
         final List<Procedure> rslt = new ArrayList<Procedure>();
         for (Procedure p : procedures) {
-            if (p.enumType() == type) { rslt.add(p); }
+            if (p.enumType() == type) {
+                rslt.add(p);
+            }
         }
         return rslt;
     }
@@ -482,10 +488,16 @@ public final class App implements ValueChangeHandler<String> {
      * @return the current selected membership
      */
     public Membership getSelectedMembership() {
-        if (null == memberships) { throw new NullPointerException("memberships is null"); }
+        if (null == memberships) {
+            throw new NullPointerException("memberships is null");
+        }
         final Membership memb = memberships.get(selectedUnitIndex);
-        if (null == memb) { throw new NullPointerException("selected membership is null"); }
-        if (null == memb.getUnit()) { throw new NullPointerException("unit of selected membership is null"); }
+        if (null == memb) {
+            throw new NullPointerException("selected membership is null");
+        }
+        if (null == memb.getUnit()) {
+            throw new NullPointerException("unit of selected membership is null");
+        }
         return memb;
     }
     /**
@@ -515,9 +527,13 @@ public final class App implements ValueChangeHandler<String> {
      * @return the current selected unit member
      */
     public User getSelectedUnitMember() {
-        if (null == unitMembers) { throw new NullPointerException("unit members are null"); }
+        if (null == unitMembers) {
+            throw new NullPointerException("unit members are null");
+        }
         final User user = unitMembers.get(selectedUnitMemberIndex);
-        if (null == user) { throw new NullPointerException("selected unit member is null"); }
+        if (null == user) {
+            throw new NullPointerException("selected unit member is null");
+        }
         return user;
     }
     /**
@@ -527,9 +543,13 @@ public final class App implements ValueChangeHandler<String> {
      * is administrator, otherwise false
      */
     public boolean isSelectedUnitMemberAdmin() {
-        if (null == memberships) { throw new NullPointerException("memberships is null"); }
+        if (null == memberships) {
+            throw new NullPointerException("memberships is null");
+        }
         final Membership memb = memberships.get(selectedUnitIndex);
-        if (null == memb) { throw new NullPointerException("selected membership is null"); }
+        if (null == memb) {
+            throw new NullPointerException("selected membership is null");
+        }
         return Membership.Role.ADMIN == memb.enumRole();
     }
     /**
