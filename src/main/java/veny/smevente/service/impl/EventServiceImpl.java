@@ -394,7 +394,7 @@ public class EventServiceImpl implements EventService {
         try {
             // do NOT send the email physically if email address is "-=NO_MAIL=-"
             if ("-=NO_MAIL=-".equals(customer.getEmail())) {
-                LOG.fine("fake mail (not sent), id=" + event2send.getId() + ", address=" + customer.getEmail());
+                LOG.fine("fake mail (not sent), id=" + event2send.getId() + ", customer=" + customer.getAsciiFullname());
             } else {
                 mailSender.send(message);
                 LOG.info("event sent via email, id=" + event2send.getId() + ", address=" + customer.getEmail());

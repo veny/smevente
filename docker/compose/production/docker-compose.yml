@@ -21,9 +21,9 @@ services:
             mail.port: 25
             mail.debug: "false"
         volumes:
-            - ../../../build/libs:/opt/tomcat/webapps
+            - ../../../build/libs/ROOT.war:/opt/tomcat/webapps/ROOT.war
             - ../../.volumes/log/tomcat:/opt/tomcat/logs
-    httpd:
+    apache2:
         image: veny/apache2
         depends_on:
             - tomcat
@@ -37,4 +37,4 @@ services:
         volumes:
             - ../../.volumes/log/postfix:/var/log
         environment:
-            MYHOSTNAME: smevente.com
+            SMTP_HOST: smevente.com
