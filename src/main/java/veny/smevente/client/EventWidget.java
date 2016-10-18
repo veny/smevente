@@ -33,9 +33,15 @@ public class EventWidget extends FlowPanel implements HasClickHandlers /*HasDoub
      */
     public EventWidget(final Event event) {
         // PRE-CONDITIONS
-        if (null == event) { throw new NullPointerException("event cannot be null"); }
-        if (null == event.getAuthor()) { throw new NullPointerException("author cannot be null"); }
-        if (null == event.getCustomer()) { throw new NullPointerException("customer cannot be null"); }
+        if (null == event) {
+            throw new NullPointerException("event cannot be null");
+        }
+        if (null == event.getAuthor()) {
+            throw new NullPointerException("author cannot be null");
+        }
+        if (null == event.getCustomer()) {
+            throw new NullPointerException("customer cannot be null");
+        }
         if (null == event.getProcedure()) {
             throw new NullPointerException("procedure cannot be null");
         }
