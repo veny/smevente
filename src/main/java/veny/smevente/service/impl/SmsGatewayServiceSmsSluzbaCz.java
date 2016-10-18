@@ -86,9 +86,10 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
             .append(getAuth(msg, login, password))
             .toString();
 
-        // do NOT send the SMS physically if system property 'sms.gateway.fake' set to 'true'.
+        // do NOT send the SMS physically if system property 'sms.gateway.fake' set to 'true'
+        // OR if phone number equals "-=NO_SMS=-"
         // [it's mostly for JUnit test that do not want to send a SMS.]
-        if ("true".equalsIgnoreCase(System.getProperty("sms.gateway.fake", "false"))) {
+        if ("true".equalsIgnoreCase(System.getProperty("sms.gateway.fake", "false")) || "-=NO_SMS=-".equals(number)) {
             LOG.fine("fake sms (not sent), phNumber=" + number);
             return true;
         }
