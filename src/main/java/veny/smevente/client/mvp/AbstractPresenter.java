@@ -125,7 +125,9 @@ public abstract class AbstractPresenter<D extends View> implements Presenter<D> 
     /** {@inheritDoc} */
     @Override
     public final PresenterEnum getId() {
-        if (null == id) { throw new NullPointerException("ID is null (did you invoke 'setId' before?)"); }
+        if (null == id) {
+            throw new NullPointerException("ID is null (did you invoke 'setId' before?)");
+        }
         return id;
     }
     /**

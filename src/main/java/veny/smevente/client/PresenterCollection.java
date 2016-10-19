@@ -154,7 +154,9 @@ public class PresenterCollection {
      * @return the presenter specified by enumeration item
      */
     public Presenter< ? extends View> getPresenter(final PresenterEnum presenterId) {
-        if (null == presenterId) { throw new NullPointerException("presenter ID cannot be null"); }
+        if (null == presenterId) {
+            throw new NullPointerException("presenter ID cannot be null");
+        }
 
         if (!presenterCache.containsKey(presenterId)) {
             createPresenterByNameInCache(presenterId);

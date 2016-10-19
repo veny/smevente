@@ -436,9 +436,13 @@ public class JsonDeserializer {
     public List<Pair<User, Map<String, Long>>> smsStatisticsFromJson(final String representation) {
         final JSONValue jsonValue = JSONParser.parseStrict(representation);
         final JSONObject jsObj = jsonValue.isObject();
-        if (jsObj == null) { throw new IllegalArgumentException("not JSON object: " + representation); }
+        if (jsObj == null) {
+            throw new IllegalArgumentException("not JSON object: " + representation);
+        }
         final JSONArray jsArr = jsObj.get("smsStatistics").isArray();
-        if (jsArr == null) { throw new IllegalArgumentException("not JSON array: " + representation); }
+        if (jsArr == null) {
+            throw new IllegalArgumentException("not JSON array: " + representation);
+        }
 
         final List<Pair<User, Map<String, Long>>> rslt = new ArrayList<Pair<User, Map<String, Long>>>();
         for (int i = 0; i < jsArr.size(); i++) {
@@ -465,14 +469,22 @@ public class JsonDeserializer {
     public Pair<Customer, List<Event>> customerHistoryFomJson(final String representation) {
         final JSONValue jsonValue = JSONParser.parseStrict(representation);
         final JSONObject jsonRoot = jsonValue.isObject();
-        if (null == jsonRoot) { throw new IllegalArgumentException("not JSON object: " + representation); }
+        if (null == jsonRoot) {
+            throw new IllegalArgumentException("not JSON object: " + representation);
+        }
 
         final JSONObject jsonPair = jsonRoot.get("history").isObject();
-        if (null == jsonPair) { throw new IllegalArgumentException("not JSON object: history"); }
+        if (null == jsonPair) {
+            throw new IllegalArgumentException("not JSON object: history");
+        }
         final JSONObject jsonCustomer = jsonPair.get("a").isObject();
-        if (null == jsonCustomer) { throw new IllegalArgumentException("not JSON object: history/a"); }
+        if (null == jsonCustomer) {
+            throw new IllegalArgumentException("not JSON object: history/a");
+        }
         final JSONArray jsonSmss = jsonPair.get("b").isArray();
-        if (null == jsonSmss) { throw new IllegalArgumentException("not JSON array: history/b"); }
+        if (null == jsonSmss) {
+            throw new IllegalArgumentException("not JSON array: history/b");
+        }
 
         final Customer customer = customerFromJson(jsonCustomer);
         final List<Event> smss = eventListFromJson(jsonSmss);

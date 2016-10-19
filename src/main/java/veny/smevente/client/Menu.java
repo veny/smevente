@@ -236,9 +236,13 @@ public class Menu extends MenuBar implements HeaderHandler {
      * @param weekDate new selected date
      */
     private void processNewWeekDate(final Date weekDate) {
-        if (null != weekDate)  { App.get().setWeekDate(weekDate); }
+        if (null != weekDate)  {
+            App.get().setWeekDate(weekDate);
+        }
         // just to be sure
-        if (null == App.get().getWeekDate()) { throw new NullPointerException("week date cannot be null"); }
+        if (null == App.get().getWeekDate()) {
+            throw new NullPointerException("week date cannot be null");
+        }
 
         // switch to calendar if not displayed
         if (PresenterEnum.CALENDER !=  App.get().getActivePresenterId()) {
