@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.orientechnologies.orient.core.id.ORID;
@@ -21,6 +20,7 @@ import veny.smevente.dao.ObjectNotFoundException;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
 import veny.smevente.misc.AppContext;
 import veny.smevente.misc.SoftDelete;
+import veny.smevente.misc.Utensils;
 import veny.smevente.model.AbstractEntity;
 
 /**
@@ -40,8 +40,6 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
     private final Class< T > persistentClass;
     /** Life Cycle Annotation. */
     private final SoftDelete softDeleteAnnotation;
-    /** Singleton of Apache Commons util class. */
-    private final PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
 
     /** Dependency. */
     @Autowired
@@ -326,7 +324,7 @@ public abstract class AbstractDaoOrientdb< T extends AbstractEntity > implements
             final Date softDeleteValue;
             try {
                 softDeleteValue =
-                    (Date) propertyUtilsBean.getProperty(entity, softDeleteAnnotation.attribute());
+                    (Date) Utensils.getBeanProperty(entity, softDeleteAnnotation.attribute());
             } catch (Exception e) {
                 throw new IllegalStateException("failed to read a 'softDelete' attribute, entity=" + entity, e);
             }
