@@ -14,17 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
+import eu.maydu.gwt.validation.client.server.ServerValidation;
 import veny.smevente.dao.MembershipDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
+import veny.smevente.misc.Utensils;
 import veny.smevente.model.Membership;
 import veny.smevente.model.Unit;
 import veny.smevente.model.User;
 import veny.smevente.service.UserService;
-
-import com.google.common.base.Strings;
-
-import eu.maydu.gwt.validation.client.server.ServerValidation;
 
 
 /**
@@ -188,7 +186,9 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public User findUserByUsername(final String username) {
-        if (Strings.isNullOrEmpty(username)) { throw new NullPointerException("username cannot be blank"); }
+        if (Utensils.stringIsBlank(username)) {
+            throw new NullPointerException("username cannot be blank");
+        }
 
         final List<User> found = userDao.findBy("username", username, null);
         if (found.size() > 1) {
@@ -211,7 +211,9 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @Override
     public List<Membership> getUsersInUnit(final Object unitId) {
-        if (null == unitId) { throw new IllegalArgumentException("unit id cannot be null"); }
+        if (null == unitId) {
+            throw new IllegalArgumentException("unit id cannot be null");
+        }
 
         LOG.info("getUsersInUnit, unitId=" + unitId);
 
@@ -229,9 +231,15 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize("hasPermission(#userId, 'V_MY_USER')")
     @Override
     public void updateUserPassword(final Object userId, final String oldPassword, final String newPassword) {
-        if (null == userId) { throw new NullPointerException("user ID cannot be null"); }
-        if (Strings.isNullOrEmpty(oldPassword)) { throw new NullPointerException("old password cannot be blank"); }
-        if (Strings.isNullOrEmpty(newPassword)) { throw new NullPointerException("new password cannot be blank"); }
+        if (null == userId) {
+            throw new NullPointerException("user ID cannot be null");
+        }
+        if (Utensils.stringIsBlank(oldPassword)) {
+            throw new NullPointerException("old password cannot be blank");
+        }
+        if (Utensils.stringIsBlank(newPassword)) {
+            throw new NullPointerException("new password cannot be blank");
+        }
 
         // check the old password
         final User user = userDao.getById(userId);
@@ -250,8 +258,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User performLogin(final String username, final String password) {
-        if (Strings.isNullOrEmpty(username)) { throw new NullPointerException("username cannot be blank"); }
-        if (Strings.isNullOrEmpty(password)) { throw new NullPointerException("password cannot be blank"); }
+        if (Utensils.stringIsBlank(username)) {
+            throw new NullPointerException("username cannot be blank");
+        }
+        if (Utensils.stringIsBlank(password)) {
+            throw new NullPointerException("password cannot be blank");
+        }
 
         final User user = userDao.findByUsernameAndPassword(username, encodePassword(password));
 
@@ -352,8 +364,12 @@ public class UserServiceImpl implements UserService {
     public Membership storeMembership(
             final Unit unit, final User user, final Membership.Role role, final int significance) {
 
-        if (null == user) { throw new NullPointerException("user cannot be null"); }
-        if (null == unit) { throw new NullPointerException("unit cannot be null"); }
+        if (null == user) {
+            throw new NullPointerException("user cannot be null");
+        }
+        if (null == unit) {
+            throw new NullPointerException("unit cannot be null");
+        }
         if (LOG.isLoggable(Level.FINE)) {
             LOG.fine("trying to store membership, userId="
                     + user.getId() + ", unitId=" + unit.getId() + ", role=" + role);
@@ -399,14 +415,16 @@ public class UserServiceImpl implements UserService {
      * @param forCreate whether the object has to be created as new entry in DB
      */
     private void validateUser(final User user, final boolean forCreate) {
-        if (null == user) { throw new NullPointerException("user cannot be null"); }
-        if (Strings.isNullOrEmpty(user.getUsername())) {
+        if (null == user) {
+            throw new NullPointerException("user cannot be null");
+        }
+        if (Utensils.stringIsBlank(user.getUsername())) {
             throw new IllegalArgumentException("username cannot be blank");
         }
-        if (Strings.isNullOrEmpty(user.getPassword())) {
+        if (Utensils.stringIsBlank(user.getPassword())) {
             throw new IllegalArgumentException("password cannot be blank");
         }
-        if (Strings.isNullOrEmpty(user.getFullname())) {
+        if (Utensils.stringIsBlank(user.getFullname())) {
             throw new IllegalArgumentException("fullname cannot be blank");
         }
         if (forCreate) {
@@ -414,7 +432,9 @@ public class UserServiceImpl implements UserService {
                 throw new IllegalArgumentException("expected object with empty ID");
             }
         } else {
-            if (null == user.getId()) { throw new NullPointerException("object ID cannot be null"); }
+            if (null == user.getId()) {
+                throw new NullPointerException("object ID cannot be null");
+            }
         }
     }
 

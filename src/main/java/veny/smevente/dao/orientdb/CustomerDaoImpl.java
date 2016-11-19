@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+
 import veny.smevente.dao.CustomerDao;
 import veny.smevente.dao.orientdb.DatabaseWrapper.ODatabaseCallback;
+import veny.smevente.misc.Utensils;
 import veny.smevente.model.Customer;
-
-import com.google.common.base.Strings;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 /**
  * OrientDB DAO implementation for <code>Patient</code> entity.
@@ -25,7 +25,7 @@ public class CustomerDaoImpl extends AbstractDaoOrientdb<Customer> implements Cu
         if (null == unitId) {
             throw new NullPointerException("unit ID cannot be null");
         }
-        if (Strings.isNullOrEmpty(paramName)) {
+        if (Utensils.stringIsBlank(paramName)) {
             throw new IllegalArgumentException("parameter name cannot be blank");
         }
 
@@ -57,7 +57,7 @@ public class CustomerDaoImpl extends AbstractDaoOrientdb<Customer> implements Cu
         if (null == unitId) {
             throw new NullPointerException("unit ID cannot be null");
         }
-        if (Strings.isNullOrEmpty(birthNumber)) {
+        if (Utensils.stringIsBlank(birthNumber)) {
             throw new IllegalArgumentException("birth number name cannot be blank");
         }
 

@@ -8,7 +8,7 @@ ext {
     springSecurityVersion = "3.2.4.RELEASE"
     gwtVersion = "2.7.0"
     jacksonVersion = "2.4.0"
-    orientdbVersion = "2.2.12"
+    orientdbVersion = "2.2.13"
 }
 
 repositories {
@@ -49,8 +49,6 @@ dependencies {
     runtime "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
     compile "commons-beanutils:commons-beanutils:1.9.2"
     compile "org.apache.commons:commons-lang3:3.1"
-//    runtime "org.apache.httpcomponents:httpclient:4.3.5"
-    compile "com.google.guava:guava:13.0.1"
     runtime "javax.mail:mail:1.4.7"
 
     compile files('./war/WEB-INF/lib/gwt-validation-0.9b2-SNAPSHOT-without-hibernate.jar')

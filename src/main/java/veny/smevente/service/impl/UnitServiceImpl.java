@@ -9,19 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Strings;
-
+import eu.maydu.gwt.validation.client.server.ServerValidation;
 import veny.smevente.dao.CustomerDao;
 import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
-import veny.smevente.model.Event;
+import veny.smevente.misc.Utensils;
 import veny.smevente.model.Customer;
+import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
 import veny.smevente.model.Unit;
 import veny.smevente.server.validation.ValidationContainer;
 import veny.smevente.service.UnitService;
-
-import eu.maydu.gwt.validation.client.server.ServerValidation;
 
 /**
  * Implementation of service collecting methods associated to Unit.
@@ -106,7 +104,7 @@ public class UnitServiceImpl implements UnitService {
         validateCustomer(client);
 
         // unique birth number
-        if (!Strings.isNullOrEmpty(client.getBirthNumber())) {
+        if (!Utensils.stringIsBlank(client.getBirthNumber())) {
             final Customer bn = customerDao.findByBirthNumber(client.getUnit().getId(), client.getBirthNumber());
             if (null == bn || (null != client.getId() && bn.getId().toString().equals(client.getId().toString()))) {
                 // expected state <- birth number not found
@@ -335,7 +333,7 @@ public class UnitServiceImpl implements UnitService {
         if (null == unit) {
             throw new NullPointerException("unit cannot be null");
         }
-        if (Strings.isNullOrEmpty(unit.getName())) {
+        if (Utensils.stringIsBlank(unit.getName())) {
             throw new IllegalArgumentException("unit name cannot be blank");
         }
     }
@@ -345,27 +343,31 @@ public class UnitServiceImpl implements UnitService {
      * @param customer customer to be validated
      */
     private void validateCustomer(final Customer customer) {
-        if (null == customer) { throw new NullPointerException("customer cannot be null"); }
-        if (null == customer.getUnit()) { throw new NullPointerException("unit cannot be null"); }
+        if (null == customer) {
+            throw new NullPointerException("customer cannot be null");
+        }
+        if (null == customer.getUnit()) {
+            throw new NullPointerException("unit cannot be null");
+        }
         if (null == customer.getUnit().getId()) {
             throw new NullPointerException("unit ID cannot be null");
         }
-        if (Strings.isNullOrEmpty(customer.getFirstname())) {
+        if (Utensils.stringIsBlank(customer.getFirstname())) {
             throw new IllegalArgumentException("first name cannot be blank");
         }
-        if (Strings.isNullOrEmpty(customer.getSurname())) {
+        if (Utensils.stringIsBlank(customer.getSurname())) {
             throw new IllegalArgumentException("surname cannot be blank");
         }
 
         // birth number
-        if (Strings.isNullOrEmpty(customer.getBirthNumber())) {
+        if (Utensils.stringIsBlank(customer.getBirthNumber())) {
             LOG.warning("birth number is empty, fisrtname=" + customer.getFirstname()
                     + ", surname=" + customer.getSurname());
         } else {
             validationContainer.validate("birthNumber", "birthNumber", customer.getBirthNumber());
         }
         // phone number
-        if (Strings.isNullOrEmpty(customer.getPhoneNumber())) {
+        if (Utensils.stringIsBlank(customer.getPhoneNumber())) {
             LOG.warning("phone number is empty, fisrtname=" + customer.getFirstname()
                     + ", surname=" + customer.getSurname());
         } else {
@@ -381,16 +383,28 @@ public class UnitServiceImpl implements UnitService {
         if (null == proc) {
             throw new NullPointerException("procedure cannot be null");
         }
-        if (null == proc.getUnit()) { throw new NullPointerException("unit cannot be null"); }
-        if (null == proc.getUnit().getId()) { throw new NullPointerException("unit ID cannot be null"); }
-        if (Strings.isNullOrEmpty(proc.getName())) { throw new IllegalArgumentException("name cannot be blank"); }
-        if (Strings.isNullOrEmpty(proc.getMessageText())) {
+        if (null == proc.getUnit()) {
+            throw new NullPointerException("unit cannot be null");
+        }
+        if (null == proc.getUnit().getId()) {
+            throw new NullPointerException("unit ID cannot be null");
+        }
+        if (Utensils.stringIsBlank(proc.getName())) {
+            throw new IllegalArgumentException("name cannot be blank");
+        }
+        if (Utensils.stringIsBlank(proc.getMessageText())) {
             throw new IllegalArgumentException("message text cannot be blank");
         }
         if (proc.enumType() == Event.Type.IN_CALENDAR) {
-            if (Strings.isNullOrEmpty(proc.getColor())) { throw new NullPointerException("color cannot be blank"); }
-            if (6 != proc.getColor().length()) { throw new IllegalArgumentException("bad color format"); }
-            if (proc.getTime() <= 0) { throw new IllegalArgumentException("bad time"); }
+            if (Utensils.stringIsBlank(proc.getColor())) {
+                throw new NullPointerException("color cannot be blank");
+            }
+            if (6 != proc.getColor().length()) {
+                throw new IllegalArgumentException("bad color format");
+            }
+            if (proc.getTime() <= 0) {
+                throw new IllegalArgumentException("bad time");
+            }
         }
     }
 

@@ -18,6 +18,9 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import veny.smevente.client.utils.Pair;
 import veny.smevente.client.utils.SmsUtils;
 import veny.smevente.dao.CustomerDao;
@@ -26,6 +29,7 @@ import veny.smevente.dao.GenericDao;
 import veny.smevente.dao.ProcedureDao;
 import veny.smevente.dao.UnitDao;
 import veny.smevente.dao.UserDao;
+import veny.smevente.misc.Utensils;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
@@ -35,10 +39,6 @@ import veny.smevente.service.EventService;
 import veny.smevente.service.SmsGatewayService;
 import veny.smevente.service.SmsGatewayService.SmsException;
 import veny.smevente.service.TextUtils;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 
 
 /**
@@ -506,7 +506,7 @@ public class EventServiceImpl implements EventService {
         if (null == event.getProcedure().getId()) {
             throw new NullPointerException("procedure ID cannot be null");
         }
-        if (Strings.isNullOrEmpty(event.getText())) {
+        if (Utensils.stringIsBlank(event.getText())) {
             throw new IllegalArgumentException("text cannot be blank");
         }
         if (0 == event.getText().trim().length()) {

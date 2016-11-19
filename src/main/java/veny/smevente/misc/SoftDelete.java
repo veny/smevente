@@ -18,6 +18,8 @@ public @interface SoftDelete {
 
     /**
      * Name of an attribute representing a flag that the object has been deleted.
+     *
+     * @return name of column
      */
     String attribute() default "deletedAt";
 

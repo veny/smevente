@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import veny.smevente.client.utils.Pair;
 import veny.smevente.misc.AppContext;
+import veny.smevente.misc.Utensils;
 import veny.smevente.model.Customer;
 import veny.smevente.model.Event;
 import veny.smevente.model.Procedure;
@@ -23,8 +24,6 @@ import veny.smevente.model.User;
 import veny.smevente.service.EventService;
 import veny.smevente.service.UnitService;
 import veny.smevente.service.UserService;
-
-import com.google.common.base.Strings;
 
 /**
  * Controller of Unit REST interface.
@@ -130,13 +129,15 @@ public class UnitController {
             @RequestParam("phoneNumber") final String phoneNumber,
             @RequestParam("birthNumber") final String birthNumber) {
 
-        final String n = (Strings.isNullOrEmpty(name) ? null : name.trim());
-        final String pn = (Strings.isNullOrEmpty(phoneNumber) ? null : phoneNumber.trim());
-        final String bn = (Strings.isNullOrEmpty(birthNumber) ? null : birthNumber.trim());
+        final String n = (Utensils.stringIsBlank(name) ? null : name.trim());
+        final String pn = (Utensils.stringIsBlank(phoneNumber) ? null : phoneNumber.trim());
+        final String bn = (Utensils.stringIsBlank(birthNumber) ? null : birthNumber.trim());
         final List<Customer> customers = unitService.findCustomers(unitId, n, pn, bn);
 
         // we don't need the unit
-        for (Customer c : customers) { c.setUnit(null); }
+        for (Customer c : customers) {
+            c.setUnit(null);
+        }
 
         final ModelAndView modelAndView = new ModelAndView("jsonView");
         modelAndView.addObject("customers", customers);
@@ -215,7 +216,9 @@ public class UnitController {
             @PathVariable("id") final String unitId,
             @PathVariable("type") final String procedureType) {
 
-        if (Strings.isNullOrEmpty(procedureType)) { throw new IllegalArgumentException("type cannot be blank"); }
+        if (Utensils.stringIsBlank(procedureType)) {
+            throw new IllegalArgumentException("type cannot be blank");
+        }
         final Event.Type type = Event.Type.valueOf(procedureType.trim());
 
         final List<Procedure> procedures = unitService.getProceduresByUnit(unitId, type);
