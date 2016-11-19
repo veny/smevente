@@ -38,7 +38,7 @@ import veny.smevente.service.UserService;
  * @since 10.11.2010
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "/appctx-common.xml", "/appctx-persistence-junit.xml", "/appctx-validation.xml" })
+@ContextConfiguration({ "/appctx-common.xml", "/appctx-persistence.xml", "/appctx-validation.xml" })
 public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests {
 
     // CHECKSTYLE:OFF
@@ -58,7 +58,7 @@ public abstract class AbstractBaseTest extends AbstractJUnit4SpringContextTests 
     @BeforeClass
     public static void initEmbeddedServer() throws Exception {
         final Properties dbProp = new Properties();
-        dbProp.load(AbstractBaseTest.class.getResourceAsStream("../../db.properties"));
+        dbProp.load(AbstractBaseTest.class.getResourceAsStream("../../db-test.properties"));
         final String dbUrl = dbProp.getProperty("db.url");
 
         if (dbUrl.startsWith("memory:")) {
