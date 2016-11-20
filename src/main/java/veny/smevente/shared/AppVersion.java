@@ -12,6 +12,7 @@ public interface AppVersion {
 
     /** Versions history. */
     String[][] VERSIONS = new String[][] {
+        {"0.6.2",  "20.11.2016", "removed libraries: guava, commons-lang, commons-beanutils"},
         {"0.6.1.1", "30.09.2016", "small adaptations for docker"},
         {"0.6.1",  "30.09.2016", "removed log4j"},
         {"0.6.0",  "16.08.2016", "GWT v2.7, OrientDB v2.2.2"},

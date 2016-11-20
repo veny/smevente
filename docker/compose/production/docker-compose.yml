@@ -2,14 +2,14 @@ version: '2'
 
 services:
     orientdb:
-        image: veny/orientdb
+        image: orientdb:2.2.13
         environment:
             ORIENTDB_ROOT_PASSWORD: alfa_delta_bravo
         volumes:
-            - ../../../databases:/opt/orientdb/databases
-            - ../../.volumes/log/orientdb:/opt/orientdb/log
+            - ../../../databases:/orientdb/databases
+            - ../../.volumes/log/orientdb:/orientdb/log
     tomcat:
-        image: veny/tomcat
+        image: tomcat:8.5.6-jre8-alpine
         depends_on:
             - orientdb
         environment:
@@ -21,8 +21,10 @@ services:
             mail.port: 25
             mail.debug: "false"
         volumes:
-            - ../../../build/libs/ROOT.war:/opt/tomcat/webapps/ROOT.war
-            - ../../.volumes/log/tomcat:/opt/tomcat/logs
+            - ../../../build/libs:/usr/local/tomcat/webapps
+            - ../../.volumes/log/tomcat:/usr/local/tomcat/logs
+        ports:
+            - "127.0.0.1:8080:8080"
     apache2:
         image: veny/apache2
         depends_on:

@@ -2,7 +2,7 @@ version: '2'
 
 services:
     orientdb:
-        image: veny/orientdb
+        image: orientdb:2.2.13
         container_name: smevente.orientdb
         environment:
             ORIENTDB_ROOT_PASSWORD: root
@@ -10,8 +10,8 @@ services:
             - "2424:2424"
             - "2480:2490"
         volumes:
-            - ../../../databases:/opt/orientdb/databases
-            - ../../.volumes/log/orientdb:/opt/orientdb/log
+            - ../../../databases:/orientdb/databases
+            - ../../.volumes/log/orientdb:/orientdb/log
     postfix:
         image: veny/postfix
         container_name: smevente.postfix
