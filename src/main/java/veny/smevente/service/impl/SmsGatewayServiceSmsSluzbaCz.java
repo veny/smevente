@@ -31,7 +31,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
     private static final Logger LOG = Logger.getLogger(SmsGatewayServiceSmsSluzbaCz.class.getName());
 
     /** Service endpoint to send a SMS. */
-    private static final String ENDPOINT_SEND = "https://smsgateapi.sluzba.cz/apipost10/sms";
+    private static final String ENDPOINT_SEND = "https://smsgateapi.sms-sluzba.cz/apipost10/sms";
 
     /**
      * See 'SMS_Gate_API_POST_10.pdf' for this limit.
@@ -94,7 +94,8 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
             return true;
         }
 
-        final URL url = new URL(ENDPOINT_SEND);
+        final URL url = new URL(System.getProperty("sms.endpoint.url", ENDPOINT_SEND));
+        LOG.info("initialized with service endpoint: " + url);
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
@@ -271,7 +272,7 @@ public class SmsGatewayServiceSmsSluzbaCz implements SmsGatewayService {
         metadata.put(METADATA_USERNAME, args[0]);
         metadata.put(METADATA_PASSWORD, args[1]);
 
-        service.send("606 146 177", "ahoj, toto je z aplikace.", metadata);
+        service.send("606 146 177", "ahoj, toto je z aplikace", metadata);
 
 //        System.out.println(//CSOFF
 //                service.assertResponse(

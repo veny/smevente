@@ -12,6 +12,7 @@ public interface AppVersion {
 
     /** Versions history. */
     String[][] VERSIONS = new String[][] {
+        {"0.6.3",  "25.06.2019", "changed domain of SMS endpoint"},
         {"0.6.2",  "20.11.2016", "removed libraries: guava, commons-lang, commons-beanutils"},
         {"0.6.1.1", "30.09.2016", "small adaptations for docker"},
         {"0.6.1",  "30.09.2016", "removed log4j"},

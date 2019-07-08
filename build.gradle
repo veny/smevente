@@ -1,7 +1,13 @@
-apply plugin: 'java'
-apply plugin: 'war'
+plugins {
+    id "de.esoco.gwt" version "1.0.9"
+}
+
 apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
+compileJava {options.encoding = "UTF-8"}
+apply plugin: 'war'
 apply plugin: 'checkstyle'
+apply plugin: "de.esoco.gwt"
 
 ext {
     springVersion = "4.0.5.RELEASE"
@@ -75,10 +81,15 @@ eclipse { // https://gist.github.com/gpike/3722887
         buildCommand 'com.google.gdt.eclipse.core.webAppProjectValidator'
         buildCommand 'com.google.gwt.eclipse.core.gwtProjectValidator'
     }
-    classpath {
-        containers 'com.google.gwt.eclipse.core.GWT_CONTAINER'
-        defaultOutputDir = file('war/WEB-INF/classes')
-    }
+//    classpath {
+//        containers 'com.google.gwt.eclipse.core.GWT_CONTAINER'
+//        defaultOutputDir = file('war/WEB-INF/classes')
+//    }
+}
+
+gwt {
+    module 'veny.smevente.Smevente'
+    gwtVersion = '2.7.0'
 }
 
 war {
@@ -98,45 +109,6 @@ war {
 }
 
 
-task compileGwt (dependsOn: classes, type: JavaExec) {
-  ext.buildDir = "${project.buildDir}/gwt"
-  ext.extraDir = "${project.buildDir}/extra"
-
-  inputs.source sourceSets.main.java.srcDirs
-  inputs.dir sourceSets.main.output.resourcesDir
-  outputs.dir buildDir
-
-  // Workaround for incremental build (GRADLE-1483)
-  outputs.upToDateSpec = new org.gradle.api.specs.AndSpec()
-
-  doFirst {
-    file(buildDir).mkdirs()
-  }
-
-  main = 'com.google.gwt.dev.Compiler'
-
-  classpath {
-    [
-      sourceSets.main.java.srcDirs,           // Java source
-      sourceSets.main.output.resourcesDir,    // Generated resources
-      sourceSets.main.output.classesDir,      // Generated classes
-      sourceSets.main.compileClasspath,       // Deps
-    ]
-  }
-
-  args = [
-    'veny.smevente.Smevente',
-    '-war', buildDir,
-    '-logLevel', 'INFO',
-    '-localWorkers', '2',
-    '-compileReport',
-    '-extra', extraDir,
-    '-style', 'DETAILED', // TODO 140701 disable later
-    // '-draftCompile' // Speeds up compile with 25%
-  ]
-
-  maxHeapSize = '512M'
-}
 
 task gwtSuperDev(dependsOn: classes, type: JavaExec) {
     main = 'com.google.gwt.dev.codeserver.CodeServer'
