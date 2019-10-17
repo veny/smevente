@@ -10,8 +10,12 @@
 .metadata/
 .classpath
 .project
+bin/
 build/
 databases/
+docker/.volumes/
+mvn-local-repo/
+target/
 test/junit/classes/
 war/WEB-INF/classes/
 war/WEB-INF/deploy/

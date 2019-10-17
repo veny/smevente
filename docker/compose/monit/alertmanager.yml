@@ -1,0 +1,17 @@
+global:
+  # The smarthost and SMTP sender used for mail notifications.
+  smtp_smarthost: 'postfix:25'
+  smtp_from: 'alertmanager@smevente.com'
+
+route:
+  receiver: "alerta"
+  group_by: ['alertname']
+  group_wait:      30s
+  group_interval:  5m
+  repeat_interval: 2h
+
+receivers:
+- name: "alerta"
+  email_configs:
+  - to: 'vaclav.sykora@gmail.com'
+    require_tls: false

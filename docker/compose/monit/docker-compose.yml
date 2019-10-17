@@ -1,0 +1,65 @@
+version: '2'
+
+services:
+    cadvisor:
+        image: google/cadvisor:v0.24.1
+#        ports:
+#            - "127.0.0.1:8484:8080"
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        networks:
+            - default
+    node-exporter:
+        image: prom/node-exporter:0.12.0
+#        ports:
+#            - "9100:9100"
+        networks:
+            - default
+    alertmanager:
+        image: prom/alertmanager:v0.5.0
+        volumes:
+            - ./alertmanager.yml:/etc/alertmanager/config.yml
+        networks:
+            - default
+            - devel_default
+    prometheus:
+        image: prom/prometheus:v1.3.0
+        depends_on:
+            - cadvisor
+            - alertmanager
+        ports:
+            - "9090:9090"
+        volumes:
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - ./alert.rules:/etc/prometheus/alert.rules
+            - ../../.volumes/data/prometheus:/prometheus
+#        entrypoint: /bin/prometheus -config.file=/etc/prometheus/prometheus.yml -alertmanager.url=http://alert:9093
+        command:
+            - "-config.file=/etc/prometheus/prometheus.yml"
+            - "-storage.local.path=/prometheus"
+            - "-alertmanager.url=http://alertmanager:9093"
+        networks:
+            - default
+            - devel_default
+    grafana:
+        image: grafana/grafana:3.1.1-1470047149
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD=pass
+        depends_on:
+            - prometheus
+        ports:
+            - "3000:3000"
+        volumes:
+            - ../../.volumes/data/grafana:/var/lib/grafana
+        networks:
+            - default
+
+networks:
+    devel_default:
+        external: true
+
+# http://eric-price.net/blog/monitor-docker-containers/
+# https://prometheus.io/
