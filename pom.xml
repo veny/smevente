@@ -14,6 +14,7 @@
     
     <springframework.version>4.0.5.RELEASE</springframework.version>
     <springframework.security.version>3.2.4.RELEASE</springframework.security.version>
+    <gwt.version>2.7.0</gwt.version>
     <orientdb.version>2.2.13</orientdb.version>
     <jackson.version>2.4.0</jackson.version>
   </properties>
@@ -29,6 +30,10 @@
           <moduleName>veny.smevente.Smevente</moduleName>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -38,7 +43,7 @@
       <dependency>
         <groupId>com.google.gwt</groupId>
         <artifactId>gwt</artifactId>
-        <version>2.7.0</version>
+        <version>${gwt.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
