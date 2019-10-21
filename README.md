@@ -17,6 +17,10 @@ SMS Event(e) [TBD]
 * mvn gwt:compile # TODO 'mvn compile' is prerequisite
 * mvn war:war
 
+### Start from CLI Tomcat
+> export CATALINA_OPTS="-DENVIRONMENT=production -Dmail.host=127.0.0.1 -Dmail.port=25 -Dmail.debug=true -Ddb.url=remote:localhost/smevente -Ddb.username=admin -Ddb.password=admin"
+> ./catalina.sh run
+
 
 * https://stackoverflow.com/questions/4955635/how-to-add-local-jar-files-to-a-maven-project
 mvn install:install-file -Dfile=war/WEB-INF/lib/gwt-validation-0.9b2-SNAPSHOT-without-hibernate.jar -DgroupId=eu.maydu -DartifactId=gwt-validation -Dversion=0.9b2-SNAPSHOT-without-hibernate -Dpackaging=jar -DgeneratePom=true
@@ -44,3 +48,6 @@ mvn gwt:compile # invokes the GWT compiler
 
 ## Tests
 -ea -Djava.util.logging.config.file=src/main/resources/logging-devel.properties -DRTE=test -Dorientdb.installCustomFormatter=false
+
+# TODO
+1. mvn test
