@@ -33,6 +33,14 @@
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.0.0</version>
+        <configuration>
+          <packagingExcludes>**/*-devel.properties</packagingExcludes>
+          <webResources>
+            <resource>
+              <directory>target/${project.artifactId}-${project.version}</directory>
+            </resource>
+          </webResources>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -55,10 +63,12 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
+      <scope>provided</scope> <!-- because ot Tomcat deployment problem: jar not loaded. See Servlet Spec 3.0, section 10.7.2. Offending class: javax/servlet/Servlet.class -->
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -116,6 +126,21 @@
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${springframework.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.orientechnologies</groupId>
+      <artifactId>orientdb-server</artifactId>
+      <version>${orientdb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>1.9.5</version>
     </dependency>
   </dependencies>
 </project>
